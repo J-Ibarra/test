@@ -1,0 +1,60 @@
+language: node_js
+node_js:
+  - "10.13"
+addons:
+  apt:
+    packages:
+      - docker-ce
+  hosts:
+    - 127.0.0.1 redis
+    - 127.0.0.1 local.kinesisgroup.io
+  postgresql: "9.6"
+services:
+  - docker
+  - redis-server
+  - postgresql
+before_install:
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+  - pip install --user awscli
+  - export PATH=$PATH:$HOME/.local/bin
+  - aws configure set profile.kinesis.aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+  - aws configure set profile.kinesis.aws_access_key_id $AWS_ACCESS_KEY_ID
+  - aws configure set profile.kinesis.region ap-southeast-2
+before_script:
+  - psql -c 'create database kinesis_exchange;' -U postgres
+
+jobs:
+  include:
+    - stage: test
+      if: tag IS blank #if it is a tag we don't want to run the tests, they would have run already
+      script:
+        - lerna bootstrap
+        - lerna run create-tables --since $TRAVIS_BRANCH
+        - lerna run test --since $TRAVIS_BRANCH
+    - stage: "Build and deploy Integration"
+      if: branch = integration and type = push
+      env:
+        - ENVIRONMENT=int
+      script:
+        - lerna bootstrap
+        - lerna run build-image-latest --since integration
+        - eval $(aws ecr get-login --region ap-southeast-2 --no-include-email)
+        - lerna run release-image-integration --since integration
+        - lerna run update-service-integration --since integration
+    - stage: "Update version and tag changed services"
+      if: branch = master and type = push
+      script:
+        - lerna bootstrap
+        - lerna publish
+    - stage: "Publish new docker image for tagged service"
+      if: tag IS present
+      script:
+        - lerna bootstrap
+        - eval "$(./tag-service-variable-setter.sh)"
+        - cd services/$SERVICE
+        - npm run build-image-from-tag
+        - eval $(aws ecr get-login --region ap-southeast-2 --no-include-email)
+        - npm run release-image-uat-repo

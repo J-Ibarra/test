@@ -1,0 +1,2 @@
+import { Deferrable, Sequelize, Transaction, TransactionIsolationLevels } from 'sequelize';
+export declare function wrapInTransaction<R>(sequelize: Sequelize, transaction: Transaction | null, fn: (t: Transaction) => Promise<R>, errorCallback?: () => Promise<any> | void, isolationLevel?: TransactionIsolationLevels[keyof TransactionIsolationLevels], deferrable?: Deferrable[keyof Deferrable], autoCommit?: boolean): ReturnType<typeof fn>;

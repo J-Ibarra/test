@@ -1,0 +1,55 @@
+{
+  "name": "note",
+  "version": "1.0.0",
+  "description": "> TODO: description",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist",
+    "migrate-test-db": "npm run clean && npm run build && NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test NODE_PATH=dist node dist/migrations/index.js",
+    "test": "jest",
+    "build": "tsc -p tsconfig.build.json",
+    "build-image-latest": "echo build image here",
+    "build-image-from-tag": "echo build image here using $VERSION env variable, set by travis",
+    "release-image-integration": "echo push image to ECR here",
+    "release-image-uat": "echo push image to ECR here",
+    "update-service-integration": "echo updating integration service here"
+  },
+  "dependencies": {
+    "@abx-types/note": "1.0.0",
+    "@abx/note-query-lib": "1.0.0",
+    "@abx/db-connection-utils": "1.0.0",
+    "sequelize": "4.41.0"
+  },
+  "devDependencies": {
+    "@lerna/filter-options": "^3.18.4",
+    "@types/sequelize": "3.30.4",
+    "@types/jest": "^24.0.23",
+    "@types/node": "^12.12.11",
+    "@types/validator": "6.3.0",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.1.0",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.2"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "lib",
+    "testRegex": ".spec.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "testEnvironment": "node"
+  },
+  "private": true,
+  "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9"
+}
