@@ -1,4 +1,4 @@
 {
-  "packages": ["services/*", "libs/model/*", "libs/query/*", "libs/util/*"],
+  "packages": ["packages/services/*", "packages/libs/model/*", "packages/libs/query/*", "packages/libs/util/*"],
   "version": "independent"
 }

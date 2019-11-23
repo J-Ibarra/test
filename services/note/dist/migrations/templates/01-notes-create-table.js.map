@@ -1,1 +1,0 @@
-{"version":3,"file":"01-notes-create-table.js","sourceRoot":"","sources":["../../../lib/migrations/templates/01-notes-create-table.ts"],"names":[],"mappings":";;AAAA,SAAgB,EAAE,CAAC,cAAc;IAC/B,OAAO,cAAc,CAAC,SAAS,CAAC,KAAK,CACnC;;;;;;;;KAQC,CACF,CAAA;AACH,CAAC;AAZD,gBAYC;AAED,SAAgB,IAAI,CAAC,cAAc;IACjC,OAAO,cAAc,CAAC,SAAS,CAAC,KAAK,CAAC,yBAAyB,CAAC,CAAA;AAClE,CAAC;AAFD,oBAEC"}

@@ -1,0 +1,3 @@
+--reporter spec
+--require ../../../../_test-setup/test_globals.js
+--timeout 5000

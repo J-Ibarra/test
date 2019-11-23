@@ -1,28 +1,13 @@
 {
+  "extends": "./tsconfig.build.json",
+
   "compilerOptions": {
-    "module": "commonjs",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "noImplicitAny": false,
-    "noImplicitReturns": true,
-    "strictNullChecks": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "importHelpers": true,
-    "noEmitHelpers": true,
-    "esModuleInterop": true,
-    "lib": ["es6", "dom", "es2017"],
-    "target": "es6",
-    "sourceMap": true,
-    "outDir": "./dist",
-    "baseUrl": "./",
-    "incremental": true
-  },
-  "formatCodeOptions": {
-    "indentSize": 2,
-    "tabSize": 2
-  },
-  "exclude": ["node_modules"]
+    "baseUrl": "./packages",
+    "paths": {
+      "@abx-types/note": ["libs/model/note/src"],
+      "@abx/note-query-lib": ["libs/query/note/src"],
+      "@abx/db-connection-utils": ["libs/util/db-connection-utils/src"],
+      "@abx/logging": ["libs/util/logging/src"],
+    }
+  }
 }
