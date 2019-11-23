@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - "10.13"
+  - '10.13'
 addons:
   apt:
     packages:
@@ -8,7 +8,7 @@ addons:
   hosts:
     - 127.0.0.1 redis
     - 127.0.0.1 local.kinesisgroup.io
-  postgresql: "9.6"
+  postgresql: '9.6'
 services:
   - docker
   - redis-server
@@ -32,9 +32,9 @@ jobs:
       if: tag IS blank #if it is a tag we don't want to run the tests, they would have run already
       script:
         - lerna bootstrap
-        - lerna run create-tables --since $TRAVIS_BRANCH
+        - lerna run migrate-test-db --since $TRAVIS_BRANCH
         - lerna run test --since $TRAVIS_BRANCH
-    - stage: "Build and deploy Integration"
+    - stage: 'Build and deploy Integration'
       if: branch = integration and type = push
       env:
         - ENVIRONMENT=int
@@ -44,12 +44,12 @@ jobs:
         - eval $(aws ecr get-login --region ap-southeast-2 --no-include-email)
         - lerna run release-image-integration --since integration
         - lerna run update-service-integration --since integration
-    - stage: "Update version and tag changed services"
+    - stage: 'Update version and tag changed services'
       if: branch = master and type = push
       script:
         - lerna bootstrap
         - lerna publish
-    - stage: "Publish new docker image for tagged service"
+    - stage: 'Publish new docker image for tagged service'
       if: tag IS present
       script:
         - lerna bootstrap
