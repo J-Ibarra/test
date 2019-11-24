@@ -1,3 +1,3 @@
-# `common-db`
+# `@abx/logging`
 
 > TODO: description

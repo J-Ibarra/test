@@ -1,3 +1,3 @@
-# `common-db`
+# `@abx-types/note`
 
 > TODO: description

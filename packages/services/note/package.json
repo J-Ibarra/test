@@ -55,19 +55,6 @@
     "tslint": "^5.20.1",
     "typescript": "^3.7.2"
   },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "lib",
-    "testRegex": ".spec.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "testEnvironment": "node"
-  },
   "private": true,
   "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9"
 }

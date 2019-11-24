@@ -1,3 +1,3 @@
-# `common-db`
+# `@abx/db-connection-utils`
 
 > TODO: description
