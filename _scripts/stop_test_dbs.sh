@@ -1,2 +1,2 @@
-docker kill postgres || true
-docker kill redis || true
+docker kill postgres-exchange-test || true
+docker kill redis-exchange-test || true

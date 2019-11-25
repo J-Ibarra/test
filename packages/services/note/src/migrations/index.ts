@@ -1,6 +1,3 @@
-import '@abx/note-query-lib'
-import { runMigrations } from '@abx/db-connection-utils'
+import { runNoteMigrations } from './migration-runner'
 
-runMigrations(`${__dirname}/templates`)
-  .then(() => console.log('Note migrations successfully executed'))
-  .then(() => process.exit(0))
+runNoteMigrations().then(() => process.exit(0))

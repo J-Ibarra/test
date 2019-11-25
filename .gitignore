@@ -50,3 +50,5 @@ dist
 
 # local postgres data
 .postgres-data
+
+_logs

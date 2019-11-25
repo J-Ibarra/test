@@ -23,5 +23,6 @@ export function bootstrapRestApi() {
 
   app.on('unhandledRejection', e => logger.error(e as any))
 
+  console.log('Notes API on port 3002')
   app.listen(3002)
 }
