@@ -1,4 +1,4 @@
 export enum DBOrder {
-    ASC = 'ASC',
-    DESC = 'DESC',
-  }
+  ASC = 'ASC',
+  DESC = 'DESC',
+}

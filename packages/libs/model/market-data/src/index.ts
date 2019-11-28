@@ -1,5 +1,5 @@
-import './DepthMidPrice';
-import './OHLCMarketData';
-import './SymbolMarketDataSnapshot';
-import './MidPricesForSymbolRequest';
-import './MidPricesForSymbolsRequest';
+import './DepthMidPrice'
+import './OHLCMarketData'
+import './SymbolMarketDataSnapshot'
+import './MidPricesForSymbolRequest'
+import './MidPricesForSymbolsRequest'

@@ -5,7 +5,7 @@
 export interface CacheGateway {
   /**
    * Safely closes active connections
-   * 
+   *
    * @returns {Promise<void>}
    */
   quit(): Promise<void>
