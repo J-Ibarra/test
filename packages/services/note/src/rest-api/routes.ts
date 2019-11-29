@@ -10,6 +10,13 @@ const models: TsoaRoute.Models = {
       description: { dataType: 'string', required: true },
       createdAt: { dataType: 'datetime' },
       updatedAt: { dataType: 'datetime' },
+    "NoteResponse": {
+        "properties": {
+            "title": { "dataType": "string", "required": true },
+            "description": { "dataType": "string", "required": true },
+            "createdAt": { "dataType": "datetime" },
+            "updatedAt": { "dataType": "datetime" },
+        },
     },
   },
   NoteCreationRequest: {

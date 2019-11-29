@@ -1,7 +1,7 @@
 import { Body, Post, Route } from 'tsoa'
-import { Note } from '@abx-types/note'
 
 import { createNote } from '../core/note_creation_handler'
+import { NoteResponse } from './response-model/note.response'
 
 interface NoteCreationRequest {
   title: string
@@ -11,7 +11,7 @@ interface NoteCreationRequest {
 @Route()
 export class NotesController {
   @Post('notes')
-  public async createNote(@Body() { title, description }: NoteCreationRequest): Promise<Note> {
+  public async createNote(@Body() { title, description }: NoteCreationRequest): Promise<NoteResponse> {
     return createNote(title, description)
   }
 }

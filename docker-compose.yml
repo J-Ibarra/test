@@ -17,6 +17,5 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=kinesis_exchange
-      #- POSTGRES_INITDB_ARGS="-c max_connections=1000"
 volumes:
   postgres-data:
