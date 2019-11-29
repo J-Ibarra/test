@@ -33,7 +33,7 @@ jobs:
       script:
         - lerna link
         - lerna bootstrap
-        - lerna build --since $TRAVIS_BRANCH
+        - lerna run build --since $TRAVIS_BRANCH
         - lerna run migrate-test-db --since $TRAVIS_BRANCH
         - lerna run test --since $TRAVIS_BRANCH
     - stage: 'Build and deploy Integration'
