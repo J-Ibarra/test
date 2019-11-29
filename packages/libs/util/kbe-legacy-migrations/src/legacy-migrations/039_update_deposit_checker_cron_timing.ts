@@ -1,12 +1,17 @@
 export function up(queryInterface) {
-  return queryInterface.sequelize.query(`
+  return queryInterface.sequelize.query(
+    `
     UPDATE cron_schedule SET cron = '*/30 * * * * *' WHERE name = 'depositChecker';
-  `, { raw: true })
+  `,
+    { raw: true },
+  )
 }
 
 export function down(queryInterface) {
-  queryInterface.sequelize.query(`
+  queryInterface.sequelize.query(
+    `
     UPDATE cron_schedule SET cron = '*/7 * * * *' WHERE name = 'depositChecker';
-  `, { raw: true })
+  `,
+    { raw: true },
+  )
 }
-

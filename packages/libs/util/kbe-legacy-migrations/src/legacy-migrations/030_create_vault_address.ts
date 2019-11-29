@@ -12,12 +12,9 @@ export async function up(queryInterface) {
 
     ALTER TABLE ONLY public.vault_address
         ADD CONSTRAINT vault_address_pkey PRIMARY KEY (id);
-  `
-  )
+  `)
 }
 
 export async function down(queryInterface) {
-  return queryInterface.sequelize.query(
-    `DROP TABLE public.vault_address;`
-  )
+  return queryInterface.sequelize.query(`DROP TABLE public.vault_address;`)
 }

@@ -11,12 +11,9 @@ export async function up(queryInterface) {
     );
 
     ALTER TABLE public.contacts OWNER TO postgres;
-  `
-  )
+  `)
 }
 
 export async function down(queryInterface) {
-  return queryInterface.sequelize.query(
-    `DROP TABLE public.contacts;`
-  )
+  return queryInterface.sequelize.query(`DROP TABLE public.contacts;`)
 }

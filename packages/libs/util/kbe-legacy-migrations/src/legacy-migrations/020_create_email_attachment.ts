@@ -14,7 +14,6 @@ export async function up({ sequelize }: { sequelize: Sequelize }) {
 
     ALTER TABLE public.email_attachment OWNER TO postgres;
   `)
-
 }
 
 export async function down({ sequelize }: { sequelize: Sequelize }) {

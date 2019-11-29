@@ -29,7 +29,7 @@ const tablesWithForeignKeyToSymbolId = [
   'order_match_transaction',
   'ohlc_market_data',
   'depth_mid_price',
-  'order_queue_status'
+  'order_queue_status',
 ]
 
 export async function up({ sequelize }: { sequelize: Sequelize }) {
@@ -81,25 +81,45 @@ ADD COLUMN "createdAt" timestamp with time zone NOT NULL;
 ALTER TABLE public.symbol
 ADD COLUMN "updatedAt" timestamp with time zone NOT NULL;
 `
-const dropForeignKeyConstraints = () => tablesWithForeignKeyToSymbolId.map(table => `
+const dropForeignKeyConstraints = () =>
+  tablesWithForeignKeyToSymbolId
+    .map(
+      table => `
 ALTER TABLE public.${table}
 DROP CONSTRAINT IF EXISTS "${table}_symbolId_fkey" CASCADE;
-`).join(' ')
+`,
+    )
+    .join(' ')
 
-const insertNewSymbols = () => newSymbolData.map(({ symbolId, baseId, quoteId, feeId }) => `
+const insertNewSymbols = () =>
+  newSymbolData
+    .map(
+      ({ symbolId, baseId, quoteId, feeId }) => `
 INSERT INTO public.symbol(id, "baseId", "quoteId", "feeId", "createdAt", "updatedAt")
 values ('${symbolId}', ${baseId}, ${quoteId}, ${feeId}, now(), now());
-`).join(' ')
+`,
+    )
+    .join(' ')
 
-const alterAllForeignKeyColumnTypes = (type = 'character varying(7)') => tablesWithForeignKeyToSymbolId.map(table => `
+const alterAllForeignKeyColumnTypes = (type = 'character varying(7)') =>
+  tablesWithForeignKeyToSymbolId
+    .map(
+      table => `
 ALTER TABLE public.${table}
 ALTER COLUMN "symbolId" TYPE ${type};
-`).join(' ')
+`,
+    )
+    .join(' ')
 
-const addBackForeignKeys = () => tablesWithForeignKeyToSymbolId.map(table => `
+const addBackForeignKeys = () =>
+  tablesWithForeignKeyToSymbolId
+    .map(
+      table => `
 ALTER TABLE public.${table}
 ADD CONSTRAINT "${table}_symbolId_fkey" FOREIGN KEY ("symbolId") REFERENCES public.symbol(id);
-`).join(' ')
+`,
+    )
+    .join(' ')
 
 const updateDefaultFeeTiersForAllSymbols = () => `
   DELETE FROM public.default_execution_fee;
@@ -113,8 +133,10 @@ const insertBoundaries = () => `
   ${newSymbolData.map(({ symbolId }) => createInsertStatementForSymbolBoundary(`'${symbolId}'`)).join(' ')}
 `
 
-const insetOrderQueueStatuses = (symbols) => `
-  ${symbols.map(({ symbolId }) => `INSERT INTO public.order_queue_status("symbolId","processing","lastProcessed") VALUES ('${symbolId}',FALSE, now());`).join(' ')}
+const insetOrderQueueStatuses = symbols => `
+  ${symbols
+    .map(({ symbolId }) => `INSERT INTO public.order_queue_status("symbolId","processing","lastProcessed") VALUES ('${symbolId}',FALSE, now());`)
+    .join(' ')}
 `
 
 export async function down({ sequelize }: { sequelize: Sequelize }) {
@@ -132,10 +154,9 @@ export async function down({ sequelize }: { sequelize: Sequelize }) {
     ${addBackForeignKeys()}
 
     ${Array.from({ length: 13 }, (_, i) => {
-    const symbolId = i + 1
-    createInsertStatementForSymbolBoundary(symbolId)
-  }).join(' ')
-    }
+      const symbolId = i + 1
+      createInsertStatementForSymbolBoundary(symbolId)
+    }).join(' ')}
   `)
 }
 

@@ -16,12 +16,10 @@ export function up(queryInterface) {
 
       ALTER TABLE ONLY public.deposit_request
           ADD CONSTRAINT deposit_request_pkey PRIMARY KEY (id);
-    `
+    `,
   )
 }
 
-export function down (queryInterface) {
-  return queryInterface.sequelize.query(
-    `DROP TABLE public.deposit_request;`
-  )
+export function down(queryInterface) {
+  return queryInterface.sequelize.query(`DROP TABLE public.deposit_request;`)
 }

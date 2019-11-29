@@ -16,12 +16,10 @@ export function up(queryInterface) {
 
       ALTER TABLE ONLY public.balance_adjustment
           ADD CONSTRAINT balance_adjustment_pkey PRIMARY KEY (id);
-    `
+    `,
   )
 }
 
-export function down (queryInterface) {
-  return queryInterface.sequelize.query(
-    `DROP TABLE public.balance_adjustment;`
-  )
+export function down(queryInterface) {
+  return queryInterface.sequelize.query(`DROP TABLE public.balance_adjustment;`)
 }
