@@ -4,10 +4,10 @@
   "compilerOptions": {
     "baseUrl": "./packages",
     "paths": {
-      "@abx-types/note": ["libs/model/note/src"],
-      "@abx/note-query-lib": ["libs/query/note/src"],
-      "@abx/db-connection-utils": ["libs/util/db-connection-utils/src"],
-      "@abx/logging": ["libs/util/logging/src"],
+      "@abx-types/note": ["packages/libs/model/note/src"],
+      "@abx/note-query-lib": ["packages/libs/query/note/src"],
+      "@abx/db-connection-utils": ["packages/libs/util/db-connection-utils/src"],
+      "@abx/logging": ["packages/libs/util/logging/src"],
     }
   }
 }
