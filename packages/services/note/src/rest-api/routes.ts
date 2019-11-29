@@ -4,7 +4,7 @@ import { NotesController } from './NotesController';
 import * as express from 'express';
 
 const models: TsoaRoute.Models = {
-    "Note": {
+    "NoteResponse": {
         "properties": {
             "title": { "dataType": "string", "required": true },
             "description": { "dataType": "string", "required": true },

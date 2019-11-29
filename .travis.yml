@@ -31,7 +31,9 @@ jobs:
     - stage: test
       if: tag IS blank #if it is a tag we don't want to run the tests, they would have run already
       script:
+        - lerna link
         - lerna bootstrap
+        - lerna build --since $TRAVIS_BRANCH
         - lerna run migrate-test-db --since $TRAVIS_BRANCH
         - lerna run test --since $TRAVIS_BRANCH
     - stage: 'Build and deploy Integration'
