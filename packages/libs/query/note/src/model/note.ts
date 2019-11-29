@@ -1,5 +1,5 @@
 import * as Sequelize from 'sequelize'
-import { Note } from '@abx-types/note/src'
+import { Note } from '@abx-types/note'
 
 export interface NoteInstance extends Sequelize.Instance<Note>, Note {}
 
