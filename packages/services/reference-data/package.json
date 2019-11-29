@@ -1,5 +1,5 @@
 {
-  "name": "note",
+  "name": "@abx/exchange-reference-data-service",
   "version": "1.0.0",
   "description": "> TODO: description",
   "directories": {
@@ -13,7 +13,7 @@
     "swagger-gen": "tsoa swagger",
     "routes-gen": "tsoa routes",
     "api-build": "npm run swagger-gen && npm run routes-gen",
-    "build": "npm run clean && npm run api-build && npm run compile",
+    "build": "npm run clean && npm run compile",
     "clean": "rm -rf ./dist",
     "compile": "tsc -p tsconfig.build.json --skipLibCheck",
     "migrate-test-db": "npm run build && NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test NODE_PATH=dist node dist/migrations/index.js",
@@ -26,10 +26,9 @@
     "update-service-integration": "echo updating integration service here"
   },
   "dependencies": {
-    "@abx-types/note": "1.0.0",
+    "@abx-types/reference-data": "1.0.0",
     "@abx/db-connection-utils": "1.0.0",
     "@abx/logging": "1.0.0",
-    "@abx/note-query-lib": "1.0.0",
     "body-parser": "1.18.3",
     "cookie-parser": "1.4.3",
     "express": "4.16.4",
