@@ -1,5 +1,5 @@
 {
-  "name": "@abx-types/note",
+  "name": "@abx-types/reference-data",
   "version": "1.0.0",
   "description": "Contains the note model interfaces",
   "license": "ISC",
