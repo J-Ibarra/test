@@ -14,7 +14,9 @@
     "compile": "tsc -p tsconfig.build.json --skipLibCheck"
   },
   "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9",
-  "dependencies": {},
+  "dependencies": {
+    "moment": "2.22.2"
+  },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",
     "@types/chai": "4.0.3",

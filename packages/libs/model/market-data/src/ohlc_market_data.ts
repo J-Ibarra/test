@@ -1,4 +1,5 @@
 import { MarketDataTimeFrame } from './market_data_time_frame'
+
 /** Contains the OHLC market data for a given {@link Currencies} for a timeFrame */
 export interface OHLCMarketData {
   /** The trade symbol(driven by 'base' and 'to' currency ids). */
