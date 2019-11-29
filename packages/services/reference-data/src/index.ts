@@ -1,11 +1,11 @@
 import { bootstrapRestApi } from './rest-api'
 import { bootstrapInternalApi } from './internal-api'
-// import { runReferenceDataMigrations } from './migrations/migration-runner'
+import { runReferenceDataMigrations } from './migrations/migration-runner'
 
 bootstrap()
 
 async function bootstrap() {
-  // await runReferenceDataMigrations()
+  await runReferenceDataMigrations()
   bootstrapInternalApi()
   bootstrapRestApi()
 }

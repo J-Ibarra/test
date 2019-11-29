@@ -16,7 +16,8 @@
   "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9",
   "dependencies": {
     "@abx/db-connection-utils": "1.0.0",
-    "node-uuid": "1.4.7"
+    "node-uuid": "1.4.7",
+    "sequelize": "4.41.0"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",
