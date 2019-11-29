@@ -35,6 +35,7 @@ jobs:
         - lerna bootstrap
         - lerna run --scope @abx/logging build
         - lerna run --scope @abx/db-connection-utils build
+        - lerna run --scope @abx-types* build
         - lerna run build --since $TRAVIS_BRANCH
         - lerna run migrate-test-db --since $TRAVIS_BRANCH
         - lerna run test --since $TRAVIS_BRANCH
