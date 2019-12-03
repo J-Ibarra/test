@@ -33,9 +33,9 @@ jobs:
       script:
         - lerna link
         - lerna bootstrap
-        - lerna run build --since develop --include-dependencies
-        - lerna run migrate-test-db --since develop --include-dependencies
-        - lerna run test --since develop
+        - lerna run build --include-dependencies
+        - lerna run migrate-test-db --since $TRAVIS_BRANCH --include-dependencies
+        - lerna run test --since $TRAVIS_BRANCH
     - stage: 'Build and deploy Integration'
       if: branch = integration and type = push
       env:
