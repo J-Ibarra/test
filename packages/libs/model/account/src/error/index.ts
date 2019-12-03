@@ -1,2 +1,2 @@
-import './EmailValidationError.enum'
-import './ResetPasswordValidationError.enum'
+export * from './EmailValidationError.enum'
+export * from './ResetPasswordValidationError.enum'

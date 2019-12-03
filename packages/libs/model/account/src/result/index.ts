@@ -1,2 +1,2 @@
-import './EmailValidationResult.interface'
-import './SalesforcePostResponse.interface'
+export * from './EmailValidationResult.interface'
+export * from './SalesforcePostResponse.interface'

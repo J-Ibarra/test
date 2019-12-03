@@ -1,2 +1,2 @@
-import './SalesforceReferenceTable.interface'
-import './SalesforceTokenResponse.interface'
+export * from './SalesforceReferenceTable.interface'
+export * from './SalesforceTokenResponse.interface'
