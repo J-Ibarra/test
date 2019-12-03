@@ -9,7 +9,6 @@ export async function up({ sequelize }: { sequelize: Sequelize }) {
   `)
 }
 
-
 export async function down({ sequelize }: { sequelize: Sequelize }) {
   return sequelize.query(`
     ALTER TABLE public.withdrawal_request

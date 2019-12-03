@@ -1,4 +1,4 @@
-import { CurrencyCode } from '.';
+import { CurrencyCode } from '.'
 
 export interface CurrencyBoundary {
   id?: number

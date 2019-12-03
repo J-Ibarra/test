@@ -19,8 +19,7 @@ export async function up({ sequelize }: { sequelize: Sequelize }) {
     ${Array.from({ length: 13 }, (_, i) => {
       const symbolId = i + 1
       createInsertStatementForSymbolBoundary(symbolId)
-    }).join(' ')
-    }
+    }).join(' ')}
   `)
 }
 

@@ -41,7 +41,6 @@ export async function up({ sequelize }: { sequelize: Sequelize }) {
   `)
 }
 
-
 export async function down({ sequelize }: { sequelize: Sequelize }) {
   return sequelize.query(`
     ALTER TABLE default_execution_fee

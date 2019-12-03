@@ -1,8 +1,8 @@
-import { CurrencyCode } from '.';
+import { CurrencyCode } from '.'
 
 export enum CryptoCurrency {
-    ethereum = CurrencyCode.ethereum,
-    kau = CurrencyCode.kau,
-    kag = CurrencyCode.kag,
-    kvt = CurrencyCode.kvt,
-  }
+  ethereum = CurrencyCode.ethereum,
+  kau = CurrencyCode.kau,
+  kag = CurrencyCode.kag,
+  kvt = CurrencyCode.kvt,
+}

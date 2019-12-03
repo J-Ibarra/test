@@ -14,12 +14,10 @@ export function up(queryInterface) {
 
       ALTER TABLE ONLY public.session
           ADD CONSTRAINT session_pkey PRIMARY KEY (id);
-    `
+    `,
   )
 }
 
-export function down (queryInterface) {
-  return queryInterface.sequelize.query(
-    `DROP TABLE public.session;`
-  )
+export function down(queryInterface) {
+  return queryInterface.sequelize.query(`DROP TABLE public.session;`)
 }
