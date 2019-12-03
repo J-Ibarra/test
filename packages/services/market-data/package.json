@@ -1,5 +1,5 @@
 {
-  "name": "note",
+  "name": "@abx/exchange-market-data-service",
   "version": "1.0.0",
   "description": "> TODO: description",
   "directories": {
@@ -26,10 +26,10 @@
     "update-service-integration": "echo updating integration service here"
   },
   "dependencies": {
-    "@abx-types/note": "1.0.0",
+    "@abx-types/market-data": "1.0.0",
     "@abx/db-connection-utils": "1.0.0",
     "@abx/logging": "1.0.0",
-    "@abx/note-query-lib": "1.0.0",
+    "@abx/kbe-legacy-migrations": "1.0.0",
     "body-parser": "1.18.3",
     "cookie-parser": "1.4.3",
     "express": "4.16.4",
