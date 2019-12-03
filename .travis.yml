@@ -33,19 +33,18 @@ jobs:
       script:
         - lerna link
         - lerna bootstrap
-        - lerna run --scope @abx/logging --scope @abx/db-connection-utils build
-        - lerna run build --since $TRAVIS_BRANCH --include-dependencies
-        - lerna run migrate-test-db --since $TRAVIS_BRANCH
-        - lerna run test --since $TRAVIS_BRANCH
+        - lerna run build --since develop --include-dependencies
+        - lerna run migrate-test-db --since develop --include-dependencies
+        - lerna run test --since develop
     - stage: 'Build and deploy Integration'
       if: branch = integration and type = push
       env:
         - ENVIRONMENT=int
       script:
-        - lerna run build-image-latest --since integration
+        - lerna run build-image-latest --since master
         - eval $(aws ecr get-login --region ap-southeast-2 --no-include-email)
-        - lerna run release-image-integration --since integration
-        - lerna run update-service-integration --since integration
+        - lerna run release-image-integration --since master
+        - lerna run update-service-integration --since master
     - stage: 'Update version and tag changed services'
       if: branch = master and type = push
       script:
