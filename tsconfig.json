@@ -5,6 +5,7 @@
     "baseUrl": "./packages",
     "paths": {
       "@abx-types/note": ["packages/libs/model/note/src"],
+      "@abx-types/reference-data": ["packages/libs/model/reference-data/src"],
       "@abx/note-query-lib": ["packages/libs/query/note/src"],
       "@abx/db-connection-utils": ["packages/libs/util/db-connection-utils/src"],
       "@abx/logging": ["packages/libs/util/logging/src"],
