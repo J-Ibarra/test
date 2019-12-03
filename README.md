@@ -37,3 +37,62 @@ Steps to set the project up locally:
 1. Run `docker-compose up -d`
 2. Run `npm install`
 3. Run `lerna bootstrap`
+
+### Conventions
+
+#### Branches
+
+Branch naming should follow the git-flow branching model. A good overview on this can be found [here](https://danielkummer.github.io/git-flow-cheatsheet/). Our branch names are as follows:
+
+| Branch type | Format                         | Notes                                                                                                                                                             |
+|-------------|--------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| master      | -                              | Production branch                                                                                                                                                 |
+| develop     | -                              | Base development branch                                                                                                                                           |
+| feature     | /feature/[JIRA ID]-branch-name | Used for developing new features. Almost all new code will reside within a feature branch. When completed, feature branches are merged back into develop          |
+| hotfix      | /hotfix/[JIRA ID]-branch-name  | Used for developing hotfixes to the production environment. These changes are merged straight to `master` and then merged back down through to existing branches. |
+| release     | /release/[RELEASE ID]          | Used for promoting code from `develop` to `master`                                                                                                                |
+| support     | /support/[JIRA ID]-branch-name | Used for doing support work that doesn't need to be reintegrated                                                                                                  |
+
+Please always remember to use the JIRA ID in your branches so that other developers will always have visibility over how that work fits into project plans.
+
+#### Object and file naming
+
+Object and file names should be descriptive as to the purpose of the code within it.
+
+| Object type | File naming pattern         | Object naming pattern   |
+|-------------|-----------------------------|-------------------------|
+| Enum        | [Object Name].enum.ts       | [Object Name]Enum       |
+| Service     | [Object Name].service.ts    | [Object Name]Service    |
+| Controller  | [Object Name].controller.ts | [Object Name]Controller |
+| Config      | [Object Name].config.ts     | [Object Name]Config     |
+| Util        | [Object Name].util.ts       | [Object Name]Util       |
+| Type        | [Object Name].type.ts       | [Object Name]Type       |
+| Interface   | [Object Name].interface.ts  | I[ObjectName]           |
+
+#### Variable and method naming
+
+Variables and methods should be named in `camelCase` and be descriptive enough such that the code is self-documenting. Don't use variables like `x`, as it means nothing to the developer who has to look at your code many months after you write it!
+
+This also applies to loops and iterators, e.g.:
+
+```typescript
+// Bad
+let i
+for (i = 0; i < x; i++) {
+    ...
+}
+
+// Good
+let userIteration
+for (userIteration = 0; userIteration < numberOfUsers; userIteration++) {
+    ...
+}
+```
+
+#### Coding methodology
+
+Functions should be kept succinct and aim to achieve a single purpose. This is to aid in the creation of unit tests and reduce the complexity required in producing tests.
+
+#### Unit testing
+
+All new code must have matching unit tests which adequately cover a range of input scenarios.

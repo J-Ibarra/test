@@ -1,5 +1,5 @@
 import { bootstrapRestApi } from './rest-api'
-import { bootstrapInternalApi } from './internal-api/note_creator'
+import { bootstrapInternalApi } from './internal-api'
 import { runNoteMigrations } from './migrations/migration-runner'
 
 bootstrap()
