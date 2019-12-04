@@ -1,0 +1,12 @@
+export interface Balance {
+  accountId: string
+  currency?: CurrencyCode
+  currencyId: number
+  available: BalanceTypeObj
+  reserved: BalanceTypeObj
+  pendingDeposit: BalanceTypeObj
+  pendingWithdrawal: BalanceTypeObj
+  pendingRedemption: BalanceTypeObj
+  pendingDebitCardTopUp: BalanceTypeObj
+  displayFormat?: EDisplayFormats
+}
