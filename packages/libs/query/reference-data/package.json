@@ -1,7 +1,7 @@
 {
-  "name": "@abx/note-query-lib",
+  "name": "@abx/reference-data-query-lib",
   "version": "1.0.0",
-  "description": "Contains common note model db queries",
+  "description": "Contains common reference data model db queries",
   "license": "ISC",
   "main": "dist/index",
   "types": "dist/index",
@@ -16,7 +16,7 @@
   },
   "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9",
   "dependencies": {
-    "@abx-types/note": "1.0.0",
+    "@abx-types/reference-data": "1.0.0",
     "@abx/db-connection-utils": "1.0.0",
     "sequelize": "4.41.0"
   },
