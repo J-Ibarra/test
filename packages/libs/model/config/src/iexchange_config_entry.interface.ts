@@ -1,6 +1,6 @@
-import { ExchangeConfigValue } from '.';
+import { ExchangeConfigValue } from '.'
 
 export interface IExchangeConfigEntry {
-    id?: number
-    value: { [P in keyof ExchangeConfigValue]?: ExchangeConfigValue[P] }
-  }
+  id?: number
+  value: { [P in keyof ExchangeConfigValue]?: ExchangeConfigValue[P] }
+}

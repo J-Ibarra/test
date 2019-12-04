@@ -1,6 +1,6 @@
-import { SupportedFeatureFlags } from './supported_feature_flags.enum';
+import { SupportedFeatureFlags } from './supported_feature_flags.enum'
 
 export interface FeatureFlag {
-    name: SupportedFeatureFlags
-    enabled: boolean
-  }
+  name: SupportedFeatureFlags
+  enabled: boolean
+}

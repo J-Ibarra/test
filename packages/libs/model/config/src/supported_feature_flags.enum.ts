@@ -1,3 +1,3 @@
 export enum SupportedFeatureFlags {
-    debitCard = 'debit_card',
-  }
+  debitCard = 'debit_card',
+}

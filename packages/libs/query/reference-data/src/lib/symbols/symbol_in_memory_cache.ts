@@ -23,11 +23,7 @@ async function findSymbols(transaction): Promise<SymbolPair[]> {
       isEnabled: true,
     },
     transaction,
-    include: [
-      createCurrencyIncludeOption('quote'),
-      createCurrencyIncludeOption('base'),
-      createCurrencyIncludeOption('fee'),
-    ],
+    include: [createCurrencyIncludeOption('quote'), createCurrencyIncludeOption('base'), createCurrencyIncludeOption('fee')],
   })
 
   return allSymbols.map(symbol => symbol.get() as any)
