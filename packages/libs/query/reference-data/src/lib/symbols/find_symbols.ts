@@ -14,36 +14,33 @@ export async function getAllSymbolPairSummaries(transaction?: Transaction): Prom
   return symbols.map(transformToSummary)
 }
 
-
 export async function getSymbolsForQuoteCurrency(quoteCurrencyCode: CurrencyCode, transaction?: Transaction): Promise<SymbolPair[]> {
   return (await fetchAllSymbols(transaction)).reduce(
-    (symbols, symbol) => symbol.quote.code === quoteCurrencyCode ? symbols.concat(symbol) : symbols,
-    []
+    (symbols, symbol) => (symbol.quote.code === quoteCurrencyCode ? symbols.concat(symbol) : symbols),
+    [] as SymbolPair[],
   )
 }
 
 export async function getSymbolsForBaseCurrency(baseCurrencyCode: CurrencyCode, transaction?: Transaction): Promise<SymbolPair[]> {
   return (await fetchAllSymbols(transaction)).reduce(
-    (symbols, symbol) => symbol.base.code === baseCurrencyCode ? symbols.concat(symbol) : symbols,
-    []
+    (symbols, symbol) => (symbol.base.code === baseCurrencyCode ? symbols.concat(symbol) : symbols),
+    [] as SymbolPair[],
   )
 }
 
 export async function getCompleteSymbolDetails(symbolId: string, transaction?: Transaction): Promise<SymbolPair> {
-  return (await fetchAllSymbols(transaction)).find(({ id }) => id === symbolId)
+  return (await fetchAllSymbols(transaction)).find(({ id }) => id === symbolId)!
 }
 
 export async function getAllSymbolsIncludingCurrency(currency: CurrencyCode, transaction?: Transaction): Promise<SymbolPair[]> {
   return (await fetchAllSymbols(transaction)).reduce(
-    (symbols, symbol) => symbol.base.code === currency
-      || symbol.quote.code === currency ? symbols.concat(symbol) : symbols,
-    []
+    (symbols, symbol) => (symbol.base.code === currency || symbol.quote.code === currency ? symbols.concat(symbol) : symbols),
+    [] as SymbolPair[],
   )
 }
 
 export async function getSymbolWithCurrencyPair(baseCurrencyCode: CurrencyCode, quoteCurrencyCode: CurrencyCode): Promise<SymbolPair> {
-  return (await fetchAllSymbols())
-    .find(({ base, quote }) => base.code === baseCurrencyCode && quote.code === quoteCurrencyCode)
+  return (await fetchAllSymbols()).find(({ base, quote }) => base.code === baseCurrencyCode && quote.code === quoteCurrencyCode)!
 }
 
 export function getAllCompleteSymbolDetails(transaction?: Transaction): Promise<SymbolPair[]> {
@@ -54,5 +51,5 @@ const transformToSummary = ({ id, base, quote, fee }: SymbolPair): SymbolPairSum
   id,
   baseId: base.id,
   quoteId: quote.id,
-  feeId: fee.id
+  feeId: fee.id,
 })

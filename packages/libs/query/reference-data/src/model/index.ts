@@ -1,9 +1,7 @@
-import { Sequelize } from 'sequelize'
-
 import Currency from './currency'
 import Symbol from './symbol'
 
-export default function (sequelize) {
+export default function(sequelize) {
   const currencyModel = Currency(sequelize)
   const symbolModel = Symbol(sequelize)
 

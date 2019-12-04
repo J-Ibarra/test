@@ -4,7 +4,7 @@ import { getModel } from '@abx/db-connection-utils'
 import { Currency, CurrencyCode } from '@abx-types/reference-data'
 import { isCryptoCurrency } from './validate_currency'
 
-let currencyInMemoryCache = []
+let currencyInMemoryCache: Currency[] = []
 
 export async function findAllCurrencies(): Promise<Currency[]> {
   if (isEmpty(currencyInMemoryCache)) {
@@ -34,26 +34,26 @@ export async function findCryptoCurrencies() {
 export async function findCurrencyForCodes(currencyCodes: CurrencyCode[]): Promise<Currency[]> {
   const allCurrencies = await findAllCurrencies()
 
-  return currencyCodes.map(currencyCode => allCurrencies.find(({ code }) => currencyCode === code))
+  return currencyCodes.map(currencyCode => allCurrencies.find(({ code }) => currencyCode === code)!)
 }
 
 export async function findCurrencyForCode(currencyCode: CurrencyCode): Promise<Currency> {
   const allCurrencies = await findAllCurrencies()
 
-  return allCurrencies.find(({ code }) => code === currencyCode)
+  return allCurrencies.find(({ code }) => code === currencyCode)!
 }
 
 export async function findCurrencyForId(currencyId: number): Promise<Currency> {
   const allCurrencies = await findAllCurrencies()
 
-  return allCurrencies.find(({ id }) => id === currencyId)
+  return allCurrencies.find(({ id }) => id === currencyId)!
 }
 
 export async function getCurrencyId(currencyCode: CurrencyCode): Promise<number> {
   const allCurrencies = await findAllCurrencies()
-  const currency = allCurrencies.find(({ code }) => code === currencyCode)
+  const currency = allCurrencies.find(({ code }) => code === currencyCode)!
 
-  return currency && currency.id
+  return currency.id
 }
 
 export async function getCurrencyCode(currencyId: number) {

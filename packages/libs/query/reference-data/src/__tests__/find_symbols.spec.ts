@@ -1,8 +1,13 @@
-
 import { expect } from 'chai'
 
 import { CurrencyCode } from '@abx-types/reference-data'
-import { getAllCompleteSymbolDetails, getAllSymbolsIncludingCurrency, getSymbolsForQuoteCurrency, getSymbolWithCurrencyPair } from '../lib/symbols/find_symbols'
+import {
+  getAllCompleteSymbolDetails,
+  getAllSymbolsIncludingCurrency,
+  getSymbolsForQuoteCurrency,
+  getSymbolWithCurrencyPair,
+} from '../lib/symbols/find_symbols'
+import '../index'
 
 describe('find_symbols', () => {
   it('getSymbolsForQuoteCurrency should find all symbols for a quote currency', async () => {
