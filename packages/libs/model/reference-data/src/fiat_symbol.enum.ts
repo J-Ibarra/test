@@ -1,4 +1,4 @@
 export enum FiatSymbol {
-    usd = '$',
-    euro = '€',
-  }
+  usd = '$',
+  euro = '€',
+}

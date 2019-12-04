@@ -15,12 +15,10 @@ export function up(queryInterface) {
 
       ALTER TABLE ONLY public."balance"
         ADD CONSTRAINT "balance_balanceType_fkey" FOREIGN KEY ("balanceTypeId") REFERENCES public.balance_type(id);
-    `
+    `,
   )
 }
 
-export function down (queryInterface) {
-  return queryInterface.sequelize.query(
-    `DROP TABLE public.balance_type;`
-  )
+export function down(queryInterface) {
+  return queryInterface.sequelize.query(`DROP TABLE public.balance_type;`)
 }

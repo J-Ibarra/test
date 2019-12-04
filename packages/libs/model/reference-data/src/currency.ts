@@ -1,8 +1,8 @@
-import { CurrencyCode } from '.';
+import { CurrencyCode } from '.'
 
 export interface Currency {
-    id: number
-    code: CurrencyCode
-    symbolSortPriority?: number
-    currencyOrderPriority?: number
-  }
+  id: number
+  code: CurrencyCode
+  symbolSortPriority?: number
+  currencyOrderPriority?: number
+}

@@ -1,4 +1,4 @@
-import {Sequelize}  from 'sequelize'
+import { Sequelize } from 'sequelize'
 
 export async function up({ sequelize }: { sequelize: Sequelize }) {
   return sequelize.query(`
@@ -6,7 +6,6 @@ export async function up({ sequelize }: { sequelize: Sequelize }) {
       ALTER COLUMN "taxAmount" TYPE decimal(30,20);
   `)
 }
-
 
 export async function down({ sequelize }: { sequelize: Sequelize }) {
   return sequelize.query(`
