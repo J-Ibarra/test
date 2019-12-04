@@ -5,6 +5,7 @@
     "baseUrl": "./packages",
     "paths": {
       "@abx-types/note": ["packages/libs/model/note/src"],
+      "@abx-types/depth-cache": ["packages/libs/model/depth-cache/src"],
       "@abx-types/reference-data": ["packages/libs/model/reference-data/src"],
       "@abx-types/account": ["packages/libs/model/account/src"],
       "@abx/note-query-lib": ["packages/libs/query/note/src"],
