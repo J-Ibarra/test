@@ -1,3 +1,6 @@
+import { CurrencyCode } from '@abx-types/reference-data'
+import { EDisplayFormats } from './enum/display_formats'
+import { BalanceAmount } from './balance_amount'
 
 export interface PreferredCurrencyEnrichedBalance {
   currency: CurrencyCode

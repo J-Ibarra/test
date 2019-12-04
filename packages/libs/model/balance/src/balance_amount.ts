@@ -1,4 +1,4 @@
-interface BalanceAmount {
+export interface BalanceAmount {
   amount: number
   preferredCurrencyAmount: number
 }

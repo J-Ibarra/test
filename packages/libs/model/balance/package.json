@@ -14,12 +14,16 @@
     "compile": "tsc -p tsconfig.build.json --skipLibCheck"
   },
   "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9",
+  "dependencies": {
+    "@abx-types/reference-data": "1.0.0"
+  },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",
     "@types/chai": "4.0.3",
     "@types/chai-as-promised": "7.1.0",
     "@types/mocha": "2.2.41",
     "@types/node": "^12.12.11",
+    "@types/sequelize": "3.30.4",
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "mocha": "5.2.0",

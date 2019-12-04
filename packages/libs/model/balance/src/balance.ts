@@ -1,3 +1,7 @@
+import { CurrencyCode } from '@abx-types/reference-data'
+import { BalanceTypeObj } from './balance_type_obj'
+import { EDisplayFormats } from './enum/display_formats'
+
 export interface Balance {
   accountId: string
   currency?: CurrencyCode

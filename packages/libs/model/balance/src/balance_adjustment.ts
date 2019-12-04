@@ -1,3 +1,6 @@
+import { RawBalance } from './raw_balance'
+import { SourceEventType } from './enum'
+
 export interface BalanceAdjustment {
   id?: number
   balance?: RawBalance

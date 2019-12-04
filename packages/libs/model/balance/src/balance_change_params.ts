@@ -1,3 +1,6 @@
+import { SourceEventType } from './enum'
+import { Transaction } from 'sequelize'
+
 export interface BalanceChangeParams {
   sourceEventType: SourceEventType
   sourceEventId: number
