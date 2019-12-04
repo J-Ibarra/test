@@ -4,7 +4,7 @@ import { User } from '../../../model/account/src/user/User.interface'
 import { Account } from '../../../model/account/src/account/Account.interface'
 import { findSession } from './session_query_repository'
 import { findAccountById } from './account_query_repository'
-import { JwtTokenHandler } from './jwt_token_handler'
+import { JwtTokenHandler } from './token'
 import { findUserByIdWithAccount } from './users/users'
 
 import { WhereOptions } from 'sequelize'
