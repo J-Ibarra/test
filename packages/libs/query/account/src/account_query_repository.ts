@@ -59,3 +59,11 @@ export async function hasAccountSuspended(accountId: string): Promise<boolean> {
 
   return account && !account.suspended ? account.suspended : true
 }
+
+export async function findUserByIdWithAccount(id: string) {
+  const user = await getModel<User>('user').findOne({
+    where: { id },
+    include: [{ model: getModel<Account>('account'), as: 'account' }],
+  })
+  return user ? user.get() : null
+}
