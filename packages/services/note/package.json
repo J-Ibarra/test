@@ -17,6 +17,7 @@
     "clean": "rm -rf ./dist",
     "compile": "tsc -p tsconfig.build.json --skipLibCheck",
     "migrate-test-db": "npm run build && NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test NODE_PATH=dist node dist/migrations/index.js",
+    "migrate-test-db-no-build": "NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test NODE_PATH=dist node dist/migrations/index.js",
     "start-local": "tsoa routes && NODE_ENV=dev ts-node-dev src/index.ts > ../../../_logs/notes.logs",
     "test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_PATH=dist NODE_ENV=test ts-mocha -p tsconfig.build.json --opts ../../../_test-setup/mocha.opts --require ../../../_test-setup/test_globals.js src/**/*.spec.ts --exit",
     "build-image-latest": "echo build image here",
