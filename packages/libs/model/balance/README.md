@@ -1,3 +1,3 @@
-# `@abx-types/note`
+# `@abx-types/balance`
 
 > TODO: description
