@@ -1,4 +1,4 @@
-import { AccountType } from 'libs/model/account/src/account/AccountType.enum'
+import { AccountType } from '@abx-types/account'
 import { Logger } from '@abx/logging'
 import { OverloadedRequest } from './request_overloads'
 import { JwtTokenHandler } from './token/jwt_token_handler'
@@ -30,7 +30,7 @@ export async function expressAuthentication(request: OverloadedRequest, security
   } else if (securityName === 'adminAuth') {
     const { account } = request
 
-    if (account.type !== AccountType.admin) {
+    if (account!.type !== AccountType.admin) {
       logger.warn('Account not authorized')
       return Promise.reject({ message: 'Account not authorized' })
     }
@@ -53,4 +53,6 @@ const runTokenValidation = (request: OverloadedRequest): Promise<void> => {
     logger.warn('Not authorized.')
     return Promise.reject({ message: 'Not authorized' })
   }
+
+  return Promise.resolve()
 }

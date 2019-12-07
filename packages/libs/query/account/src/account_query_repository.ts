@@ -1,10 +1,8 @@
-import { Account } from './../../../model/account/src/account/Account.interface'
-import { wrapInTransaction } from '../../../util/db-connector/src/sequelize-setup/transaction_wrapper'
+import { Account, User } from '@abx-types/account'
 import { Transaction } from 'sequelize'
-import sequelize, { getModel } from '@abx/db-connection-utils'
-import { User } from 'libs/model/account/src/user/User.interface'
+import { sequelize, getModel, wrapInTransaction } from '@abx/db-connection-utils'
 
-export async function findAccountById(id: string, t?: Transaction): Promise<Account> {
+export async function findAccountById(id: string, t?: Transaction): Promise<Account | null> {
   return wrapInTransaction(sequelize, t, async tran => {
     const account = await getModel<Account>('account').findOne({
       where: { id },
@@ -15,10 +13,10 @@ export async function findAccountById(id: string, t?: Transaction): Promise<Acco
   })
 }
 
-export async function findAccountWithUserDetails(accountQuery: Partial<Account>, t?: Transaction): Promise<Account> {
+export async function findAccountWithUserDetails(accountQuery: Partial<Account>, t?: Transaction): Promise<Account | null> {
   return wrapInTransaction(sequelize, t, async tran => {
     const account = await getModel<Account>('account').findOne({
-      where: { ...accountQuery },
+      where: { ...accountQuery } as any,
       transaction: tran,
       include: [
         {

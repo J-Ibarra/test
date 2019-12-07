@@ -1,0 +1,3 @@
+# `@abx/error`
+
+> TODO: description

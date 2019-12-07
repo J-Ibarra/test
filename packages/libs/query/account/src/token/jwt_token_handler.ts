@@ -1,7 +1,7 @@
 import * as jwt from 'jsonwebtoken'
 import moment from 'moment'
 
-const jwtSecret = process.env.JWT_SECRET || 'test'
+export const jwtSecret = process.env.JWT_SECRET || 'test'
 
 import { AuthToken, TokenClaims, TokenHandler, TokenVerificationResult } from './token_handler'
 

@@ -1,11 +1,12 @@
+import { Token } from '@abx-types/account'
 import { expect } from 'chai'
 import { v4 } from 'node-uuid'
 import sinon from 'sinon'
-import sequelize, { getModel } from '../../../db/abx_modules'
-import { createTemporaryTestingAccount } from '../../../db/test_helpers/test_accounts'
-import { Token } from '../../interface'
-import { JwtTokenHandler } from '../../lib/token/jwt_token_handler'
-import { createTokenForAccount, deactivateToken, findToken, findTokensForAccount } from '../../lib/token/token'
+import { sequelize, getModel } from '@abx/db-connection-utils'
+import { JwtTokenHandler } from '../../token'
+import { createTokenForAccount, deactivateToken, findToken, findTokensForAccount } from '../../token'
+import { createTemporaryTestingAccount } from '../../test-utils/test-account-creator'
+import '../../index'
 
 const testAuthToken = {
   token: 'foo',
@@ -36,9 +37,9 @@ describe('token', () => {
 
     expect(generateTokenSpy.withArgs(account.id).calledOnce).to.equal(true)
 
-    expect(tokenCreated.accountId).to.eql(account.id)
-    expect(tokenCreated.deactivated).to.equal(false)
-    expect(tokenCreated.token).to.eql(testAuthToken.token)
+    expect(tokenCreated!.accountId).to.eql(account.id)
+    expect(tokenCreated!.deactivated).to.equal(false)
+    expect(tokenCreated!.token).to.eql(testAuthToken.token)
   })
 
   describe('findToken', () => {

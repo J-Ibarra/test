@@ -5,7 +5,7 @@ const logger = Logger.getInstance('transaction_wrapper', 'wrapInTransaction')
 
 export async function wrapInTransaction<R>(
   sequelize: Sequelize,
-  transaction: Transaction | null,
+  transaction: Transaction | null | undefined,
   fn: (t: Transaction) => Promise<R>,
   errorCallback?: () => Promise<any> | void,
   isolationLevel: TransactionIsolationLevels[keyof TransactionIsolationLevels] = Transaction.ISOLATION_LEVELS.READ_COMMITTED,

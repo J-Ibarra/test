@@ -3,7 +3,7 @@ import Sequelize from 'sequelize'
 import * as _ from 'lodash'
 import Warlock from 'node-redis-warlock'
 import { getVanillaRedisClient } from '../cache/redis'
-import sequelizeInstance from './index'
+import { sequelize } from './index'
 
 const redisClient = getVanillaRedisClient()
 const warlock = new Warlock(redisClient)
@@ -16,12 +16,12 @@ export async function runMigrations(templatesDir: string) {
     const umzug = new Umzug({
       storage: 'sequelize',
       storageOptions: {
-        sequelize: sequelizeInstance,
-        model: sequelizeInstance.models.sequelizeMeta,
+        sequelize,
+        model: sequelize.models.sequelizeMeta,
       },
       logging: running => console.log(running),
       migrations: {
-        params: [sequelizeInstance.getQueryInterface(), Sequelize],
+        params: [sequelize.getQueryInterface(), Sequelize],
         pattern: /\.js$/,
         path: templatesDir,
       },

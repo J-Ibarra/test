@@ -6,7 +6,7 @@ import { migrationModel } from './migration'
 const dbConfig = environmentConfig.exchangeDb
 
 // Instantiate sequelize connection to the correct database
-const sequelize = new Sequelize(dbConfig.schema, dbConfig.username, dbConfig.password, {
+export const sequelize = new Sequelize(dbConfig.schema, dbConfig.username, dbConfig.password, {
   host: dbConfig.host,
   dialect: dbConfig.dialect,
   port: dbConfig.port,
@@ -44,7 +44,6 @@ if (process.env.SYNCDB) {
   })
 }
 
-export default sequelize
 export * from './transaction_wrapper'
 export * from './migration'
 

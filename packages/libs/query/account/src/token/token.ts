@@ -1,9 +1,8 @@
 import { v4 } from 'node-uuid'
 import { Transaction } from 'sequelize'
+import { Token } from '@abx-types/account'
+import { sequelize, getModel, wrapInTransaction } from '@abx/db-connection-utils'
 
-import sequelize, { getModel } from '../../../db/abx_modules'
-import { wrapInTransaction } from '../../../db/transaction_wrapper'
-import { Token } from '../../interface'
 import { TokenHandler } from './token_handler'
 
 export function createTokenForAccount(accountId: string, tokenHandler: TokenHandler, t?: Transaction) {
@@ -33,7 +32,7 @@ export async function findTokensForAccount(accountId: string): Promise<Token[]> 
   return tokens.map(token => token.get())
 }
 
-export async function findToken(id: string): Promise<Token> {
+export async function findToken(id: string): Promise<Token | null> {
   const token = await getModel<Token>('token').findOne({ where: { id, deactivated: false } })
 
   return !!token ? token.get() : null

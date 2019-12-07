@@ -16,11 +16,16 @@
   },
   "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9",
   "dependencies": {
-    "@abx-types/note": "1.0.0",
+    "@abx/error": "1.0.0",
+    "@abx/logging": "1.0.0",
+    "@abx-types/account": "1.0.0",
+    "@abx-types/config": "1.0.0",
     "@abx/db-connection-utils": "1.0.0",
     "sequelize": "4.41.0",
     "express": "4.16.4",
-    "jsonwebtoken": "8.5.1"
+    "jsonwebtoken": "8.5.1",
+    "node-uuid": "1.4.7",
+    "bcryptjs": "2.4.3"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",
@@ -31,8 +36,10 @@
     "@types/node": "^12.12.11",
     "@types/sequelize": "3.30.4",
     "@types/validator": "6.3.0",
+    "@types/sinon": "5.0.7",
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
+    "sinon": "7.2.0",
     "mocha": "5.2.0",
     "ts-mocha": "6.0.0",
     "source-map-support": "0.5.9",
