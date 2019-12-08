@@ -1,4 +1,4 @@
-import { DepthItem } from './depth_item'
+import { DepthItem } from '@abx-types/depth-cache'
 
 export interface DepthUpdate {
   symbolId: string

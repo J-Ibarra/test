@@ -6,9 +6,11 @@
     "paths": {
       "@abx-types/note": ["packages/libs/model/note/src"],
       "@abx-types/depth-cache": ["packages/libs/model/depth-cache/src"],
+      "@abx-types/order": ["packages/libs/model/order/src"],
       "@abx-types/reference-data": ["packages/libs/model/reference-data/src"],
       "@abx-types/account": ["packages/libs/model/account/src"],
       "@abx/note-query-lib": ["packages/libs/query/note/src"],
+      "@abx/depth-query-lib": ["packages/libs/query/depth-cache/src"],
       "@abx/error": ["packages/libs/util/error/src"],
       "@abx/db-connection-utils": ["packages/libs/util/db-connection-utils/src"],
       "@abx/logging": ["packages/libs/util/logging/src"]
