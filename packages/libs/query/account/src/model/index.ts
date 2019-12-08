@@ -5,7 +5,7 @@ import Session from './session'
 import Token from './token'
 import User from './user'
 
-export default function accountModels(sequelize: Sequelize) {
+export default function accountModels(sequelize: Sequelize): any {
   const userModel = User(sequelize)
   const accountModel = Account(sequelize)
   const sessionModel = Session(sequelize)

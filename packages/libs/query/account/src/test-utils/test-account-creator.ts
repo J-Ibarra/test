@@ -1,10 +1,11 @@
 import { v4 } from 'node-uuid'
 import * as bcrypt from 'bcryptjs'
-
-import { User, AccountType, CreateAccountRequest, AccountStatus, Account, EmailValidationError, CreateUserRequest } from '@abx-types/account'
 import { Transaction } from 'sequelize'
+
 import { sequelize, getModel, wrapInTransaction } from '@abx/db-connection-utils'
-import { ValidationError } from '@abx/error'
+import { ValidationError } from '@abx-types/error'
+import { User, AccountType, CreateAccountRequest, AccountStatus, Account, EmailValidationError, CreateUserRequest } from '@abx-types/account'
+
 import { UserInstance } from '../model/user'
 import { findUserByEmail } from '../user_query_repository'
 

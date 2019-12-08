@@ -1,3 +1,3 @@
-# `@abx/account-query-lib`
+# `@abx/note-query-lib`
 
 > TODO: description

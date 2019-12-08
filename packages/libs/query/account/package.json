@@ -1,7 +1,7 @@
 {
-  "name": "@abx/account-query-lib",
+  "name": "@abx-query-libs/account",
   "version": "1.0.0",
-  "description": "Contains common note model db queries",
+  "description": "Contains common account model db queries",
   "license": "ISC",
   "main": "dist/index",
   "types": "dist/index",
@@ -16,7 +16,7 @@
   },
   "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9",
   "dependencies": {
-    "@abx/error": "1.0.0",
+    "@abx-types/error": "1.0.0",
     "@abx/logging": "1.0.0",
     "@abx-types/account": "1.0.0",
     "@abx-types/config": "1.0.0",
@@ -25,7 +25,8 @@
     "express": "4.16.4",
     "jsonwebtoken": "8.5.1",
     "node-uuid": "1.4.7",
-    "bcryptjs": "2.4.3"
+    "bcryptjs": "2.4.3",
+    "moment": "2.22.2"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",

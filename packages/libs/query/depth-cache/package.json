@@ -1,5 +1,5 @@
 {
-  "name": "@abx/depth-cache-query-lib",
+  "name": "@abx-query-libs/depth-cache",
   "version": "1.0.0",
   "description": "Contains common depth-cache model db queries",
   "license": "ISC",

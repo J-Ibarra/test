@@ -1,9 +1,8 @@
-import { AccountType } from '@abx-types/account'
+import { OverloadedRequest, AccountType } from '@abx-types/account'
+import { JwtTokenHandler } from '@abx-query-libs/account'
 import { Logger } from '@abx/logging'
-import { OverloadedRequest } from './request_overloads'
-import { JwtTokenHandler } from './token/jwt_token_handler'
 
-const logger = Logger.getInstance('api', 'authentication-middleware')
+const logger = Logger.getInstance('express-middleware', 'authentication-middleware')
 
 export async function expressAuthentication(request: OverloadedRequest, securityName: string, _: string[]) {
   const { user } = request
@@ -30,7 +29,7 @@ export async function expressAuthentication(request: OverloadedRequest, security
   } else if (securityName === 'adminAuth') {
     const { account } = request
 
-    if (account!.type !== AccountType.admin) {
+    if (account && account.type !== AccountType.admin) {
       logger.warn('Account not authorized')
       return Promise.reject({ message: 'Account not authorized' })
     }

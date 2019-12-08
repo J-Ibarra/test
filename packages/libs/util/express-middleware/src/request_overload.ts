@@ -1,26 +1,14 @@
 import { Logger } from '@abx/logging'
-import { Session, User, Account } from '@abx-types/account'
+import { Session, User, OverloadedRequest } from '@abx-types/account'
 
-import { WhereOptions } from 'sequelize'
 import * as crypto from 'crypto'
 import * as express from 'express'
 import { get } from 'lodash'
 
-import { apiCookieSecret, apiCookieIv } from './cookie_secrets'
-import { findSession } from './session_query_repository'
-import { findAccountById } from './account_query_repository'
-import { JwtTokenHandler } from './token'
-import { findUserByIdWithAccount } from './account_query_repository'
+import { apiCookieSecret, apiCookieIv, findSession, findAccountById, JwtTokenHandler, findUserByIdWithAccount } from '@abx-query-libs/account'
 
-const logger = Logger.getInstance('api', 'Request Overloads')
+const logger = Logger.getInstance('express-middleware', 'Request Overloads')
 const algo = 'aes-256-ctr'
-
-export interface OverloadedRequest extends express.Request {
-  session?: Session
-  account?: Account | null
-  user?: User
-  where?: WhereOptions
-}
 
 export async function overloadRequestWithSessionInfo(
   request: OverloadedRequest,

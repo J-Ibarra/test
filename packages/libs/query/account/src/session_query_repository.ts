@@ -1,5 +1,5 @@
 import { getModel } from '@abx/db-connection-utils'
-import { Session } from '../../../model/account/src/user/Session.interface'
+import { Session } from '@abx-types/account/src/user/Session.interface'
 import { Transaction } from 'sequelize'
 
 export async function findSession(id: string, transaction?: Transaction): Promise<Session | null> {

@@ -1,7 +1,7 @@
 {
-  "name": "@abx/error",
+  "name": "@abx-types/error",
   "version": "1.0.0",
-  "description": "Contains common error utilities",
+  "description": "Contains common error models",
   "license": "ISC",
   "main": "dist/index",
   "types": "dist/index",

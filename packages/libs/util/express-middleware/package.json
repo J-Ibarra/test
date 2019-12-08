@@ -1,7 +1,7 @@
 {
-  "name": "@abx-query-libs/reference-data",
+  "name": "@abx/express-middleware",
   "version": "1.0.0",
-  "description": "Contains common reference data model db queries",
+  "description": "Contains common express middleware",
   "license": "ISC",
   "main": "dist/index",
   "types": "dist/index",
@@ -11,23 +11,28 @@
   "scripts": {
     "build": "npm run clean && npm run compile",
     "clean": "rm -rf ./dist",
-    "compile": "tsc -p tsconfig.build.json --skipLibCheck",
-    "test": "ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts --require ../../../../_test-setup/test_globals.js src/**/*.spec.ts --exit"
+    "compile": "tsc -p tsconfig.build.json --skipLibCheck"
   },
   "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9",
   "dependencies": {
-    "@abx-types/reference-data": "1.0.0",
+    "@abx-types/config": "1.0.0",
+    "@abx-types/account": "1.0.0",
     "@abx/db-connection-utils": "1.0.0",
-    "sequelize": "4.41.0"
+    "@abx-query-libs/account": "1.0.0",
+    "@abx/logging": "1.0.0",
+    "newrelic": "4.10.0",
+    "cors": "2.8.5",
+    "express-rate-limit": "3.3.2",
+    "rate-limit-redis": "1.6.0"
   },
   "devDependencies": {
+    "@types/express": "4.11.1",
     "@lerna/filter-options": "^3.18.4",
-    "@types/chai": "4.2.0",
-    "@types/chai-as-promised": "7.1.1",
+    "@types/chai": "4.0.3",
+    "@types/chai-as-promised": "7.1.0",
+    "@types/lodash": "4.14.92",
     "@types/mocha": "2.2.41",
     "@types/node": "^12.12.11",
-    "@types/sequelize": "3.30.4",
-    "@types/validator": "6.3.0",
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "mocha": "5.2.0",
@@ -36,6 +41,8 @@
     "ts-node": "8.5.2",
     "ts-node-dev": "1.0.0-pre.44",
     "tslint": "5.20.1",
-    "typescript": "3.7.2"
+    "typescript": "3.7.2",
+    "sinon": "7.2.0",
+    "mock-express-request": "0.2.2"
   }
 }

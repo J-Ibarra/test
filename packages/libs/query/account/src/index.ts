@@ -6,7 +6,6 @@ setupModel(AccountModel)
 
 export * from './account_query_repository'
 export * from './cookie_secrets'
-export * from './request_authenticator'
-export * from './request_overloads'
 export * from './session_query_repository'
 export * from './token'
+export * from './test-utils/test-account-creator'
