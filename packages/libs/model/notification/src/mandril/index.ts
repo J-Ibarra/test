@@ -1,0 +1,6 @@
+export * from './mandrill_email_attachment.interface'
+export * from './mandrill_email_params.interface'
+export * from './mandrill_email.interface'
+export * from './mandrill_recipients.interface'
+export * from './mandrill_response.type'
+export * from './mandrill_send_status.interface'
