@@ -1,3 +1,3 @@
-# `@abx/error`
+# `@abx/express-middleware`
 
 > TODO: description

@@ -12,7 +12,7 @@ const DEFAULT_RATE_LIMIT_EXCEEDED_STATUS_CODE = 429
 const generateMaxLimitExceededRequestHandler = (requestWindow, message) => (_, res) => {
   res.status(DEFAULT_RATE_LIMIT_EXCEEDED_STATUS_CODE).send({
     requestWindow,
-    message
+    message,
   })
 }
 
@@ -21,16 +21,14 @@ const generateMaxLimitExceededRequestHandler = (requestWindow, message) => (_, r
  * on the number of requests allowed per user/account for specific endpoints.
  */
 export class RateLimiter {
-
   private static readonly redisStore = new RedisStore({
-    client: getVanillaRedisClient()
+    client: getVanillaRedisClient(),
   })
 
-  constructor(private endpointConfigGateway: EndpointConfigDataGateway = InMemoryApiRateConfigGateway.instance) {
-  }
+  constructor(private endpointConfigGateway: EndpointConfigDataGateway = InMemoryApiRateConfigGateway.instance) {}
 
   public async configureForApp(app: Express): Promise<void> {
-    (await this.endpointConfigGateway.getRateLimitConfigForAllEndpoints()).forEach(endpointConfig =>
+    ;(await this.endpointConfigGateway.getRateLimitConfigForAllEndpoints()).forEach(endpointConfig =>
       app.use(
         endpointConfig.path,
         new RateLimit({
@@ -40,16 +38,16 @@ export class RateLimiter {
           handler: generateMaxLimitExceededRequestHandler(endpointConfig.requestWindow, endpointConfig.rateExceededMessage),
           skipSuccessfulRequests: endpointConfig.skipSuccessfulRequests,
           keyGenerator: endpointConfig.keyGenerator,
-          onLimitReached: (req) => {
+          onLimitReached: req => {
             recordCustomEvent('event_rate_limit_reached', {
               ip: req.clientIp,
             })
           },
-          skip: (request) => {
+          skip: request => {
             return request.method === 'OPTIONS'
-          }
-        })
-      )
+          },
+        }),
+      ),
     )
   }
 }

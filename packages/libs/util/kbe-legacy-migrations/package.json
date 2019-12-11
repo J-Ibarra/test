@@ -11,7 +11,8 @@
   "scripts": {
     "build": "npm run clean && npm run compile",
     "clean": "rm -rf ./dist",
-    "compile": "tsc -p tsconfig.build.json --skipLibCheck"
+    "compile": "tsc -p tsconfig.build.json --skipLibCheck",
+    "run-legacy-migrations": "npm run compile && NODE_ENV=test NODE_PATH=dist node dist/runner.js"
   },
   "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9",
   "dependencies": {
