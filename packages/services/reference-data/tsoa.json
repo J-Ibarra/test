@@ -19,7 +19,8 @@
   "routes": {
     "basePath": "/api",
     "entryFile": "./src/rest-api/index.ts",
-    "routesDir": "./src/rest-api"
+    "routesDir": "./src/rest-api",
+    "authenticationModule": "./src/rest-api/middleware/authentication.ts"
   },
   "compilerOptions": {
     "baseUrl": "src"

@@ -1,4 +1,5 @@
 import { CurrencyCode } from '@abx-types/reference-data'
+import { AccountType } from '@abx-types/account'
 import { FeatureFlag, ExchangeHoldingsWallet, WithdrawalConfig, WithdrawalLimit, DepositPollingFrequency } from '.'
 
 export interface ExchangeConfigValue {
@@ -11,4 +12,5 @@ export interface ExchangeConfigValue {
   transactionFeeCap: Record<CurrencyCode, number>
   operationsEmail: string
   ethereumDepositMaxBlockCheck: number
+  excludedAccountTypesFromOrderRanges: AccountType[]
 }

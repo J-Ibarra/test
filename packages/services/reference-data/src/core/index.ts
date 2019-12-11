@@ -1,7 +1,9 @@
 import { setupModel } from '@abx/db-connection-utils'
 
-import setupModelReferenceDataModel from './model'
+import setupReferenceDataModel from './model'
 
-setupModel(setupModelReferenceDataModel)
+setupModel(setupReferenceDataModel)
 
 export * from './symbols'
+export * from './find_boundaries'
+export * from './config'
