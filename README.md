@@ -7,9 +7,10 @@ This repository utilizes Lerna to manage inter-service dependencies and the foll
 ### All the shared libs are put in 3 categories
 
 1. Model (`/packages/libs/model`) stores all the types/models for each service/bounded-context (e.g account, balance, order).
-2. Query (`/packages/libs/model`) houses packages that allow clients to run common queries for a given model. All the sequelize models are stored there along with some common query functions.
-   **!!!** There should be no functions exported here which mutate (insert/update/delete) the underlying model (datastore).
-3. Util (`/packages/libs/util`) stores all the packages which contain non-functional(non-business logic related) logic which is reused across services (e.g. `db-connector` store all db (Postgress/redis) connector logic , `logging`)
+2. Query (`/packages/libs/query`) houses packages that allow clients to run common queries for a given model. At present `account` is the only functional area which this is required for(mainly due to authentication and access control in the REST API for each service). For other functional areas `internal-clients` should be created
+3 Internal Clients (`packages/libs/internal-clients`) contains all the internal api packages to be used for cross-service dependencies. Example:
+- The `order` service requires `reference-data` (e.g. symbol,currency, currency boundary data) so it needs to use `@abx-service-clients/reference-data` (`libs/internal-clients/reference-data`
+4. Util (`/packages/libs/util`) stores all the packages which contain non-functional(non-business logic related) logic which is reused across services (e.g. `db-connector` store all db (Postgress/redis) connector logic , `logging`)
 
 All of these packages are versioned and release to the org npm account and could be used by repos/projects outside of this monorepo (e.g. Yield engine/Front-end)
 
