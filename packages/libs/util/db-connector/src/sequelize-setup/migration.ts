@@ -19,7 +19,11 @@ export async function runMigrations(templatesDir: string) {
         sequelize,
         model: sequelize.models.sequelizeMeta,
       },
-      logging: running => console.log(running),
+      logging: running => {
+        if (process.env.NODE_ENV !== 'test') {
+          console.log(running)
+        }
+      },
       migrations: {
         params: [sequelize.getQueryInterface(), Sequelize],
         pattern: /\.js$/,
