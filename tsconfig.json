@@ -10,6 +10,7 @@
       "@abx-types/order": ["packages/libs/model/order/src"],
       "@abx-types/notification": ["packages/libs/model/notification/src"],
       "@abx-types/reference-data": ["packages/libs/model/reference-data/src"],
+      "@abx-types/market-data": ["packages/libs/model/market-data/src"], 
       "@abx-types/account": ["packages/libs/model/account/src"],
       "@abx-types/error": ["packages/libs/util/error/src"],
 
