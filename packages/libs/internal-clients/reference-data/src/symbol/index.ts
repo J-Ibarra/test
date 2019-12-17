@@ -55,7 +55,7 @@ function transformToSummary({ id, base, quote, fee }: SymbolPair): SymbolPairSum
 }
 
 function fetchSymbolsIfInMemoryCacheExpired(): Promise<SymbolPair[]> {
-  if (symbols.length > 0 && moment().diff(lastCacheUpdateTime, 'minute') < 5) {
+  if (symbols.length > 0 || moment().diff(lastCacheUpdateTime, 'minute') < 5) {
     return Promise.resolve(symbols)
   }
 

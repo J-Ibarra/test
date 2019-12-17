@@ -55,8 +55,8 @@ export async function deleteCurrency(code: CurrencyCode): Promise<void> {
   currencyInMemoryCache = currencyInMemoryCache.filter(({ code: persistedCurrencyCode }) => persistedCurrencyCode !== code)
 }
 
-async function findAllCurrencies(): Promise<Currency[]> {
-  if (currencyInMemoryCache.length === 0 && moment().diff(lastCacheUpdateTime, 'minute') < 5) {
+export async function findAllCurrencies(): Promise<Currency[]> {
+  if (currencyInMemoryCache.length === 0 || moment().diff(lastCacheUpdateTime, 'minute') < 5) {
     const epicurus = getEpicurusInstance()
     currencyInMemoryCache = await epicurus.request(CurrencyEndpoints.getAllCurrencies, {})
     lastCacheUpdateTime = new Date()
