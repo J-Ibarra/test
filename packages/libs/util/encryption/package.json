@@ -1,0 +1,42 @@
+{
+  "name": "@abx-utils/encryption",
+  "version": "1.0.0",
+  "description": "Contains common encryption utilities",
+  "license": "ISC",
+  "main": "dist/index",
+  "types": "dist/index",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npm run clean && npm run compile",
+    "clean": "rm -rf ./dist",
+    "compile": "tsc -p tsconfig.build.json --skipLibCheck"
+  },
+  "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9",
+  "dependencies": {
+    "@abx-types/config": "1.0.0",
+    "aws-sdk": "latest",
+    "lodash": "4.17.5",
+    "moment": "2.22.2",
+    "newrelic": "4.10.0",
+    "winston": "3.2.1"
+  },
+  "devDependencies": {
+    "@lerna/filter-options": "^3.18.4",
+    "@types/chai": "4.0.3",
+    "@types/chai-as-promised": "7.1.0",
+    "@types/lodash": "4.14.92",
+    "@types/mocha": "2.2.41",
+    "@types/node": "^12.12.11",
+    "chai": "4.2.0",
+    "chai-as-promised": "7.1.1",
+    "mocha": "5.2.0",
+    "ts-mocha": "6.0.0",
+    "source-map-support": "0.5.9",
+    "ts-node": "8.5.2",
+    "ts-node-dev": "1.0.0-pre.44",
+    "tslint": "5.20.1",
+    "typescript": "3.7.2"
+  }
+}
