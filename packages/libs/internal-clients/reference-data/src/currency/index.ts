@@ -2,10 +2,6 @@ import { Currency, CurrencyCode } from '@abx-types/reference-data'
 import { getEpicurusInstance } from '@abx/db-connection-utils'
 import { CurrencyEndpoints } from './endpoints'
 import { isCryptoCurrency } from '../utils'
-import moment from 'moment'
-
-let lastCacheUpdateTime: Date = new Date()
-let currencyInMemoryCache: Currency[] = []
 
 export async function findAllCurrencyCodes(): Promise<CurrencyCode[]> {
   const currencies = await findAllCurrencies()
@@ -51,18 +47,9 @@ export async function getCurrencyCode(currencyId: number) {
   return currency && currency.code
 }
 
-export async function deleteCurrency(code: CurrencyCode): Promise<void> {
-  currencyInMemoryCache = currencyInMemoryCache.filter(({ code: persistedCurrencyCode }) => persistedCurrencyCode !== code)
-}
-
 export async function findAllCurrencies(): Promise<Currency[]> {
-  if (currencyInMemoryCache.length === 0 || moment().diff(lastCacheUpdateTime, 'minute') < 5) {
-    const epicurus = getEpicurusInstance()
-    currencyInMemoryCache = await epicurus.request(CurrencyEndpoints.getAllCurrencies, {})
-    lastCacheUpdateTime = new Date()
-  }
-
-  return currencyInMemoryCache
+  const epicurus = getEpicurusInstance()
+  return epicurus.request(CurrencyEndpoints.getAllCurrencies, {})
 }
 
 export * from './endpoints'

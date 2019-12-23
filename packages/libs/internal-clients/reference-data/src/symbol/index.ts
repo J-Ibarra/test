@@ -1,10 +1,6 @@
-import moment from 'moment'
 import { getEpicurusInstance } from '@abx/db-connection-utils'
 import { SymbolEndpoints } from './endpoints'
 import { CurrencyCode, SymbolPair, SymbolPairSummary } from '@abx-types/reference-data'
-
-let lastCacheUpdateTime: Date = new Date()
-let symbols: SymbolPair[] = []
 
 export function getAllCompleteSymbolDetails(): Promise<SymbolPair[]> {
   return fetchSymbolsIfInMemoryCacheExpired()
@@ -55,10 +51,6 @@ function transformToSummary({ id, base, quote, fee }: SymbolPair): SymbolPairSum
 }
 
 function fetchSymbolsIfInMemoryCacheExpired(): Promise<SymbolPair[]> {
-  if (symbols.length > 0 || moment().diff(lastCacheUpdateTime, 'minute') < 5) {
-    return Promise.resolve(symbols)
-  }
-
   const epicurus = getEpicurusInstance()
   return epicurus.request(SymbolEndpoints.getAllCompleteSymbolDetails, {})
 }

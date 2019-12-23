@@ -1,6 +1,6 @@
 import { getEpicurusInstance, messageFactory } from '@abx/db-connection-utils'
 import { OrderMatchEndpoints, findOrderMatch } from '@abx-service-clients/order'
-import { findOrderMatchTransaction, findOrderMatchTransactions } from '../core'
+import { findOrderMatchTransaction, findOrderMatchTransactions } from '../../../core'
 
 export function boot() {
   const epicurus = getEpicurusInstance()
