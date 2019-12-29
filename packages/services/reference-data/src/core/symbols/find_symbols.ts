@@ -1,6 +1,7 @@
 import { Transaction } from 'sequelize'
 import { CurrencyCode, SymbolPair, SymbolPairSummary } from '@abx-types/reference-data'
 import { fetchAllSymbols } from './symbol_in_memory_cache'
+import { transformToSummary } from '@abx-service-clients/reference-data'
 
 export async function getSymbolPairSummary(id: string, transaction?: Transaction): Promise<SymbolPairSummary> {
   const symbol = await getCompleteSymbolDetails(id, transaction)
@@ -46,10 +47,3 @@ export async function getSymbolWithCurrencyPair(baseCurrencyCode: CurrencyCode, 
 export function getAllCompleteSymbolDetails(transaction?: Transaction): Promise<SymbolPair[]> {
   return fetchAllSymbols(transaction)
 }
-
-const transformToSummary = ({ id, base, quote, fee }: SymbolPair): SymbolPairSummary => ({
-  id,
-  baseId: base.id,
-  quoteId: quote.id,
-  feeId: fee.id,
-})

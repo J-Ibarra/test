@@ -5,4 +5,6 @@ export interface SymbolPair {
   base: Currency
   quote: Currency
   fee: Currency
+  orderRange: number | null
+  sortOrder?: number | null
 }

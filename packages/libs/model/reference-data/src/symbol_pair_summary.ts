@@ -3,4 +3,6 @@ export interface SymbolPairSummary {
   baseId: number
   quoteId: number
   feeId: number
+  orderRange: number | null
+  sortOrder?: number | null
 }

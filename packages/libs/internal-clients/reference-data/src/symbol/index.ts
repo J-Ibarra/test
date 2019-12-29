@@ -41,12 +41,14 @@ export async function getSymbolWithCurrencyPair(baseCurrencyCode: CurrencyCode, 
   return (await fetchSymbolsIfInMemoryCacheExpired()).find(({ base, quote }) => base.code === baseCurrencyCode && quote.code === quoteCurrencyCode)!
 }
 
-function transformToSummary({ id, base, quote, fee }: SymbolPair): SymbolPairSummary {
+export function transformToSummary({ id, base, quote, fee, orderRange, sortOrder }: SymbolPair): SymbolPairSummary {
   return {
     id,
     baseId: base.id,
     quoteId: quote.id,
     feeId: fee.id,
+    orderRange,
+    sortOrder,
   }
 }
 

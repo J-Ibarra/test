@@ -10,4 +10,5 @@ export interface SymbolPairApiResponse {
   fee: CurrencyCode
   /** The percentage used to limit order price ranges. */
   orderRange?: number | null
+  sortOrder?: number | null
 }

@@ -51,5 +51,5 @@ export function bootstrapRestApi() {
   app.on('unhandledRejection', e => logger.error(e as any))
 
   console.log('Reference Data API on port 3003')
-  app.listen(3003)
+  return app.listen(3003)
 }

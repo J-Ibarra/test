@@ -37,6 +37,7 @@ const models: TsoaRoute.Models = {
             "quote": { "ref": "CurrencyCode", "required": true },
             "fee": { "ref": "CurrencyCode", "required": true },
             "orderRange": { "dataType": "object" },
+            "sortOrder": { "dataType": "object" },
         },
     },
 };
@@ -101,6 +102,7 @@ export function RegisterRoutes(app: express.Express) {
     app.get('/api/symbols',
         function(request: any, response: any, next: any) {
             const args = {
+                includeOrderRange: { "in": "query", "name": "includeOrderRange", "dataType": "boolean" },
             };
 
             let validatedArgs: any[] = [];

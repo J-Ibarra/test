@@ -14,5 +14,18 @@ export default function(sequelize: Sequelize.Sequelize) {
       type: Sequelize.STRING,
       allowNull: false,
     },
+    isEnabled: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      defaultValue: true,
+    },
+    symbolSortPriority: {
+      type: Sequelize.NUMERIC,
+      allowNull: true,
+    },
+    currencyOrderPriority: {
+      type: Sequelize.NUMERIC,
+      allowNull: true,
+    },
   })
 }

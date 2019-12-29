@@ -38,5 +38,26 @@ export default function(sequelize: Sequelize.Sequelize) {
         key: 'id',
       },
     },
+    orderRange: {
+      type: Sequelize.NUMERIC,
+      defaultValue: 0.3,
+      allowNull: true,
+      get(this: SymbolInstance) {
+        return parseFloat(this.getDataValue('orderRange')) || null
+      },
+    },
+    sortOrder: {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      get(this: SymbolInstance) {
+        return parseFloat(this.getDataValue('sortOrder')) || null
+      },
+      unique: true,
+    },
+    isEnabled: {
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
+    },
   })
 }
