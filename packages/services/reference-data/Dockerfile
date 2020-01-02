@@ -6,18 +6,23 @@ ENV NPM_TOKEN=$NPM_TOKEN
 RUN mkdir /sync
 WORKDIR /sync
 
-# Cache node modules
+# Installing monorepo dependencies
+COPY .npmrc .
 COPY package.json .
 COPY package-lock.json .
-COPY .npmrc .
-ARG NPM_TOKEN
+COPY lerna.json .
+COPY tsconfig.json .
+COPY tsconfig.build.json .
 
-RUN npm install
+RUN npm install --loglevel notice
+RUN npm i lerna -g --loglevel notice
 
-# Copy only production code
-COPY src/ src/
+# Copying required modules (.dockerignore will make sure, node_modules are not copied over)
+COPY packages/libs ./packages/libs
+COPY packages/services/reference-data ./packages/services/reference-data
 
-COPY docker-start.sh .
+RUN lerna bootstrap
+WORKDIR /sync/packages/services/reference-data
 
 EXPOSE 3003
 
