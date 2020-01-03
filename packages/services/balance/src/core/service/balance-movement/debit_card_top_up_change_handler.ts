@@ -1,6 +1,6 @@
 import { Logger } from '@abx/logging'
 import { ValidationError } from '@abx-types/error'
-import { BalanceChangeParams } from '@abx-types/balance'
+import { BalanceChangeParams, BalanceType } from '@abx-types/balance'
 import { BalanceRepository } from '../../repository/balance_repository'
 import { BalanceRetrievalHandler } from '../balance_retrieval_handler'
 import { BalanceChangeHandler } from './balance_change_handler'
@@ -23,6 +23,7 @@ export class DebitCardTopUpChangeHandler {
       currencyIds: [changeParams.currencyId],
       transaction: changeParams.t,
     })
+
     await this.validateAvailableBalance(changeParams, 'Available balance is less than debit card top up amount')
 
     await Promise.all([
@@ -47,9 +48,10 @@ export class DebitCardTopUpChangeHandler {
   }
 
   private async validateAvailableBalance({ currencyId, accountId, amount, t }: BalanceChangeParams, errorMessage: string) {
-    const balance = await this.balanceRetrievalHandler.findBalance(currencyId, accountId, t)
+    const balance = await this.balanceRepository.findRawBalances({ accountId, currencyId, transaction: t })
+    const availableBalance = balance.find(({ balanceTypeId }) => balanceTypeId === BalanceType.available) || { value: 0 }
 
-    if (amount > balance.available.value!) {
+    if (amount > availableBalance.value!) {
       throw new ValidationError(errorMessage)
     }
   }

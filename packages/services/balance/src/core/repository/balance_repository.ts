@@ -1,8 +1,6 @@
-import { get } from 'lodash'
 import { Transaction } from 'sequelize'
 
 import { getModel, sequelize } from '@abx/db-connection-utils'
-import { Currency } from '@abx-types/reference-data'
 import { RawBalance } from '@abx-types/balance'
 import { BalanceLockParams } from '../balance_movement_facade'
 
@@ -22,24 +20,14 @@ export class BalanceRepository {
     accountId,
     currencyId,
     transaction,
-    includeCurrencyDetails,
   }: {
     accountId: string
     currencyId?: number
     transaction?: Transaction
-    includeCurrencyDetails?: boolean
   }): Promise<RawBalance[]> {
     const balances = await getModel<RawBalance>('balance').findAll({
       where: !!currencyId ? { currencyId, accountId } : { accountId },
       transaction,
-      include: includeCurrencyDetails
-        ? [
-            {
-              model: getModel<Currency>('currency'),
-              attributes: ['id', 'code'],
-            },
-          ]
-        : [],
     })
 
     return balances.map(b => {
@@ -47,7 +35,6 @@ export class BalanceRepository {
 
       return {
         ...balance,
-        fullCurrencyDetails: get(balance as any, 'currency.dataValues'),
       }
     })
   }

@@ -65,13 +65,12 @@ export class BalanceRetrievalHandler {
 
     const allBalancesForAccount = await this.repository.findRawBalances({
       accountId,
-      includeCurrencyDetails: true,
     })
 
     // get account balances that exists in the db
     const currencyToAccountBalances = this.combineCurrenciesWithRawBalances(allBalancesForAccount)
 
-    return currenciesAvailableForTrade.map(mainCurrency => {
+    const result = currenciesAvailableForTrade.map(mainCurrency => {
       // check to see if we have an existing balance in the db
       const balanceExists: any = Array.from(currencyToAccountBalances).find(([currencyId]) => currencyId === mainCurrency.id)
 
@@ -83,6 +82,8 @@ export class BalanceRetrievalHandler {
       // if it doesn't exist in the db we will create a Balance Object with 0 balance
       return this.transformRawBalances(accountId, mainCurrency.id, new Map(), mainCurrency.code)
     })
+
+    return result
   }
 
   private transformRawBalances(accountId: string, currencyId: number, rawBalances: Map<BalanceType, RawBalance>, currency: CurrencyCode): Balance {
@@ -139,7 +140,7 @@ export class BalanceRetrievalHandler {
     }, new Map<number, Map<BalanceType, RawBalance>>())
   }
 
-  public getDisplayFormatForBalance(currency: CurrencyCode): EDisplayFormats {
+  public getDisplayFormatForBalance(currency?: CurrencyCode): EDisplayFormats {
     return currency === CurrencyCode.kvt ? EDisplayFormats.wholeNumber : EDisplayFormats.decimal
   }
 }

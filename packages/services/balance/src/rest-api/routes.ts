@@ -5,6 +5,38 @@ import { expressAuthentication } from './middleware/authentication';
 import * as express from 'express';
 
 const models: TsoaRoute.Models = {
+    "CurrencyCode": {
+        "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USD", "EUR", "GBP"],
+    },
+    "BalanceAmount": {
+        "properties": {
+            "amount": { "dataType": "double", "required": true },
+            "preferredCurrencyAmount": { "dataType": "double", "required": true },
+        },
+    },
+    "EDisplayFormats": {
+        "enums": ["0", "1"],
+    },
+    "PreferredCurrencyEnrichedBalance": {
+        "properties": {
+            "currency": { "ref": "CurrencyCode", "required": true },
+            "total": { "ref": "BalanceAmount", "required": true },
+            "available": { "ref": "BalanceAmount", "required": true },
+            "reserved": { "ref": "BalanceAmount", "required": true },
+            "pendingDeposit": { "ref": "BalanceAmount", "required": true },
+            "pendingWithdrawal": { "ref": "BalanceAmount", "required": true },
+            "pendingRedemption": { "ref": "BalanceAmount", "required": true },
+            "pendingDebitCardTopUp": { "ref": "BalanceAmount", "required": true },
+            "displayFormat": { "ref": "EDisplayFormats" },
+        },
+    },
+    "CompleteBalanceDetails": {
+        "properties": {
+            "accountId": { "dataType": "string", "required": true },
+            "preferredCurrencyTotal": { "dataType": "double", "required": true },
+            "balances": { "dataType": "array", "array": { "ref": "PreferredCurrencyEnrichedBalance" }, "required": true },
+        },
+    },
 };
 const validationService = new ValidationService(models);
 

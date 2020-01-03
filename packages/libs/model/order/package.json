@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@abx-types/depth-cache": "1.0.0",
+    "@abx-types/reference-data": "1.0.0",
     "decimal.js": "10.2.0"
   }
 }

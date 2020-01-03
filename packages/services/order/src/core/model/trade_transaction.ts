@@ -1,6 +1,6 @@
 import * as Sequelize from 'sequelize'
 import { TradeTransaction } from '@abx-types/order'
-import { currencyPrecision, currencyScale, taxPrecision, taxScale } from '@abx-types/config'
+import { currencyPrecision, currencyScale, taxPrecision, taxScale } from '@abx-types/reference-data'
 
 export interface TradeTransactionInstance extends Sequelize.Instance<TradeTransaction>, TradeTransaction {
   getCounterTrade: Sequelize.BelongsToGetAssociationMixin<TradeTransactionInstance>

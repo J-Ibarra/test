@@ -22,6 +22,6 @@ export class BalancesController extends Controller {
       return cachedResponse
     }
 
-    return BalanceRetrievalFacade.getInstance().findAllBalancesForAccount(request.account!.id) as any
+    return BalanceRetrievalFacade.getInstance().findAllBalancesForAccount(request.account!.id)
   }
 }

@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk'
-import { Environment, localTestEnvironments } from '@abx-types/config'
+import { Environment, localTestEnvironments } from '@abx-types/reference-data'
 
 const kms = new AWS.KMS({ region: 'ap-southeast-2' })
 

@@ -1,5 +1,5 @@
 import { OrderDirection } from '../core/order_direction.enum'
-import { FiatCurrency } from '../core/fiat_currency.enum'
+import { FiatCurrency } from '@abx-types/reference-data'
 
 export interface TradeTransaction {
   id?: number

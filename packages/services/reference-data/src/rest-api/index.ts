@@ -14,6 +14,8 @@ import './symbols_controller'
 
 const logger = Logger.getInstance('api', 'bootstrapRestApi')
 
+export const REST_API_PORT = 3101
+
 export function bootstrapRestApi() {
   const app = express()
 
@@ -30,7 +32,7 @@ export function bootstrapRestApi() {
   configureCORS(app)
 
   if (process.env.NODE_ENV !== 'test') {
-    logger.debug('Starting server on port 3000...')
+    logger.debug(`Starting reference-data server on port ${REST_API_PORT}...`)
 
     configureApiRateLimiting = new RateLimiter().configureForApp(app).then(() => logger.debug('API rate limiting configured.'))
   }
@@ -50,6 +52,6 @@ export function bootstrapRestApi() {
 
   app.on('unhandledRejection', e => logger.error(e as any))
 
-  console.log('Reference Data API on port 3003')
-  return app.listen(3003)
+  console.log(`Reference Data API on port ${REST_API_PORT}`)
+  return app.listen(REST_API_PORT)
 }

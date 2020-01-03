@@ -5,11 +5,14 @@ import methodOverride from 'method-override'
 import { mw as requestIpMiddleware } from 'request-ip'
 import { Logger } from '@abx/logging'
 import { auditMiddleware, configureCORS, RateLimiter, maintenanceMiddleware, overloadRequestWithSessionInfo } from '@abx/express-middleware'
-// import { RegisterRoutes } from './routes'
+import { RegisterRoutes } from './routes'
 
 import './balances_controller'
+import { OverloadedRequest } from '@abx-types/account'
 
 const logger = Logger.getInstance('api', 'bootstrapRestApi')
+
+export const BALANCE_REST_API_PORT = 3102
 
 export function bootstrapRestApi() {
   const app = express()
@@ -20,20 +23,22 @@ export function bootstrapRestApi() {
   app.use(bodyParser.json())
   app.use(methodOverride())
   app.use(maintenanceMiddleware)
-  app.use(overloadRequestWithSessionInfo)
+  app.use((request: OverloadedRequest, _: express.Response = {} as any, next: () => void = () => ({})) => {
+    overloadRequestWithSessionInfo(request, undefined, next)
+  })
   app.all('*', auditMiddleware)
 
   let configureApiRateLimiting = Promise.resolve()
   configureCORS(app)
 
   if (process.env.NODE_ENV !== 'test') {
-    logger.debug('Starting server on port 3000...')
+    logger.debug(`Starting server on port ${BALANCE_REST_API_PORT}...`)
 
     configureApiRateLimiting = new RateLimiter().configureForApp(app).then(() => logger.debug('API rate limiting configured.'))
   }
 
   configureApiRateLimiting.then(() => {
-    // RegisterRoutes(app)
+    RegisterRoutes(app)
 
     // @ts-ignore
     app.use((err, req, res, next) => {
@@ -47,6 +52,6 @@ export function bootstrapRestApi() {
 
   app.on('unhandledRejection', e => logger.error(e as any))
 
-  console.log('Reference Data API on port 3003')
-  app.listen(3004)
+  console.log(`Balance API running on port ${BALANCE_REST_API_PORT}`)
+  return app.listen(BALANCE_REST_API_PORT)
 }

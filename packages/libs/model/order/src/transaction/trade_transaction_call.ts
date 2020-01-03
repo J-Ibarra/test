@@ -1,6 +1,7 @@
-import { OrderMatch, FiatCurrency } from '../core'
+import { OrderMatch } from '../core'
 import { Tax } from '.'
 import { Transaction } from 'sequelize'
+import { FiatCurrency } from '@abx-types/reference-data'
 
 export interface TradeTransactionCall {
   orderMatch: OrderMatch

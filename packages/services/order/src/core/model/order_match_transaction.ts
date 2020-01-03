@@ -1,6 +1,6 @@
 import * as Sequelize from 'sequelize'
 import { OrderMatch } from '@abx-types/order'
-import { currencyPrecision, currencyScale } from '@abx-types/config'
+import { currencyPrecision, currencyScale } from '@abx-types/reference-data'
 
 export interface OrderMatchInstance extends Sequelize.Instance<OrderMatch>, OrderMatch {}
 

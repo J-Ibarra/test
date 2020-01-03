@@ -24,6 +24,6 @@ COPY packages/services/reference-data ./packages/services/reference-data
 RUN lerna bootstrap
 WORKDIR /sync/packages/services/reference-data
 
-EXPOSE 3003
+EXPOSE 3101
 
 CMD  "./docker-start.sh"

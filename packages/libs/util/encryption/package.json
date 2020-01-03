@@ -15,7 +15,7 @@
   },
   "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9",
   "dependencies": {
-    "@abx-types/config": "1.0.0",
+    "@abx-types/reference-data": "1.0.0",
     "aws-sdk": "latest",
     "lodash": "4.17.5",
     "moment": "2.22.2",

@@ -19,7 +19,7 @@
     "@abx-types/error": "1.0.0",
     "@abx/logging": "1.0.0",
     "@abx-types/account": "1.0.0",
-    "@abx-types/config": "1.0.0",
+    "@abx-types/reference-data": "1.0.0",
     "@abx/db-connection-utils": "1.0.0",
     "sequelize": "4.41.0",
     "express": "4.16.4",

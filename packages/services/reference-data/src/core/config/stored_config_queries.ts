@@ -9,7 +9,7 @@ import {
   IExchangeConfigEntry,
   SupportedFeatureFlags,
   WithdrawalConfig,
-} from '@abx-types/config'
+} from '@abx-types/reference-data'
 import { findExchangeConfig } from './stored_config_loader'
 
 export async function getFeatureFlags(): Promise<FeatureFlag[]> {

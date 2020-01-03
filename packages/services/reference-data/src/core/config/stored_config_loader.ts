@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { e2eTestingEnvironments, Environment, ExchangeConfigValue, IExchangeConfigEntry } from '@abx-types/config'
+import { e2eTestingEnvironments, Environment, ExchangeConfigValue, IExchangeConfigEntry } from '@abx-types/reference-data'
 import { sequelize, getModel, wrapInTransaction } from '@abx/db-connection-utils'
 
 interface ConfigInMemoryCache {

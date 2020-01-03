@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js'
 
-import { Environment } from '@abx-types/config'
+import { Environment } from '@abx-types/reference-data'
 import { Logger } from '@abx/logging'
 import { SupportedFxPair } from '@abx-types/order'
 import { sourceFxRateFromExchangeRatesApi } from './exchangeratesapi_fx_rate_source'

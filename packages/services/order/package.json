@@ -28,7 +28,6 @@
   "dependencies": {
     "@abx-types/reference-data": "1.0.0",
     "@abx-types/order": "1.0.0",
-    "@abx-types/config": "1.0.0",
     "@abx-types/error": "1.0.0",
     "@abx-service-clients/order": "1.0.0",
     "@abx-service-clients/reference-data": "1.0.0",

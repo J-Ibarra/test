@@ -1,13 +1,16 @@
 import { v4 } from 'node-uuid'
 import * as bcrypt from 'bcryptjs'
 import { Transaction } from 'sequelize'
+import * as crypto from 'crypto'
 
 import { sequelize, getModel, wrapInTransaction } from '@abx/db-connection-utils'
 import { ValidationError } from '@abx-types/error'
-import { User, AccountType, CreateAccountRequest, AccountStatus, Account, EmailValidationError, CreateUserRequest } from '@abx-types/account'
+import { User, AccountType, CreateAccountRequest, AccountStatus, Account, EmailValidationError, CreateUserRequest, Session } from '@abx-types/account'
 
 import { UserInstance } from '../model/user'
 import { findUserByEmail } from '../user_query_repository'
+import moment from 'moment'
+import { apiCookieSecret, apiCookieIv } from '../cookie_secrets'
 
 export const TEST_PASSWORD = 'testPass123414'
 
@@ -62,5 +65,43 @@ async function createUser({ accountId, firstName, lastName, email, password }: C
         { transaction },
       )
       .then((u: UserInstance) => u.get('publicView'))
+  })
+}
+
+export async function createAccountAndSession(accountType: AccountType = AccountType.individual) {
+  const tempAcc = await createTemporaryTestingAccount(accountType)
+  await getModel<Account>('account').update({ status: AccountStatus.kycVerified } as any, { where: { id: tempAcc.id } })
+  const user: User = tempAcc.users![0]
+  const cookie = await createCookie(user.id)
+
+  return { account: tempAcc, cookie: `appSession=${cookie}`, email: user.email, id: user.id }
+}
+
+async function createCookie(userId: string, t?: Transaction, sessionExpiryInHours: number = 12) {
+  const session = await createSession(userId, t, sessionExpiryInHours)
+  const cipher = crypto.createCipheriv('aes-256-ctr', apiCookieSecret, apiCookieIv)
+  let crypted = cipher.update(session.id, 'utf8', 'hex')
+  crypted += cipher.final('hex')
+
+  return crypted
+}
+
+function createSession(userId: string, trans?: Transaction, cookieExpiryInHours: number = 12) {
+  return wrapInTransaction(sequelize, trans, async t => {
+    const expiry = moment()
+      .add(cookieExpiryInHours, 'hours')
+      .toDate()
+    const session = await getModel<Session>('session').create(
+      {
+        id: v4(),
+        userId,
+        expiry,
+      },
+      {
+        transaction: t,
+      },
+    )
+
+    return session.get()
   })
 }

@@ -19,7 +19,6 @@
     "@abx-types/reference-data": "1.0.0",
     "@abx-types/order": "1.0.0",
     "@abx-types/depth-cache": "1.0.0",
-    "@abx-types/config": "1.0.0",
     "@abx/logging": "1.0.0",
     "@abx/db-connection-utils": "1.0.0",
     "sequelize": "4.41.0",

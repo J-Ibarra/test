@@ -1,6 +1,6 @@
 import * as Sequelize from 'sequelize'
 import { Order } from '@abx-types/order'
-import { currencyPrecision, currencyScale } from '@abx-types/config'
+import { currencyPrecision, currencyScale } from '@abx-types/reference-data'
 
 export interface OrderInstance extends Sequelize.Instance<Order>, Order {}
 

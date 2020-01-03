@@ -1,5 +1,5 @@
 import cors from 'cors'
-import { Environment } from '@abx-types/config'
+import { Environment } from '@abx-types/reference-data'
 import { Logger } from '@abx/logging'
 
 const ENVIRONMENTS_WITH_LOCALHOST_ORIGIN_ENABLED = [
