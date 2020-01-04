@@ -13,6 +13,7 @@
       "@abx-types/market-data": ["packages/libs/model/market-data/src"],
       "@abx-types/account": ["packages/libs/model/account/src"],
       "@abx-types/error": ["packages/libs/util/error/src"],
+      "@abx-types/withdrawal": ["packages/libs/model/withdrawal/src"],
 
       "@abx-query-libs/account": ["packages/libs/query/account/src"],
 
