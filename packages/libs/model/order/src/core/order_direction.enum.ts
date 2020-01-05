@@ -1,4 +1,4 @@
-export const enum OrderDirection {
+export enum OrderDirection {
   buy = 'buy',
   sell = 'sell',
 }

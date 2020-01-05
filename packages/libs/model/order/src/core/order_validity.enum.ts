@@ -1,4 +1,4 @@
-export const enum OrderValidity {
+export enum OrderValidity {
   GTC = 'GTC',
   GTD = 'GTD',
 }

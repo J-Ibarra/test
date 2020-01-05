@@ -1,4 +1,4 @@
-export const enum OrderType {
+export enum OrderType {
   market = 'market',
   limit = 'limit',
 }

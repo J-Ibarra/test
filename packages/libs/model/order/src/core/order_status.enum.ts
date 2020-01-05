@@ -1,4 +1,4 @@
-export const enum OrderStatus {
+export enum OrderStatus {
   /** Used for fresh orders where order matching has not been performed yet. */
   submit = 'submit',
   /** Used for orders that could not be fully filled during order matching. */

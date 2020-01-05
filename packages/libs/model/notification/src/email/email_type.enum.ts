@@ -1,5 +1,5 @@
-export const enum emailType {
-    to = 'to',
-    cc = 'cc',
-    bcc = 'bcc',
-  }
+export enum emailType {
+  to = 'to',
+  cc = 'cc',
+  bcc = 'bcc',
+}

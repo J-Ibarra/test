@@ -19,7 +19,9 @@
 
       "@abx/express-middleware": ["packages/libs/util/express-middleware/src"],
       "@abx/db-connection-utils": ["packages/libs/util/db-connection-utils/src"],
-      "@abx/logging": ["packages/libs/util/logging/src"]
+      "@abx/logging": ["packages/libs/util/logging/src"],
+
+      "@abx-service-clients/notification": ["packages/packages/libs/internal-clients/notification/src"]
     }
   }
 }

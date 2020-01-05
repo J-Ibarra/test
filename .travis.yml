@@ -35,7 +35,7 @@ jobs:
         - lerna bootstrap
         - lerna run build --include-dependencies
         - lerna run run-legacy-migrations
-        - lerna run test --since $TRAVIS_BRANCH
+        - lerna run test
     - stage: 'Build and deploy Integration'
       if: branch = integration and type = push
       env:

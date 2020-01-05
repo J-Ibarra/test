@@ -8,6 +8,3 @@ export * from './email_type.enum'
 export * from './formatted_template_content.interface'
 export * from './notification_status.enum'
 export * from './trade_confirmation_template_content.interface'
-export * from './email'
-export * from './email_attachment'
-
