@@ -6,3 +6,6 @@ setupModel(setupOrderDataModel)
 
 export * from './order-queries'
 export * from './transaction-queries'
+export * from './fees'
+export * from './order_boundary_validation'
+export * from './exchange-status-checks/contract_exchange'
