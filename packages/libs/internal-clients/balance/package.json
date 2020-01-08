@@ -18,8 +18,10 @@
   "dependencies": {
     "@abx/db-connection-utils": "1.0.0",
     "@abx-types/reference-data": "1.0.0",
+    "@abx/logging": "1.0.0",
     "sequelize": "4.41.0",
-    "@abx-types/balance": "1.0.0"
+    "@abx-types/balance": "1.0.0",
+    "aws-sdk": "2.574.0"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",

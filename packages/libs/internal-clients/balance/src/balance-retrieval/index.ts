@@ -1,11 +1,10 @@
 import { getEpicurusInstance } from '@abx/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
-import { Transaction } from 'sequelize'
 import { BalanceRetrievalEndpoints } from './endpoints'
 
-export function findBalance(currency: CurrencyCode, accountId: string, transaction?: Transaction) {
+export function findBalance(currency: CurrencyCode, accountId: string) {
   const epicurus = getEpicurusInstance()
-  return epicurus.request(BalanceRetrievalEndpoints.findBalance, { currency, accountId, transaction })
+  return epicurus.request(BalanceRetrievalEndpoints.findBalance, { currency, accountId })
 }
 
 export function findAllBalancesForAccount(accountId: string) {
