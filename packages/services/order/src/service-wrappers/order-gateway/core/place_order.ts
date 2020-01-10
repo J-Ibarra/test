@@ -9,6 +9,7 @@ import { getEpicurusInstance } from '@abx/db-connection-utils'
 import { getContractExchangeStatus, ContractExchangeStatus } from '../../../core'
 
 const logger = Logger.getInstance('contract_exchange', 'placeOrder')
+
 export async function placeOrder(request: PlaceOrderRequest): Promise<Order> {
   try {
     const exchangeStatus = await getContractExchangeStatus()

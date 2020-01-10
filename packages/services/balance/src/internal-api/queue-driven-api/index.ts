@@ -1,5 +1,5 @@
 import { getQueuePoller } from './queue-poller'
-import { consumerQueueMessage } from './queued_message_cosumer'
+import { consumerQueueMessage } from './queued_message_consumer'
 
 export function bootstrapQueueDrivenApi() {
   const queuePoller = getQueuePoller()
