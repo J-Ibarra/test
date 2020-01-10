@@ -1,12 +1,6 @@
-import { User, Account } from '@abx-types/account'
 import { getEpicurusInstance } from '@abx/db-connection-utils'
 import { AccountEndpoints } from './endpoints'
-
-export function findAccountWithUserDetails(accountQuery: Partial<Account>) {
-  const epicurus = getEpicurusInstance()
-
-  return epicurus.request(AccountEndpoints.findAccountWithUserDetails, { accountQuery })
-}
+import { User } from '@abx-types/account'
 
 export function findAccountById(accountId: string) {
   const epicurus = getEpicurusInstance()
@@ -20,22 +14,17 @@ export function findAccountsByIdWithUserDetails(accountIds: string[]) {
   return epicurus.request(AccountEndpoints.findAccountsByIdWithUserDetails, { accountIds })
 }
 
-export function findUserByAccountId(accountId: string) {
+export function findUserByAccountId(accountId: string): Promise<User | null> {
   const epicurus = getEpicurusInstance()
 
   return epicurus.request(AccountEndpoints.findUserByAccountId, { accountId })
 }
 
-export function findUsersByAccountId(accountId: string) {
+export function findUsersByAccountId(accountId: string): Promise<User[]> {
   const epicurus = getEpicurusInstance()
 
   return epicurus.request(AccountEndpoints.findUsersByAccountId, { accountId })
 }
 
-export function findUser(criteria: Partial<User>, includeAccountDetails: boolean) {
-  const epicurus = getEpicurusInstance()
-
-  return epicurus.request(AccountEndpoints.findUser, { criteria, includeAccountDetails })
-}
-
 export * from './endpoints'
+export * from './notification_topics'

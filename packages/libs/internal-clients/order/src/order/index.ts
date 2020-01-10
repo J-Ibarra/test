@@ -6,4 +6,9 @@ export function findOrderId(orderId: number) {
   return epicurus.request(OrderEndpoints.findOrderById, { orderId })
 }
 
+export function cancelAllOrdersForAccount(accountId: string) {
+  const epicurus = getEpicurusInstance()
+  return epicurus.request(OrderEndpoints.cancelAllOrdersForAccount, { accountId })
+}
+
 export * from './endpoints'

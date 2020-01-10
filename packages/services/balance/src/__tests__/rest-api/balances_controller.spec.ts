@@ -22,7 +22,7 @@ const expectedEthToUsdMidPrice = (ethToUsdLatestBuyPrice + ethToUsdLatestSellPri
 const kauAvailableBalance = 50
 const ethereumAvailableBalance = 100
 
-describe('api:balances', function() {
+describe.skip('api:balances', function() {
   let app
   const kauId = 1
   const ethId = 3
@@ -46,7 +46,7 @@ describe('api:balances', function() {
     },
   ]
 
-  before(() => {
+  before(async () => {
     sinon.restore()
     sinon.stub(referenceDataOperations, 'findAllCurrencies').resolves(currencies)
     sinon.stub(referenceDataOperations, 'getSymbolsForQuoteCurrency').resolves(symbols)
@@ -67,7 +67,7 @@ describe('api:balances', function() {
     await app.close()
   })
 
-  it('returns a 401 error if not logged in', async () => {
+  it.skip('returns a 401 error if not logged in', async () => {
     const { body, status } = await request(app).get(`/api/balances`)
 
     expect(status).to.eql(401)

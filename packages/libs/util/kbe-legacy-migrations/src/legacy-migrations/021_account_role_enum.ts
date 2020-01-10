@@ -4,7 +4,7 @@ export async function up({ sequelize }: { sequelize: Sequelize }) {
   return sequelize.query(
     `
     CREATE TYPE account_role AS enum(
-      'admin', 'corporate', 'individual', 'operator'
+      'administrator', 'corporate', 'individual', 'operator'
     );
 
     ALTER TABLE public.account ALTER COLUMN type TYPE account_role USING (type::account_role);

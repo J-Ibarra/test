@@ -12,6 +12,7 @@ describe('BalanceRepository', () => {
   let accountId
 
   beforeEach(async () => {
+    // await truncateTables()
     const { id } = await createTemporaryTestingAccount()
 
     accountId = id

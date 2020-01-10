@@ -5,13 +5,10 @@ import { AdminRequest } from './model'
 
 import { AdminFundManagementEndpoints } from './endpoints'
 
-
-export async function findAdminRequest(queryParams: Partial<AdminRequest>,transaction?: Transaction,): Promise<AdminRequest> {
-
-    const epicurus = getEpicurusInstance()
-    return epicurus.request(AdminFundManagementEndpoints.findAdminRequest, { queryParams, transaction })
+export async function findAdminRequest(queryParams: Partial<AdminRequest>, transaction?: Transaction): Promise<AdminRequest> {
+  const epicurus = getEpicurusInstance()
+  return epicurus.request(AdminFundManagementEndpoints.findAdminRequest, { queryParams, transaction })
 }
-
 
 export async function saveClientTriggeredFiatWithdrawalAdminRequest(
   accountId: string,
@@ -20,18 +17,20 @@ export async function saveClientTriggeredFiatWithdrawalAdminRequest(
   memo: string,
   transaction: Transaction,
 ): Promise<AdminRequest> {
-
-    const epicurus = getEpicurusInstance()
-    return epicurus.request(AdminFundManagementEndpoints.saveClientTriggeredFiatWithdrawalAdminRequest, { accountId, currencyCode, amount, memo, transaction })
-
+  const epicurus = getEpicurusInstance()
+  return epicurus.request(AdminFundManagementEndpoints.saveClientTriggeredFiatWithdrawalAdminRequest, {
+    accountId,
+    currencyCode,
+    amount,
+    memo,
+    transaction,
+  })
 }
 
-export async function updateAdminRequest(id: number, update: Partial<AdminRequest>, transaction?: Transaction,): Promise<AdminRequest> {
-    
-    const epicurus = getEpicurusInstance()
-    return epicurus.request(AdminFundManagementEndpoints.updateAdminRequest, { id, update, transaction })
+export async function updateAdminRequest(id: number, update: Partial<AdminRequest>, transaction?: Transaction): Promise<AdminRequest> {
+  const epicurus = getEpicurusInstance()
+  return epicurus.request(AdminFundManagementEndpoints.updateAdminRequest, { id, update, transaction })
 }
-
-
 
 export * from './endpoints'
+export * from './model'

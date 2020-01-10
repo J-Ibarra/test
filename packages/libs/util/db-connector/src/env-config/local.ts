@@ -1,4 +1,4 @@
-const dbConfig = {
+export const dbConfig = {
   exchangeDb: {
     username: process.env.EXCHANGE_DB_USERNAME || 'postgres',
     password: process.env.EXCHANGE_DB_PASSWORD || 'postgres',
@@ -22,5 +22,3 @@ const dbConfig = {
   },
   jwtSecret: 'foo',
 }
-
-export default dbConfig

@@ -1,4 +1,4 @@
-export default {
+export const dbConfig = {
   exchangeDb: {
     username: process.env.EXCHANGE_DB_USERNAME,
     password: process.env.EXCHANGE_DB_PASSWORD,
@@ -20,4 +20,5 @@ export default {
     // unless overridden during instantiation of a Redis client
     db: 0,
   },
+  jwtSecret: process.env.JWT_SECRET,
 }
