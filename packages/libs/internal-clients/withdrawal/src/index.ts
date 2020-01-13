@@ -8,13 +8,19 @@ export function findWithdrawalRequestForTransactionHash(txHash: string): Promise
   return epicurus.request(WithdrawalEndpoints.findWithdrawalRequestForTransactionHash, { txHash })
 }
 
+export function findWithdrawalRequestsForTransactionHashes(txHashes: string[]): Promise<WithdrawalRequest[]> {
+  const epicurus = getEpicurusInstance()
+
+  return epicurus.request(WithdrawalEndpoints.findWithdrawalRequestForTransactionHash, { txHashes })
+}
+
 export function findWithdrawalRequestById(id: number): Promise<WithdrawalRequest | null> {
   const epicurus = getEpicurusInstance()
 
   return epicurus.request(WithdrawalEndpoints.findWithdrawalRequestById, { id })
 }
 
-export function findWithdrawalRequestsByIds(ids: number[]): Promise<WithdrawalRequest | null> {
+export function findWithdrawalRequestsByIds(ids: number[]): Promise<WithdrawalRequest[]> {
   const epicurus = getEpicurusInstance()
 
   return epicurus.request(WithdrawalEndpoints.findWithdrawalRequestsByIds, { ids })

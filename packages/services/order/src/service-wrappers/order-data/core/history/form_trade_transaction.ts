@@ -12,16 +12,16 @@ const logger = Logger.getInstance('dataset_retrieval', 'form_trade_Transaction')
  * @param tradeTransaction
  * @param selectedCurrencyCode
  */
-export async function formTradeTransactionToHistory(
+export function formTradeTransactionToHistory(
   tradeTransaction: TradeTransaction,
   selectedCurrencyCode: CurrencyCode,
   allSymbols: SymbolPair[],
   currencyBoundaries: CurrencyBoundary[],
-): Promise<TransactionHistory> {
+): TransactionHistory {
   const feeCurrency = allSymbols.find(({ fee }) => fee.code === selectedCurrencyCode)!.fee
   const tradeSymbol = allSymbols.find(symbol => symbol.id === tradeTransaction.symbolId)
 
-  const { primaryAmount, memo, direction, preferredCurrencyAmount } = await formResult(
+  const { primaryAmount, memo, direction, preferredCurrencyAmount } = formResult(
     tradeTransaction,
     selectedCurrencyCode,
     tradeSymbol!,
@@ -41,10 +41,10 @@ export async function formTradeTransactionToHistory(
     transactionId: tradeTransaction.id,
     fee: tradeTransaction.fee,
     feeCurrency: feeCurrency.code,
-  }
+  } as TransactionHistory
 }
 
-const formResult = async (
+const formResult = (
   tradeTransaction: TradeTransaction,
   selectedCurrency: CurrencyCode,
   tradeSymbol: SymbolPair,

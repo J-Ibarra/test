@@ -1,37 +1,56 @@
-import { User } from '@abx-types/account'
-import { findUserByAccountId } from '@abx-service-clients/account'
-import { findAdminRequest } from '@abx-service-clients/admin-fund-management'
 import { DepositRequest } from '@abx-types/deposit'
-import { findDepositAddressesForAccount, findDepositRequestById } from '@abx-service-clients/deposit'
+import { findDepositAddressesForAccount, findDepositRequestsByIds } from '@abx-service-clients/deposit'
 import { CurrencyCode, Currency } from '@abx-types/reference-data'
 import { CurrencyTransaction, TransactionType } from '@abx-types/order'
 import { WithdrawalRequest } from '@abx-types/withdrawal'
-import { findWithdrawalRequestForTransactionHash } from '@abx-service-clients/withdrawal'
-import { TransactionHistory, TransactionHistoryDirection } from './model'
-import { verifyIsFromKBE } from './util'
-import { isFiatCurrency } from '@abx-service-clients/reference-data'
+import { findWithdrawalRequestsForTransactionHashes } from '@abx-service-clients/withdrawal'
+import { TransactionHistoryDirection } from './model'
+import { isFiatCurrency, getExchangeHoldingsWallets } from '@abx-service-clients/reference-data'
+import { AdminRequest, findAdminRequests } from '@abx-service-clients/admin-fund-management'
+import { groupBy, head } from 'lodash'
 
-export async function buildDepositTransactionHistory() {}
-/**
- * Form currency transaction to transaction history type
- * @param currencyTransaction
- * @param selectedCurrencyCode
- */
-export async function formDepositCurrencyTransactionToHistory(
-  currencyTransaction: CurrencyTransaction,
+export async function buildDepositTransactionHistory(
   selectedCurrencyCode: CurrencyCode,
+  depositTransactions: CurrencyTransaction[],
   allCurrencies: Currency[],
-): Promise<TransactionHistory> {
+) {
   if (isFiatCurrency(selectedCurrencyCode)) {
-    return formFiatDepositHistoryItem(currencyTransaction, selectedCurrencyCode)
+    const adminRequests: AdminRequest[] = await findAdminRequests(depositTransactions.map(({ requestId }) => requestId))
+    const adminRequestIdToDescription =
+      adminRequests.reduce((acc, adminRequest) => (acc[adminRequest.id] = adminRequest.description), {} as Record<number, string | undefined>) || {}
+
+    return depositTransactions.map(depositTransaction =>
+      formFiatDepositHistoryItem(depositTransaction, selectedCurrencyCode, adminRequestIdToDescription[depositTransaction.requestId!]),
+    )
   }
 
-  return formCryptoDepositHistoryItem(currencyTransaction, selectedCurrencyCode, allCurrencies)
+  const holdingWallets = await getExchangeHoldingsWallets()
+  const depositRequests = await findDepositRequestsByIds(depositTransactions.map(({ requestId }) => requestId))
+  const depositRequestIdToRequest = groupBy<DepositRequest>(depositRequests, 'id')
+
+  const withdrawalRequests = await findWithdrawalRequestsForTransactionHashes(depositRequests.map(({ depositTxHash }) => depositTxHash))
+  const txHashToWithdrawalRequest = groupBy(withdrawalRequests, 'txHash')
+
+  return depositTransactions.map(depositTransaction => {
+    const depositRequest = head(depositRequestIdToRequest[depositTransaction.requestId!])!
+
+    return formCryptoDepositHistoryItem(
+      depositTransaction,
+      depositRequest,
+      selectedCurrencyCode,
+      allCurrencies,
+      holdingWallets.some(holdingWallet => holdingWallet.publicKey === depositRequest.from)
+        ? null
+        : head(txHashToWithdrawalRequest[depositRequest.depositTxHash]),
+    )
+  })
 }
 
-async function formFiatDepositHistoryItem(currencyTransaction: CurrencyTransaction, selectedCurrencyCode: CurrencyCode) {
-  const depositAdminRequest = await findAdminRequest({ id: currencyTransaction.requestId })
-
+async function formFiatDepositHistoryItem(
+  currencyTransaction: CurrencyTransaction,
+  selectedCurrencyCode: CurrencyCode,
+  adminRequestDescription?: string,
+) {
   return {
     transactionType: TransactionType.currency,
     primaryCurrencyCode: selectedCurrencyCode,
@@ -39,28 +58,23 @@ async function formFiatDepositHistoryItem(currencyTransaction: CurrencyTransacti
     preferredCurrencyCode: selectedCurrencyCode,
     preferredCurrencyAmount: currencyTransaction.amount,
     title: 'Kinesis Operations',
-    memo: !!depositAdminRequest ? depositAdminRequest.description! : currencyTransaction.memo!,
+    memo: adminRequestDescription || currencyTransaction.memo!,
     direction: TransactionHistoryDirection.incoming,
     createdAt: currencyTransaction.createdAt!,
   }
 }
 
-async function formCryptoDepositHistoryItem(currencyTransaction: CurrencyTransaction, selectedCurrencyCode: CurrencyCode, allCurrencies: Currency[]) {
-  const [depositRequest, depositCurrency] = await Promise.all([
-    findDepositRequestById(currencyTransaction.requestId!),
-    allCurrencies.find(({ code }) => code === selectedCurrencyCode)!,
-  ])
+async function formCryptoDepositHistoryItem(
+  currencyTransaction: CurrencyTransaction,
+  depositRequest: DepositRequest,
+  selectedCurrencyCode: CurrencyCode,
+  allCurrencies: Currency[],
+  senderRequest?: WithdrawalRequest,
+) {
+  const depositCurrency = allCurrencies.find(({ code }) => code === selectedCurrencyCode)
 
-  if (!depositRequest) {
-    throw new Error(`Deposit ${currencyTransaction.requestId} not found`)
-  }
-
-  const depositRequestSender = await getDepositRequestSender(depositRequest)
-  const sender = !!depositRequestSender ? depositRequestSender.sender : undefined
-  const senderRequest = !!depositRequestSender ? depositRequestSender.senderRequest : undefined
-
-  const { title, memo, senderAddress, transactionType } = !!sender
-    ? await resultOfSenderExist(sender, senderRequest, depositCurrency!.id)
+  const { title, memo, senderAddress, transactionType } = !!senderRequest
+    ? await resultOfSenderExist(senderRequest, depositCurrency!.id)
     : resultOfSenderNotExist(depositRequest)
 
   return {
@@ -78,28 +92,6 @@ async function formCryptoDepositHistoryItem(currencyTransaction: CurrencyTransac
   }
 }
 
-/**
- * Get sender if the withdraw request is transfer request
- * @param depositRequest
- */
-export async function getDepositRequestSender(depositRequest: DepositRequest) {
-  const { from: address, depositTxHash } = depositRequest
-  const isTransfer = await verifyIsFromKBE(address)
-
-  if (!isTransfer) {
-    return
-  }
-
-  const withdrawalRequest = await findWithdrawalRequestForTransactionHash(depositTxHash)
-
-  if (!withdrawalRequest) {
-    return
-  }
-  const sender = await findUserByAccountId(withdrawalRequest.accountId)
-
-  return { sender, senderRequest: withdrawalRequest }
-}
-
 interface Result {
   title: string
   senderAddress: string
@@ -107,8 +99,8 @@ interface Result {
   memo: string
 }
 
-const resultOfSenderExist = async (sender: User, senderRequest: WithdrawalRequest | undefined, selectedCurrencyId: number): Promise<Result> => {
-  const senderAddresses = await findDepositAddressesForAccount(sender.accountId)
+const resultOfSenderExist = async (senderRequest: WithdrawalRequest | undefined, selectedCurrencyId: number): Promise<Result> => {
+  const senderAddresses = await findDepositAddressesForAccount(senderRequest!.accountId)
 
   const senderAddress = senderAddresses.find(req => req.currencyId === selectedCurrencyId)!.publicKey
 

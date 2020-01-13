@@ -3,7 +3,6 @@ import _ from 'lodash'
 import { isNullOrUndefined } from 'util'
 import { CurrencyCode, FiatCurrency, SymbolPair } from '@abx-types/reference-data'
 import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-data'
-import { getExchangeHoldingsWallets } from '@abx-service-clients/reference-data'
 
 type RequireOnlyOne<T, Keys extends keyof T = keyof T> = Pick<T, Exclude<keyof T, Keys>> &
   { [K in Keys]-?: Required<Pick<T, K>> & Partial<Record<Exclude<Keys, K>, undefined>> }[Keys]
@@ -39,12 +38,6 @@ export async function getMidPriceForSymbolWithDate(preferredCurrencyCode: Curren
   const midPrice = (await calculateRealTimeMidPriceForSymbol(preferredSymbolPair.id)) || 1
 
   return preferredSymbolPair.quote.code === preferredCurrencyCode ? 1 / midPrice : midPrice
-}
-
-export async function verifyIsFromKBE(address: string): Promise<boolean> {
-  const exchangeHoldingWallets = await getExchangeHoldingsWallets()
-  const isFromKBE = exchangeHoldingWallets.some(holdingWallet => holdingWallet.publicKey === address)
-  return isFromKBE
 }
 
 /**

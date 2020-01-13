@@ -14,4 +14,10 @@ export function findDepositRequestById(id: number): Promise<DepositRequest | nul
   return epicurus.request(DepositEndpoints.findDepositRequestById, { id })
 }
 
+export function findDepositRequestsByIds(ids: number[]): Promise<DepositRequest[]> {
+  const epicurus = getEpicurusInstance()
+
+  return epicurus.request(DepositEndpoints.findDepositRequestsByIds, { ids })
+}
+
 export * from './endpoints'

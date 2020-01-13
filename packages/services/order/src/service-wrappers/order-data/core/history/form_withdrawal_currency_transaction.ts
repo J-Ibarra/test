@@ -4,6 +4,16 @@ import { CurrencyCode } from '@abx-types/reference-data'
 import { CurrencyTransaction, TransactionType } from '@abx-types/order'
 import { WithdrawalRequest, WithdrawalRequestType } from '@abx-types/withdrawal'
 import { TransactionHistory, TransactionHistoryDirection } from './model'
+import { findWithdrawalRequestsByIds } from '@abx-service-clients/withdrawal'
+
+
+export async function buildWithdrawalTransactionHistory(
+  currencyTransactions: CurrencyTransaction[],
+  selectedCurrencyCode: CurrencyCode,
+) {
+  const withdrawalRequests = await findWithdrawalRequestsByIds(currencyTransactions.map(({ requestId }) => requestId!))
+  const registeredDepositAddressesForWithdrawalRequests = 
+  }
 
 /**
  * Form withdrawal request to transaction history type
@@ -11,11 +21,9 @@ import { TransactionHistory, TransactionHistoryDirection } from './model'
  * @param selectedCurrencyCode
  */
 export async function formWithdrawalCurrencyTransactionToHistory(
-  currencyTransaction: CurrencyTransaction,
+  withdrawalRequest: WithdrawalRequest,
   selectedCurrencyCode: CurrencyCode,
 ): Promise<TransactionHistory> {
-  const withdrawalRequest = await findWithdrawalRequestById(currencyTransaction.requestId)
-
   const { withdrawalFee, feeCurrencyCode } = await getWithdrawalFee(
     withdrawalRequest.currency.code,
     withdrawalRequest.amount,
@@ -70,7 +78,6 @@ export async function getWithdrawRequestReceiver(withdrawalRequest: WithdrawalRe
   if (depositAddresses.length === 0) {
     return
   }
-  return findUserByAccountId(depositAddresses[0].accountId)
 }
 
 interface Result {
