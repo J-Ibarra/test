@@ -1,3 +1,5 @@
+import { Account } from '../account'
+
 export interface User {
   id: string
   account?: Account

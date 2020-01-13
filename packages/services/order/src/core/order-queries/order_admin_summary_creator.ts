@@ -11,15 +11,20 @@ interface OrderWithOwnerAccount extends Order {
 
 export async function getAllOrdersForAccountHin(hin: string): Promise<OrderAdminSummary[]> {
   const account = await findAccountWithUserDetails({ hin })
+
+  if (!account) {
+    throw new Error(`Account not found for hin ${hin}`)
+  }
+
   const allOrders = await findOrders({
-    where: { accountId: account.id },
+    where: { accountId: account!.id },
     order: [['createdAt', 'DESC']],
   })
 
   return enrichWithTransactionDetails(
     allOrders.map(order => ({
       ...order,
-      account,
+      account: account!,
     })),
   )
 }

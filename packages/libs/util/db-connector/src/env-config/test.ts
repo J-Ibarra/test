@@ -1,6 +1,6 @@
 const privateKey = 'test'
 
-export default {
+export const dbConfig = {
   exchangeDb: {
     username: 'postgres',
     password: '',

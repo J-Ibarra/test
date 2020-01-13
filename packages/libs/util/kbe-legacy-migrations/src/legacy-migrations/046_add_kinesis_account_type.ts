@@ -14,7 +14,7 @@ export async function down({ sequelize }: { sequelize: Sequelize }) {
 
     DROP TYPE account_role;
     CREATE TYPE account_role AS enum(
-      'admin', 'corporate', 'individual', 'operator'
+      'administrator', 'corporate', 'individual', 'operator'
     );
 
     ALTER TABLE public.account ALTER COLUMN type TYPE account_role USING (type::account_role);

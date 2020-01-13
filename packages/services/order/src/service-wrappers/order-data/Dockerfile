@@ -22,6 +22,6 @@ COPY packages/libs ./packages/libs
 COPY packages/services/order ./packages/services/order
 
 RUN lerna bootstrap
-WORKDIR /sync/packages/services/order/src/service-wrappers
+WORKDIR /sync/packages/services/order/src/service-wrappers/order-data
 
 CMD  "./docker-start.sh"

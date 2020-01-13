@@ -1,6 +1,6 @@
-import { WithdrawalRequest } from './withdrawal_request.interface'
+import { CurrencyEnrichedWithdrawalRequest } from './withdrawal_request.interface'
 
 export interface WithdrawalWithFeeRequestPair {
-  withdrawalRequest: WithdrawalRequest
-  feeRequest?: WithdrawalRequest
+  withdrawalRequest: CurrencyEnrichedWithdrawalRequest
+  feeRequest?: CurrencyEnrichedWithdrawalRequest | null
 }

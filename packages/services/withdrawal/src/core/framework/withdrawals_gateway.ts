@@ -53,7 +53,7 @@ async function validateRequest(
   const [withdrawalRequestCurrency, feeCurrency] = currencies
   const [{ available: availableBalance }, { available: feeCurrencyAvailableBalance }] = balances
 
-  await validat#eWithdrawal({
+  await validateWithdrawal({
     currency: withdrawalRequestCurrency,
     currencyCode,
     amount,

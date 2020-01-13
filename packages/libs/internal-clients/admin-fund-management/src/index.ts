@@ -5,12 +5,12 @@ import { AdminRequest } from './model'
 
 import { AdminFundManagementEndpoints } from './endpoints'
 
-export async function findAdminRequest(queryParams: Partial<AdminRequest>, transaction?: Transaction): Promise<AdminRequest> {
+export async function findAdminRequest(queryParams: Partial<AdminRequest>): Promise<AdminRequest> {
   const epicurus = getEpicurusInstance()
-  return epicurus.request(AdminFundManagementEndpoints.findAdminRequest, { queryParams, transaction })
+  return epicurus.request(AdminFundManagementEndpoints.findAdminRequest, { queryParams })
 }
 
-export async function findAdminRequests(ids: number[]): Promise<AdminRequest> {
+export async function findAdminRequests(ids: number[]): Promise<AdminRequest[]> {
   const epicurus = getEpicurusInstance()
   return epicurus.request(AdminFundManagementEndpoints.findAdminRequest, { ids })
 }
@@ -32,10 +32,10 @@ export async function saveClientTriggeredFiatWithdrawalAdminRequest(
   })
 }
 
-export async function updateAdminRequest(id: number, update: Partial<AdminRequest>, transaction?: Transaction): Promise<AdminRequest> {
+export async function updateAdminRequest(id: number, update: Partial<AdminRequest>): Promise<AdminRequest> {
   const epicurus = getEpicurusInstance()
-  return epicurus.request(AdminFundManagementEndpoints.updateAdminRequest, { id, update, transaction })
+  return epicurus.request(AdminFundManagementEndpoints.updateAdminRequest, { id, update })
 }
 
 export * from './endpoints'
-export * from '/model'
+export * from './model'

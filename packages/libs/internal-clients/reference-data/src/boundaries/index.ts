@@ -21,3 +21,4 @@ export async function getSymbolBoundaries(symbolId: string): Promise<SymbolBound
 }
 
 export * from './endpoints'
+export * from './utils'

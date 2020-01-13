@@ -107,3 +107,5 @@ export class DepthCacheFacade {
     }, {} as DepthCache)
   }
 }
+
+export * from './depth_aggregator'

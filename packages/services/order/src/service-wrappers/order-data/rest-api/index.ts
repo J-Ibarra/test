@@ -8,10 +8,14 @@ import { auditMiddleware, configureCORS, RateLimiter, maintenanceMiddleware, ove
 // import { RegisterRoutes } from './routes'
 
 import './order_retrieval_controller'
+import './fees_controller'
+import './order_match_controller'
+import './orders_admin_controller'
+import './transaction_history_controller'
 
 const logger = Logger.getInstance('api', 'bootstrapRestApi')
 
-export const REST_API_PORT = 3104
+export const ORDER_DATA_API_PORT = 3106
 
 export function bootstrapRestApi() {
   const app = express()
@@ -29,7 +33,7 @@ export function bootstrapRestApi() {
   configureCORS(app)
 
   if (process.env.NODE_ENV !== 'test') {
-    logger.debug(`Starting reference-data server on port ${REST_API_PORT}...`)
+    logger.debug(`Starting order data server on port ${ORDER_DATA_API_PORT}...`)
 
     configureApiRateLimiting = new RateLimiter().configureForApp(app).then(() => logger.debug('API rate limiting configured.'))
   }
@@ -49,6 +53,6 @@ export function bootstrapRestApi() {
 
   app.on('unhandledRejection', e => logger.error(e as any))
 
-  console.log(`Reference Data API on port ${REST_API_PORT}`)
-  return app.listen(REST_API_PORT)
+  console.log(`Order Data API on port ${ORDER_DATA_API_PORT}`)
+  return app.listen(ORDER_DATA_API_PORT)
 }

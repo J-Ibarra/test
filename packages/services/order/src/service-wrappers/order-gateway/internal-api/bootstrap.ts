@@ -1,9 +1,9 @@
 import { getEpicurusInstance, messageFactory } from '@abx/db-connection-utils'
 import { Logger } from '@abx/logging'
-import { OrderEndpoints } from '@abx-service-clients/order'
 import { OrderType } from '@abx-types/order'
 import { marketOrderMessage, limitOrderMessage, cancelAllOrdersForAccountMessage, cancelOrderMessage } from './schema'
 import { placeOrder, OrderCancellationGateway } from '../core'
+import { OrderGatewayEndpoints } from '@abx-service-clients/order'
 
 const logger = Logger.getInstance('order-gateway', 'bootstrapInternalApi')
 
@@ -14,7 +14,7 @@ export function bootstrapInternalApi() {
 
   logger.debug('Setting up place order epicurus endpoint')
   epicurus.server(
-    OrderEndpoints.placeOrder,
+    OrderGatewayEndpoints.placeOrder,
     messageFactory(
       msg => (msg.orderType === OrderType.market ? marketOrderMessage : limitOrderMessage),
       request => {
@@ -29,7 +29,7 @@ export function bootstrapInternalApi() {
 
   logger.debug('Setting up place order epicurus endpoint')
   epicurus.server(
-    OrderEndpoints.cancelAllOrdersForAccount,
+    OrderGatewayEndpoints.cancelAllOrdersForAccount,
     messageFactory(cancelAllOrdersForAccountMessage, ({ accountId }) => {
       return orderCancellationGateway.cancelOrdersOnAccount(accountId)
     }),
@@ -37,7 +37,7 @@ export function bootstrapInternalApi() {
 
   logger.debug('Setting up cancel order epicurus endpoint')
   epicurus.server(
-    OrderEndpoints.cancelOrderMessage,
+    OrderGatewayEndpoints.cancelOrder,
     messageFactory(cancelOrderMessage, msg => {
       return orderCancellationGateway.cancelOrder(msg).then((order: any) => ({ orderId: order.id }))
     }),

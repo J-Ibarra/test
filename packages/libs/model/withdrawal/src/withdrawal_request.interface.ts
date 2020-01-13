@@ -10,9 +10,7 @@ export interface WithdrawalRequest {
   amount: number
   state: WithdrawalState
   address?: string
-  currency?: Currency
   currencyId: number
-  feeCurrency?: Currency
   feeCurrencyId?: number
   account?: Account
   accountId: string
@@ -37,4 +35,9 @@ export interface WithdrawalRequest {
   transactionId?: string
   transactionFee?: number
   adminRequestId?: number
+}
+
+export interface CurrencyEnrichedWithdrawalRequest extends WithdrawalRequest {
+  feeCurrency?: Currency
+  currency: Currency
 }

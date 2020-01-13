@@ -3,10 +3,11 @@ import { Logger } from '@abx/logging'
 import { CurrencyCode, Currency, SymbolPair } from '@abx-types/reference-data'
 import { TradeTransaction, TransactionDirection, CurrencyTransaction } from '@abx-types/order'
 import { TransactionHistory } from './model'
-import { formDepositCurrencyTransactionToHistory, formTradeTransactionToHistory, formWithdrawalCurrencyTransactionToHistory } from './'
+import { formTradeTransactionToHistory } from './'
 import { findCurrencyTransactionForAccountAndCurrency, findTradeTransactionForAccountAndSymbols } from '../../../../core'
 import { getAllCompleteSymbolDetails, getAllCurrencyBoundaries } from '@abx-service-clients/reference-data'
-import { findWithdrawalRequestsByIds } from '@abx-service-clients/withdrawal'
+import { buildDepositTransactionHistory } from './form_deposit_currency_transaction'
+import { buildWithdrawalTransactionHistory } from './form_withdrawal_currency_transaction'
 
 const logger = Logger.getInstance('transaction', 'transaction_history')
 
@@ -38,19 +39,14 @@ async function createDepositAndWithdrawalTransactions(
 ) {
   const depositTransactionsToAdd = currencyTransactions.filter(({ direction }) => direction === TransactionDirection.deposit)
   const withdrawalTransactionsToAdd = currencyTransactions.filter(({ direction }) => direction === TransactionDirection.withdrawal)
-  const withdrawaRequests = await findWithdrawalRequestsByIds(withdrawalTransactionsToAdd.map(({ id }) => id!))
 
   const [depositTransactionHistoryItems, withdrawalRequestTransactionHistoryItems] = await Promise.all([
-    Promise.all(
-      depositTransactionsToAdd.map(currencyTransaction =>
-        formDepositCurrencyTransactionToHistory(
-          currencyTransaction,
-          selectedCurrencyCode,
-          allSymbols.reduce((acc, { base, quote }) => acc.concat([base, quote]), [] as Currency[]),
-        ),
-      ),
+    buildDepositTransactionHistory(
+      selectedCurrencyCode,
+      depositTransactionsToAdd,
+      allSymbols.reduce((acc, { base, quote }) => acc.concat([base, quote]), [] as Currency[]),
     ),
-    Promise.all(withdrawalTransactionsToAdd.map(transaction => formWithdrawalCurrencyTransactionToHistory(transaction, selectedCurrencyCode))),
+    buildWithdrawalTransactionHistory(withdrawalTransactionsToAdd, selectedCurrencyCode),
   ])
 
   return depositTransactionHistoryItems.concat(withdrawalRequestTransactionHistoryItems)

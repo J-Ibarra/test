@@ -1,9 +1,9 @@
 import Sequelize from 'sequelize'
 
-import environmentConfig from '../env-config'
+import { getEnvironmentConfig } from '../env-config'
 import { migrationModel } from './migration'
 
-const dbConfig = environmentConfig.exchangeDb
+const dbConfig = getEnvironmentConfig().exchangeDb
 
 // Instantiate sequelize connection to the correct database
 export const sequelize = new Sequelize(dbConfig.schema, dbConfig.username, dbConfig.password, {

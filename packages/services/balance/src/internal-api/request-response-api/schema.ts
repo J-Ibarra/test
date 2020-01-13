@@ -7,8 +7,8 @@ export const findBalancePayloadSchema = {
   type: 'object',
   'x-persist-event': 'find balance',
   properties: {
-    currency: {
-      type: 'string',
+    currencyId: {
+      type: 'number',
       required: true,
     },
     accountId: {
