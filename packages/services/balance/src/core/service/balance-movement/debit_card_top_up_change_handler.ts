@@ -21,7 +21,7 @@ export class DebitCardTopUpChangeHandler {
     await this.balanceRepository.lockBalancesForAccounts({
       accountIds: [changeParams.accountId],
       currencyIds: [changeParams.currencyId],
-      transaction: changeParams.t,
+      transaction: changeParams.t!,
     })
 
     await this.validateAvailableBalance(changeParams, 'Available balance is less than debit card top up amount')
