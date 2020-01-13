@@ -1,0 +1,138 @@
+import Decimal from 'decimal.js'
+
+import { Logger } from '@abx/logging'
+import { OrderDirection, TradeTransaction, TransactionType } from '@abx-types/order'
+import { CurrencyCode, SymbolPair, CurrencyBoundary } from '@abx-types/reference-data'
+import { TransactionHistory, TransactionHistoryDirection } from './model'
+
+const logger = Logger.getInstance('dataset_retrieval', 'form_trade_Transaction')
+
+/**
+ * Form Order type balance adjustment to history
+ * @param tradeTransaction
+ * @param selectedCurrencyCode
+ */
+export async function formTradeTransactionToHistory(
+  tradeTransaction: TradeTransaction,
+  selectedCurrencyCode: CurrencyCode,
+  allSymbols: SymbolPair[],
+  currencyBoundaries: CurrencyBoundary[],
+): Promise<TransactionHistory> {
+  const feeCurrency = allSymbols.find(({ fee }) => fee.code === selectedCurrencyCode)!.fee
+  const tradeSymbol = allSymbols.find(symbol => symbol.id === tradeTransaction.symbolId)
+
+  const { primaryAmount, memo, direction, preferredCurrencyAmount } = await formResult(
+    tradeTransaction,
+    selectedCurrencyCode,
+    tradeSymbol!,
+    currencyBoundaries.find(({ currencyId }) => currencyId === feeCurrency.id)!,
+  )
+
+  return {
+    transactionType: TransactionType.trade,
+    primaryCurrencyCode: selectedCurrencyCode,
+    primaryAmount,
+    preferredCurrencyCode: tradeTransaction.fiatCurrencyCode.toString() as CurrencyCode,
+    preferredCurrencyAmount,
+    title: `${selectedCurrencyCode} Exchange`,
+    memo,
+    direction,
+    createdAt: tradeTransaction.createdAt!,
+    transactionId: tradeTransaction.id,
+    fee: tradeTransaction.fee,
+    feeCurrency: feeCurrency.code,
+  }
+}
+
+const formResult = async (
+  tradeTransaction: TradeTransaction,
+  selectedCurrency: CurrencyCode,
+  tradeSymbol: SymbolPair,
+  feeCurrencyBoundary: CurrencyBoundary,
+) => {
+  const selectedCurrencyIsBase = tradeSymbol.base.code === selectedCurrency
+  const directionIsSell = tradeTransaction.direction === OrderDirection.sell
+  const feeIsTakenFromBase = tradeSymbol.base.code === tradeSymbol.fee.code
+
+  const fee = new Decimal(tradeTransaction.fee).toDP(feeCurrencyBoundary.maxDecimals, Decimal.ROUND_DOWN).toNumber()
+
+  const { tradeAmount, preferredCurrencyAmount } = selectedCurrencyIsBase
+    ? calculateTradeAndPreferredCurrencyAmountsForBaseCurrency(feeIsTakenFromBase, directionIsSell, fee, tradeSymbol, tradeTransaction)
+    : calculateTradeAndPreferredCurrencyAmountsForQuoteCurrency(feeIsTakenFromBase, directionIsSell, fee, tradeSymbol, tradeTransaction)
+
+  const memo = `${tradeSymbol.base.code} ${directionIsSell ? 'sold for' : 'purchased with'} ${tradeSymbol.quote.code}`
+  const direction = tradeAmount < 0 ? TransactionHistoryDirection.outgoing : TransactionHistoryDirection.incoming
+
+  return { primaryAmount: tradeAmount, memo, direction, preferredCurrencyAmount }
+}
+
+const calculateTradeAndPreferredCurrencyAmountsForBaseCurrency = (
+  feeIsTakenFromBase: boolean,
+  directionIsSell: boolean,
+  fee: number,
+  tradeSymbol: SymbolPair,
+  tradeTransaction: TradeTransaction,
+) => {
+  const tradeAmount = directionIsSell ? -tradeTransaction.amount : tradeTransaction.amount
+  logger.info(`Trade amount ${tradeAmount}`)
+  let tradeAmountAfterFeeTaken = tradeAmount
+
+  if (feeIsTakenFromBase) {
+    tradeAmountAfterFeeTaken = new Decimal(tradeAmount).minus(fee).toNumber()
+  }
+
+  let fiatConversionRate
+  if (tradeSymbol.quote.code !== CurrencyCode.usd) {
+    fiatConversionRate = new Decimal(tradeTransaction.baseFiatConversion).div(tradeTransaction.amount)
+  } else {
+    fiatConversionRate = tradeTransaction.matchPrice
+  }
+
+  const preferredCurrencyAmount = new Decimal(tradeAmount).times(fiatConversionRate).toNumber()
+
+  logger.info(`Trade amount after fee taken ${tradeAmountAfterFeeTaken}`)
+  return { tradeAmount: tradeAmountAfterFeeTaken, preferredCurrencyAmount }
+}
+
+const calculateTradeAndPreferredCurrencyAmountsForQuoteCurrency = (
+  feeIsTakenFromBase: boolean,
+  directionIsSell: boolean,
+  fee: number,
+  tradeSymbol: SymbolPair,
+  tradeTransaction: TradeTransaction,
+) => {
+  const price = tradeTransaction.matchPrice
+  const tradeAmountDecimal = new Decimal(tradeTransaction.amount)
+  let tradeAmount = 0
+
+  if (!feeIsTakenFromBase) {
+    tradeAmount = directionIsSell
+      ? tradeAmountDecimal
+          .times(price)
+          .minus(fee)
+          .toNumber()
+      : tradeAmountDecimal
+          .times(-1)
+          .times(price)
+          .minus(fee)
+          .toNumber()
+  } else {
+    tradeAmount = directionIsSell
+      ? tradeAmountDecimal.times(price).toNumber()
+      : tradeAmountDecimal
+          .times(-1)
+          .times(price)
+          .toNumber()
+  }
+
+  let fiatConversionRate
+  if (tradeSymbol.quote.code !== CurrencyCode.usd) {
+    fiatConversionRate = new Decimal(tradeTransaction.quoteFiatConversion).div(tradeAmountDecimal.times(price))
+  } else {
+    fiatConversionRate = 1
+  }
+
+  const preferredCurrencyAmount = new Decimal(tradeAmount).times(fiatConversionRate).toNumber()
+
+  return { tradeAmount, preferredCurrencyAmount }
+}

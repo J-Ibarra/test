@@ -191,3 +191,5 @@ export const determineMaxFee = async ({ orderFee, feeCurrencyCode }: { orderFee:
   const fetchedBoundaryRow = await findBoundaryForCurrency(feeCurrencyCode)
   return Decimal.max(fetchedBoundaryRow.minAmount || 0, orderFee)
 }
+
+export * from './tiers'

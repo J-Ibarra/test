@@ -7,11 +7,11 @@ import { Logger } from '@abx/logging'
 import { auditMiddleware, configureCORS, RateLimiter, maintenanceMiddleware, overloadRequestWithSessionInfo } from '@abx/express-middleware'
 // import { RegisterRoutes } from './routes'
 
-import './order_change_controller'
+import './order_retrieval_controller'
 
 const logger = Logger.getInstance('api', 'bootstrapRestApi')
 
-export const REST_API_PORT = 3105
+export const REST_API_PORT = 3104
 
 export function bootstrapRestApi() {
   const app = express()

@@ -6,7 +6,7 @@ import { CurrencyCode, SymbolPair } from '@abx-types/reference-data'
 import { getAllCompleteSymbolDetails, getAllSymbolsIncludingCurrency } from '@abx-service-clients/reference-data'
 import { TradeTransaction } from '@abx-types/order'
 import { CoreOrderDetails, Order, OrderStatus, OrderWithTradeTransactions } from '@abx-types/order'
-import { findTradeTransactions } from '../transaction-queries'
+import { findTradeTransactions } from '../transaction'
 
 /** A container for all the transactions for a given order. */
 interface OrderTransactionSummary {

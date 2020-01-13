@@ -1,26 +1,27 @@
 import { Transaction } from 'sequelize'
 
-// import { BalanceMovementFacade, SourceEventType } from '../../../../balances'
+import { createReserve } from '@abx-service-clients/balance'
+import { SourceEventType } from '@abx-types/balance'
 import { Logger } from '@abx/logging'
-import { Currency, SymbolPair } from '@abx-types/reference-data'
-import { Order, SymbolPairSummary } from '@abx-types/order'
+import { SymbolPair } from '@abx-types/reference-data'
+import { Order } from '@abx-types/order'
 import { findBoundaryForCurrency, feeTakenFromBase } from '@abx-service-clients/reference-data'
 import { determineMaxReserveForTradeValue } from '../../../../core'
 
 const logger = Logger.getInstance('contract_exchange', 'allocateSellOrderReserveBalance')
 
 export async function allocateSellOrderReserveBalance(order: Order, pair: SymbolPair, transaction: Transaction): Promise<void> {
-  const balanceToReserve = await validateSellOrderAvailableBalance(order, pair, transaction)
+  const balanceToReserve = await calculateTotalBaseAmountRequired(order, pair, transaction)
   logger.debug(`Creating reserve of ${balanceToReserve} ${pair.base.code} for seller ${order.accountId}`)
 
-  // await balanceMovementFacade.createReserve({
-  //   currencyId: baseCurrency.id,
-  //   accountId,
-  //   amount: reserve,
-  //   sourceEventId: orderId,
-  //   sourceEventType: 'order' as SourceEventType,
-  //   t: transaction,
-  // })
+  return createReserve({
+    currencyId: pair.base.id,
+    accountId: order.accountId,
+    amount: balanceToReserve,
+    sourceEventId: order.id!,
+    sourceEventType: 'order' as SourceEventType,
+    t: transaction,
+  })
 }
 
 /**
@@ -34,7 +35,7 @@ export async function allocateSellOrderReserveBalance(order: Order, pair: Symbol
  * @param transaction the parent transaction
  * @returns the total amount to be reserved
  */
-export async function validateSellOrderAvailableBalance(order: Order, pair: SymbolPair, transaction: Transaction): Promise<number> {
+export async function calculateTotalBaseAmountRequired(order: Order, pair: SymbolPair, transaction: Transaction): Promise<number> {
   const { maxDecimals: maxDecimalsForCurrency } = await findBoundaryForCurrency(pair.base.code)
 
   return feeTakenFromBase(pair)

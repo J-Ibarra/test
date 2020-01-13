@@ -1,9 +1,10 @@
 import Decimal from 'decimal.js'
 import { Transaction } from 'sequelize'
 
-// import { BalanceMovementFacade, SourceEventType } from '../../../../balances'
+import { createReserve } from '@abx-service-clients/balance'
+import { SourceEventType } from '@abx-types/balance'
 import { Logger } from '@abx/logging'
-import { Currency, SymbolPair } from '@abx-types/reference-data'
+import { SymbolPair } from '@abx-types/reference-data'
 import { Order } from '@abx-types/order'
 import { feeTakenFromBase, findBoundaryForCurrency } from '@abx-service-clients/reference-data'
 import { determineMaxBuyReserve } from '../../../../core'
@@ -11,18 +12,18 @@ import { determineMaxBuyReserve } from '../../../../core'
 const logger = Logger.getInstance('contract_exchange', 'allocateBuyOrderReserveBalance')
 
 export async function allocateBuyOrderReserveBalance(order: Order, pair: SymbolPair, transaction: Transaction): Promise<void> {
-  const amountToReserve = calculateTotalQuoteAmountRequired(order, pair)
+  const amountToReserve = await calculateTotalQuoteAmountRequired(order, pair)
 
   logger.debug(`Creating reserve of ${amountToReserve} ${pair.quote.code} for buyer ${order.accountId}`)
 
-  // return await balanceMovementFacade.createReserve({
-  //   currencyId: quoteCurrency.id,
-  //   accountId,
-  //   amount: reserve,
-  //   sourceEventId: orderId,
-  //   sourceEventType: 'order' as SourceEventType,
-  //   t: transaction,
-  // })
+  return createReserve({
+    currencyId: pair.quote.id,
+    accountId: order.accountId,
+    amount: amountToReserve,
+    sourceEventId: order.id!,
+    sourceEventType: 'order' as SourceEventType,
+    t: transaction,
+  })
 }
 
 export async function calculateTotalQuoteAmountRequired(order: Order, pair: SymbolPair): Promise<number> {

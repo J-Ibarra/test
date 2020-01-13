@@ -80,3 +80,29 @@ export let limitOrderMessage = {
     },
   },
 }
+
+export let cancelOrderMessage = {
+  type: 'object',
+  'x-persist-event': 'cancel order',
+  properties: {
+    orderId: {
+      type: 'number',
+      required: true,
+    },
+    cancellationReason: {
+      type: 'string',
+      required: false,
+    },
+  },
+}
+
+export let cancelAllOrdersForAccountMessage = {
+  type: 'object',
+  'x-persist-event': 'cancel order',
+  properties: {
+    accountId: {
+      type: 'string',
+      required: true,
+    },
+  },
+}

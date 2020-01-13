@@ -5,7 +5,7 @@ import { getMidPricesForSymbol } from '@abx-service-clients/market-data'
 import { MidPricesForSymbolRequest } from '@abx-types/market-data'
 import { CurrencyCode, SymbolPair, currencyScale } from '@abx-types/reference-data'
 import { getSymbolWithCurrencyPair } from '@abx-service-clients/reference-data'
-import { findLastOrderMatchForSymbol } from '../../transaction-queries'
+import { findLastOrderMatchForSymbol } from '../../transaction'
 
 /** Responsible for creating {@link TradeAccumulationStrategy} instances based on the currency pair. */
 export class TradeAccumulationStrategyFactory {

@@ -1,7 +1,6 @@
 import { every } from 'lodash'
 import { Transaction } from 'sequelize'
 import { sequelize, getModel, wrapInTransaction } from '@abx/db-connection-utils'
-import { getAllSymbolPairSummaries } from '@abx-service-clients/reference-data'
 import { AccountFeeTier } from '@abx-types/order'
 import { AccountFeeTierInstance } from '../../model/account_execution_fee'
 import { validateTiers } from './validation-utils'
@@ -24,15 +23,10 @@ export async function getAccountFeeTiersForSymbol(accountId: string, symbolId: s
   return instances.map(i => i.get())
 }
 
-export async function getAccountFeeTiersForAllSymbols(accountId: string, transaction: Transaction): Promise<AccountFeeTier[]> {
-  const symbols = await getAllSymbolPairSummaries(transaction)
-
+export async function getAccountFeeTiersForAllSymbols(accountId: string, transaction?: Transaction): Promise<AccountFeeTier[]> {
   const instances = await getModel<AccountFeeTierInstance>('accountExecutionFee').findAll({
     where: {
       accountId,
-      symbolId: {
-        $in: symbols.map(sym => sym.id),
-      },
     },
     order: [['tier', 'ASC']],
     transaction,
