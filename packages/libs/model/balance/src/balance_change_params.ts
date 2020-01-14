@@ -7,6 +7,6 @@ export interface BalanceChangeParams {
   currencyId: number
   accountId: string
   amount: number
-  t: Transaction
+  t?: Transaction
   initialReserve?: number
 }
