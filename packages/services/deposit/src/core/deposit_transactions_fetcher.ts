@@ -1,9 +1,9 @@
-import { Logger } from '../../config/logging'
+import { Logger } from '@abx/logging'
 import { CurrencyManager } from '@abx-query-libs/blockchain-currency-gateway'
 import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-data'
 import { FiatCurrency } from '@abx-types/reference-data'
 import { findCurrencyForId } from '@abx-service-clients/reference-data'
-import { DepositAddress, DepositRequest, DepositRequestStatus } from '../interfaces'
+import { DepositAddress, DepositRequest, DepositRequestStatus } from '../../interfaces'
 import { fetchTransactionsForDepositAddresses } from './transaction-fetching-strategies'
 
 const logger = Logger.getInstance('deposit_transactions_fetcher', 'getPotentialDepositRequests')

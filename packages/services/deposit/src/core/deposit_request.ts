@@ -4,7 +4,7 @@ import { getModel } from '../../db/abx_modules'
 import { CurrencyCode, CryptoCurrency, Currency } from '@abx-types/reference-data'
 import { findAllCurrencies, findCurrencyForCodes } from '@abx-service-clients/reference-data'
 import { getMinimumDepositAmountForCurrency } from '../framework/deposit_amount_validator'
-import { DepositAddress, DepositRequest, DepositRequestStatus } from '../interfaces'
+import { DepositAddress, DepositRequest, DepositRequestStatus } from '../../interfaces'
 
 export async function storeDepositRequests(deposits: DepositRequest[], transaction?: Transaction): Promise<DepositRequest[]> {
   const depositAddressIdToDepositAddress: Map<number, DepositAddress> = deposits.reduce(

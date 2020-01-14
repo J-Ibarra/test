@@ -6,7 +6,7 @@ import { CurrencyManager, OnChainCurrencyGateway } from '@abx-query-libs/blockch
 import sequelize, { getModel } from '../../db/abx_modules'
 import { ValidationError } from '@abx-types/error'
 import { findCryptoCurrencies, isFiatCurrency } from '@abx-service-clients/reference-data'
-import { DepositAddress } from '../interfaces'
+import { DepositAddress } from '../../interfaces'
 import { encryptValue } from '@abx-utils/encryption'
 
 const logger = Logger.getInstance('lib', 'deposit_address')

@@ -3,20 +3,14 @@ import { get } from 'lodash'
 import { Transaction } from 'sequelize'
 
 import { recordCustomEvent } from 'newrelic'
-import { getDepositFeeCurrencyId } from '..'
-import { findOrCreateKinesisRevenueAccount } from '@abx-types/account'
-import { findUserByAccountId } from '../../accounts/lib/users'
-import { BalanceMovementFacade } from '@abx-service-clients/balance'
+import { findOrCreateKinesisRevenueAccount, findUserByAccountId } from '@abx-service-clients/account'
 import { SourceEventType } from '@abx-types/balance'
-import { findBoundaryForCurrency } from '@abx-types/reference-data'
-import { EpicurusRequestChannel } from '../../commons'
-import { Logger } from '@abx-types/reference-data'
-import { getInstance } from '../../db/epicurus'
+import { findBoundaryForCurrency, findCurrencyForId, isFiatCurrency, getFiatCurrencySymbol } from '@abx-service-clients/reference-data'
+import { Logger } from '@abx/logging'
 import { Email, EmailTemplates } from '@abx-types/notification'
-import { CurrencyCode, findCurrencyForId, getCurrencyId, isFiatCurrency } from '@abx-types/reference-data'
-import { getFiatCurrencySymbol } from '../../symbols/lib/get_currency_symbol'
-import { createCurrencyTransaction, TransactionDirection } from '@abx-service-clients/order'
-import { DepositRequest, DepositRequestStatus } from '../interfaces'
+import { CurrencyCode } from '@abx-types/reference-data'
+import { createCurrencyTransaction } from '@abx-service-clients/order'
+import { DepositRequest, DepositRequestStatus } from '../../interfaces'
 import { findDepositAddressForId } from './deposit_address'
 import { updateDepositRequest } from './deposit_request'
 
@@ -47,9 +41,7 @@ export async function completePendingDeposit(request: DepositRequest, transactio
       transaction,
     ).then(depositCurrencyTransaction => {
       logger.debug(
-        `Completed Currency Transaction for deposit request ${confirmedRequest.id} of ${confirmedRequest.amount} at address: ${
-        confirmedRequest.depositAddress.publicKey
-        }`,
+        `Completed Currency Transaction for deposit request ${confirmedRequest.id} of ${confirmedRequest.amount} at address: ${confirmedRequest.depositAddress.publicKey}`,
       )
 
       return depositCurrencyTransaction
@@ -127,7 +119,7 @@ async function sendDepositConfirmEmail(accountId: string, amount: number, curren
   recordCustomEvent('event_crypto_deposit_completion_email', {
     toAccountId: accountId,
     amount,
-    currency: currencyCode
+    currency: currencyCode,
   })
 
   const epicurus = getInstance()

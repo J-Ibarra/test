@@ -1,10 +1,10 @@
 import Decimal from 'decimal.js'
 import util from 'util'
 import { TransactionRetrievalResult } from '.'
-import { CurrencyBoundary, CurrencyCode, FiatCurrency} from '@abx-types/reference-data'
-import { Logger } from '../../../config/logging'
+import { CurrencyBoundary, CurrencyCode, FiatCurrency } from '@abx-types/reference-data'
+import { Logger } from '@abx/logging'
 import { OnChainCurrencyGateway } from '@abx-query-libs/blockchain-currency-gateway'
-import { DepositAddress } from '../../interfaces'
+import { DepositAddress } from '@abx-types/deposit'
 import { getDepositMinimumForCurrency } from '../deposit_request'
 import { getDepositTransactionAndRecordLastSeenTransaction } from './new_transactions_retriever'
 
@@ -47,23 +47,14 @@ async function getNewTransactionForAddress(params: {
 
     if (balanceAtAddress > minimumForCurrency) {
       logger.debug(
-        `Balance for address: ${address} for currency: ${
-          currency.ticker
-        } is greater than the minimum (${minimumForCurrency}${
-          currency.ticker
-        }), proceeding with a deposit`,
+        `Balance for address: ${address} for currency: ${currency.ticker} is greater than the minimum (${minimumForCurrency}${currency.ticker}), proceeding with a deposit`,
       )
 
       const depositTransactions = await getDepositTransactionAndRecordLastSeenTransaction(
-        (onChainCurrency, lastSeenTxHash) =>
-          onChainCurrency.getDepositTransactions(address, lastSeenTxHash),
+        (onChainCurrency, lastSeenTxHash) => onChainCurrency.getDepositTransactions(address, lastSeenTxHash),
         currency,
       )
-      logger.debug(
-        `${
-          depositTransactions.length
-        } deposit transactions found for address ${address} and currency ${currency.ticker}`,
-      )
+      logger.debug(`${depositTransactions.length} deposit transactions found for address ${address} and currency ${currency.ticker}`)
 
       return {
         success: true,
@@ -76,18 +67,14 @@ async function getNewTransactionForAddress(params: {
               amount: truncatedAmount,
               depositTxHash: txHash,
               fiatCurrencyCode: FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION,
-              fiatConversion: new Decimal(truncatedAmount)
-                .times(fiatValueOfOneCryptoCurrency)
-                .toNumber(),
+              fiatConversion: new Decimal(truncatedAmount).times(fiatValueOfOneCryptoCurrency).toNumber(),
             }
           }),
         },
       }
     }
   } catch (error) {
-    logger.error(
-      `Error when getting deposit request for currency: ${currency.ticker} at address: ${address}`,
-    )
+    logger.error(`Error when getting deposit request for currency: ${currency.ticker} at address: ${address}`)
     logger.error(JSON.stringify(util.inspect(error)))
     return { success: false, payload: { depositAddress } }
   }
@@ -95,11 +82,7 @@ async function getNewTransactionForAddress(params: {
   return { success: true, payload: { depositAddress, depositTransactions: [] } }
 }
 
-function truncateAmountDecimal(
-  amount: number,
-  currencyCode: CurrencyCode,
-  currencyBoundary: CurrencyBoundary,
-) {
+function truncateAmountDecimal(amount: number, currencyCode: CurrencyCode, currencyBoundary: CurrencyBoundary) {
   if (currencyCode === CurrencyCode.ethereum) {
     return new Decimal(amount).toDP(currencyBoundary.maxDecimals, Decimal.ROUND_DOWN).toNumber()
   }
