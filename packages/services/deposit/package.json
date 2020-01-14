@@ -12,10 +12,9 @@
   "scripts": {
     "swagger-gen": "tsoa swagger",
     "routes-gen": "tsoa routes",
-    "api-build": "npm run swagger-gen && npm run routes-gen",
     "build": "npm run clean && npm run compile",
     "clean": "rm -rf ./dist",
-    "compile": "npm run clean && npm run api-build && tsc -p tsconfig.build.json --skipLibCheck",
+    "compile": "npm run clean && tsc -p tsconfig.build.json --skipLibCheck",
     "migrate-db": "npm run build && NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test NODE_PATH=dist node dist/migrations/index.js",
     "start-local": "tsoa routes && NODE_ENV=dev ts-node-dev src/index.ts > ../../../_logs/notes.logs",
     "test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_PATH=dist ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts src/**/*.spec.ts --exit",

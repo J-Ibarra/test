@@ -4,8 +4,7 @@ import { Logger } from '@abx/logging'
 import { sequelize, wrapInTransaction } from '@abx/db-connection-utils'
 import { ValidationError } from '@abx-types/error'
 import { AccountOrderCancellationRequest, CancelOrderRequest, Order, OrderStatus } from '@abx-types/order'
-import { findOrder, findOrders } from '../../../core'
-import { saveOrder } from './save_order'
+import { findOrder, findOrders, saveOrder } from '../../../core'
 import { addToQueue } from './add_to_queue'
 
 /** Defines the gateway used for placing order cancellations. */

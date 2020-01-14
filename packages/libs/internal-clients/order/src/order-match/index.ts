@@ -14,4 +14,10 @@ export function findOrderMatches(criteria: Partial<OrderMatch>): Promise<OrderMa
   return epicurus.request(OrderMatchEndpoints.findOrderMatch, { criteria })
 }
 
+export function settleOrderMatch(id: number, feeCurrencyToUsdMidPrice: number): Promise<void> {
+  const epicurus = getEpicurusInstance()
+
+  return epicurus.request(OrderMatchEndpoints.findOrderMatch, { id, feeCurrencyToUsdMidPrice })
+}
+
 export * from './endpoints'

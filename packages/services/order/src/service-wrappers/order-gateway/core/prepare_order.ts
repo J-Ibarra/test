@@ -2,8 +2,8 @@ import { Logger } from '@abx/logging'
 import { sequelize } from '@abx/db-connection-utils'
 import { getCompleteSymbolDetails } from '@abx-service-clients/reference-data'
 import { Order } from '@abx-types/order'
-import { saveOrder } from './save_order'
-import { allocateReserveBalance } from './reserve-balance-allocators'
+import { saveOrder } from '../../../core'
+import { allocateReserveBalance } from '../../../core/reserve-balance-allocators'
 
 const logger = Logger.getInstance('contract_exchange', 'prepareOrder')
 

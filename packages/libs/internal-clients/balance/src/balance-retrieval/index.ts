@@ -23,4 +23,14 @@ export function findRawBalances(currency: CurrencyCode, accountId: string): Prom
   return epicurus.request(BalanceRetrievalEndpoints.findRawBalances, { currency, accountId })
 }
 
+export function retrieveTotalOrderValueReceivedByAccount(accountId: string, currencyReceivedId: number, tradeTransactionId: number[]) {
+  const epicurus = getEpicurusInstance()
+  return epicurus.request(BalanceRetrievalEndpoints.findRawBalances, { accountId, currencyReceivedId, tradeTransactionId })
+}
+
+export function getBalanceAdjustmentForBalanceAndOrder(balanceId: number, orderId: number) {
+  const epicurus = getEpicurusInstance()
+  return epicurus.request(BalanceRetrievalEndpoints.findRawBalances, { balanceId, orderId })
+}
+
 export * from './endpoints'

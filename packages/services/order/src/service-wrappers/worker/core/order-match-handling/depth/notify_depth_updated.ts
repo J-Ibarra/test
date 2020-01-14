@@ -9,7 +9,7 @@ export const createDepthNotifier = (
   updatedDepth: Record<OrderDirection, Order[]>,
   topOfDepthUpdated: boolean,
 ) => {
-  const depth = state.depth
+  const depth = state.depth!
   if (depth.muted) {
     return
   }

@@ -6,7 +6,7 @@ import { Logger } from '@abx/logging'
 import { SymbolPair } from '@abx-types/reference-data'
 import { Order } from '@abx-types/order'
 import { findBoundaryForCurrency, feeTakenFromBase } from '@abx-service-clients/reference-data'
-import { determineMaxReserveForTradeValue } from '../../../../core'
+import { determineMaxReserveForTradeValue } from '..'
 
 const logger = Logger.getInstance('contract_exchange', 'allocateSellOrderReserveBalance')
 

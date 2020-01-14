@@ -12,6 +12,7 @@ export interface TradeTransaction {
   amount: number
   matchPrice: number
   fee: number
+  feeRate: number
   feeCurrencyId: number
   taxRate: number
   taxAmountCHF: number

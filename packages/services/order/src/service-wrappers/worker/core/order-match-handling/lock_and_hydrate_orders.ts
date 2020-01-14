@@ -3,9 +3,10 @@ import { Logger } from '@abx/logging'
 import { getCacheClient } from '@abx/db-connection-utils'
 import { getAllSymbolPairSummaries } from '@abx-service-clients/reference-data'
 import { Order, OrderStatus, OrderType } from '@abx-types/order'
-import { CancelOrderQueueRequest, OrderQueueRequest, PlaceOrderQueueRequest } from './interface'
+import { CancelOrderQueueRequest, OrderQueueRequest, PlaceOrderQueueRequest } from '@abx-types/order'
 import { addToQueue } from '../../../order-gateway/core/add_to_queue'
 import { findOrders } from '../../../../core'
+import { getDepthFromCache } from './depth/redis'
 
 const redisCacheGateway = getCacheClient()
 
@@ -49,9 +50,9 @@ async function getOrdersNotInOrderQueueOrDepth(statuses: OrderStatus[]): Promise
   return orders.reduce(
     (orderRequests, order) =>
       !orderIdsOfQueuedOrders.includes(order.id!) && !orderIdsOfDepthOrders.includes(order.id!)
-        ? orderRequests.concat(createOrderQueueRequestForOrder(order!))
+        ? orderRequests.concat(createOrderQueueRequestForOrder(order!) as any)
         : orderRequests,
-    [],
+    [] as (PlaceOrderQueueRequest | CancelOrderQueueRequest)[],
   )
 }
 
@@ -69,8 +70,8 @@ async function getOrdersNotInOrderQueue(statuses: OrderStatus[]): Promise<Array<
 
   return orders.reduce(
     (orderRequests, order) =>
-      !orderIdsOfQueuedOrders.includes(order.id!) ? orderRequests.concat(createOrderQueueRequestForOrder(order)) : orderRequests,
-    [],
+      !orderIdsOfQueuedOrders.includes(order.id!) ? orderRequests.concat(createOrderQueueRequestForOrder(order) as any) : orderRequests,
+    [] as Array<PlaceOrderQueueRequest | CancelOrderQueueRequest>,
   )
 }
 
@@ -80,25 +81,25 @@ async function getCurrentOrderIdsForQueuedOrders(): Promise<number[]> {
     symbols.map(({ id }) => redisCacheGateway.getList<OrderQueueRequest>(`exchange:orders:queue:${id}`)),
   )
 
-  return _.flatMap(orderQueueRequestsForAllSymbols, placeOrderRequests => placeOrderRequests.map(({ order }) => order.id))
+  return _.flatMap(orderQueueRequestsForAllSymbols, placeOrderRequests => placeOrderRequests.map(({ order }) => order.id!))
 }
 
 async function getCurrentOrderIdsForOrdersInDepth(): Promise<number[]> {
   const symbols = await getAllSymbolPairSummaries()
   const depthForSymbols = await Promise.all(symbols.map(({ id }) => getDepthFromCache(id)))
 
-  return _.flatMap(depthForSymbols, ({ buy, sell }) => buy.concat(sell).map(({ id }) => id))
+  return _.flatMap(depthForSymbols, ({ buy, sell }) => buy.concat(sell).map(({ id }) => id!))
 }
 
-function createOrderQueueRequestForOrder(order: Order) {
+function createOrderQueueRequestForOrder(order: Order): OrderQueueRequest | CancelOrderQueueRequest {
   return order.status === OrderStatus.pendingCancel
-    ? {
+    ? ({
         requestType: 'cancel',
         cancellationReason: 'pending cancelled order picked up after hydration',
         order,
-      }
-    : {
+      } as CancelOrderQueueRequest)
+    : ({
         requestType: 'place',
         order,
-      }
+      } as OrderQueueRequest)
 }

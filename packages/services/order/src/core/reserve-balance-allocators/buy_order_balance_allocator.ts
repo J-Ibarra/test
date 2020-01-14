@@ -7,12 +7,22 @@ import { Logger } from '@abx/logging'
 import { SymbolPair } from '@abx-types/reference-data'
 import { Order } from '@abx-types/order'
 import { feeTakenFromBase, findBoundaryForCurrency } from '@abx-service-clients/reference-data'
-import { determineMaxBuyReserve } from '../../../../core'
+import { determineMaxBuyReserve } from '..'
 
 const logger = Logger.getInstance('contract_exchange', 'allocateBuyOrderReserveBalance')
 
-export async function allocateBuyOrderReserveBalance(order: Order, pair: SymbolPair, transaction: Transaction): Promise<void> {
-  const amountToReserve = await calculateTotalQuoteAmountRequired(order, pair)
+export async function allocateBuyOrderReserveBalance({
+  order,
+  pair,
+  transaction,
+  precalculatedReservePrice,
+}: {
+  order: Order
+  pair: SymbolPair
+  transaction: Transaction
+  precalculatedReservePrice?: number
+}): Promise<void> {
+  const amountToReserve = precalculatedReservePrice || (await calculateTotalQuoteAmountRequired(order, pair))
 
   logger.debug(`Creating reserve of ${amountToReserve} ${pair.quote.code} for buyer ${order.accountId}`)
 

@@ -7,7 +7,7 @@ export interface DepthState {
   broadcast: {
     depthUpdated: (symbolId: string, direction: OrderDirection, updatedDepth: Record<OrderDirection, Order[]>, topOfDepthUpdated: boolean) => void
   }
-  command: {
+  command?: {
     resetExpiryTimer: () => void
   }
   muted?: boolean
