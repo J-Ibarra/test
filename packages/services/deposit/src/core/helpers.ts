@@ -1,9 +1,11 @@
-import Decimal from 'decimal.js'
-import { curry } from 'lodash'
-import { CurrencyBoundary } from '@abx-types/reference-data'
+import { CurrencyCode } from '@abx-types/reference-data'
+import { getCurrencyId } from '@abx-service-clients/reference-data'
 
-function truncateForBoundary(currencyBoundary: CurrencyBoundary, amount: number) {
-  return new Decimal(amount).toDP(currencyBoundary.maxDecimals, Decimal.ROUND_DOWN).toNumber()
+export async function getDepositFeeCurrencyId(currency: CurrencyCode) {
+  if (currency === CurrencyCode.kvt) {
+    return getCurrencyId(CurrencyCode.ethereum)
+  }
+
+  const feeCurrencyId = await getCurrencyId(currency)
+  return feeCurrencyId
 }
-
-export const truncateCurrencyDecimals = curry(truncateForBoundary)

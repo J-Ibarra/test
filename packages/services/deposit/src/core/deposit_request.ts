@@ -1,10 +1,10 @@
 import { flatMap } from 'lodash'
 import { Transaction } from 'sequelize'
-import { getModel } from '../../db/abx_modules'
+import { getModel } from '@abx/db-connection-utils'
 import { CurrencyCode, CryptoCurrency, Currency } from '@abx-types/reference-data'
-import { findAllCurrencies, findCurrencyForCodes } from '@abx-service-clients/reference-data'
-import { getMinimumDepositAmountForCurrency } from '../framework/deposit_amount_validator'
+import { findCurrencyForCodes } from '@abx-service-clients/reference-data'
 import { DepositAddress, DepositRequest, DepositRequestStatus } from '../../interfaces'
+import { getMinimumDepositAmountForCurrency } from './deposit_amount_validator'
 
 export async function storeDepositRequests(deposits: DepositRequest[], transaction?: Transaction): Promise<DepositRequest[]> {
   const depositAddressIdToDepositAddress: Map<number, DepositAddress> = deposits.reduce(
@@ -25,14 +25,14 @@ export async function storeDepositRequests(deposits: DepositRequest[], transacti
 
     return {
       ...persistedDepositRequest,
-      depositAddress: depositAddressIdToDepositAddress.get(persistedDepositRequest.depositAddressId),
+      depositAddress: depositAddressIdToDepositAddress.get(persistedDepositRequest.depositAddressId!)!,
     }
   })
 }
 
 export async function getAllDepositRequests(query: Partial<DepositRequest>, parentTransaction?: Transaction): Promise<DepositRequest[]> {
   const depositInstances = await getModel<DepositRequest>('depositRequest').findAll({
-    where: query,
+    where: query as any,
     include: [
       {
         model: getModel<DepositAddress>('depositAddress'),
@@ -45,7 +45,7 @@ export async function getAllDepositRequests(query: Partial<DepositRequest>, pare
 }
 
 export async function loadAllPendingDepositRequestsAboveMinimumAmount(): Promise<DepositRequest[]> {
-  const cryptoCurrencies = await findCurrencyForCodes(Object.values(CryptoCurrency))
+  const cryptoCurrencies = await findCurrencyForCodes(Object.values(CryptoCurrency) as any)
 
   const depositRequestsForAllCurrenciesPromise = cryptoCurrencies.map(cryptoCurrency =>
     getAllPendingDepositRequestsForCurrencyAboveMinimumAmount(cryptoCurrency),
@@ -82,7 +82,7 @@ export async function findMostRecentlyUpdatedDepositRequest(
   parentTransaction?: Transaction,
 ): Promise<DepositRequest | null> {
   const depositInstance = await getModel<DepositRequest>('depositRequest').findOne({
-    where,
+    where: where as any,
     include: [
       {
         model: getModel<DepositAddress>('depositAddress'),
@@ -132,11 +132,12 @@ export async function getDepositRequestsForAccount(accountId: string) {
   return requests.map(req => req.get())
 }
 
-export async function findDepositRequestById(id: number): Promise<DepositRequest> {
+export async function findDepositRequestById(id: number): Promise<DepositRequest | null> {
   const depositRequest = await getModel<DepositRequest>('depositRequest').findOne({
     where: { id },
     include: [getModel<DepositAddress>('depositAddress')],
   })
+
   return !!depositRequest ? depositRequest.get({ plain: true }) : null
 }
 

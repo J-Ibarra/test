@@ -13,33 +13,34 @@ import { createCurrencyTransaction } from '@abx-service-clients/order'
 import { DepositRequest, DepositRequestStatus } from '../../interfaces'
 import { findDepositAddressForId } from './deposit_address'
 import { updateDepositRequest } from './deposit_request'
-
+import { TransactionDirection } from '@abx-types/order'
+import { confirmPendingDeposit, confirmPendingWithdrawal } from '@abx-service-clients/balance'
+import { createEmail } from '@abx-service-clients/notification'
+import { ValidationError } from '@abx-types/error'
+import { getDepositFeeCurrencyId } from './helpers'
 const logger = Logger.getInstance('completePendingDeposit', 'deposits')
 
 export async function completePendingDeposit(request: DepositRequest, transaction: Transaction) {
   const confirmedRequest = request
   if (!request.depositAddress) {
-    const addressForDeposit = await findDepositAddressForId(request.depositAddressId)
+    const addressForDeposit = await findDepositAddressForId(request.depositAddressId!)
 
-    confirmedRequest.depositAddress = addressForDeposit
+    confirmedRequest.depositAddress = addressForDeposit!
   }
 
   const [, currencyTransaction] = await Promise.all([
-    updateDepositRequest(confirmedRequest.id, { status: DepositRequestStatus.completed }, transaction).then(() =>
+    updateDepositRequest(confirmedRequest.id!, { status: DepositRequestStatus.completed }, transaction).then(() =>
       logger.debug(
         `Confirmed Deposit Request ${confirmedRequest.id} for ${confirmedRequest.amount} at address: ${confirmedRequest.depositAddress.publicKey}`,
       ),
     ),
-    createCurrencyTransaction(
-      {
-        accountId: confirmedRequest.depositAddress.accountId,
-        amount: confirmedRequest.amount,
-        currencyId: confirmedRequest.depositAddress.currencyId,
-        direction: TransactionDirection.deposit,
-        requestId: confirmedRequest.id,
-      },
-      transaction,
-    ).then(depositCurrencyTransaction => {
+    createCurrencyTransaction({
+      accountId: confirmedRequest.depositAddress.accountId,
+      amount: confirmedRequest.amount,
+      currencyId: confirmedRequest.depositAddress.currencyId,
+      direction: TransactionDirection.deposit,
+      requestId: confirmedRequest.id!,
+    }).then(depositCurrencyTransaction => {
       logger.debug(
         `Completed Currency Transaction for deposit request ${confirmedRequest.id} of ${confirmedRequest.amount} at address: ${confirmedRequest.depositAddress.publicKey}`,
       )
@@ -48,17 +49,16 @@ export async function completePendingDeposit(request: DepositRequest, transactio
     }),
   ])
 
-  await BalanceMovementFacade.getInstance().confirmPendingDeposit({
+  await confirmPendingDeposit({
     accountId: currencyTransaction.accountId,
     amount: currencyTransaction.amount,
     currencyId: currencyTransaction.currencyId,
-    sourceEventId: currencyTransaction.id,
+    sourceEventId: currencyTransaction.id!,
     sourceEventType: SourceEventType.currencyDeposit,
-    t: transaction,
   })
 
   const { code: currencyCode } = await findCurrencyForId(confirmedRequest.depositAddress.currencyId)
-  await rebateOnChainFeeFromKinesisRevenueAccount(confirmedRequest, currencyCode, transaction)
+  await rebateOnChainFeeFromKinesisRevenueAccount(confirmedRequest, currencyCode)
 
   logger.debug(`Confirmed pending deposit in the Database for: ${confirmedRequest.amount} at address: ${confirmedRequest.depositAddress.publicKey}`)
 
@@ -69,20 +69,16 @@ export async function completePendingDeposit(request: DepositRequest, transactio
 
 const currencyToCoverOnChainFeeFor = [CurrencyCode.ethereum, CurrencyCode.kvt]
 
-async function rebateOnChainFeeFromKinesisRevenueAccount(confirmedRequest: DepositRequest, currencyCode: CurrencyCode, transaction: Transaction) {
+async function rebateOnChainFeeFromKinesisRevenueAccount(confirmedRequest: DepositRequest, currencyCode: CurrencyCode) {
   if (currencyToCoverOnChainFeeFor.includes(currencyCode)) {
-    const [kinesisRevenueAccount, currencyId] = await Promise.all([
-      findOrCreateKinesisRevenueAccount({ transaction }),
-      getDepositFeeCurrencyId(currencyCode),
-    ])
+    const [kinesisRevenueAccount, currencyId] = await Promise.all([findOrCreateKinesisRevenueAccount(), getDepositFeeCurrencyId(currencyCode)])
 
-    await BalanceMovementFacade.getInstance().confirmPendingWithdrawal({
+    await confirmPendingWithdrawal({
       accountId: kinesisRevenueAccount.id,
       amount: confirmedRequest.holdingsTxFee ? new Decimal(confirmedRequest.holdingsTxFee).toNumber() : 0,
       currencyId,
-      sourceEventId: confirmedRequest.id,
+      sourceEventId: confirmedRequest.id!,
       sourceEventType: SourceEventType.currencyDeposit,
-      t: transaction,
     })
   }
 }
@@ -93,6 +89,12 @@ async function sendDepositConfirmEmail(accountId: string, amount: number, curren
   }
 
   const user = await findUserByAccountId(accountId)
+
+  if (!user) {
+    logger.error(`Couldn't find user for account: ${accountId}`)
+    throw new ValidationError(`Couldn't find user for account: ${accountId}`)
+  }
+
   logger.debug(`Found user for account: ${accountId}`)
 
   const url = process.env.KMS_DOMAIN + '/login'
@@ -122,6 +124,5 @@ async function sendDepositConfirmEmail(accountId: string, amount: number, curren
     currency: currencyCode,
   })
 
-  const epicurus = getInstance()
-  await epicurus.request(EpicurusRequestChannel.createEmail, emailRequest)
+  await createEmail(emailRequest)
 }

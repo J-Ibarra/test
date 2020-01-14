@@ -1,13 +1,14 @@
 import { Transaction } from 'sequelize'
 import { getEnvironment, CurrencyCode } from '@abx-types/reference-data'
-import { Account, AccountStatus, AccountType } from '@abx-types/account'
-import { Logger } from '../../config/logging'
+import { Account, AccountStatus } from '@abx-types/account'
+import { Logger } from '@abx/logging'
 import { CurrencyManager, OnChainCurrencyGateway } from '@abx-query-libs/blockchain-currency-gateway'
-import sequelize, { getModel } from '../../db/abx_modules'
+import { getModel } from '@abx/db-connection-utils'
 import { ValidationError } from '@abx-types/error'
 import { findCryptoCurrencies, isFiatCurrency } from '@abx-service-clients/reference-data'
-import { DepositAddress } from '../../interfaces'
+import { DepositAddress } from '@abx-types/deposit'
 import { encryptValue } from '@abx-utils/encryption'
+import { groupBy } from 'lodash'
 
 const logger = Logger.getInstance('lib', 'deposit_address')
 
@@ -26,7 +27,7 @@ export async function generateNewDepositAddress(accountId: string, currency: OnC
 
 export async function findDepositAddresses(query: Partial<DepositAddress>, transaction?: Transaction) {
   const depositAddresses = await getModel<DepositAddress>('depositAddress').findAll({
-    where: query,
+    where: query as any,
     transaction,
   })
   return depositAddresses.map(address => address.get())
@@ -57,7 +58,7 @@ export async function findOrCreateDepositAddressesForAccount(accountId: string) 
 
   const existingDepositAddresses = await findDepositAddressesForAccount(accountId, true)
 
-  logger.debug(`Found existing deposit addresses for account: ${existingDepositAddresses.map(a => a.currency.code)}`)
+  logger.debug(`Found existing deposit addresses for currency: ${existingDepositAddresses.map(({ currencyId }) => currencyId).join(',')}`)
 
   const cryptoCurrencies = await findCryptoCurrencies()
 
@@ -115,20 +116,20 @@ export async function createMissingDepositAddressesForAccount(
   const cryptoCurrencies = await findCryptoCurrencies()
 
   logger.debug(`Crypto currencies ${cryptoCurrencies.join(', ')}`)
-  const manager = new CurrencyManager(getEnvironment(), cryptoCurrencies)
+  const manager = new CurrencyManager(
+    getEnvironment(),
+    cryptoCurrencies.map(({ code }) => code),
+  )
 
-  const existingCurrencies = existingDepositAddresses.map(({ currency }) => currency.code)
-  logger.debug(`Existing currencies ${existingCurrencies.join(', ')}`)
+  const currencyIdToDepositAddress = groupBy(existingDepositAddresses, 'currencyId')
 
-  const cryptoCurrenciesToGenerateAddressFor = cryptoCurrencies.filter((currency: CurrencyCode) => {
-    return !existingCurrencies.includes(currency)
-  })
+  const cryptoCurrenciesToGenerateAddressFor = cryptoCurrencies.filter(({ id }) => (currencyIdToDepositAddress[id] || []).length === 0)
 
   logger.debug(`Currencies to generate: ${cryptoCurrenciesToGenerateAddressFor.join(', ')}`)
 
   return Promise.all(
-    cryptoCurrenciesToGenerateAddressFor.map((currency: CurrencyCode) => {
-      return createNewDepositAddress(manager, accountId, currency)
+    cryptoCurrenciesToGenerateAddressFor.map(({ code }) => {
+      return createNewDepositAddress(manager, accountId, code)
     }),
   )
 }

@@ -1,7 +1,7 @@
 import Decimal from 'decimal.js'
 import util from 'util'
 import { TransactionRetrievalResult } from '.'
-import { CurrencyBoundary, CurrencyCode, FiatCurrency } from '@abx-types/reference-data'
+import { FiatCurrency } from '@abx-types/reference-data'
 import { Logger } from '@abx/logging'
 import { OnChainCurrencyGateway } from '@abx-query-libs/blockchain-currency-gateway'
 import { DepositAddress } from '@abx-types/deposit'
@@ -43,7 +43,7 @@ async function getNewTransactionForAddress(params: {
 
   try {
     const balanceAtAddress = await currency.balanceAt(address)
-    const minimumForCurrency = getDepositMinimumForCurrency(currency.ticker)
+    const minimumForCurrency = getDepositMinimumForCurrency(currency.ticker!)
 
     if (balanceAtAddress > minimumForCurrency) {
       logger.debug(
@@ -80,12 +80,4 @@ async function getNewTransactionForAddress(params: {
   }
 
   return { success: true, payload: { depositAddress, depositTransactions: [] } }
-}
-
-function truncateAmountDecimal(amount: number, currencyCode: CurrencyCode, currencyBoundary: CurrencyBoundary) {
-  if (currencyCode === CurrencyCode.ethereum) {
-    return new Decimal(amount).toDP(currencyBoundary.maxDecimals, Decimal.ROUND_DOWN).toNumber()
-  }
-
-  return amount
 }

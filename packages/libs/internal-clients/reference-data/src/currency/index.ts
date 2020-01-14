@@ -9,10 +9,10 @@ export async function findAllCurrencyCodes(): Promise<CurrencyCode[]> {
   return currencies.map(({ code }) => code)
 }
 
-export async function findCryptoCurrencies() {
+export async function findCryptoCurrencies(): Promise<Currency[]> {
   const allCurrencies = await findAllCurrencies()
 
-  return allCurrencies.filter(({ code }) => isCryptoCurrency(code)).map(currency => currency.code)
+  return allCurrencies.filter(({ code }) => isCryptoCurrency(code))
 }
 
 export async function findCurrencyForCodes(currencyCodes: CurrencyCode[]): Promise<Currency[]> {

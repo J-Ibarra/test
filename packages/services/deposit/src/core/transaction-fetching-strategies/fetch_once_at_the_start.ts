@@ -4,7 +4,7 @@ import { TransactionRetrievalResult } from '.'
 import { Logger } from '@abx/logging'
 import { DepositTransaction, DepositTransactionWithFiatConversion, OnChainCurrencyGateway } from '@abx-query-libs/blockchain-currency-gateway'
 import { FiatCurrency } from '@abx-types/reference-data'
-import { DepositAddress } from '../../../interfaces'
+import { DepositAddress } from '@abx-types/deposit'
 import { getDepositTransactionAndRecordLastSeenTransaction } from './new_transactions_retriever'
 
 const logger = Logger.getInstance('fetch_once_at_the_start', 'fetchTransactionsForEachDepositAddress')

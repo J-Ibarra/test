@@ -1,7 +1,6 @@
-import { findBoundaryForCurrency } from '@abx-service-clients/reference-data'
+import { findBoundaryForCurrency, truncateCurrencyDecimals } from '@abx-service-clients/reference-data'
 import { CurrencyManager, DepositTransactionWithFiatConversion } from '@abx-query-libs/blockchain-currency-gateway'
 import { DepositAddress } from '../../../interfaces'
-import { truncateCurrencyDecimals } from '../helpers'
 import { fetchTransactionsForEachDepositAddress } from './fetch_for_each_address'
 
 export interface TransactionRetrievalResult {
@@ -29,6 +28,10 @@ export async function fetchTransactionsForDepositAddresses(
     currency,
     depositAddresses,
     fiatValueOfOneCryptoCurrency,
-    truncateToCurrencyDP,
+    truncateToCurrencyDP: truncateToCurrencyDP as any,
   })
 }
+
+export * from './fetch_for_each_address'
+export * from './fetch_once_at_the_start'
+export * from './new_transactions_retriever'

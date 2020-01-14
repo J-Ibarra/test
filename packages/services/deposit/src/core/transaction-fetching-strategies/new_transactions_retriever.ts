@@ -1,4 +1,4 @@
-import { Logger } from '../../../config/logging'
+import { Logger } from '@abx/logging'
 import { DepositTransaction, OnChainCurrencyGateway } from '@abx-query-libs/blockchain-currency-gateway'
 import * as LastDepositHashRecorder from '../../framework/deposit_hash_recorder/last_deposit_hash_recorder'
 
