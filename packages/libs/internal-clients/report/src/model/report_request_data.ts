@@ -1,7 +1,7 @@
-import { OrderMatchData } from './order_match_data'
 import { ReportType } from './enum/report_type'
+import { ReportData } from './report_data'
 
-export interface ReportRequestData {
-    reportType: ReportType
-    orderMatchData?: OrderMatchData
-  }
+export interface ReportRequest {
+  reportType: ReportType
+  data: ReportData
+}

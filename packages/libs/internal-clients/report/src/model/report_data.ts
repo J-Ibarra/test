@@ -1,7 +1,9 @@
 import { TradeTransactionReportData } from './transaction/trade_transaction_report_data'
 
+export type ReportDataContent = TradeTransactionReportData
+
 export interface ReportData {
-    data: TradeTransactionReportData
-    identifier: number
-    accountId: string
-  }
+  content: ReportDataContent
+  identifier: number
+  accountId: string
+}

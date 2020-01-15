@@ -1,32 +1,18 @@
-import {findAccountById} from '../../../accounts'
-import { Logger } from '../../../config/logging'
-import sequelize from '../../../db/abx_modules'
-import { wrapInTransaction } from '../../../db/transaction_wrapper'
-import { ValidationError } from '../../../errors'
-import { findTradeTransaction } from '../../../transactions'
-import { TradeTransactionInvoiceUrl } from '../../interfaces'
+import { findAccountById } from '@abx-service-clients/account'
+import { Logger } from '@abx/logging'
+import { ValidationError } from '@abx-types/error'
+import { findTradeTransaction } from '@abx-service-clients/order'
+import { TradeTransactionInvoiceUrl } from '@abx-service-clients/report'
 import { generatePreSignedUrlForTradeTransactionReport } from './s3_presigned_url'
 
 const logger = Logger.getInstance('trade transaction report', 'getTradeTransactionInvoicePreSignedUrl')
 
 export async function getTradeTransactionInvoicePreSignedUrl(userAccountId: string, transactionId: number): Promise<TradeTransactionInvoiceUrl> {
-  const { accountId: accountIdInTransaction } = await wrapInTransaction(sequelize, null, async (t) => {
-    const tradeTransaction = await findTradeTransaction({
-      where: {
-        id: transactionId
-      },
-      transaction: t,
-    })
-
-    return tradeTransaction
-  })
+  const { accountId: accountIdInTransaction } = await findTradeTransaction({ id: transactionId })
   logger.debug(`Fetched account id ${accountIdInTransaction} for validating permission to view report`)
 
   if (accountIdInTransaction !== userAccountId) {
-    throw new ValidationError(
-      'You are not authorized to access the trade transaction invoice.',
-      { status: 401 }
-    )
+    throw new ValidationError('You are not authorized to access the trade transaction invoice.', { status: 401 })
   }
   const account = await findAccountById(userAccountId)
 

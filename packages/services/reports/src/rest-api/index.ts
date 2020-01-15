@@ -7,12 +7,12 @@ import { Logger } from '@abx/logging'
 import { auditMiddleware, configureCORS, RateLimiter, maintenanceMiddleware, overloadRequestWithSessionInfo } from '@abx/express-middleware'
 import { RegisterRoutes } from './routes'
 
-import './balances_controller'
+import './report_controller'
 import { OverloadedRequest } from '@abx-types/account'
 
 const logger = Logger.getInstance('api', 'bootstrapRestApi')
 
-export const REPORT_REST_API_PORT = 3106
+export const REPORT_REST_API_PORT = 3107
 
 export function bootstrapRestApi() {
   const app = express()
@@ -32,7 +32,7 @@ export function bootstrapRestApi() {
   configureCORS(app)
 
   if (process.env.NODE_ENV !== 'test') {
-    logger.debug(`Starting server on port ${REPORT_REST_API_PORT}...`)
+    logger.debug(`Starting reports server on port ${REPORT_REST_API_PORT}...`)
 
     configureApiRateLimiting = new RateLimiter().configureForApp(app).then(() => logger.debug('API rate limiting configured.'))
   }

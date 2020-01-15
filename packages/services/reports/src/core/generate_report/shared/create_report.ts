@@ -1,22 +1,18 @@
-const jsreport = require('jsreport')
+import jsreport from 'jsreport'
 
-import { Logger } from '../../../../config/logging'
-import { EmailAttachment, EmailAttachmentType } from '../../../../notification/interfaces'
-import { ReportEngine, ReportRecipe, ReportRequestData } from '../../../interfaces'
-import { generateReportData } from './report_helpers'
+import { Logger } from '@abx/logging'
+import { EmailAttachment, EmailAttachmentType } from '@abx-types/notification'
+import { ReportEngine, ReportRecipe } from '@abx-service-clients/report'
 import { getTemplateFromS3, uploadReportToS3 } from './s3_helpers'
-
+import { ReportRequest } from '@abx-service-clients/report'
 
 const logger = Logger.getInstance('lib', 'createReportAndUploadToS3')
 
-export async function createReportAndUploadToS3(
-  request: ReportRequestData,
-): Promise<EmailAttachment[]> {
+export async function createReportAndUploadToS3({ reportType, data }: ReportRequest): Promise<EmailAttachment[]> {
   try {
-    const { data, identifier, accountId } = await generateReportData(request)
-    logger.debug(`Generated report data for ${request.reportType}`)
-    const template = await getTemplateFromS3(request.reportType)
-    logger.debug(`Fetched report template for ${request.reportType}`)
+    logger.debug(`Generated report data for ${reportType}`)
+    const template = await getTemplateFromS3(reportType)
+    logger.debug(`Fetched report template for ${reportType}`)
 
     const renderedReport = await jsreport.render({
       template: {
@@ -34,25 +30,27 @@ export async function createReportAndUploadToS3(
               <span style="display:block;"> {{footer.email}}</span>
             </div>
           </div>
-          <div style="clear: both; display: block; width: 100%; text-align: center; font-size: 9px;">Page {#pageNum}/{#numPages}</div>`
-        }
+          <div style="clear: both; display: block; width: 100%; text-align: center; font-size: 9px;">Page {#pageNum}/{#numPages}</div>`,
+        },
       },
-      data
+      data: data.content,
     })
 
     const { name } = await uploadReportToS3({
       reportBuffer: renderedReport.content,
-      identifier,
-      reportType: request.reportType,
-      accountHin: data.account.hin,
-      accountId
+      identifier: data.identifier,
+      accountHin: data.content.account.hin,
+      accountId: data.accountId,
+      reportType,
     })
 
-    const emailAttachment = [{
-      name,
-      content: renderedReport.content.toString('base64'),
-      type: EmailAttachmentType.pdf,
-    }]
+    const emailAttachment = [
+      {
+        name,
+        content: renderedReport.content.toString('base64'),
+        type: EmailAttachmentType.pdf,
+      },
+    ]
 
     return emailAttachment
   } catch (err) {

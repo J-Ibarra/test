@@ -1,14 +1,11 @@
 import Decimal from 'decimal.js'
 import * as moment from 'moment'
-import { findAccountById } from '../../../../accounts'
-import { findBoundaryForCurrency } from '../../../../boundaries'
-import { Logger } from '../../../../config/logging'
-import { formatCurrencyValue } from '../../../../currencies/lib/helpers'
-import sequelize from '../../../../db/abx_modules'
-import { wrapInTransaction } from '../../../../db/transaction_wrapper'
-import { OrderDirection } from '../../../../orders/interface'
-import { CurrencyCode, getCurrencyCode } from '../../../../symbols'
-import { OrderMatchData, ReportData } from '../../../interfaces'
+import { findAccountById } from '@abx-service-clients/account'
+import { findBoundaryForCurrency, getCurrencyCode, formatCurrencyValue, getBoundariesForCurrencies } from '@abx-service-clients/reference-data'
+import { Logger } from '@abx/logging'
+import { OrderDirection } from '@abx-types/order'
+import { CurrencyCode } from '@abx-types/reference-data'
+import { OrderMatchData, ReportData } from '@abx-service-clients/report'
 import { findTradeTransactionFromOrderMatch } from './trade_transaction_report_helpers'
 
 const logger = Logger.getInstance('trade transaction report', 'generate report data for rendering')
@@ -23,25 +20,17 @@ export async function generateTradeTransactionReportData(orderMatchData: OrderMa
     direction,
   })
 
-  const { hin, feeCurrency } = await wrapInTransaction(sequelize, null, async t => {
-    const { hin: accountHin } = await findAccountById(accountId, t)
-    const currency = await getCurrencyCode(feeCurrencyId)
+  const { hin: accountHin } = await findAccountById(accountId)
+  const feeCurrency = await getCurrencyCode(feeCurrencyId)
 
-    return {
-      hin: accountHin,
-      feeCurrency: currency,
-    }
-  })
-
-  const formattedFee = await truncateFees(fee, feeCurrency)
-
-  logger.debug(`Fetched client data: ${hin}`)
+  const formattedFee = await truncateFees(fee, feeCurrency!)
+  logger.debug(`Fetched client data: ${accountHin!}`)
 
   const STATIC_RESOURCES = 'https://s3-ap-southeast-2.amazonaws.com/kbe-report-templates/static-resources'
   const isBuying: boolean = direction === OrderDirection.buy
   const feeCurrencyIsBase: boolean = feeCurrency === baseCurrency
 
-  const { totalPaid, totalReceived } = determineTotalCurrencyValues({
+  const { paidCurrencyCode, totalPaid, totalReceived } = determineTotalCurrencyValues({
     amount,
     feeCurrencyIsBase,
     fee: formattedFee,
@@ -51,6 +40,12 @@ export async function generateTradeTransactionReportData(orderMatchData: OrderMa
     isBuying,
   })
 
+  const [quoteCurrencyBoundary, feeCurrencyBoundary, paidCurrencyBoundary] = await getBoundariesForCurrencies([
+    quoteCurrency,
+    feeCurrency!,
+    paidCurrencyCode,
+  ])
+
   const feePercent: number = new Decimal(fee)
     .div(feeCurrencyIsBase ? amount : consideration)
     .mul(100)
@@ -58,10 +53,10 @@ export async function generateTradeTransactionReportData(orderMatchData: OrderMa
     .toNumber()
 
   const data: ReportData = {
-    data: {
+    content: {
       $staticResources: `${STATIC_RESOURCES}/css`,
       account: {
-        hin,
+        hin: accountHin!,
         companyRegistrationId: '', // in SF??? not saved
         fullAddress: 'Account address', // in SF??? not saved
       },
@@ -69,45 +64,47 @@ export async function generateTradeTransactionReportData(orderMatchData: OrderMa
         direction: direction.toUpperCase(),
         tradingParty: isBuying ? 'Buyer' : 'Seller',
         orderId,
-        tradeTransactionId,
+        tradeTransactionId: tradeTransactionId!,
         utcTime: moment.utc(date).format('YYYY-MM-DD hh:mm'),
         baseCurrency,
         quoteCurrency,
         amount,
-        matchPrice: await formatCurrencyValue(
-          {
+        matchPrice: await formatCurrencyValue({
+          value: {
             currencyCode: quoteCurrency,
             value: matchPrice,
           },
-          true,
-        ),
-        consideration: await formatCurrencyValue(
-          {
+          boundary: quoteCurrencyBoundary,
+        }),
+        consideration: await formatCurrencyValue({
+          value: {
             currencyCode: quoteCurrency,
-            value: consideration,
+            value: consideration!,
           },
-          true,
-        ),
-        totalPaid: await formatCurrencyValue(totalPaid, true),
-        totalReceived: await formatCurrencyValue(totalReceived, true),
+          boundary: quoteCurrencyBoundary,
+          appendCurrencyCode: true,
+        }),
+        totalPaid: await formatCurrencyValue({ value: totalPaid, boundary: paidCurrencyBoundary, appendCurrencyCode: true }),
+        totalReceived: await formatCurrencyValue({ value: totalReceived, boundary: paidCurrencyBoundary, appendCurrencyCode: true }),
       },
       transactionFee: {
-        fee: await formatCurrencyValue(
-          {
-            currencyCode: feeCurrency,
+        fee: await formatCurrencyValue({
+          value: {
+            currencyCode: feeCurrency!,
             value: formattedFee,
           },
-          true,
-        ),
+          boundary: feeCurrencyBoundary,
+          appendCurrencyCode: true,
+        }),
         feePercent,
-        feeCurrency,
+        feeCurrency: feeCurrency!,
       },
       footer: {
         imgSrc: `${STATIC_RESOURCES}/images/Kinesis_logo.png`,
         email: 'info@kinesis.money',
       },
     },
-    identifier: tradeTransactionId,
+    identifier: tradeTransactionId!,
     accountId,
   }
 
@@ -121,6 +118,7 @@ function determineTotalCurrencyValues({ feeCurrencyIsBase, baseCurrency, quoteCu
 
   if (feeCurrencyIsBase) {
     return {
+      paidCurrencyCode,
       totalPaid: {
         currencyCode: paidCurrencyCode,
         value: isBuying ? finalMatchPrice.toNumber() : amount + fee,
@@ -132,6 +130,7 @@ function determineTotalCurrencyValues({ feeCurrencyIsBase, baseCurrency, quoteCu
     }
   } else {
     return {
+      paidCurrencyCode,
       totalPaid: {
         currencyCode: paidCurrencyCode,
         value: isBuying ? finalMatchPrice.plus(fee).toNumber() : amount,

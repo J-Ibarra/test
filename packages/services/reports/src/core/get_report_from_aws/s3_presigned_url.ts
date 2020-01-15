@@ -1,6 +1,7 @@
-import { Logger } from '../../../config/logging'
-import { ReportType, S3SignedUrlParams, TradeTransactionInvoiceUrl } from '../../interfaces'
+import { Logger } from '@abx/logging'
+import { ReportType, S3SignedUrlParams, TradeTransactionInvoiceUrl } from '@abx-service-clients/report'
 import { createSignedUrl } from '../generate_report/shared/s3_helpers'
+
 const logger = Logger.getInstance('reports', 's3_presigned_url')
 
 export async function generatePreSignedUrlForTradeTransactionReport(transactionId: number, accountHin: string): Promise<TradeTransactionInvoiceUrl> {
@@ -11,10 +12,9 @@ export async function generatePreSignedUrlForTradeTransactionReport(transactionI
   }
 
   return createSignedUrl(params)
-    .then((url) => ({ url }))
-    .catch((e) => {
+    .then(url => ({ url }))
+    .catch(e => {
       logger.error(`error with signed url: ${e}`)
       return { url: '' }
     })
 }
-

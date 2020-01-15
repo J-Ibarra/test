@@ -1,20 +1,10 @@
 import { FindOptions, Transaction } from 'sequelize'
-import sequelize, { getModel } from '../../../db/abx_modules'
-import { wrapInTransaction } from '../../../db/transaction_wrapper'
-import { StoredReport } from '../../interfaces'
+import { wrapInTransaction, getModel, sequelize } from '@abx/db-connection-utils'
+import { StoredReport } from '@abx-service-clients/report'
 
-export async function storeReport({
-  accountId,
-  reportType,
-  s3Key
-}: StoredReport,
-  transaction?: Transaction
-): Promise<StoredReport> {
-  return wrapInTransaction(sequelize, transaction, async (t) => {
-    const storedReportInstance = await getModel<StoredReport>('storedReport').create(
-      { accountId, reportType, s3Key },
-      { transaction: t }
-    )
+export async function storeReport({ accountId, reportType, s3Key }: StoredReport, transaction?: Transaction): Promise<StoredReport> {
+  return wrapInTransaction(sequelize, transaction, async t => {
+    const storedReportInstance = await getModel<StoredReport>('storedReport').create({ accountId, reportType, s3Key }, { transaction: t })
 
     return storedReportInstance.get()
   })

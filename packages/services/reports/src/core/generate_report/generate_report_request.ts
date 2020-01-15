@@ -1,6 +1,6 @@
 import { EmailAttachment } from '@abx-types/notification'
-import { ReportRequestData, generateReport } from '@abx-service-clients/report'
+import { generateReport, ReportRequest } from '@abx-service-clients/report'
 
-export function generateReportRequest(reportRequest: ReportRequestData): Promise<EmailAttachment[]> {
+export function generateReportRequest(reportRequest: ReportRequest): Promise<EmailAttachment[]> {
   return generateReport(reportRequest)
 }

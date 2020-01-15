@@ -1,8 +1,7 @@
 import * as AWS from 'aws-sdk'
 
-import { getAwsRegionForEnvironment } from '../../../../../config'
-import { Environment } from '../../../../../interfaces'
-import { ReportType, S3SignedUrlParams, UploadFileToS3Success } from '../../../interfaces'
+import { getAwsRegionForEnvironment, Environment } from '@abx-types/reference-data'
+import { ReportType, S3SignedUrlParams, UploadFileToS3Success } from '@abx-service-clients/report'
 import { storeReport } from '../../stored_reports/store_reports'
 
 const s3 = new AWS.S3({
@@ -59,7 +58,7 @@ export async function getTemplateFromS3(template: ReportType): Promise<string> {
 
   try {
     const { Body } = await s3.getObject(params).promise()
-    return Body.toString()
+    return (Body as Buffer).toString()
   } catch (err) {
     return err.message
   }
@@ -104,10 +103,10 @@ export async function deleteObjectsFromBucket(bucket: string) {
   })
 
   await Promise.all(
-    objectList.Contents.map(object => {
+    objectList.Contents!.map(object => {
       return deleteObject({
         Bucket: bucket,
-        Key: object.Key,
+        Key: object.Key!,
       })
     }),
   )
