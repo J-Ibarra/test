@@ -7,7 +7,7 @@ import { BalanceRepository } from '../..'
 
 const currencyId = 1
 
-describe('BalanceRepository', () => {
+describe.skip('BalanceRepository', () => {
   const balanceRepository = BalanceRepository.getInstance()
   let accountId
 
