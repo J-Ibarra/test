@@ -1,4 +1,4 @@
-import { CryptoCurrency, CurrencyCode, FiatCurrencies, FiatCurrency, SymbolPair, CurrencyBoundary } from '@abx-types/reference-data'
+import { CryptoCurrency, CurrencyCode, FiatCurrencies, FiatCurrency, SymbolPair, CurrencyBoundary, FiatSymbol } from '@abx-types/reference-data'
 import { findBoundaryForCurrency } from './boundaries'
 import Decimal from 'decimal.js'
 import { curry } from 'lodash'
@@ -13,6 +13,16 @@ export function isCryptoCurrency(ticker: CurrencyCode) {
 
 export function feeTakenFromBase({ base, fee }: SymbolPair) {
   return base.id === fee.id
+}
+
+export function getFiatCurrencySymbol(currencyCode: CurrencyCode) {
+  if (currencyCode === CurrencyCode.usd) {
+    return FiatSymbol.usd
+  } else if (currencyCode === CurrencyCode.euro) {
+    return FiatSymbol.euro
+  }
+
+  return ''
 }
 
 interface CurrencyValue {

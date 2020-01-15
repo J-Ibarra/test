@@ -1,11 +1,17 @@
 import { getEpicurusInstance } from '@abx/db-connection-utils'
 import { AccountEndpoints } from './endpoints'
-import { User } from '@abx-types/account'
+import { User, Account } from '@abx-types/account'
 
 export function findAccountById(accountId: string) {
   const epicurus = getEpicurusInstance()
 
   return epicurus.request(AccountEndpoints.findAccountById, { accountId })
+}
+
+export function findAccountWithUserDetails(criteria: Partial<Account>): Promise<Account | null> {
+  const epicurus = getEpicurusInstance()
+
+  return epicurus.request(AccountEndpoints.findUserByAccountId, { ...criteria })
 }
 
 export function findAccountsByIdWithUserDetails(accountIds: string[]) {
@@ -36,6 +42,12 @@ export function findOrCreateKinesisRevenueAccount(): Promise<Account> {
   const epicurus = getEpicurusInstance()
 
   return epicurus.request(AccountEndpoints.findOrCreateKinesisRevenueAccount, {})
+}
+
+export function findOrCreateOperatorAccount() {
+  const epicurus = getEpicurusInstance()
+
+  return epicurus.request(AccountEndpoints.findOrCreateOperatorAccount, {})
 }
 
 export * from './endpoints'

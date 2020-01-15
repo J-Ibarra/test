@@ -1,4 +1,4 @@
-import { CurrencyBoundary, CurrencyCode } from '@abx-types/reference-data'
+import { CurrencyBoundary, CurrencyCode, SymbolBoundaries } from '@abx-types/reference-data'
 import { getEpicurusInstance } from '@abx/db-connection-utils'
 import { BoundaryEndpoints } from './endpoints'
 
@@ -11,6 +11,13 @@ export async function getAllCurrencyBoundaries(): Promise<Record<CurrencyCode, C
   const epicurus = getEpicurusInstance()
 
   return epicurus.request(BoundaryEndpoints.getAllCurrencyBoundaries, {})
+}
+
+export async function getSymbolBoundaries(symbolId: string): Promise<SymbolBoundaries> {
+  const epicurus = getEpicurusInstance()
+  const [base, quote] = symbolId.split('_')
+
+  return epicurus.request(BoundaryEndpoints.getBoundariesForCurrencies, { base, quote })
 }
 
 export * from './endpoints'

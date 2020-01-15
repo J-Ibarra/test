@@ -10,6 +10,7 @@ import { EnrichedInitialisationParams, WithdrawalRequest, WithdrawalRequestType 
 
 import { createWithdrawalRequest } from '../../common/create_withdrawal_request'
 import { findCurrencyForCode } from '@abx-service-clients/reference-data'
+import { convertAmountToFiatCurrency } from '@abx-utils/fx-rate'
 
 const preferredCurrencyCode = FiatCurrency.usd
 
@@ -78,7 +79,7 @@ async function calculateConversionRates({
 }): Promise<{ totalAmount: number; fiatConversion: string; kauConversion: string }> {
   const totalAmount = addFee ? await getTotalWithdrawalAmount(amount, currencyCode, fee) : amount
   const [fiatConversion, kauConversion] = await Promise.all([
-    helper.convertAmountToFiatCurrency(currencyCode, preferredCurrencyCode, totalAmount),
+    convertAmountToFiatCurrency(currencyCode, preferredCurrencyCode, totalAmount),
     helper.kauConversion(currencyCode, amount),
   ])
 

@@ -1,30 +1,10 @@
 import Decimal from 'decimal.js'
 import { findAdminRequest } from '@abx-service-clients/admin-fund-management'
-import {
-  findBoundaryForCurrency,
-  getAllSymbolsIncludingCurrency,
-  truncateCurrencyValue,
-  truncateCurrencyDecimals,
-} from '@abx-service-clients/reference-data'
-import { KINESIS_BASE_NETWORK_FEE, KINESIS_ON_CHAIN_TRANSACTION_FEE, CurrencyCode, FiatCurrency } from '@abx-types/reference-data'
+import { findBoundaryForCurrency, truncateCurrencyValue, truncateCurrencyDecimals } from '@abx-service-clients/reference-data'
+import { KINESIS_BASE_NETWORK_FEE, KINESIS_ON_CHAIN_TRANSACTION_FEE, CurrencyCode } from '@abx-types/reference-data'
 import { getWithdrawalConfigForCurrency } from '@abx-service-clients/reference-data'
 import { SupportedFxPair } from '@abx-types/order'
-import { getQuoteFor } from '@abx-utils/fx-rate'
-import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-data'
-
-export async function convertAmountToFiatCurrency(currencyCode: CurrencyCode, fiatCurrencyCode: FiatCurrency, amount: number) {
-  if (currencyCode === fiatCurrencyCode.toString()) {
-    return truncateCurrencyValue({ currencyCode: fiatCurrencyCode as any, value: amount })
-  }
-
-  if (currencyCode === CurrencyCode.euro) {
-    const usdForOneEur = await getQuoteFor(SupportedFxPair.EUR_USD)
-    const convertedValue = new Decimal(amount).times(usdForOneEur).toNumber()
-    return truncateCurrencyValue({ currencyCode: fiatCurrencyCode as any, value: convertedValue })
-  } else {
-    return convertAndTruncateCurrencyValue(new Decimal(amount), currencyCode, fiatCurrencyCode as any)
-  }
-}
+import { getQuoteFor, convertAndTruncateCurrencyValue } from '@abx-utils/fx-rate'
 
 /**
  * Convert the amount to equivalent KAU value
@@ -99,22 +79,4 @@ export async function getWithdrawalFee(
     withdrawalFee: truncateToCurrencyDP(withdrawalFee),
     feeCurrencyCode,
   }
-}
-
-export async function convertAndTruncateCurrencyValue(
-  tradeAmount: Decimal,
-  tradeCurrencyCode: CurrencyCode,
-  toCurrencyCode: CurrencyCode,
-): Promise<string> {
-  const allSymbols = await getAllSymbolsIncludingCurrency(tradeCurrencyCode)
-  const targetSymbol = allSymbols.find(symbol => symbol.base.code === toCurrencyCode || symbol.quote.code === toCurrencyCode)
-  if (!targetSymbol) {
-    return '0'
-  }
-  const midPrice = (await calculateRealTimeMidPriceForSymbol(targetSymbol.id)) || 1
-  const convertedValue =
-    targetSymbol.quote.code === toCurrencyCode
-      ? new Decimal(tradeAmount).times(midPrice).toNumber()
-      : new Decimal(tradeAmount).dividedBy(midPrice).toNumber()
-  return truncateCurrencyValue({ currencyCode: toCurrencyCode, value: convertedValue })
 }
