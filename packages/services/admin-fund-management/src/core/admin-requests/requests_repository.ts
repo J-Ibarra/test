@@ -14,10 +14,7 @@ export async function findAllAdminRequests(transaction?: Transaction): Promise<A
   })
 }
 
-export async function findAllAdminRequestsForAccountHin(
-  accountHin: number,
-  transaction?: Transaction,
-): Promise<AdminRequest[]> {
+export async function findAllAdminRequestsForAccountHin(accountHin: number, transaction?: Transaction): Promise<AdminRequest[]> {
   return wrapInTransaction(sequelize, transaction, async t => {
     const requests = await getModel<AdminRequest>('admin_request').findAll({
       where: { hin: accountHin },
@@ -29,13 +26,10 @@ export async function findAllAdminRequestsForAccountHin(
   })
 }
 
-export async function findAdminRequest(
-  queryParams: Partial<AdminRequest>,
-  transaction?: Transaction,
-): Promise<AdminRequest> {
+export async function findAdminRequest(queryParams: Partial<AdminRequest>, transaction?: Transaction): Promise<AdminRequest | null> {
   return wrapInTransaction(sequelize, transaction, async t => {
     const request = await getModel<AdminRequest>('admin_request').findOne({
-      where: { ...queryParams },
+      where: { ...queryParams } as any,
       transaction: t,
     })
 
@@ -43,11 +37,7 @@ export async function findAdminRequest(
   })
 }
 
-export async function updateAdminRequest(
-  id: number,
-  update: Partial<AdminRequest>,
-  transaction?: Transaction,
-): Promise<AdminRequest> {
+export async function updateAdminRequest(id: number, update: Partial<AdminRequest>, transaction?: Transaction): Promise<AdminRequest> {
   return wrapInTransaction(sequelize, transaction, async t => {
     const updateResult = await getModel<Partial<AdminRequest>>('admin_request').update(
       { ...update },
@@ -62,16 +52,12 @@ export async function updateAdminRequest(
   })
 }
 
-export async function saveAdminRequest(
-  adminRequest: CreateAdminRequestParams,
-  transaction?: Transaction,
-): Promise<AdminRequest> {
+export async function saveAdminRequest(adminRequest: CreateAdminRequestParams, transaction?: Transaction): Promise<AdminRequest> {
   return wrapInTransaction(sequelize, transaction, async t => {
     const globalTransactionId = await getNextGlobalTransactionId(adminRequest.type, t)
-    const createdAdminRequest = await getModel<AdminRequest>('admin_request').create(
-      { ...adminRequest, globalTransactionId } as AdminRequest,
-      { transaction: t },
-    )
+    const createdAdminRequest = await getModel<AdminRequest>('admin_request').create({ ...adminRequest, globalTransactionId } as AdminRequest, {
+      transaction: t,
+    })
 
     return createdAdminRequest.get()
   })

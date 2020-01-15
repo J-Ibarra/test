@@ -1,7 +1,6 @@
 import Decimal from 'decimal.js'
 import { Transaction } from 'sequelize'
 import { findAccountWithUserDetails } from '@abx-service-clients/account'
-import { BalanceMovementFacade } from '@abx-service-clients/balance'
 import { SourceEventType } from '@abx-types/balance'
 import { Logger } from '@abx/logging'
 import { sequelize, wrapInTransaction } from '@abx/db-connection-utils'
@@ -10,19 +9,23 @@ import { AdminRequest, AdminRequestStatus, AdminRequestStatusUpdate, AdminReques
 import { findAdminRequest } from '../requests_repository'
 import { updateAdminRequestStatus } from '../update_admin_request'
 import { rejectWithdrawalRequest } from './withdrawal_request_rejection_handler'
-
-const balanceMovementFacade = BalanceMovementFacade.getInstance()
+import { RuntimeError } from '@abx-types/error'
+import { denyPendingDeposit, denyPendingRedemption } from '@abx-service-clients/balance'
 
 const logger = Logger.getInstance('request_rejection_handler', 'rejectAdminRequest')
 
 export function rejectAdminRequest({ id, adminId, approvedAt }: AdminRequestStatusUpdate): Promise<AdminRequest> {
   return wrapInTransaction(sequelize, null, async transaction => {
     const request = await findAdminRequest({ id }, transaction)
+
+    if (!request) {
+      throw new RuntimeError(`Tried to reject admin request ${id} which could not be found`)
+    }
     logger.info(`Rejecting ${request.type} request for account hin ${request.hin} and amount ${request.amount}`)
 
-    const clientAccount = await findAccountWithUserDetails({ hin: request.hin }, transaction)
+    const clientAccount = await findAccountWithUserDetails({ hin: request.hin })
 
-    await denyPendingBalanceBasedOnRequestType(clientAccount.id, request, transaction, approvedAt)
+    await denyPendingBalanceBasedOnRequestType(clientAccount!.id, request, transaction, approvedAt)
     return updateAdminRequestStatus(request.id, adminId, AdminRequestStatus.rejected, transaction)
   })
 }
@@ -38,22 +41,20 @@ async function denyPendingBalanceBasedOnRequestType(
   if (adminRequest.type === AdminRequestType.withdrawal) {
     return rejectWithdrawalRequest(currencyId, adminRequest, transaction, rejectedAt)
   } else if (adminRequest.type === AdminRequestType.deposit) {
-    return balanceMovementFacade.denyPendingDeposit({
+    return denyPendingDeposit({
       sourceEventType: SourceEventType.adminRequest,
       sourceEventId: adminRequest.id,
       currencyId,
       accountId: clientAccountId,
       amount: adminRequest.amount,
-      t: transaction,
     })
   }
 
-  return balanceMovementFacade.denyPendingRedemption({
+  return denyPendingRedemption({
     sourceEventType: SourceEventType.adminRequest,
     sourceEventId: adminRequest.id,
     currencyId,
     accountId: clientAccountId,
-    amount: new Decimal(adminRequest.amount).add(adminRequest.fee).toNumber(),
-    t: transaction,
+    amount: new Decimal(adminRequest.amount).add(adminRequest.fee!).toNumber(),
   })
 }
