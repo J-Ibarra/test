@@ -47,7 +47,7 @@ export async function findOrdersForCurrency(accountId: string, currency: Currenc
   return orders
 }
 
-function findAllOrdersForAccountAndSymbols(
+export function findAllOrdersForAccountAndSymbols(
   accountId: string,
   symbols: SymbolPair[],
   where: WhereOptions = {},
