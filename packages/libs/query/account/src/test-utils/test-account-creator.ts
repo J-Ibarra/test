@@ -14,30 +14,27 @@ import { apiCookieSecret, apiCookieIv } from '../cookie_secrets'
 
 export const TEST_PASSWORD = 'testPass123414'
 
-export async function createTemporaryTestingAccount(accountType: AccountType = AccountType.individual): Promise<Account> {
-  return await createAccount({ firstName: 'fn', lastName: 'ln', email: `${v4()}@abx.com`, password: TEST_PASSWORD }, accountType)
+export function createTemporaryTestingAccount(accountType: AccountType = AccountType.individual): Promise<Account> {
+  return createAccount({ firstName: 'fn', lastName: 'ln', email: `${v4()}@abx.com`, password: TEST_PASSWORD }, accountType)
 }
 
-function createAccount(
+async function createAccount(
   newAccount: CreateAccountRequest,
   type: AccountType = AccountType.individual,
   parentTransaction?: Transaction,
 ): Promise<Account> {
-  return wrapInTransaction(sequelize, parentTransaction, async transaction => {
+  await wrapInTransaction(sequelize, parentTransaction, async transaction => {
     await validateUserEmail(newAccount.email, transaction)
-
-    const accountInst = await getModel<Account>('account').create(
-      { id: v4(), type, status: AccountStatus.registered, suspended: false },
-      { transaction },
-    )
-    const account = accountInst.get()
-    const user = await createUser({ accountId: account.id, ...newAccount }, transaction)
-
-    return {
-      ...account,
-      users: [user],
-    }
   })
+
+  const accountInst = await getModel<Account>('account').create({ id: v4(), type, status: AccountStatus.registered, suspended: false })
+  const account = accountInst.get()
+  const user = await createUser({ accountId: account.id, ...newAccount })
+
+  return {
+    ...account,
+    users: [user],
+  }
 }
 
 async function validateUserEmail(email: string, trans: Transaction) {
