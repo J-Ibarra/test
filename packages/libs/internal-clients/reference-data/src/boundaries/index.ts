@@ -20,5 +20,11 @@ export async function getSymbolBoundaries(symbolId: string): Promise<SymbolBound
   return epicurus.request(BoundaryEndpoints.getBoundariesForCurrencies, { base, quote })
 }
 
+export async function getBoundariesForCurrencies(currencies: CurrencyCode[]): Promise<CurrencyBoundary[]> {
+  const epicurus = getEpicurusInstance()
+
+  return epicurus.request(BoundaryEndpoints.getBoundariesForCurrencies, { currencies })
+}
+
 export * from './endpoints'
 export * from './utils'

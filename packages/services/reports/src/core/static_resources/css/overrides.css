@@ -1,0 +1,54 @@
+.abxImage {
+  width: 50px;
+  height: 50px;
+  background-image: url("png/abx.png"); }
+
+.cn * {
+  font-weight: normal; }
+
+#line {
+  border-top: 3px solid #a0a0a0; }
+
+table {
+  margin: 0.5rem 0; }
+  table.table.table-bordered {
+    border-radius: 0;
+    font-size: 10pt; }
+    table.table.table-bordered tr > td:first-child {
+      text-align: left; }
+    table.table.table-bordered thead td {
+      background-color: #a0a0a0; }
+  table:first-child {
+    margin-top: 1rem; }
+  table:last-child {
+    margin-bottom: 1rem; }
+
+footer img {
+  margin-top: 1rem;
+  max-height: 100px;
+  max-width: 150px; }
+
+header {
+  margin-bottom: 1rem; }
+
+div.col-xs-3.span3 {
+  margin-top: 1rem; }
+
+.padd {
+  padding: 20px; }
+
+.pad-top {
+  padding-top: 10px; }
+
+.container {
+  padding: 0; }
+
+/******/
+.page-break {
+  display: block;
+  page-break-before: always; }
+
+/******/
+html {
+  zoom: 0.68;
+  /*workaround for phantomJS2 rendering pages too large*/ }
