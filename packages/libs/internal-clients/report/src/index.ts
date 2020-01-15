@@ -9,3 +9,4 @@ export function generateReport(data: ReportRequestData) {
 }
 
 export * from './endpoints'
+export * from './model'

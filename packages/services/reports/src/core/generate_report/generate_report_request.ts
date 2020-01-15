@@ -1,9 +1,6 @@
-import { EpicurusRequestChannel } from '../../../commons'
-import { getInstance } from '../../../db/epicurus'
-import { EmailAttachment } from '../../../notification/interfaces'
-import { ReportRequestData } from '../../interfaces'
+import { EmailAttachment } from '@abx-types/notification'
+import { ReportRequestData, generateReport } from '@abx-service-clients/report'
 
 export function generateReportRequest(reportRequest: ReportRequestData): Promise<EmailAttachment[]> {
-  const epicurus = getInstance()
-  return epicurus.request(EpicurusRequestChannel.generateReport, reportRequest)
+  return generateReport(reportRequest)
 }
