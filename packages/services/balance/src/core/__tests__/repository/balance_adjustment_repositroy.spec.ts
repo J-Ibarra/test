@@ -10,7 +10,9 @@ describe('BalanceAdjustmentRepository', () => {
   const balanceAdjustmentRepository = BalanceAdjustmentRepository.getInstance()
 
   it('createAdjustment should create an adjustment', async () => {
+    console.log('Foo')
     const { id: accountId } = await createTemporaryTestingAccount()
+    console.log('Bar')
 
     const balance = await createAvailableBalance(accountId, 100, currencyId)
     const adjustmentBalance = 50

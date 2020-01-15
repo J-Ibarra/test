@@ -27,9 +27,13 @@ async function createAccount(
     return validateUserEmail(newAccount.email, transaction)
   })
 
+  console.log(`Validated email`)
   const accountInst = await getModel<Account>('account').create({ id: v4(), type, status: AccountStatus.registered, suspended: false })
   const account = accountInst.get()
+
+  console.log(`Created account ${account.id}`)
   const user = await createUser({ accountId: account.id, ...newAccount })
+  console.log(`Created user for account ${account.id}`)
 
   return {
     ...account,
