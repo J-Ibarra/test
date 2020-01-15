@@ -1,0 +1,28 @@
+{
+  "swagger": {
+    "outputDirectory": "./dist",
+    "entryFile": "./src/rest-api/index.ts",
+    "basePath": "/api",
+    "securityDefinitions": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "name": "appSession",
+        "in": "cookie"
+      },
+      "adminAuth": {
+        "type": "apiKey",
+        "name": "appSession",
+        "in": "cookie"
+      }
+    }
+  },
+  "routes": {
+    "basePath": "/api",
+    "entryFile": "./src/rest-api/index.ts",
+    "routesDir": "./src/rest-api",
+    "authenticationModule": "./src/rest-api/middleware/authentication.ts"
+  },
+  "compilerOptions": {
+    "baseUrl": "src"
+  }
+}
