@@ -6,4 +6,5 @@ export enum AccountEndpoints {
   findUser = 'exchange:accounts:findUser',
   findAccountById = 'exchange:accounts:findAccountById',
   findOrCreateKinesisRevenueAccount = 'exchange:accounts:findOrCreateKinesisRevenueAccount',
+  findOrCreateOperatorAccount = 'exchange:accounts:findOrCreateOperatorAccount',
 }

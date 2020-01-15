@@ -44,5 +44,11 @@ export function findOrCreateKinesisRevenueAccount(): Promise<Account> {
   return epicurus.request(AccountEndpoints.findOrCreateKinesisRevenueAccount, {})
 }
 
+export function findOrCreateOperatorAccount() {
+  const epicurus = getEpicurusInstance()
+
+  return epicurus.request(AccountEndpoints.findOrCreateOperatorAccount, {})
+}
+
 export * from './endpoints'
 export * from './notification_topics'

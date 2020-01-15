@@ -4,7 +4,7 @@ import { findAccountById } from '@abx-service-clients/account'
 import { getExcludedAccountTypesFromOrderRangeValidations, getSymbolPairSummary } from '@abx-service-clients/reference-data'
 import { ValidationError } from '@abx-types/error'
 import { OrderType, PlaceOrderRequest } from '@abx-types/order'
-import { getLastExecutedPrice } from './last_executed_price_redis'
+import { getLastExecutedPrice } from '../../../../core/order-match/last_executed_price_redis'
 
 export const validatePriceIfAccountBoundByOrderRange = async ({ accountId, symbolId, orderType, limitPrice }: PlaceOrderRequest) => {
   if (orderType === OrderType.limit) {

@@ -26,3 +26,4 @@ export function allocateReserveBalance(order: Order, pair: SymbolPair, transacti
 
 export * from './buy_order_balance_allocator'
 export * from './sell_order_balance_allocator'
+export * from './initial_balance_retriever'

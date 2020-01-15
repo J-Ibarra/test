@@ -6,6 +6,7 @@ import { broadcastAskDepthUpdate, broadcastBidDepthUpdate } from './core/handle_
 import { handleOrderUpdated } from './core/handle_order_updated'
 import { configureWorker } from './core'
 import { settleOrderMatch } from '@abx-service-clients/order'
+import { runOrderDataMigrations } from '../../migrations/migration-runner'
 
 const logger = Logger.getInstance('contract_exchange', 'bootstrap')
 export const noBody = {
@@ -14,6 +15,8 @@ export const noBody = {
 }
 
 export async function bootstrap() {
+  await runOrderDataMigrations()
+
   // Start the required Gatekeeper listeners
   logger.debug('Initializing Gatekeeper')
   await initializeGatekeeper().then(() => logger.debug('Gatekeeper initialized'))
@@ -54,3 +57,5 @@ export async function bootstrap() {
     logger.debug('Graceful shutdown complete')
   }
 }
+
+bootstrap()

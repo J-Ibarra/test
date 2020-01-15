@@ -1,5 +1,10 @@
 import * as AWS from 'aws-sdk'
-import { BalanceAsyncRequestType, BalanceChangeAsyncRequestContainer, BasicBalanceAsyncRequestPayload } from '@abx-types/balance'
+import {
+  BalanceAsyncRequestType,
+  BalanceChangeAsyncRequestContainer,
+  BasicBalanceAsyncRequestPayload,
+  InitialReserveBalanceChangeAsyncRequestPayload,
+} from '@abx-types/balance'
 import { Logger } from '@abx/logging'
 import { getEpicurusInstance } from '@abx/db-connection-utils'
 import { Environment } from '@abx-types/reference-data'
@@ -21,7 +26,7 @@ export function releaseReserve(payload: BasicBalanceAsyncRequestPayload) {
   })
 }
 
-export function finaliseReserve(payload: BasicBalanceAsyncRequestPayload) {
+export function finaliseReserve(payload: InitialReserveBalanceChangeAsyncRequestPayload) {
   return sendAsyncChangeMessage({
     requestedChanges: [
       {

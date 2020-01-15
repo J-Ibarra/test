@@ -4,8 +4,7 @@ import { findBoundaryForCurrency, feeTakenFromBase } from '@abx-service-clients/
 import { Logger } from '@abx/logging'
 import { SymbolPair } from '@abx-types/reference-data'
 import { Order, OrderDirection, OrderType, TradeTransaction } from '@abx-types/order'
-import { retrieveInitialReserveForOrder } from './shared-utils'
-import { findTradeTransactions } from '../../../../../../core'
+import { findTradeTransactions, retrieveInitialReserveForOrder } from '../../../../../../core'
 import { releaseReserve } from '@abx-service-clients/balance'
 
 const logger = Logger.getInstance('lib', 'releaseRemainingReserveForBuyOrder')

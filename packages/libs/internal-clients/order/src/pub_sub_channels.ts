@@ -8,4 +8,6 @@ export enum OrderPubSubChannels {
   orderCancelled = 'exchange:pub-sub:order:orderCancelled',
   orderFilled = 'exchange:pub-sub:order:orderFilled',
   orderPartiallyFilled = 'exchange:pub-sub:order:orderPartiallyFilled',
+
+  orderMatchSettled = 'exchange:pub-sub:order:orderMatchSettled',
 }

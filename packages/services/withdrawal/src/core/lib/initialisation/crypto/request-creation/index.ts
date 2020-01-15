@@ -5,6 +5,7 @@ import * as helper from '../../../../helper'
 import { InitialiseWithdrawalParams, CurrencyEnrichedWithdrawalRequest } from '@abx-types/withdrawal'
 import { createSingleWithdrawalRequest } from './no_fee_request_creator'
 import { createSeparateWithrawalFeeRequest } from './separate_fee_request_withdrawal_creator'
+import { convertAmountToFiatCurrency } from '@abx-utils/fx-rate'
 
 export interface WithdrawalRequestCreationResult {
   amountRequest: CurrencyEnrichedWithdrawalRequest
@@ -52,7 +53,7 @@ export async function calculateConversionRates({
 }) {
   const totalAmount = addFee ? await getTotalWithdrawalAmount(amount, cryptoCurrency) : amount
   const [fiatConversion, kauConversion] = await Promise.all([
-    helper.convertAmountToFiatCurrency(cryptoCurrency, preferredCurrencyCode, totalAmount),
+    convertAmountToFiatCurrency(cryptoCurrency, preferredCurrencyCode, totalAmount),
     helper.kauConversion(cryptoCurrency, amount),
   ])
 

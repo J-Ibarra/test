@@ -193,3 +193,4 @@ export const determineMaxFee = async ({ orderFee, feeCurrencyCode }: { orderFee:
 }
 
 export * from './tiers'
+export * from './trade_accumulation'

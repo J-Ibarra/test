@@ -33,4 +33,8 @@ export function getBalanceAdjustmentForBalanceAndOrder(balanceId: number, orderI
   return epicurus.request(BalanceRetrievalEndpoints.findRawBalances, { balanceId, orderId })
 }
 
+export function getBalanceAdjustmentsForBalanceAndTradeTransactions(balanceId: number, counterTradeTransactionIds: number[]) {
+  const epicurus = getEpicurusInstance()
+  return epicurus.request(BalanceRetrievalEndpoints.getBalanceAdjustmentsForBalanceAndTradeTransactions, { balanceId, counterTradeTransactionIds })
+}
 export * from './endpoints'

@@ -16,13 +16,12 @@ COPY tsconfig.build.json .
 
 RUN npm install --loglevel notice
 RUN npm i lerna -g --loglevel notice
-RUN npm i lerna -g ts-node-dev
 
 # Copying required modules (.dockerignore will make sure, node_modules are not copied over)
 COPY packages/libs ./packages/libs
 COPY packages/services/order ./packages/services/order
 
 RUN lerna bootstrap
-WORKDIR /sync/packages/services/order/src/service-wrappers/order-data
+WORKDIR /sync/packages/services/order/src/service-wrappers/settlement
 
 CMD  "./docker-start.sh"
