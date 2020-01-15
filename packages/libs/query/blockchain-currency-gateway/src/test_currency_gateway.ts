@@ -151,6 +151,3 @@ export class TestCurrency implements OnChainCurrencyGateway {
     return Promise.resolve()
   }
 }
-
-export const getOnChainCurrencyManagerForEnvironment = (environment: Environment, currencies: CurrencyCode[]) =>
-  environment === Environment.test ? new TestCurrencyManager(currencies) : new CurrencyManager(environment, currencies)

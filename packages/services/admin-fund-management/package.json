@@ -42,10 +42,10 @@
     "@abx-service-clients/market-data": "1.0.0",
     "@abx-service-clients/balance": "1.0.0",
     "@abx-service-clients/account": "1.0.0",
+    "@abx-service-clients/deposit": "1.0.0",
     "@abx-service-clients/order": "1.0.0",
     "@abx-service-clients/notification": "1.0.0",
     "@abx-service-clients/withdrawal": "1.0.0",
-    
     "@abx/logging": "1.0.0",
     "body-parser": "1.18.3",
     "cookie-parser": "1.4.3",

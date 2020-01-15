@@ -2,7 +2,6 @@ import Decimal from 'decimal.js'
 import { Transaction } from 'sequelize'
 
 import { Account } from '@abx-types/account'
-import { BalanceMovementFacade } from '@abx-service-clients/balance'
 import { SourceEventType } from '@abx-types/balance'
 
 import { CurrencyBoundary } from '@abx-types/reference-data'
@@ -12,9 +11,8 @@ import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { CurrencyCode } from '@abx-types/reference-data'
 
 import { AdminRequest } from '@abx-service-clients/admin-fund-management'
+import { createPendingRedemption } from '@abx-service-clients/balance'
 
-
-const balanceMovementFacade = BalanceMovementFacade.getInstance()
 const kauIncrement = 100
 const kagIncrement = 200
 
@@ -30,13 +28,13 @@ export async function handleRedemptionRequestCreation(
     throw new ValidationError(`Redemption request for ${adminRequest.amount} ${adminRequest.asset} has invalid amount`)
   }
 
-  return balanceMovementFacade.createPendingRedemption({
+  return createPendingRedemption({
     sourceEventType: SourceEventType.adminRequest,
     sourceEventId: adminRequest.id,
     currencyId,
     accountId: clientAccount.id,
     amount: new Decimal(adminRequest.amount)
-      .plus(adminRequest.fee)
+      .plus(adminRequest.fee!)
       .toDecimalPlaces(currencyBoundary.maxDecimals)
       .toNumber(),
     t: transaction,

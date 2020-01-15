@@ -6,8 +6,7 @@ import { CurrencyCode } from '@abx-types/reference-data'
 import { kauConversion as convertToKau } from '../../helper'
 import { findNonCancelledWithdrawalsForTheLast24Hours } from '../common/find_withdrawal_request'
 import { CompleteValidationParams, WithdrawalRequestValidator } from './withdrawal_request_validator'
-
-export const WITHDRAWAL_MEMO_MAX_LENGTH = 25
+import { WITHDRAWAL_MEMO_MAX_LENGTH } from '@abx-types/withdrawal'
 
 export const commonWithdrawalRequestValidators: WithdrawalRequestValidator[] = [
   ({ account }: CompleteValidationParams) => ({

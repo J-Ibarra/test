@@ -1,5 +1,4 @@
 import Decimal from 'decimal.js'
-import { Transaction } from 'sequelize'
 import { findAccountWithUserDetails } from '@abx-service-clients/account'
 import { SourceEventType } from '@abx-types/balance'
 import { Logger } from '@abx/logging'
@@ -25,21 +24,16 @@ export function rejectAdminRequest({ id, adminId, approvedAt }: AdminRequestStat
 
     const clientAccount = await findAccountWithUserDetails({ hin: request.hin })
 
-    await denyPendingBalanceBasedOnRequestType(clientAccount!.id, request, transaction, approvedAt)
+    await denyPendingBalanceBasedOnRequestType(clientAccount!.id, request, approvedAt)
     return updateAdminRequestStatus(request.id, adminId, AdminRequestStatus.rejected, transaction)
   })
 }
 
-async function denyPendingBalanceBasedOnRequestType(
-  clientAccountId: string,
-  adminRequest: AdminRequest,
-  transaction: Transaction,
-  rejectedAt: Date,
-): Promise<void> {
+async function denyPendingBalanceBasedOnRequestType(clientAccountId: string, adminRequest: AdminRequest, rejectedAt: Date): Promise<void> {
   const currencyId = await getCurrencyId(adminRequest.asset)
 
   if (adminRequest.type === AdminRequestType.withdrawal) {
-    return rejectWithdrawalRequest(currencyId, adminRequest, transaction, rejectedAt)
+    return rejectWithdrawalRequest(adminRequest, rejectedAt)
   } else if (adminRequest.type === AdminRequestType.deposit) {
     return denyPendingDeposit({
       sourceEventType: SourceEventType.adminRequest,

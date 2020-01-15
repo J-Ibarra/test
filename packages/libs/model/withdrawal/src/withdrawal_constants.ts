@@ -1,0 +1,1 @@
+export const WITHDRAWAL_MEMO_MAX_LENGTH = 25

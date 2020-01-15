@@ -8,23 +8,19 @@ import { CurrencyCode } from '@abx-types/reference-data'
 import { AdminRequest, AdminRequestStatus, AdminRequestType, NewAdminRequestParams } from '@abx-service-clients/admin-fund-management'
 import { saveAdminRequest } from '../requests_repository'
 
-export async function saveNewAdminRequest(
-  request: NewAdminRequestParams,
-  clientAccount: Account,
-  transaction: Transaction,
-) {
+export async function saveNewAdminRequest(request: NewAdminRequestParams, clientAccount: Account, transaction: Transaction) {
   const adminAccount = await findAccountWithUserDetails({ id: request.adminAccountId })
 
   return saveAdminRequest(
     {
-      client: `${clientAccount.users[0].firstName} ${clientAccount.users[0].lastName}`,
+      client: `${clientAccount.users![0].firstName} ${clientAccount!.users![0].lastName}`,
       hin: request.hin,
       type: request.type,
       description: request.description,
       asset: request.asset,
       amount: request.amount,
       fee: request.fee,
-      admin: `${adminAccount.users[0].firstName} ${adminAccount.users[0].lastName}`,
+      admin: `${adminAccount!.users![0].firstName} ${adminAccount!.users![0].lastName}`,
       status: AdminRequestStatus.pending,
     },
     transaction,
@@ -43,8 +39,8 @@ export async function saveClientTriggeredFiatWithdrawalAdminRequest(
 
   return saveAdminRequest(
     {
-      client: `${clientAccount.users[0].firstName} ${clientAccount.users[0].lastName}`,
-      hin: clientAccount.hin,
+      client: `${clientAccount!.users![0].firstName} ${clientAccount!.users![0].lastName}`,
+      hin: clientAccount!.hin!,
       type: AdminRequestType.withdrawal,
       description: memo,
       asset: currencyCode,

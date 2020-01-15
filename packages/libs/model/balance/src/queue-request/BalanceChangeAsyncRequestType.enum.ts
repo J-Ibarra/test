@@ -1,4 +1,6 @@
 export enum BalanceAsyncRequestType {
+  updateAvailable,
+
   finaliseReserve,
   releaseReserve,
 

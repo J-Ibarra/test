@@ -16,22 +16,16 @@ const logger = Logger.getInstance('request-creation-handler', 'createAdminReques
 
 export function createAdminRequest(request: NewAdminRequestParams): Promise<AdminRequest> {
   return wrapInTransaction(sequelize, null, async transaction => {
-    logger.info(
-      `Creating ${request.type} admin request for account hin ${request.hin} and amount ${
-        request.amount
-      }`,
-    )
-    const clientAccount = await findAccountWithUserDetails({ hin: request.hin }, transaction)
-    const adminRequest = await saveNewAdminRequest(request, clientAccount, transaction)
+    logger.info(`Creating ${request.type} admin request for account hin ${request.hin} and amount ${request.amount}`)
+    const clientAccount = await findAccountWithUserDetails({ hin: request.hin })
+    const adminRequest = await saveNewAdminRequest(request, clientAccount!, transaction)
     const boundaryForCurrency = await findBoundaryForCurrency(request.asset)
 
     const createPendingBalance = getPendingBalanceHandlerBasedOnRequestType(adminRequest.type)
 
-    await createPendingBalance(adminRequest, clientAccount, boundaryForCurrency, transaction)
+    await createPendingBalance(adminRequest, clientAccount!, boundaryForCurrency, transaction)
     logger.info(
-      `Created ${request.type} admin request for account hin ${request.hin} and amount ${
-        request.amount
-      } with global transaction id of ${adminRequest.globalTransactionId}`,
+      `Created ${request.type} admin request for account hin ${request.hin} and amount ${request.amount} with global transaction id of ${adminRequest.globalTransactionId}`,
     )
     return adminRequest
   })
@@ -39,12 +33,7 @@ export function createAdminRequest(request: NewAdminRequestParams): Promise<Admi
 
 function getPendingBalanceHandlerBasedOnRequestType(
   adminRequestType: AdminRequestType,
-): (
-  adminRequest: AdminRequest,
-  clientAccount: Account,
-  currencyBoundary: CurrencyBoundary,
-  transaction: Transaction,
-) => Promise<void> {
+): (adminRequest: AdminRequest, clientAccount: Account, currencyBoundary: CurrencyBoundary, transaction: Transaction) => Promise<void> {
   if (adminRequestType === AdminRequestType.withdrawal) {
     return handleWithdrawalRequestCreation
   } else if (adminRequestType === AdminRequestType.deposit) {

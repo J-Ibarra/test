@@ -1,12 +1,13 @@
 import { getEpicurusInstance, messageFactory } from '@abx/db-connection-utils'
 import { BalanceRetrievalEndpoints } from '@abx-service-clients/balance'
 import { findBalancePayloadSchema, findAllBalancesForAccountSchema } from './schema'
-import { BalanceRetrievalFacade, BalanceRepository } from '../../core'
+import { BalanceRetrievalFacade, BalanceRepository, BalanceRetrievalHandler } from '../../core'
 
 export function bootstrapQueryEndpoints() {
   const epicurus = getEpicurusInstance()
   const balanceRetrievalFacade = new BalanceRetrievalFacade()
   const balanceRepository = new BalanceRepository()
+  const balanceRetrievalHandler = new BalanceRetrievalHandler()
 
   epicurus.server(
     BalanceRetrievalEndpoints.findBalance,
@@ -15,7 +16,7 @@ export function bootstrapQueryEndpoints() {
 
   epicurus.server(
     BalanceRetrievalEndpoints.findAllBalancesForAccount,
-    messageFactory(findAllBalancesForAccountSchema, ({ accountId }) => balanceRetrievalFacade.findAllBalancesForAccount(accountId)),
+    messageFactory(findAllBalancesForAccountSchema, ({ accountId }) => balanceRetrievalHandler.findAllBalancesForAccount(accountId)),
   )
 
   epicurus.server(
