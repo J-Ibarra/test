@@ -17,9 +17,18 @@ export function createPendingRedemption(changeParams: BalanceChangeParams) {
   return epicurus.request(RequestResponseBalanceMovementEndpoints.createPendingRedemption, { changeParams })
 }
 
-export function createPendingWithdrawal(pendingWithdrawalParams: BalanceChangeParams, pendingWithdrawalFeeParams: BalanceChangeParams) {
+export function createPendingWithdrawal({
+  pendingWithdrawalParams,
+  pendingWithdrawalFeeParams,
+}: {
+  pendingWithdrawalParams: BalanceChangeParams
+  pendingWithdrawalFeeParams?: BalanceChangeParams
+}) {
   const epicurus = getEpicurusInstance()
-  return epicurus.request(RequestResponseBalanceMovementEndpoints.createPendingWithdrawal, { pendingWithdrawalParams, pendingWithdrawalFeeParams })
+  return epicurus.request(RequestResponseBalanceMovementEndpoints.createPendingWithdrawal, {
+    pendingWithdrawalFeeParams: pendingWithdrawalFeeParams || null,
+    pendingWithdrawalParams,
+  })
 }
 
 export function createPendingDebitCardTopUp(changeParams: BalanceChangeParams) {

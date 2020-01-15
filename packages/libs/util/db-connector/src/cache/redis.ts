@@ -1,10 +1,10 @@
 import { RedisConfig } from '../model'
-import environmentConfig from '../env-config'
+import { getEnvironmentConfig } from '../env-config'
 import { CacheGateway } from './cache-gateway'
 import { APIRedisGateway } from './api-redis-gateway'
 import { RedisGateway } from './redis-gateway'
 
-const redisDbConfig = environmentConfig.redisDb
+const redisDbConfig = getEnvironmentConfig().redisDb
 let redisClient
 let cacheClient: CacheGateway | undefined
 let cacheSubscriptionClient: CacheGateway | undefined

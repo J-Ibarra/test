@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import environmentConfig from '../../env-config'
+import { getEnvironmentConfig } from '../../env-config'
 import { RedisGateway } from '../redis-gateway'
 
 interface DummyInterface {
@@ -23,7 +23,7 @@ const hashKey = 'hkey'
 const hashKey2 = 'hkey2'
 
 describe('RedisGateway', () => {
-  const redisDbConfig = environmentConfig.redisDb
+  const redisDbConfig = getEnvironmentConfig().redisDb
   const redisGateway = new RedisGateway(redisDbConfig)
   const vanillaClient = redisGateway.redisClient
 

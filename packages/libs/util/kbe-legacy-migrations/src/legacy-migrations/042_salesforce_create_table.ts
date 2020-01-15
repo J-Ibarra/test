@@ -23,7 +23,9 @@ export async function up(queryInterface: Sequelize.QueryInterface) {
     `
     CREATE TABLE public.salesforce (
       id SERIAL,
-      type character varying(255) NOT NULL,
+      "salesforcePlatformCredentialId" character varying(255) NOT NULL,
+      "salesforceAccountId" character varying(255) NOT NULL,
+      "accountId" uuid REFERENCES public.account(id),
       "createdAt" timestamp with time zone NOT NULL,
       "updatedAt" timestamp with time zone NOT NULL
   );

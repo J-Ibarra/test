@@ -1,5 +1,5 @@
-import environmentConfig from '../../env-config'
-const dbConfig = environmentConfig.redisDb
+import { getEnvironmentConfig } from '../../env-config'
+const dbConfig = getEnvironmentConfig().redisDb
 import epicurusConnector, { EpicurusPublicInterface } from 'epicurus-node'
 
 let epicurus: EpicurusPublicInterface

@@ -6,6 +6,12 @@ export function getAllCompleteSymbolDetails(): Promise<SymbolPair[]> {
   return fetchSymbolsIfInMemoryCacheExpired()
 }
 
+export async function getAllSymbolPairSummaries(): Promise<SymbolPairSummary[]> {
+  const completeSymbolDetails = await getAllCompleteSymbolDetails()
+
+  return completeSymbolDetails.map(transformToSummary)
+}
+
 export async function getAllSymbolsIncludingCurrency(currencyCode: CurrencyCode): Promise<SymbolPair[]> {
   return (await fetchSymbolsIfInMemoryCacheExpired()).reduce(
     (symbols, symbol) => (symbol.base.code === currencyCode || symbol.quote.code === currencyCode ? symbols.concat(symbol) : symbols),

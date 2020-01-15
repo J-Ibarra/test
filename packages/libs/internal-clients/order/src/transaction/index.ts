@@ -1,6 +1,14 @@
 import { getEpicurusInstance } from '@abx/db-connection-utils'
-import { TradeTransaction } from '@abx-types/order'
+import { TradeTransaction, TransactionDirection, CurrencyTransaction } from '@abx-types/order'
 import { TradeTransactionEndpoints } from './endpoints'
+
+export interface CurrencyTransactionCreationRequest {
+  accountId: string
+  amount: number
+  currencyId: number
+  direction: TransactionDirection
+  requestId: number
+}
 
 export function findTradeTransaction(criteria: Partial<TradeTransaction>): Promise<TradeTransaction> {
   const epicurus = getEpicurusInstance()
@@ -12,6 +20,12 @@ export function findTradeTransactions(criteria: Partial<TradeTransaction>): Prom
   const epicurus = getEpicurusInstance()
 
   return epicurus.request(TradeTransactionEndpoints.findTradeTransactions, { criteria })
+}
+
+export function createCurrencyTransaction(transaction: CurrencyTransactionCreationRequest): Promise<CurrencyTransaction> {
+  const epicurus = getEpicurusInstance()
+
+  return epicurus.request(TradeTransactionEndpoints.createCurrencyTransaction, { transaction })
 }
 
 export * from './endpoints'

@@ -5,6 +5,7 @@ export enum Environment {
   test = 'test',
   production = 'production',
   integration = 'integration',
+  staging = 'staging',
   uat = 'uat',
 }
 

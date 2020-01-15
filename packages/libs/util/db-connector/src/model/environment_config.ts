@@ -25,4 +25,5 @@ export interface DbConfig {
 export interface EnvironmentConfig {
   exchangeDb: DbConfig
   redisDb: RedisConfig
+  jwtSecret: string
 }
