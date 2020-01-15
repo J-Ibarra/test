@@ -45,7 +45,7 @@ async function validateUserEmail(email: string, trans: Transaction) {
   }
 }
 
-async function createUser({ accountId, firstName, lastName, email, password }: CreateUserRequest, trans?: Transaction): Promise<User> {
+async function createUser({ accountId, firstName, lastName, email, password }: CreateUserRequest): Promise<User> {
   const salt = await bcrypt.genSalt()
   const passwordHash = await bcrypt.hash(password, salt)
   return getModel<User>('user')
