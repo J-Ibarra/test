@@ -1,0 +1,34 @@
+ table.table.table-bordered { 
+    border: 1px solid black;
+  }
+
+  table.table.table-bordered td{
+      border: 1px solid black;
+  }
+  table.table.table-bordered thead td {
+    border: 1px solid black;
+  }
+
+  table.table.table-bordered tr.light-gray th,
+  table.table.table-bordered tr.light-gray td{
+    background-color: #dedede;
+    border: 1px solid black;
+  }
+
+  table.table.table-bordered tr > td{
+    padding: 3px;
+    text-align: right;
+  }
+
+  table.table.table-bordered tr > th{
+    text-align: center;
+    background-color: none;
+  }
+
+  table.gridless {
+      border:0px;
+  }
+  table.gridless th, table.gridless td {
+      border: 0px;
+  }
+  
