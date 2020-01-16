@@ -16,9 +16,12 @@
   },
   "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9",
   "dependencies": {
+    "@abx-types/reference-data": "1.0.0",
     "@abx-types/withdrawal": "1.0.0",
     "@abx/db-connection-utils": "1.0.0",
-    "moment": "2.22.2"
+    "moment": "2.22.2",
+    "aws-sdk": "2.574.0",
+    "@abx/logging": "1.0.0"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",

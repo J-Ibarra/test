@@ -1,7 +1,7 @@
 import { getEpicurusInstance } from '@abx/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { BalanceRetrievalEndpoints } from './endpoints'
-import { Balance, CompleteBalanceDetails, RawBalance } from '@abx-types/balance'
+import { Balance, RawBalance } from '@abx-types/balance'
 
 export function findBalance(currency: CurrencyCode, accountId: string): Promise<Balance> {
   const epicurus = getEpicurusInstance()
@@ -13,7 +13,7 @@ export function findCurrencyBalances(currencies: CurrencyCode[], accountId: stri
   return epicurus.request(BalanceRetrievalEndpoints.findCurrencyBalances, { currencies, accountId })
 }
 
-export function findAllBalancesForAccount(accountId: string): Promise<CompleteBalanceDetails> {
+export function findAllBalancesForAccount(accountId: string): Promise<Balance[]> {
   const epicurus = getEpicurusInstance()
   return epicurus.request(BalanceRetrievalEndpoints.findAllBalancesForAccount, { accountId })
 }

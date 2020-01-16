@@ -50,5 +50,11 @@ export function findOrCreateOperatorAccount() {
   return epicurus.request(AccountEndpoints.findOrCreateOperatorAccount, {})
 }
 
+export function getNamesAndEmailsOfUsers() {
+  const epicurus = getEpicurusInstance()
+
+  return epicurus.request(AccountEndpoints.getNamesAndEmailsOfUsers, {})
+}
+
 export * from './endpoints'
 export * from './notification_topics'

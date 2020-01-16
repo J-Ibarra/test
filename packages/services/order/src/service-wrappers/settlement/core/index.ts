@@ -4,6 +4,7 @@ import { OrderMatch, OrderMatchStatus, UsdMidPriceEnrichedOrderMatch } from '@ab
 import { OrderMatchRepository, setLastExecutedPrice } from '../../../core'
 import { OrderSettlementGateway } from './order_settlement_gateway'
 import { OrderPubSubChannels } from '@abx-service-clients/order'
+import { sendTradeConfirmationEmail } from './handler/trade-confirmation-email'
 
 const logger = Logger.getInstance('settlement', 'settle_order_match')
 
@@ -78,6 +79,7 @@ export async function runSettlementLogic(rawOrderMatch: UsdMidPriceEnrichedOrder
       const epicurus = getEpicurusInstance()
       epicurus.publish(OrderPubSubChannels.orderMatchSettled, orderMatch)
 
+      process.nextTick(() => sendTradeConfirmationEmail(orderMatch))
       return setLastExecutedPrice(orderMatch.symbolId, orderMatch.matchPrice)
     } catch (e) {
       logger.debug(`Transaction error ocurred while trying to settle order match ${rawOrderMatch.id}`)

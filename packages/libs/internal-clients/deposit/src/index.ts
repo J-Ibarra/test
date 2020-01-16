@@ -21,3 +21,4 @@ export function findDepositRequestsByIds(ids: number[]): Promise<DepositRequest[
 }
 
 export * from './endpoints'
+export * from './pub_sub_channels'
