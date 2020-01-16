@@ -14,14 +14,20 @@
       "@abx-types/account": ["packages/libs/model/account/src"],
       "@abx-types/error": ["packages/libs/util/error/src"],
       "@abx-types/withdrawal": ["packages/libs/model/withdrawal/src"],
+      
 
       "@abx-query-libs/account": ["packages/libs/query/account/src"],
+      "@abx-query-libs/blockchain-currency-gateway": ["/packages/libs/query/blockchain-currency-gateway/src"], 
 
       "@abx/express-middleware": ["packages/libs/util/express-middleware/src"],
       "@abx/db-connection-utils": ["packages/libs/util/db-connection-utils/src"],
       "@abx/logging": ["packages/libs/util/logging/src"],
 
-      "@abx-service-clients/notification": ["packages/packages/libs/internal-clients/notification/src"]
+      "@abx-service-clients/notification": ["packages/packages/libs/internal-clients/notification/src"],
+      "@abx-service-clients/admin-fund-management": ["packages/libs/internal-clients/admin-fund-management/src"],
+      "@abx-service-clients/withdrawal": ["/packages/libs/internal-clients/withdrawal/src/"]
+    
+
     }
   }
 }

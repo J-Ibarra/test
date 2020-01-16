@@ -4,6 +4,7 @@ import {
   BalanceChangeAsyncRequestContainer,
   BasicBalanceAsyncRequestPayload,
   InitialReserveBalanceChangeAsyncRequestPayload,
+  BalanceChangeAsyncRequest,
 } from '@abx-types/balance'
 import { Logger } from '@abx/logging'
 import { getEpicurusInstance } from '@abx/db-connection-utils'
@@ -14,6 +15,12 @@ const sqs = new AWS.SQS()
 const logger = Logger.getInstance('balance-internal-client', 'async_endpoints_handler')
 export const environmentsWithLocalRedisQueue = [Environment.development, Environment.e2eLocal, Environment.test]
 export const localRedisBalanceChangeTopic = 'local-balance-change-topic'
+
+export function triggerMultipleBalanceChanges(changes: BalanceChangeAsyncRequest[]) {
+  return sendAsyncChangeMessage({
+    requestedChanges: changes,
+  })
+}
 
 export function releaseReserve(payload: BasicBalanceAsyncRequestPayload) {
   return sendAsyncChangeMessage({

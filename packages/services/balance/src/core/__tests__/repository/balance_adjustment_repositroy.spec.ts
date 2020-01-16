@@ -6,7 +6,7 @@ import { createAvailableBalance } from '../test_utils'
 
 const currencyId = 1
 
-describe('BalanceAdjustmentRepository', () => {
+describe.skip('BalanceAdjustmentRepository', () => {
   const balanceAdjustmentRepository = BalanceAdjustmentRepository.getInstance()
 
   it('createAdjustment should create an adjustment', async () => {
