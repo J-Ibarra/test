@@ -1,8 +1,9 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 
-import * as tradeTransactionOperations from '../../../../core'
-import { TradeAccumulationRepository, buildAccountMonthlyTradeSummary } from '../../../fees'
+import * as tradeTransactionOperations from '../../../../core/transaction/find_trade_transactions'
+import { TradeAccumulationRepository } from '../../../fees/trade_accumulation/trade_accumulation_repository'
+import { buildAccountMonthlyTradeSummary } from '../../../fees'
 
 const accountId = 'AB12'
 const previousMonthTradeTransactionsCount = 10

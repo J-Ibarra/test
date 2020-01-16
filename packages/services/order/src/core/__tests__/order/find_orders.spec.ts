@@ -1,8 +1,9 @@
 import { expect } from 'chai'
 import moment from 'moment'
 import sinon from 'sinon'
-import { getModel } from '@abx/db-connection-utils'
+import { getModel, truncateTables } from '@abx/db-connection-utils'
 import { CurrencyCode, FiatCurrency } from '@abx-types/reference-data'
+import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import { TradeTransaction, Order, OrderDirection, OrderStatus, OrderType, OrderValidity } from '@abx-types/order'
 import { extractCoreOrderDetails, findAllOrdersForAccount, findAllOrdersForAccountAndSymbols, findOrdersForCurrency } from '../../order/find_orders'
 import { createTemporaryTestingAccount } from '@abx-query-libs/account'
@@ -18,6 +19,7 @@ describe('find_orders', () => {
   let kauUsdTransaction
 
   beforeEach(async () => {
+    await truncateTables()
     account = await createTemporaryTestingAccount()
 
     await getModel<Order>('order').bulkCreate([
@@ -62,6 +64,14 @@ describe('find_orders', () => {
       matchPrice: 20,
       orderId: 1,
     })
+    sinon.stub(referenceDataOperations, 'getAllCompleteSymbolDetails').resolves([
+      {
+        id: 'KAU_USD',
+      },
+      {
+        id: 'KVT_USD',
+      },
+    ])
     await getModel<TradeTransaction>('tradeTransaction').bulkCreate([kauUsdTransaction])
 
     orders = (await getModel<Order>('order').findAll()).map(order => order.get())
@@ -91,6 +101,20 @@ describe('find_orders', () => {
 
       expect(orders.length).to.eql(3)
 
+      sinon
+        .stub(referenceDataOperations, 'getAllSymbolsIncludingCurrency')
+        .onFirstCall()
+        .resolves([
+          {
+            id: 'KAU_USD',
+          },
+        ])
+        .onSecondCall()
+        .resolves([
+          {
+            id: 'KVT_USD',
+          },
+        ])
       const kauOrder = (await findOrdersForCurrency(account.id, CurrencyCode.kau))[0]
 
       expect(kauOrder.amount).to.eql(kauUsdOrder.amount)
@@ -105,7 +129,6 @@ describe('find_orders', () => {
       expect(kauOrder.transactions.length).to.eql(2)
 
       const kvtOrder = (await findOrdersForCurrency(account.id, CurrencyCode.kvt))[0]
-
       expect(kvtOrder.amount).to.eql(kvtUsdOrder.amount)
       expect(kvtOrder.direction).to.eql(kvtUsdOrder.direction)
       expect(kvtOrder.id).to.eql(kvtUsdOrder.id)
@@ -133,6 +156,20 @@ describe('find_orders', () => {
       })
       await getModel<TradeTransaction>('tradeTransaction').bulkCreate([kauUsdSecondTransaction])
       expect(orders.length).to.eql(3)
+      sinon
+        .stub(referenceDataOperations, 'getAllSymbolsIncludingCurrency')
+        .onFirstCall()
+        .resolves([
+          {
+            id: 'KAU_USD',
+          },
+        ])
+        .onSecondCall()
+        .resolves([
+          {
+            id: 'KVT_USD',
+          },
+        ])
 
       const ordersFoundForKau = (await findOrdersForCurrency(account.id, CurrencyCode.kau))[0]
 
@@ -179,6 +216,11 @@ describe('find_orders', () => {
           $gt: '2019-03-10',
         },
       }
+      sinon.stub(referenceDataOperations, 'getAllSymbolsIncludingCurrency').resolves([
+        {
+          id: 'KAU_USD',
+        },
+      ])
 
       const ordersFound = await findOrdersForCurrency(account.id, CurrencyCode.kau, whereOptions)
       expect(ordersFound.length).to.eql(1)
@@ -209,6 +251,7 @@ describe('find_orders', () => {
       matchPrice: 18,
       orderId: 1,
     })
+
     await getModel<TradeTransaction>('tradeTransaction').bulkCreate([kauUsdSecondTransaction])
     expect(orders.length).to.eql(3)
 
@@ -234,6 +277,7 @@ describe('find_orders', () => {
     expect(ordersFoundForKvt.symbolId).to.eql(kvtUsdOrder.symbolId)
     expect(ordersFoundForKvt.transactions.length).to.eql(0)
   })
+
   describe('findAllOrders up to 500', () => {
     it('findAllOrdersForAccountAndSymbols should only fetch the latest 500 orders', async () => {
       const ordersToCreate: Order[] = []

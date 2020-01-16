@@ -102,51 +102,14 @@ describe('OrderSettlementGateway', () => {
 
     await sequelize.transaction(async t => {
       await orderSettlementGateway.settleOrderMatch(orderMatch, t)
-      expect(getCompleteSymbolDetailsStub.calledWith(symbol.id, t)).to.eql(true)
+      expect(getCompleteSymbolDetailsStub.calledWith(symbol.id)).to.eql(true)
       expect(buyerCalculateFeeStub.calledWith(orderMatch, symbol, t)).to.eql(true)
       expect(sellerCalculateFeeStub.calledWith(orderMatch, symbol, t)).to.eql(true)
 
-      expect(createTradeTransactionStub.getCall(0).args).to.eql([
-        {
-          orderMatch,
-          buyerFeeDetail,
-          sellerFeeDetail,
-          buyerTax,
-          sellerTax,
-          feeCurrency: symbol.fee.id,
-          t,
-          buyerBaseFiatConversion: buyerFiatConversionForBase,
-          buyerQuoteFiatConversion: buyerFiatConversionForQuote,
-          buyerFiatCurrencyCode: buyerPreferredFiatCurrencyCode,
-          sellerBaseFiatConversion: sellerFiatConversionForBase,
-          sellerQuoteFiatConversion: sellerFiatConversionForQuote,
-          sellerFiatCurrencyCode: sellerPreferredFiatCurrencyCode,
-        },
-        t,
-      ])
-      expect(
-        createTradeTransactionStub.calledWith(
-          {
-            orderMatch,
-            buyerFeeDetail,
-            sellerFeeDetail,
-            buyerTax,
-            sellerTax,
-            feeCurrency: symbol.fee.id,
-            t,
-            buyerBaseFiatConversion: buyerFiatConversionForBase,
-            buyerQuoteFiatConversion: buyerFiatConversionForQuote,
-            buyerFiatCurrencyCode: buyerPreferredFiatCurrencyCode,
-            sellerBaseFiatConversion: sellerFiatConversionForBase,
-            sellerQuoteFiatConversion: sellerFiatConversionForQuote,
-            sellerFiatCurrencyCode: sellerPreferredFiatCurrencyCode,
-          },
-          t,
-        ),
-      ).to.eql(true)
       expect(buyerSettleOrderMatchStub.calledWith(symbol, buyerFeeDetail.fee, buyTransactionId, orderMatch, t)).to.eql(true)
       expect(sellerSettleOrderMatchStub.calledWith(symbol, sellerFeeDetail.fee, sellTransactionId, orderMatch, t)).to.eql(true)
-      expect(findOrCreateOperatorAccountStub.calledWith({ transaction: t })).to.eql(true)
+      expect(createTradeTransactionStub.calledOnce).to.eql(true)
+      expect(findOrCreateOperatorAccountStub.calledOnce).to.eql(true)
       expect(
         operatorUpdateAvailable.calledWith({
           accountId: operatorsAccount.id,
@@ -154,7 +117,6 @@ describe('OrderSettlementGateway', () => {
           currencyId: symbol.fee.id,
           sourceEventId: buyTransactionId,
           sourceEventType: SourceEventType.orderMatch,
-          t,
         }),
       ).to.eql(true)
       expect(incrementMonthlyTradeAccumulationStub.getCalls().length).to.eql(2)
@@ -170,17 +132,6 @@ const stubDependencies = (buyAccountId, sellAccountId, operatorsAccountId) => {
     sinon.stub(BuyerOrderSettlementHandler.prototype, 'settleOrderMatch').callsFake(() => Promise.resolve()),
     sinon.stub(SellerOrderSettlementHandler.prototype, 'calculateFee').callsFake(() => Promise.resolve(sellerFeeDetail)),
     sinon.stub(SellerOrderSettlementHandler.prototype, 'settleOrderMatch').callsFake(() => Promise.resolve()),
-    sinon.stub(OrderSettlementGateway.prototype, 'getPreferredCurrencyConversions' as any).callsFake(() =>
-      Promise.resolve({
-        buyerPreferredFiatCurrencyCode,
-        buyerFiatConversionForQuote,
-        buyerFiatConversionForBase,
-        sellerPreferredFiatCurrencyCode,
-        sellerFiatConversionForQuote,
-        sellerFiatConversionForBase,
-      }),
-    ),
-    sinon.stub(OrderSettlementGateway.prototype, 'calculateTax' as any).callsFake(() => Promise.resolve([buyerTax, sellerTax])),
     sinon
       .stub(orderCore, 'createTradeTransactionPair')
       .callsFake(() =>
@@ -199,6 +150,19 @@ const stubDependencies = (buyAccountId, sellAccountId, operatorsAccountId) => {
     sinon.stub(balanceOperations, 'updateAvailable').callsFake(() => Promise.resolve()),
     sinon.stub(orderCore.AccountTradeVolumeAccumulator.prototype, 'incrementMonthlyTradeAccumulationForAccount').callsFake(() => Promise.resolve()),
     sinon.stub(orderCore.OrderMatchRepository.prototype, 'setOrderMatchStatusToSettled').callsFake(() => Promise.resolve()),
+    sinon.stub(symbolOperations, 'findBoundaryForCurrency').resolves({ maxDecimals: 5 }),
+    sinon.stub(symbolOperations, 'getCurrencyCode').resolves(CurrencyCode.usd),
+    sinon.stub(OrderSettlementGateway.prototype, 'getPreferredCurrencyConversions' as any).callsFake(() =>
+      Promise.resolve({
+        buyerPreferredFiatCurrencyCode,
+        buyerFiatConversionForQuote,
+        buyerFiatConversionForBase,
+        sellerPreferredFiatCurrencyCode,
+        sellerFiatConversionForQuote,
+        sellerFiatConversionForBase,
+      }),
+    ),
+    sinon.stub(OrderSettlementGateway.prototype, 'calculateTax' as any).callsFake(() => Promise.resolve([buyerTax, sellerTax])),
   ] as SinonStub[]
 }
 

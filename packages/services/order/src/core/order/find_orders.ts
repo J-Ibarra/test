@@ -71,6 +71,7 @@ export function findAllOrdersForAccountAndSymbols(
           $in: symbols.map(({ id }) => id),
         },
       },
+      limit: 500,
       order: [['createdAt', 'desc']],
     },
     orderTransformer,

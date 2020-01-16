@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import sinon from 'sinon'
 import { getCacheClient, CacheGateway, truncateTables } from '@abx/db-connection-utils'
 import { OrderDirection, OrderStatus, OrderQueueRequest } from '@abx-types/order'
 import { createOrder as persistOrderInDb } from '../../../../../core'
@@ -6,6 +7,8 @@ import { createOrder } from './test-utils'
 import { createTemporaryTestingAccount } from '@abx-query-libs/account'
 import { publishDbOrdersToQueue } from '../../order-match-handling/lock_and_hydrate_orders'
 import { setDepthIntoRedis } from '../../order-match-handling/depth/redis'
+import * as referenceDataOperations from '@abx-service-clients/reference-data'
+import { CurrencyCode } from '@abx-types/reference-data'
 
 describe('lock_and_hydrate_order:integration', () => {
   let testAccount
@@ -14,13 +17,29 @@ describe('lock_and_hydrate_order:integration', () => {
   before(() => {
     redisCacheGateway = getCacheClient()
   })
+
   beforeEach(async () => {
     testAccount = await createTemporaryTestingAccount()
     await redisCacheGateway.flush()
+    sinon.stub(referenceDataOperations, 'getAllSymbolPairSummaries').resolves([
+      {
+        id: 'KAU_USD',
+        base: {
+          code: CurrencyCode.kau,
+        },
+        quote: {
+          base: {
+            code: CurrencyCode.usd,
+          },
+        },
+      },
+    ])
   })
+
   afterEach(async () => {
     await redisCacheGateway.flush()
     await truncateTables()
+    sinon.restore()
   })
 
   describe('publishDbOrdersToQueue', () => {

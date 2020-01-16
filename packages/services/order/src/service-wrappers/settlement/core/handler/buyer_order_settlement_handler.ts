@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js'
 import { Transaction } from 'sequelize'
-import { BalanceChangeParams, SourceEventType } from '@abx-types/balance'
+import { SourceEventType } from '@abx-types/balance'
 import { findOrder, determineMaxBuyReserve, findOrderMatchTransactions, retrieveInitialReserveForOrder } from '../../../../core'
 import { Order, OrderMatch, OrderMatchStatus, OrderStatus, OrderType } from '@abx-types/order'
 import { SymbolPair } from '@abx-types/reference-data'
@@ -170,13 +170,7 @@ export class BuyerOrderSettlementHandler extends OrderSettlementHandler {
         })
   }
 
-  public async updateAvailableBalance(
-    orderMatch: OrderMatch,
-    buyerFee: number,
-    pair: SymbolPair,
-    buyerTransactionId: number,
-    transaction: Transaction,
-  ) {
+  public async updateAvailableBalance(orderMatch: OrderMatch, buyerFee: number, pair: SymbolPair, buyerTransactionId: number) {
     const { maxDecimals: maxBaseDecimals } = await findBoundaryForCurrency(pair.base.code)
     const amountToReceive = feeTakenFromBase(pair)
       ? new Decimal(orderMatch.amount)
@@ -185,16 +179,13 @@ export class BuyerOrderSettlementHandler extends OrderSettlementHandler {
           .toNumber()
       : orderMatch.amount
 
-    const buyerBaseChange: BalanceChangeParams = {
+    return updateAvailable({
       accountId: orderMatch.buyAccountId,
       amount: amountToReceive,
       currencyId: pair.base.id,
       sourceEventId: buyerTransactionId,
       sourceEventType: SourceEventType.orderMatch,
-      t: transaction,
-    }
-
-    return updateAvailable(buyerBaseChange)
+    })
   }
 
   public getAccountId({ buyAccountId }: OrderMatch) {

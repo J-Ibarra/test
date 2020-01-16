@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import Decimal from 'decimal.js'
 import sinon from 'sinon'
-import { findBoundaryForCurrency } from '@abx-service-clients/reference-data'
+import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import { sequelize, wrapInTransaction, truncateTables } from '@abx/db-connection-utils'
 import * as coreOperations from '../../../../../core'
 import { CurrencyCode } from '@abx-types/reference-data'
@@ -14,6 +14,7 @@ const symbolId = 'KAU_KAG'
 const orderAmount = 10
 const orderMatchPrice = 6
 const feeRate = 0.2
+const kauMaxDecimals = 6
 
 describe('OrderSettlementHandler', () => {
   const orderSettlementHandler = BuyerOrderSettlementHandler.getInstance()
@@ -28,6 +29,7 @@ describe('OrderSettlementHandler', () => {
     sellerAccount = await createTemporaryTestingAccount()
     orderMatch = createOrderMatch(sellerAccount.id, buyerAccount.id, symbolId, 10, 5)
     sinon.restore()
+    sinon.stub(referenceDataOperations, 'findBoundaryForCurrency').resolves({ maxDecimals: kauMaxDecimals })
     getFeeRateForAccountStub = sinon.stub(coreOperations, 'getFeeRateForAccount').callsFake(() => Promise.resolve(feeRate))
   })
 
@@ -40,11 +42,10 @@ describe('OrderSettlementHandler', () => {
   describe('calculateFee', () => {
     it('should multiply orderMatch amount * feeRate when base currency is fee currency', async () => {
       const symbol = createSymbol(CurrencyCode.kau, CurrencyCode.kag, CurrencyCode.kau)
-      const { maxDecimals } = await findBoundaryForCurrency(CurrencyCode.kau)
       await calculateFeeAndVerifyFeeMatchesExpected(symbol, {
         fee: new Decimal(orderAmount)
           .times(feeRate)
-          .toDP(maxDecimals, Decimal.ROUND_DOWN)
+          .toDP(kauMaxDecimals, Decimal.ROUND_DOWN)
           .toNumber(),
         feeRate,
       })
@@ -52,14 +53,13 @@ describe('OrderSettlementHandler', () => {
 
     it('should calculate (orderMatch amount * match price * feeRate) when quote currency is fee currency', async () => {
       const symbol = createSymbol(CurrencyCode.kau, CurrencyCode.kag, CurrencyCode.kau)
-      const { maxDecimals } = await findBoundaryForCurrency(CurrencyCode.kau)
 
       calculateFeeAndVerifyFeeMatchesExpected(
         symbol,
         new Decimal(orderAmount)
           .times(orderMatchPrice)
           .times(feeRate)
-          .toDP(maxDecimals, Decimal.ROUND_DOWN)
+          .toDP(kauMaxDecimals, Decimal.ROUND_DOWN)
           .toNumber(),
       )
     })

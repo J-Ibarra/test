@@ -38,3 +38,41 @@ export const createDumbOrderMatchTransaction = async (amount, matchPrice, sellAc
     return await createOrderMatchTransaction(orderMatch, transaction)
   })
 }
+
+export const createTestDepth = (symbolId, depthUpdated, bidDepth = [] as Order[], askDepth = [] as Order[]) => ({
+  orders: {
+    [symbolId]: {
+      [OrderDirection.buy]: bidDepth,
+      [OrderDirection.sell]: askDepth,
+    },
+  },
+  broadcast: {
+    depthUpdated,
+  },
+})
+
+export const createOrder = ({
+  id = 1,
+  symbolId,
+  limitPrice,
+  direction,
+  remaining = 10,
+}: {
+  symbolId: string
+  limitPrice: number
+  direction: OrderDirection
+  remaining?: number
+  amount?: number
+  id?: number
+}): Order => ({
+  id,
+  accountId: 'fooBar',
+  symbolId,
+  direction,
+  amount: 10,
+  remaining,
+  status: OrderStatus.submit,
+  orderType: OrderType.limit,
+  validity: OrderValidity.GTC,
+  limitPrice,
+})

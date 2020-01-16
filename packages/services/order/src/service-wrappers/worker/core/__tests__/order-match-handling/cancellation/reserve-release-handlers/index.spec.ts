@@ -31,8 +31,6 @@ const symbol = {
   orderRange: 0.3,
 }
 
-const transaction = {} as any
-
 describe('releaseRemainingReserveForCancelledOrder', () => {
   let getSymbolDetailsStub
   let buyOrderReleaseStub
@@ -54,8 +52,8 @@ describe('releaseRemainingReserveForCancelledOrder', () => {
 
     await releaseRemainingReserveForCancelledOrder(order)
 
-    expect(getSymbolDetailsStub.calledWith(symbol.id, transaction)).to.eql(true)
-    expect(sellOrderReleaseStub.calledWith(symbol, order, transaction)).to.eql(true)
+    expect(getSymbolDetailsStub.calledWith(symbol.id)).to.eql(true)
+    expect(sellOrderReleaseStub.calledWith(symbol, order)).to.eql(true)
   })
 
   it('should call releaseRemainingReserveForBuyOrder when buy order', async () => {
@@ -63,7 +61,7 @@ describe('releaseRemainingReserveForCancelledOrder', () => {
 
     await releaseRemainingReserveForCancelledOrder(order)
 
-    expect(getSymbolDetailsStub.calledWith(symbol.id, transaction)).to.eql(true)
-    expect(buyOrderReleaseStub.calledWith(symbol, order, transaction)).to.eql(true)
+    expect(getSymbolDetailsStub.calledWith(symbol.id)).to.eql(true)
+    expect(buyOrderReleaseStub.calledWith(symbol, order)).to.eql(true)
   })
 })

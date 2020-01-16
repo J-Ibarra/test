@@ -78,7 +78,7 @@ export class OrderSettlementGateway {
       transaction,
     )
 
-    await this.transferFeesIntoOperatorAccount(buyerFeeDetail.fee, sellerFeeDetail.fee, matchedSymbol.fee.id, buyerTx.id!, transaction)
+    await this.transferFeesIntoOperatorAccount(buyerFeeDetail.fee, sellerFeeDetail.fee, matchedSymbol.fee.id, buyerTx.id!)
     this.logger.debug(
       `The sum of ${buyerFeeDetail.fee} and ${sellerFeeDetail.fee} has been added to operator account for currency ${matchedSymbol.base.code}`,
     )
@@ -151,13 +151,7 @@ export class OrderSettlementGateway {
     this.logger.debug(`Updated seller reserved and available balances for order match ${orderMatch.id}`)
   }
 
-  private async transferFeesIntoOperatorAccount(
-    buyerFee: number,
-    sellerFee: number,
-    feeCurrencyId: number,
-    buyerTransactionId: number,
-    t: Transaction,
-  ) {
+  private async transferFeesIntoOperatorAccount(buyerFee: number, sellerFee: number, feeCurrencyId: number, buyerTransactionId: number) {
     const operator = await findOrCreateOperatorAccount()
     const feeCurrencyCode = await getCurrencyCode(feeCurrencyId)
     const { maxDecimals: maxFeeDecimals } = await findBoundaryForCurrency(feeCurrencyCode!)
@@ -173,7 +167,6 @@ export class OrderSettlementGateway {
       currencyId: feeCurrencyId,
       sourceEventId: buyerTransactionId,
       sourceEventType: SourceEventType.orderMatch,
-      t,
     }
 
     await updateAvailable(feesToOperator)
@@ -222,7 +215,6 @@ export class OrderSettlementGateway {
       sellerFeeDetail,
       sellerTax,
       feeCurrency: feeCurrencyId,
-      t: transaction,
       buyerBaseFiatConversion,
       buyerQuoteFiatConversion,
       buyerFiatCurrencyCode,

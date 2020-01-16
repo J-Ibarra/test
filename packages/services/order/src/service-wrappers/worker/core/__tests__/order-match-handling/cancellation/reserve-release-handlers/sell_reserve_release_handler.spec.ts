@@ -9,7 +9,6 @@ import { OrderDirection } from '@abx-types/order'
 import { releaseRemainingReserveForSellOrder } from '../../../../order-match-handling/cancellation/reserve-release-handlers/sell_reserve_release_handler'
 import { createOrder, createSymbol } from '../../test-utils'
 
-const transaction = {} as any
 const stubbedMaxDecimalBoundary = 5
 
 describe('releaseRemainingReserveForSellOrder', () => {
@@ -49,7 +48,6 @@ describe('releaseRemainingReserveForSellOrder', () => {
         amount: order.remaining,
         sourceEventId: order.id,
         sourceEventType: SourceEventType.orderCancellation,
-        t: transaction,
       }),
     ).to.eql(true)
   })
@@ -78,7 +76,6 @@ describe('releaseRemainingReserveForSellOrder', () => {
         amount: maxReserve,
         sourceEventId: order.id,
         sourceEventType: SourceEventType.orderCancellation,
-        t: transaction,
       }),
     ).to.eql(true)
     expect(boundaryOperationsStub.calledWith(symbol.base.code)).to.eql(true)

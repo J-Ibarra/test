@@ -1,6 +1,5 @@
 import { OrderMatch } from '../core'
 import { Tax } from '.'
-import { Transaction } from 'sequelize'
 import { FiatCurrency } from '@abx-types/reference-data'
 
 export interface FeeDetail {
@@ -21,5 +20,4 @@ export interface TradeTransactionCall {
   sellerFiatCurrencyCode: FiatCurrency
   sellerBaseFiatConversion: number
   sellerQuoteFiatConversion: number
-  t?: Transaction
 }

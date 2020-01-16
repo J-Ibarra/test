@@ -1,8 +1,8 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 import { OrderDirection } from '@abx-types/order'
-import { createOrder, createTestDepth } from '../../utils'
 import { addOrderToDepth } from '../../../order-match-handling/depth'
+import { createTestDepth, createOrder } from '../../../../../../core/__tests__/utils'
 
 const symbolId = 'KAU_USD'
 

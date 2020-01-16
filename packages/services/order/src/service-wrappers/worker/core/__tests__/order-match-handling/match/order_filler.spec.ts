@@ -2,10 +2,12 @@ import { expect } from 'chai'
 import sinon from 'sinon'
 import * as libOperations from '../../../../../../core'
 import * as marketOperations from '@abx-service-clients/market-data'
+import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import { Order, OrderDirection, OrderMatchStatus, OrderStatus } from '@abx-types/order'
 import * as depthOperations from '../../../order-match-handling/depth'
 import { fillOrders } from '../../../order-match-handling/match/matcher/order_filler'
 import { createOrder } from '../test-utils'
+import { CurrencyCode } from '@abx-types/reference-data'
 
 const transaction = {} as any
 const depth = {
@@ -62,6 +64,25 @@ describe('fillOrders', () => {
     sinon.stub(libOperations, 'createOrderMatchTransaction').resolves({ get: () => orderMatch })
     const saveOrderStub = sinon.stub(libOperations, 'saveOrder').callsFake(({ order }) => Promise.resolve(order))
     const updateOrderStub = sinon.stub(depthOperations, 'updateOrderInDepth').callsFake(() => true)
+    sinon.stub(referenceDataOperations, 'getCompleteSymbolDetails').resolves({
+      base: {
+        code: CurrencyCode.kau,
+      },
+      quote: {
+        code: CurrencyCode.usd,
+      },
+      fee: {
+        code: CurrencyCode.kau,
+      },
+    })
+    sinon.stub(referenceDataOperations, 'getSymbolBoundaries').resolves({
+      baseBoundary: {
+        maxDecimals: 6,
+      },
+      quoteBoundary: {
+        maxDecimals: 2,
+      },
+    })
 
     const fillResult = await fillOrders(buyOrder, matchingOrder, depth, [], [], transaction)
     expect(
@@ -104,6 +125,25 @@ describe('fillOrders', () => {
     sinon.stub(libOperations, 'saveOrder').callsFake(({ order }) => Promise.resolve(order))
     sinon.stub(depthOperations, 'updateOrderInDepth').resolves(true)
     sinon.stub(marketOperations, 'calculateMidPriceForSymbol').resolves(latestKauUsdMidPrice)
+    sinon.stub(referenceDataOperations, 'getCompleteSymbolDetails').resolves({
+      base: {
+        code: CurrencyCode.kau,
+      },
+      quote: {
+        code: CurrencyCode.kag,
+      },
+      fee: {
+        code: CurrencyCode.kag,
+      },
+    })
+    sinon.stub(referenceDataOperations, 'getSymbolBoundaries').resolves({
+      baseBoundary: {
+        maxDecimals: 6,
+      },
+      quoteBoundary: {
+        maxDecimals: 6,
+      },
+    })
 
     const fillResult = await fillOrders(buyOrder, matchingOrder, depth, [], [], transaction)
 

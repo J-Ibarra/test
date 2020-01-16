@@ -3,7 +3,6 @@ import { v4 } from 'node-uuid'
 import sinon from 'sinon'
 import { SourceEventType } from '@abx-types/balance'
 import * as boundaryOperations from '@abx-service-clients/reference-data'
-import { sequelize } from '@abx/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { OrderDirection } from '@abx-types/order'
 import * as balanceOperations from '@abx-service-clients/balance'
@@ -47,21 +46,18 @@ describe('releaseRemainingReserveForBuyOrder', () => {
       remaining: 10,
     })
     sinon.stub(reserveCancellationUtils, 'retrieveInitialReserveForOrder').resolves(order.remaining * order.limitPrice!)
-    await sequelize.transaction(async t => {
-      await releaseRemainingReserveForBuyOrder(symbol, order)
+    await releaseRemainingReserveForBuyOrder(symbol, order)
 
-      expect(
-        balanceMovementFacadeStub.calledWith({
-          currencyId: symbol.quote.id,
-          accountId: order.accountId,
-          amount: order.remaining * order.limitPrice!,
-          sourceEventId: order.id,
-          sourceEventType: SourceEventType.orderCancellation,
-          t,
-        }),
-      ).to.eql(true)
-      expect(boundaryOperationsStub.calledWith(symbol.quote.code)).to.eql(true)
-    })
+    expect(
+      balanceMovementFacadeStub.calledWith({
+        currencyId: symbol.quote.id,
+        accountId: order.accountId,
+        amount: order.remaining * order.limitPrice!,
+        sourceEventId: order.id,
+        sourceEventType: SourceEventType.orderCancellation,
+      }),
+    ).to.eql(true)
+    expect(boundaryOperationsStub.calledWith(symbol.quote.code)).to.eql(true)
   })
 
   it('should release max reserve(reserved initially) when quote currency is fee currency', async () => {
@@ -74,20 +70,17 @@ describe('releaseRemainingReserveForBuyOrder', () => {
       symbolId: symbol.id,
       direction: OrderDirection.buy,
     })
-    await sequelize.transaction(async t => {
-      await releaseRemainingReserveForBuyOrder(symbol, order)
+    await releaseRemainingReserveForBuyOrder(symbol, order)
 
-      expect(
-        balanceMovementFacadeStub.calledWith({
-          currencyId: symbol.quote.id,
-          accountId: order.accountId,
-          amount: maxReserve,
-          sourceEventId: order.id,
-          sourceEventType: SourceEventType.orderCancellation,
-          t,
-        }),
-      ).to.eql(true)
-      expect(boundaryOperationsStub.calledWith(symbol.quote.code)).to.eql(true)
-    })
+    expect(
+      balanceMovementFacadeStub.calledWith({
+        currencyId: symbol.quote.id,
+        accountId: order.accountId,
+        amount: maxReserve,
+        sourceEventId: order.id,
+        sourceEventType: SourceEventType.orderCancellation,
+      }),
+    ).to.eql(true)
+    expect(boundaryOperationsStub.calledWith(symbol.quote.code)).to.eql(true)
   })
 })

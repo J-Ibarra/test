@@ -16,7 +16,6 @@ export default function(sequelize) {
   const defaultFeeModel = defaultExecutionFee(sequelize)
   const accountFeeModel = accountExecutionFee(sequelize)
   const monthlyTradeAccumulationModel = MonthlyTradeAccumulation(sequelize)
-  monthlyTradeAccumulationModel.belongsTo(sequelize.models.account)
 
   tradeTransModel.belongsTo(sequelize.models.tradeTransaction, {
     foreignKey: 'counterTradeTransactionId',

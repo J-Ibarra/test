@@ -6,8 +6,8 @@ import { getTradeTransactionIdPair } from './get_trade_transaction_id_pair'
 // This just creates the trade transactions. The order module will handle reserve
 // releasing and balance transfer... I think. Depending how simple it is
 
-export async function createTradeTransactionPair(tradeTxCall: TradeTransactionCall, t: Transaction) {
-  const [tradeId1, tradeId2] = await getTradeTransactionIdPair(tradeTxCall.t as any)
+export async function createTradeTransactionPair(tradeTxCall: TradeTransactionCall, transaction: Transaction) {
+  const [tradeId1, tradeId2] = await getTradeTransactionIdPair(transaction)
 
   const buyerTradeTransaction: TradeTransaction = {
     id: tradeId1,
@@ -50,7 +50,7 @@ export async function createTradeTransactionPair(tradeTxCall: TradeTransactionCa
   }
 
   const transactions = await getModel<TradeTransaction>('tradeTransaction').bulkCreate([sellerTradeTransaction, buyerTradeTransaction], {
-    transaction: t,
+    transaction,
   })
 
   return transactions.map(trans => trans.get())
