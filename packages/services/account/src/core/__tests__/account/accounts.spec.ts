@@ -3,9 +3,8 @@ import { v4 } from 'node-uuid'
 import sinon from 'sinon'
 
 import * as dbConnectionUtils from '@abx/db-connection-utils'
-import { AccountStatus, AccountType, KycStatusChange } from '@abx-types/account'
-import { findAccountById, updateAccountStatus, verifyUserAccount, createAccount, findUserById, validatePassword, createCookie } from '../..'
-import { AccountNotificationTopics } from '@abx-service-clients/account'
+import { AccountStatus, AccountType } from '@abx-types/account'
+import { findAccountById, verifyUserAccount, createAccount, findUserById, validatePassword, createCookie } from '../..'
 import { truncateTables } from '@abx/db-connection-utils'
 
 describe('accounts', () => {
