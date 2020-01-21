@@ -6,4 +6,6 @@ export enum WithdrawalEndpoints {
 
   getWithdrawalFee = 'exchange:withdrawal:getWithdrawalFee',
   getWithdrawalFees = 'exchange:withdrawal:getWithdrawalFees',
+
+  completeFiatWithdrawal = 'exchange:withdrawal:completeFiatWithdrawal',
 }
