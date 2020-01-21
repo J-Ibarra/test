@@ -1,10 +1,8 @@
 import Decimal from 'decimal.js'
 import { get } from 'lodash'
 import { Transaction } from 'sequelize'
-import { getMidPricesForSymbol } from '@abx-service-clients/market-data'
-import { MidPricesForSymbolRequest } from '@abx-types/market-data'
+import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-data'
 import { CurrencyCode, SymbolPair, currencyScale } from '@abx-types/reference-data'
-import { getSymbolWithCurrencyPair } from '@abx-service-clients/reference-data'
 import { findLastOrderMatchForSymbol } from '../../transaction'
 
 /** Responsible for creating {@link TradeAccumulationStrategy} instances based on the currency pair. */
@@ -53,9 +51,7 @@ export class NonUsdPairStrategy implements TradeAccumulationStrategy {
    * @param amount the traded amount
    */
   public async calculateUsdTradePrice({ base }: SymbolPair, amount: number): Promise<number> {
-    const baseToUsdSymbol = await getSymbolWithCurrencyPair(base.code, CurrencyCode.usd)
-
-    const dollarsForBaseCurrency = await this.findLatestPriceForUsdAndToPair(baseToUsdSymbol.id)
+    const dollarsForBaseCurrency = await this.findLatestPriceForUsdAndToPair(`${base.code}_${CurrencyCode.usd}`)
 
     return parseFloat(new Decimal(amount).times(dollarsForBaseCurrency).toFixed(currencyScale))
   }
@@ -63,10 +59,10 @@ export class NonUsdPairStrategy implements TradeAccumulationStrategy {
   // Retrieves the latest mid price for the given symbol
   // If no mid-price present, latest order match price is used
   private async findLatestPriceForUsdAndToPair(symbolId: string) {
-    const midPrice = (await getMidPricesForSymbol(MidPricesForSymbolRequest.forSymbolAndLimit(symbolId, 1)))[0]
+    const midPrice = await calculateRealTimeMidPriceForSymbol(symbolId)
 
     if (!!midPrice) {
-      return midPrice.price
+      return midPrice
     }
 
     const latestOrderMatch = await findLastOrderMatchForSymbol(symbolId)

@@ -18,7 +18,7 @@ export function allocateReserveBalance(order: Order, pair: SymbolPair, transacti
   if (order.direction === OrderDirection.sell) {
     return allocateSellOrderReserveBalance(order, pair, transaction)
   } else if (order.direction === OrderDirection.buy && order.orderType !== OrderType.market) {
-    return allocateBuyOrderReserveBalance({ order, pair, transaction })
+    return allocateBuyOrderReserveBalance({ order, pair })
   }
 
   return Promise.resolve()

@@ -55,23 +55,4 @@ describe('accounts', () => {
 
   //   expect(foundAddresses.length).to.eql(Object.keys(CryptoCurrency).length)
   // })
-
-  it('updateAccountStatus should send notification when status set to kycVerified', async () => {
-    const account = await createAccount({ firstName: 'fn', lastName: 'ln', email: `${v4()}@example.com`, password: 'starlight' })
-
-    const epicurusPublishMock = sinon.mock()
-
-    sinon.stub(dbConnectionUtils, 'getEpicurusInstance').returns({ publish: epicurusPublishMock } as any)
-    await updateAccountStatus(account.id, AccountStatus.kycVerified)
-
-    const updatedAccount = await findAccountById(account.id)
-
-    expect(updatedAccount!.status).to.eql(AccountStatus.kycVerified)
-    expect(
-      epicurusPublishMock.calledWith(AccountNotificationTopics.accountKycStatusChange, {
-        accountId: updatedAccount!.id,
-        status: KycStatusChange.approved,
-      }),
-    ).to.eql(true)
-  })
 })

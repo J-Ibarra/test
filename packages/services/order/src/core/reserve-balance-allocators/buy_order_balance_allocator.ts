@@ -1,5 +1,4 @@
 import Decimal from 'decimal.js'
-import { Transaction } from 'sequelize'
 
 import { createReserve } from '@abx-service-clients/balance'
 import { SourceEventType } from '@abx-types/balance'
@@ -14,12 +13,10 @@ const logger = Logger.getInstance('contract_exchange', 'allocateBuyOrderReserveB
 export async function allocateBuyOrderReserveBalance({
   order,
   pair,
-  transaction,
   precalculatedReservePrice,
 }: {
   order: Order
   pair: SymbolPair
-  transaction: Transaction
   precalculatedReservePrice?: number
 }): Promise<void> {
   const amountToReserve = precalculatedReservePrice || (await calculateTotalQuoteAmountRequired(order, pair))
@@ -32,7 +29,6 @@ export async function allocateBuyOrderReserveBalance({
     amount: amountToReserve,
     sourceEventId: order.id!,
     sourceEventType: 'order' as SourceEventType,
-    t: transaction,
   })
 }
 

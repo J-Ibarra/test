@@ -11,13 +11,13 @@ export function findOrderMatch(criteria: Partial<OrderMatch>): Promise<OrderMatc
 export function findOrderMatches(criteria: Partial<OrderMatch>): Promise<OrderMatch[]> {
   const epicurus = getEpicurusInstance()
 
-  return epicurus.request(OrderMatchEndpoints.findOrderMatch, { criteria })
+  return epicurus.request(OrderMatchEndpoints.findOrderMatches, { criteria })
 }
 
 export function settleOrderMatch(id: number, feeCurrencyToUsdMidPrice: number): Promise<void> {
   const epicurus = getEpicurusInstance()
 
-  return epicurus.request(OrderMatchEndpoints.findOrderMatch, { id, feeCurrencyToUsdMidPrice })
+  return epicurus.request(OrderMatchEndpoints.settleOrderMatch, { id, feeCurrencyToUsdMidPrice })
 }
 
 export * from './endpoints'

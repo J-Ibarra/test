@@ -58,19 +58,12 @@ export class SellerOrderSettlementHandler extends OrderSettlementHandler {
       currencyId: pair.base.id,
       sourceEventId: sellerTransactionId,
       sourceEventType: SourceEventType.orderMatchRelease,
-      t: transaction,
     }
 
     return finaliseReserve(sellerReleaseAction)
   }
 
-  public async updateAvailableBalance(
-    orderMatch: OrderMatch,
-    sellerFee: number,
-    pair: SymbolPair,
-    sellerTransactionId: number,
-    transaction: Transaction,
-  ) {
+  public async updateAvailableBalance(orderMatch: OrderMatch, sellerFee: number, pair: SymbolPair, sellerTransactionId: number) {
     const { maxDecimals: maxQuoteDecimals } = await findBoundaryForCurrency(pair.quote.code)
     const tradeValueNoFees = new Decimal(orderMatch.amount).times(orderMatch.matchPrice)
 
@@ -87,7 +80,6 @@ export class SellerOrderSettlementHandler extends OrderSettlementHandler {
       currencyId: pair.quote.id,
       sourceEventId: sellerTransactionId,
       sourceEventType: SourceEventType.orderMatch,
-      t: transaction,
     }
 
     return updateAvailable(sellerUpdateAvailableQuote)

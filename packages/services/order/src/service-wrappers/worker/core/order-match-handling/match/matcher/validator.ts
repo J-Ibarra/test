@@ -47,7 +47,7 @@ async function validateAndReserveBuyMarketOrder(order: Order, matchingOrder: Ord
 
   logger.debug(`Balance validation of order ${order.id} and account ${order.accountId} completed. The total reserve is: ${reserveRequired}`)
 
-  await allocateBuyOrderReserveBalance({ order, pair, transaction, precalculatedReservePrice: reserveRequired })
+  await allocateBuyOrderReserveBalance({ order, pair, precalculatedReservePrice: reserveRequired })
 }
 
 export async function getMarketOrderValue(

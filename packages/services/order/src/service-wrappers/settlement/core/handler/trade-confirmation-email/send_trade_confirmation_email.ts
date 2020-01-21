@@ -1,7 +1,7 @@
 import { Order, OrderDirection, OrderMatch, OrderStatus } from '@abx-types/order'
 import { findUsersByAccountId } from '@abx-service-clients/account'
 import { Logger } from '@abx/logging'
-import { CurrencyCode } from '@abx-types/reference-data'
+import { CurrencyCode, Environment } from '@abx-types/reference-data'
 import { wrapInTransaction, sequelize } from '@abx/db-connection-utils'
 import { ReportType, generateReport } from '@abx-service-clients/report'
 import { getCurrencyCode, getSymbolPairSummary } from '@abx-service-clients/reference-data'
@@ -16,6 +16,10 @@ import { Transaction } from 'sequelize'
 const logger = Logger.getInstance('report', 'report generation')
 
 export async function sendTradeConfirmationEmail(orderMatch: OrderMatch) {
+  if (process.env.NODE_ENV === Environment.test) {
+    return
+  }
+
   const tradeConfirmationEmails = await wrapInTransaction(sequelize, null, async t => {
     const { buyAccountId, sellAccountId, amount, consideration, buyOrderId, createdAt, sellOrderId } = orderMatch
 

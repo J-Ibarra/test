@@ -6,6 +6,7 @@ import TradeTransaction from './trade_transaction'
 import accountExecutionFee from './account_execution_fee'
 import defaultExecutionFee from './default_execution_fee'
 import MonthlyTradeAccumulation from './monthly_trade_accumulation'
+import OrderQueueStatus from './order_queue_status'
 
 export default function(sequelize) {
   const orderModel = Order(sequelize)
@@ -15,6 +16,7 @@ export default function(sequelize) {
   const orderMatchTransactionModel = OrderMatchTransaction(sequelize)
   const defaultFeeModel = defaultExecutionFee(sequelize)
   const accountFeeModel = accountExecutionFee(sequelize)
+  const orderQueueStatusModel = OrderQueueStatus(sequelize)
   const monthlyTradeAccumulationModel = MonthlyTradeAccumulation(sequelize)
 
   tradeTransModel.belongsTo(sequelize.models.tradeTransaction, {
@@ -32,6 +34,7 @@ export default function(sequelize) {
     OrderMatchTransaction: orderMatchTransactionModel,
     defaultExecutionFee: defaultFeeModel,
     accountExecutionFee: accountFeeModel,
+    OrderQueueStatus: orderQueueStatusModel,
     MonthlyTradeAccumulation: monthlyTradeAccumulationModel,
   }
 }

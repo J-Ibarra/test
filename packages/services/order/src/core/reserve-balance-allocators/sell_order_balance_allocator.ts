@@ -20,7 +20,6 @@ export async function allocateSellOrderReserveBalance(order: Order, pair: Symbol
     amount: balanceToReserve,
     sourceEventId: order.id!,
     sourceEventType: 'order' as SourceEventType,
-    t: transaction,
   })
 }
 

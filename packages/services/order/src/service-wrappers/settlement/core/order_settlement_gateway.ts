@@ -5,10 +5,10 @@ import { findOrCreateOperatorAccount } from '@abx-service-clients/account'
 import { recordCustomEvent } from 'newrelic'
 import { Transaction } from 'sequelize'
 import { SourceEventType } from '@abx-types/balance'
-import { findBoundaryForCurrency, getVatRate, getCompleteSymbolDetails, getCurrencyCode, isFiatCurrency } from '@abx-service-clients/reference-data'
+import { findBoundaryForCurrency, getVatRate, getCompleteSymbolDetails, isFiatCurrency } from '@abx-service-clients/reference-data'
 import { Logger } from '@abx/logging'
 import { OrderMatch, UsdMidPriceEnrichedOrderMatch } from '@abx-types/order'
-import { CurrencyCode, FiatCurrency, SymbolPair } from '@abx-types/reference-data'
+import { CurrencyCode, FiatCurrency, SymbolPair, Currency } from '@abx-types/reference-data'
 import { Tax, TradeTransactionCall } from '@abx-types/order'
 import { BuyerOrderSettlementHandler, FeeDetail, SellerOrderSettlementHandler } from './handler'
 import { getVatFees } from './vat_handler'
@@ -78,7 +78,7 @@ export class OrderSettlementGateway {
       transaction,
     )
 
-    await this.transferFeesIntoOperatorAccount(buyerFeeDetail.fee, sellerFeeDetail.fee, matchedSymbol.fee.id, buyerTx.id!)
+    await this.transferFeesIntoOperatorAccount(buyerFeeDetail.fee, sellerFeeDetail.fee, matchedSymbol.fee, buyerTx.id!)
     this.logger.debug(
       `The sum of ${buyerFeeDetail.fee} and ${sellerFeeDetail.fee} has been added to operator account for currency ${matchedSymbol.base.code}`,
     )
@@ -151,9 +151,13 @@ export class OrderSettlementGateway {
     this.logger.debug(`Updated seller reserved and available balances for order match ${orderMatch.id}`)
   }
 
-  private async transferFeesIntoOperatorAccount(buyerFee: number, sellerFee: number, feeCurrencyId: number, buyerTransactionId: number) {
+  private async transferFeesIntoOperatorAccount(
+    buyerFee: number,
+    sellerFee: number,
+    { id: feeCurrencyId, code: feeCurrencyCode }: Currency,
+    buyerTransactionId: number,
+  ) {
     const operator = await findOrCreateOperatorAccount()
-    const feeCurrencyCode = await getCurrencyCode(feeCurrencyId)
     const { maxDecimals: maxFeeDecimals } = await findBoundaryForCurrency(feeCurrencyCode!)
 
     const opFees = new Decimal(buyerFee)

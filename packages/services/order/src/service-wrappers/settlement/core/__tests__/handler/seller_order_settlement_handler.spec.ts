@@ -58,7 +58,6 @@ describe('SellerOrderSettlementHandler', () => {
             sourceEventId: transactionId,
             sourceEventType: SourceEventType.orderMatchRelease,
             initialReserve: maxSellReserve,
-            t,
           }),
         ).to.eql(true)
       })
@@ -78,7 +77,6 @@ describe('SellerOrderSettlementHandler', () => {
             sourceEventId: transactionId,
             sourceEventType: SourceEventType.orderMatchRelease,
             initialReserve: orderAmount,
-            t,
           }),
         ).to.eql(true)
       })
@@ -89,39 +87,33 @@ describe('SellerOrderSettlementHandler', () => {
     it('should subtract fee from the total trade amount before updating available when fee taken from quote', async () => {
       const symbol = createSymbol(CurrencyCode.kau, CurrencyCode.kvt, CurrencyCode.kvt)
 
-      await sequelize.transaction(async t => {
-        await sellerOrderSettlementHandler.updateAvailableBalance(orderMatch, fee, symbol, transactionId, t)
+      await sellerOrderSettlementHandler.updateAvailableBalance(orderMatch, fee, symbol, transactionId)
 
-        expect(
-          updateAvailableStub.calledWith({
-            accountId: orderMatch.sellAccountId,
-            amount: orderAmount * orderMatchPrice - fee,
-            currencyId: symbol.quote.id,
-            sourceEventId: transactionId,
-            sourceEventType: SourceEventType.orderMatch,
-            t,
-          }),
-        ).to.eql(true)
-      })
+      expect(
+        updateAvailableStub.calledWith({
+          accountId: orderMatch.sellAccountId,
+          amount: orderAmount * orderMatchPrice - fee,
+          currencyId: symbol.quote.id,
+          sourceEventId: transactionId,
+          sourceEventType: SourceEventType.orderMatch,
+        }),
+      ).to.eql(true)
     })
 
     it('should not subtract from the total trade amount before updating available when fee taken from base currency', async () => {
       const symbol = createSymbol(CurrencyCode.kau, CurrencyCode.kvt, CurrencyCode.kau)
 
-      await sequelize.transaction(async t => {
-        await sellerOrderSettlementHandler.updateAvailableBalance(orderMatch, fee, symbol, transactionId, t)
+      await sellerOrderSettlementHandler.updateAvailableBalance(orderMatch, fee, symbol, transactionId)
 
-        expect(
-          updateAvailableStub.calledWith({
-            accountId: orderMatch.sellAccountId,
-            amount: orderAmount * orderMatchPrice,
-            currencyId: symbol.quote.id,
-            sourceEventId: transactionId,
-            sourceEventType: SourceEventType.orderMatch,
-            t,
-          }),
-        ).to.eql(true)
-      })
+      expect(
+        updateAvailableStub.calledWith({
+          accountId: orderMatch.sellAccountId,
+          amount: orderAmount * orderMatchPrice,
+          currencyId: symbol.quote.id,
+          sourceEventId: transactionId,
+          sourceEventType: SourceEventType.orderMatch,
+        }),
+      ).to.eql(true)
     })
   })
 

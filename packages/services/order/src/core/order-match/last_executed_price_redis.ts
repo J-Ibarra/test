@@ -24,6 +24,6 @@ export async function getLastExecutedPrice(symbolId: string): Promise<number> {
   return lastExecutedPrice
 }
 
-export async function setLastExecutedPrice(symbol: string, price: number) {
+export function setLastExecutedPrice(symbol: string, price: number) {
   return getCacheClient().set<number>(`${lastExecutedPrefix}:${symbol}`, price)
 }

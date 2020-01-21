@@ -6,4 +6,5 @@ export enum BalanceRetrievalEndpoints {
   retrieveTotalOrderValueReceivedByAccount = 'exchange:balance:retrieveTotalOrderValueReceivedByAccount',
   getBalanceAdjustmentForBalanceAndOrder = 'exchange:balance:getBalanceAdjustmentForBalanceAndOrder',
   getBalanceAdjustmentsForBalanceAndTradeTransactions = 'exchange:balance:getBalanceAdjustmentsForBalanceAndTradeTransactions',
+  getOrderBalanceReserveAdjustment = 'exchange:balance:getOrderBalanceReserveAdjustment',
 }

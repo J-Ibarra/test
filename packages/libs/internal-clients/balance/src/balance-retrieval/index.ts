@@ -25,12 +25,18 @@ export function findRawBalances(currency: CurrencyCode, accountId: string): Prom
 
 export function retrieveTotalOrderValueReceivedByAccount(accountId: string, currencyReceivedId: number, tradeTransactionId: number[]) {
   const epicurus = getEpicurusInstance()
-  return epicurus.request(BalanceRetrievalEndpoints.findRawBalances, { accountId, currencyReceivedId, tradeTransactionId })
+  return epicurus.request(BalanceRetrievalEndpoints.retrieveTotalOrderValueReceivedByAccount, { accountId, currencyReceivedId, tradeTransactionId })
 }
 
 export function getBalanceAdjustmentForBalanceAndOrder(balanceId: number, orderId: number) {
   const epicurus = getEpicurusInstance()
-  return epicurus.request(BalanceRetrievalEndpoints.findRawBalances, { balanceId, orderId })
+  return epicurus.request(BalanceRetrievalEndpoints.getBalanceAdjustmentForBalanceAndOrder, { balanceId, orderId })
+}
+
+/** Retrieves the balance adjustment corresponding to an order balance reserve. */
+export function getOrderBalanceReserveAdjustment(currencyCode: CurrencyCode, accountId: string, orderId: number) {
+  const epicurus = getEpicurusInstance()
+  return epicurus.request(BalanceRetrievalEndpoints.getOrderBalanceReserveAdjustment, { currencyCode, accountId, orderId })
 }
 
 export function getBalanceAdjustmentsForBalanceAndTradeTransactions(balanceId: number, counterTradeTransactionIds: number[]) {
