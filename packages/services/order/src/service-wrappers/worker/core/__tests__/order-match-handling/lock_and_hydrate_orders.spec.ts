@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-import { getCacheClient, CacheGateway, truncateTables } from '@abx/db-connection-utils'
+import { getCacheClient, CacheGateway, truncateTables, getVanillaRedisClient } from '@abx/db-connection-utils'
 import { OrderDirection, OrderStatus, OrderQueueRequest } from '@abx-types/order'
 import { createOrder as persistOrderInDb } from '../../../../../core'
 import { createOrder } from './test-utils'
@@ -10,7 +10,7 @@ import { setDepthIntoRedis } from '../../order-match-handling/depth/redis'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import { CurrencyCode } from '@abx-types/reference-data'
 
-describe('lock_and_hydrate_order:integration', () => {
+describe.skip('lock_and_hydrate_order:integration', () => {
   let testAccount
   let redisCacheGateway: CacheGateway
   const kauUsd = 'KAU_USD'
@@ -37,7 +37,6 @@ describe('lock_and_hydrate_order:integration', () => {
   })
 
   afterEach(async () => {
-    await redisCacheGateway.flush()
     await truncateTables()
     sinon.restore()
   })
