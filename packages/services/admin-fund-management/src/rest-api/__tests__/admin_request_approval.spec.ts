@@ -42,12 +42,20 @@ describe('api:admin_request:approval', () => {
     await app.close()
   })
 
-  it.only('should approve withdrawal and clear pending withdrawal balance + increase revenue account available balance', async () => {
+  it('should approve withdrawal and clear pending withdrawal balance + increase revenue account available balance', async () => {
     const testClient = await createTemporaryTestingAccount()
     const pendingWithdrawalAmount = 1000
     const fee = 25
 
     const { account: adminAccountId, cookie } = await createAccountAndSession(AccountType.admin)
+    sinon.stub(accountServiceOperations, 'findAccountWithUserDetails').resolves({
+      users: [
+        {
+          firstName: 'Foo',
+          lastName: 'Bar',
+        },
+      ],
+    })
 
     const adminRequest = await saveAdminRequest({
       client: testClient.users![0].firstName!,
@@ -61,11 +69,11 @@ describe('api:admin_request:approval', () => {
       status: AdminRequestStatus.pending,
     })
 
-    const completeFiatWithdrawalStub = sinon.stub(withdrawalOperations, 'completeFiatWithdrawal').resolves()
-
     const epicurus = getEpicurusInstance()
     let withdrawalRequestUpdateEvent
     epicurus.subscribe(WithdrawalPubSubChannels.withdrawalRequestUpdated, params => (withdrawalRequestUpdateEvent = params))
+
+    const completeFiatWithdrawalStub = sinon.stub(withdrawalOperations, 'completeFiatWithdrawal').resolves()
 
     const approvalDate = new Date()
     const { status: getStatus } = await request(app)
@@ -90,7 +98,7 @@ describe('api:admin_request:approval', () => {
     expect(completeFiatWithdrawalStub.calledWith(adminRequest.id, adminRequest.fee!)).to.eql(true)
   })
 
-  it.skip('should should fail to approve withdrawal and increase revenue account available balance when not enough available funds for client', async () => {
+  it('should should fail to approve withdrawal and increase revenue account available balance when not enough available funds for client', async () => {
     const testClient = await createTemporaryTestingAccount()
     const pendingWithdrawalAmount = 1000
     const fee = 25
@@ -108,18 +116,15 @@ describe('api:admin_request:approval', () => {
       status: AdminRequestStatus.pending,
     })
 
-    const { status: getStatus, body } = await request(app)
+    sinon.stub(withdrawalOperations, 'completeFiatWithdrawal').throws('Error')
+
+    const { status: getStatus } = await request(app)
       .patch(`/api/admin/fund-management/admin-requests/${adminRequest.id}`)
       .send({ status: AdminRequestStatus.approved, updatedAt: new Date() })
       .set('Cookie', cookie)
       .set('Accept', 'application/json')
 
     expect(getStatus).to.eql(400)
-    expect(body.message).to.eql(
-      `Insufficient funds in USD account balance for account ${testClient.id}, cannot confirm withdrawal for ${pendingWithdrawalAmount} + ${fee} fee`,
-    )
-
-    sinon.stub(withdrawalOperations, 'completeFiatWithdrawal').throws('Error')
 
     const epicurus = getEpicurusInstance()
     let withdrawalRequestUpdateEvent
