@@ -4,6 +4,7 @@ import * as gtid from '../models/global_transaction_id'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { AdminRequestStatus, AdminRequestType } from '@abx-service-clients/admin-fund-management'
 import { findAdminRequest, findAllAdminRequests, saveAdminRequest } from '..'
+import { truncateTables } from '@abx/db-connection-utils'
 
 describe('requests_repository', () => {
   const adminRequestParams = {
@@ -19,9 +20,11 @@ describe('requests_repository', () => {
     tradingPlatformName: 'foo',
   }
 
-  before(() => {
+  before(async () => {
     sinon.stub(gtid, 'getNextGlobalTransactionId').callsFake(type => Promise.resolve(`${type}xxx`))
   })
+
+  beforeEach(async () => await truncateTables())
 
   after(() => {
     sinon.restore()

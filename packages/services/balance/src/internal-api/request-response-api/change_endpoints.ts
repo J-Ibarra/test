@@ -1,21 +1,39 @@
-import { getEpicurusInstance } from '@abx/db-connection-utils'
+import { getEpicurusInstance, messageFactory } from '@abx/db-connection-utils'
+import { RequestResponseBalanceMovementEndpoints } from '@abx-service-clients/balance'
+import { balanceChangePayloadSchema } from './schema'
+import { BalanceMovementFacade } from '../../core'
 
-// TODO add endpoint for fiat withdrawal completion
 export function bootstrapChangeEndpoints() {
   const epicurus = getEpicurusInstance()
+  const balanceMovementFacade = BalanceMovementFacade.getInstance()
 
   epicurus.server(
-    .findBalance,
-    messageFactory(findBalancePayloadSchema, ({ currency, accountId }) => balanceRetrievalFacade.findBalance(currency, accountId)),
+    RequestResponseBalanceMovementEndpoints.createReserve,
+    messageFactory(balanceChangePayloadSchema, params => balanceMovementFacade.createReserve(params)),
   )
 
   epicurus.server(
-    BalanceRetrievalEndpoints.findAllBalancesForAccount,
-    messageFactory(findAllBalancesForAccountSchema, ({ accountId }) => balanceRetrievalHandler.findAllBalancesForAccount(accountId)),
+    RequestResponseBalanceMovementEndpoints.updateAvailable,
+    messageFactory(balanceChangePayloadSchema, params => balanceMovementFacade.updateAvailable(params)),
   )
 
   epicurus.server(
-    BalanceRetrievalEndpoints.findRawBalances,
-    messageFactory(findBalancePayloadSchema, ({ currencyId, accountId }) => balanceRepository.findRawBalances({ currencyId, accountId })),
+    RequestResponseBalanceMovementEndpoints.createPendingWithdrawalFee,
+    messageFactory(balanceChangePayloadSchema, params => balanceMovementFacade.createPendingWithdrawalFee(params)),
+  )
+
+  epicurus.server(
+    RequestResponseBalanceMovementEndpoints.createPendingRedemption,
+    messageFactory(balanceChangePayloadSchema, params => balanceMovementFacade.createPendingRedemption(params)),
+  )
+
+  epicurus.server(
+    RequestResponseBalanceMovementEndpoints.createPendingWithdrawal,
+    messageFactory(balanceChangePayloadSchema, params => balanceMovementFacade.createPendingWithdrawal(params)),
+  )
+
+  epicurus.server(
+    RequestResponseBalanceMovementEndpoints.createPendingDebitCardTopUp,
+    messageFactory(balanceChangePayloadSchema, params => balanceMovementFacade.createPendingDebitCardTopUp(params)),
   )
 }

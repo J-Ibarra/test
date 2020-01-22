@@ -43,3 +43,30 @@ export const findRawBalancePayloadSchema = {
     },
   },
 }
+
+export const balanceChangePayloadSchema = {
+  type: 'object',
+  'x-persist-event': 'balance change schema',
+  properties: {
+    sourceEventId: {
+      type: 'number',
+      required: true,
+    },
+    sourceEventType: {
+      type: 'string',
+      required: true,
+    },
+    currencyId: {
+      type: 'number',
+      required: true,
+    },
+    accountId: {
+      type: 'string',
+      required: true,
+    },
+    amount: {
+      type: 'number',
+      required: true,
+    },
+  },
+}

@@ -1,5 +1,4 @@
 import Decimal from 'decimal.js'
-import { Transaction } from 'sequelize'
 
 import { Account } from '@abx-types/account'
 import { SourceEventType } from '@abx-types/balance'
@@ -16,12 +15,7 @@ import { createPendingRedemption } from '@abx-service-clients/balance'
 const kauIncrement = 100
 const kagIncrement = 200
 
-export async function handleRedemptionRequestCreation(
-  adminRequest: AdminRequest,
-  clientAccount: Account,
-  currencyBoundary: CurrencyBoundary,
-  transaction: Transaction,
-) {
+export async function handleRedemptionRequestCreation(adminRequest: AdminRequest, clientAccount: Account, currencyBoundary: CurrencyBoundary) {
   const currencyId = await getCurrencyId(adminRequest.asset)
 
   if (!redemptionAmountValid(adminRequest.amount, adminRequest.asset)) {
@@ -37,7 +31,6 @@ export async function handleRedemptionRequestCreation(
       .plus(adminRequest.fee!)
       .toDecimalPlaces(currencyBoundary.maxDecimals)
       .toNumber(),
-    t: transaction,
   })
 }
 
