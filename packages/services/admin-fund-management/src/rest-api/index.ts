@@ -5,7 +5,7 @@ import methodOverride from 'method-override'
 import { mw as requestIpMiddleware } from 'request-ip'
 import { Logger } from '@abx/logging'
 import { auditMiddleware, configureCORS, RateLimiter, maintenanceMiddleware, overloadRequestWithSessionInfo } from '@abx/express-middleware'
-// import { RegisterRoutes } from './routes'
+import { RegisterRoutes } from './routes'
 
 import './account_summary_controller'
 import './admin_requests_controller'
@@ -40,7 +40,7 @@ export function bootstrapRestApi() {
   }
 
   configureApiRateLimiting.then(() => {
-    // RegisterRoutes(app)
+    RegisterRoutes(app)
 
     // @ts-ignore
     app.use((err, req, res, next) => {

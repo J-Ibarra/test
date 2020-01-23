@@ -49,3 +49,9 @@ export function getWithdrawalFees(
 
   return epicurus.request(WithdrawalEndpoints.getWithdrawalFees, { currencyCode, withdrawalParams })
 }
+
+export function completeFiatWithdrawal(adminRequestId: number, fee: number) {
+  const epicurus = getEpicurusInstance()
+
+  return epicurus.request(WithdrawalEndpoints.completeFiatWithdrawal, { adminRequestId, fee })
+}

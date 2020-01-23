@@ -24,16 +24,6 @@ export function createFiatWithdrawal(fiatWithdrawalCreationParams: FiatWithdrawa
   })
 }
 
-export function completeFiatWithdrawal(adminRequestId: number, fee: number) {
-  return queueChangeInSQS({
-    type: WithdrawalStatusChangeRequestType.completeFiatWithdrawal,
-    payload: {
-      adminRequestId,
-      fee,
-    },
-  })
-}
-
 function queueChangeInSQS(changes: AsyncWithdrawalStatusChangeRequest): Promise<void> {
   return new Promise((resolve, reject) => {
     sqs.sendMessage(

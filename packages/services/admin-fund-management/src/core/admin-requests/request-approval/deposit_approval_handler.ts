@@ -19,21 +19,20 @@ export function approveDeposit(adminRequest: AdminRequest, adminId: string, tran
     logger.info(
       `Approving admin deposit request(${adminRequest.id} for account ${adminRequest.hin} and amount ${adminRequest.amount} + fee ${adminRequest.fee} )`,
     )
-    const clientAccount = await findAccountWithUserDetails({ hin: adminRequest.hin })
-    const currencyId = await getCurrencyId(adminRequest.asset)
+    const [clientAccount, currencyId] = await Promise.all([findAccountWithUserDetails({ hin: adminRequest.hin }), getCurrencyId(adminRequest.asset)])
 
     await Promise.all([
       confirmPendingDeposit({
         sourceEventType: SourceEventType.adminRequest,
         sourceEventId: adminRequest.id,
-        currencyId,
+        currencyId: currencyId!,
         accountId: clientAccount!.id,
         amount: adminRequest.amount,
       }),
       createCurrencyTransaction({
         accountId: clientAccount!.id,
         amount: adminRequest.amount,
-        currencyId,
+        currencyId: currencyId!,
         direction: TransactionDirection.deposit,
         requestId: adminRequest.id,
       }),

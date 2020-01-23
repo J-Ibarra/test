@@ -1,6 +1,6 @@
 import { getEpicurusInstance } from '@abx/db-connection-utils'
 import { BalanceChangeParams } from '@abx-types/balance'
-import { RequestResponseBalanceMovementEndpoints } from './endpoints'
+import { RequestResponseBalanceMovementEndpoints } from './request_response_endpoints'
 
 export function createReserve(changeParams: BalanceChangeParams) {
   const epicurus = getEpicurusInstance()
@@ -36,4 +36,4 @@ export function createPendingDebitCardTopUp(changeParams: BalanceChangeParams) {
   return epicurus.request(RequestResponseBalanceMovementEndpoints.createPendingDebitCardTopUp, { changeParams })
 }
 
-export * from './endpoints'
+export * from './request_response_endpoints'
