@@ -16,6 +16,7 @@ const TRANSIENT_TABLES = [
   'email_attachment',
   'email',
   'withdrawal_request',
+  'withdrawal_kinesis_coin_emission',
   'ohlc_market_data',
   'depth_mid_price',
   'token',

@@ -35,7 +35,7 @@ export async function handleFiatCurrencyWithdrawalRequest({
     if (saveAdminRequest) {
       logger.debug(`Saving admin request for fiat withdrawal(account ${accountId}) for ${amount}: ${currency.code}, for account: ${accountId}`)
 
-      const savedAdminRequest = await saveClientTriggeredFiatWithdrawalAdminRequest(accountId, currency.code, amount, memo!, t)
+      const savedAdminRequest = await saveClientTriggeredFiatWithdrawalAdminRequest(accountId, currency.code, amount, memo!)
 
       logger.debug(`Admin request for fiat withdrawal saved with globalTransactionId: ${savedAdminRequest.globalTransactionId}`)
 
