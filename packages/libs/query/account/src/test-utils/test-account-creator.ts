@@ -3,7 +3,7 @@ import * as bcrypt from 'bcryptjs'
 import { Transaction } from 'sequelize'
 import * as crypto from 'crypto'
 
-import { sequelize, getModel, wrapInTransaction } from '@abx/db-connection-utils'
+import { sequelize, getModel, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { ValidationError } from '@abx-types/error'
 import { User, AccountType, CreateAccountRequest, AccountStatus, Account, EmailValidationError, CreateUserRequest, Session } from '@abx-types/account'
 

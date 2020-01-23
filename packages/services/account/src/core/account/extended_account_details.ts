@@ -1,6 +1,6 @@
 import moment from 'moment'
 
-import { getModel } from '@abx/db-connection-utils'
+import { getModel } from '@abx-utils/db-connection-utils'
 import { Address, Gender, KycVerifiedAccountDetails, SalesforceReferenceTable } from '@abx-types/account'
 import { findAccountWithUserDetails } from './accounts'
 import { getSalesforceClient } from '../salesforce'

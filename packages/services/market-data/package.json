@@ -27,9 +27,9 @@
   },
   "dependencies": {
     "@abx-types/market-data": "1.0.0",
-    "@abx/db-connection-utils": "1.0.0",
-    "@abx/logging": "1.0.0",
-    "@abx/kbe-legacy-migrations": "1.0.0",
+    "@abx-utils/db-connection-utils": "1.0.0",
+    "@abx-utils/logging": "1.0.0",
+    "@abx-utils/kbe-legacy-migrations": "1.0.0",
     "body-parser": "1.18.3",
     "cookie-parser": "1.4.3",
     "express": "4.16.4",

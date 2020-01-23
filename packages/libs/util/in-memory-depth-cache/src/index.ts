@@ -1,4 +1,4 @@
-import { getCacheClient } from '@abx/db-connection-utils'
+import { getCacheClient } from '@abx-utils/db-connection-utils'
 import { OrderDirection, SymbolDepth } from '@abx-types/order'
 import { DepthCache, DepthCacheState, DepthCacheSymbol } from '@abx-types/depth-cache'
 

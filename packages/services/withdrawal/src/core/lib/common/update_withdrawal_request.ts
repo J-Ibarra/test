@@ -1,6 +1,6 @@
 import { Transaction } from 'sequelize'
 
-import { getModel } from '@abx/db-connection-utils'
+import { getModel } from '@abx-utils/db-connection-utils'
 import { WithdrawalRequest } from '@abx-types/withdrawal'
 
 export async function updateWithdrawalRequest({ id, ...values }: Partial<WithdrawalRequest>, transaction?: Transaction): Promise<WithdrawalRequest> {

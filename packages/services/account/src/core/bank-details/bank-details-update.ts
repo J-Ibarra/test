@@ -1,4 +1,4 @@
-import { getModel } from '@abx/db-connection-utils'
+import { getModel } from '@abx-utils/db-connection-utils'
 import { PersonalBankDetails } from '@abx-types/account'
 import { encryptBankDetails } from './bank-details-encryption'
 

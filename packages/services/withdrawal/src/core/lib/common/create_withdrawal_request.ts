@@ -1,7 +1,7 @@
 import { Transaction } from 'sequelize'
 
 import { WithdrawalRequest } from '@abx-types/withdrawal'
-import { getModel } from '@abx/db-connection-utils'
+import { getModel } from '@abx-utils/db-connection-utils'
 
 export async function createWithdrawalRequest(
   withdrawalParams: WithdrawalRequest,

@@ -3,7 +3,7 @@ import * as bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import methodOverride from 'method-override'
 import { mw as requestIpMiddleware } from 'request-ip'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 
 export function bootstrapRestApi() {
   const app = express()

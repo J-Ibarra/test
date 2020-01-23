@@ -1,8 +1,8 @@
 import { Transaction } from 'sequelize'
 
-import { Logger } from '@abx/logging'
-import { wrapInTransaction, sequelize } from '@abx/db-connection-utils'
-import { getEpicurusInstance } from '@abx/db-connection-utils'
+import { Logger } from '@abx-utils/logging'
+import { wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
+import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { CurrencyCode, FiatCurrency } from '@abx-types/reference-data'
 import * as helper from '../../../helper'
 import { getTotalWithdrawalAmount, getWithdrawalFee } from '../../../helper'

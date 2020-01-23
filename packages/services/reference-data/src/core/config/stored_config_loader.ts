@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { e2eTestingEnvironments, Environment, ExchangeConfigValue, IExchangeConfigEntry } from '@abx-types/reference-data'
-import { sequelize, getModel, wrapInTransaction } from '@abx/db-connection-utils'
+import { sequelize, getModel, wrapInTransaction } from '@abx-utils/db-connection-utils'
 
 interface ConfigInMemoryCache {
   lastRefresh: Date

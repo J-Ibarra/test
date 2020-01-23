@@ -15,7 +15,7 @@ import {
   recordKycCheckTriggered,
 } from '../core'
 import { AccountType, CreateAccountRequest, PersonalBankDetails, UserPublicView } from '@abx-types/account'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { ValidationError } from '@abx-types/error'
 import { OverloadedRequest } from '@abx-types/account'
 import { createEmail } from '@abx-service-clients/notification'

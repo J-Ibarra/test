@@ -1,5 +1,5 @@
-import { Logger } from '@abx/logging'
-import { sequelize, getModel } from '@abx/db-connection-utils'
+import { Logger } from '@abx-utils/logging'
+import { sequelize, getModel } from '@abx-utils/db-connection-utils'
 import { Email, EmailAttachment } from '@abx-types/notification'
 import { sendEmail } from './mandrill'
 

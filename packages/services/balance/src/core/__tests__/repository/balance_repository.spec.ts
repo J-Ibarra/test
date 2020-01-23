@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { createTemporaryTestingAccount } from '@abx-query-libs/account'
-import { sequelize, getModel, wrapInTransaction } from '@abx/db-connection-utils'
+import { sequelize, getModel, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { BalanceType, RawBalance } from '@abx-types/balance'
 import { createAvailableBalance, createReservedBalance } from '../test_utils'
 import { BalanceRepository } from '../..'

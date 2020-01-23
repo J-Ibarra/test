@@ -4,7 +4,7 @@ import request from 'supertest'
 import { updateUser } from '../../../core'
 import { bootstrapRestApi } from '../..'
 import { createAccountAndSession } from '@abx-query-libs/account'
-import { truncateTables } from '@abx/db-connection-utils'
+import { truncateTables } from '@abx-utils/db-connection-utils'
 
 describe('api:mfa/activation', () => {
   let app: http.Server

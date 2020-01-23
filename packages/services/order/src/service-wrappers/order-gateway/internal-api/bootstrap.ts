@@ -1,5 +1,5 @@
-import { getEpicurusInstance, messageFactory } from '@abx/db-connection-utils'
-import { Logger } from '@abx/logging'
+import { getEpicurusInstance, messageFactory } from '@abx-utils/db-connection-utils'
+import { Logger } from '@abx-utils/logging'
 import { OrderType } from '@abx-types/order'
 import { marketOrderMessage, limitOrderMessage, cancelAllOrdersForAccountMessage, cancelOrderMessage } from './schema'
 import { placeOrder, OrderCancellationGateway } from '../core'

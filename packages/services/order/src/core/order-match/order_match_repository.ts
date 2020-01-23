@@ -1,5 +1,5 @@
 import { Transaction, WhereOptions } from 'sequelize'
-import { sequelize, getModel } from '@abx/db-connection-utils'
+import { sequelize, getModel } from '@abx-utils/db-connection-utils'
 import { OrderMatch, OrderMatchStatus } from '@abx-types/order'
 
 export class OrderMatchRepository {

@@ -12,7 +12,7 @@ import {
   validateUserEmail,
 } from '../..'
 import { createTemporaryTestingAccount, TEST_PASSWORD } from '@abx-query-libs/account'
-import { truncateTables } from '@abx/db-connection-utils'
+import { truncateTables } from '@abx-utils/db-connection-utils'
 
 describe('users', () => {
   beforeEach(async () => {

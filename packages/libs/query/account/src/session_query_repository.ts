@@ -1,4 +1,4 @@
-import { getModel } from '@abx/db-connection-utils'
+import { getModel } from '@abx-utils/db-connection-utils'
 import { Session } from '@abx-types/account/src/user/Session.interface'
 import { Transaction } from 'sequelize'
 

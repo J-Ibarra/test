@@ -14,7 +14,7 @@ import * as withdrawalOperations from '@abx-service-clients/withdrawal'
 
 import { SourceEventType } from '@abx-types/balance'
 import Decimal from 'decimal.js'
-import { truncateTables } from '@abx/db-connection-utils'
+import { truncateTables } from '@abx-utils/db-connection-utils'
 
 const usdId = 5
 const kauId = 2

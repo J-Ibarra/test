@@ -1,6 +1,6 @@
 import { Controller, Get, Request, Route, Security } from 'tsoa'
 
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { OverloadedRequest } from '@abx-types/account'
 import { getAccountTransactionHistory } from '../core/history'
 import { CurrencyCode } from '@abx-types/reference-data'

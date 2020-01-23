@@ -1,5 +1,5 @@
 import { User, Account, UserPublicView } from '@abx-types/account'
-import { sequelize, wrapInTransaction, getModel } from '@abx/db-connection-utils'
+import { sequelize, wrapInTransaction, getModel } from '@abx-utils/db-connection-utils'
 import { Transaction } from 'sequelize'
 
 export async function findUserByEmail(email: string, trans?: Transaction): Promise<User | null> {

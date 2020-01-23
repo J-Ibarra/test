@@ -1,5 +1,5 @@
 import { BalanceChangeAsyncRequestContainer } from '@abx-types/balance'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { QueuePoller } from './queue_poller'
 import * as AWS from 'aws-sdk'
 

@@ -1,6 +1,6 @@
 import { Environment } from '@abx-types/reference-data'
 import { EmailEndpoints } from '@abx-service-clients/notification'
-import { getEpicurusInstance, messageFactory } from '@abx/db-connection-utils'
+import { getEpicurusInstance, messageFactory } from '@abx-utils/db-connection-utils'
 import { createEmail } from '../../src/core/lib/email'
 import { email } from './create_email_message_schema'
 

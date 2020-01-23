@@ -1,6 +1,6 @@
 import moment from 'moment'
 
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { CurrencyCode, Currency } from '@abx-types/reference-data'
 import {
   LockableWithdrawalRequest,

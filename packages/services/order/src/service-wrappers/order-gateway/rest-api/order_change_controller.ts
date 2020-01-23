@@ -3,7 +3,7 @@ import { Body, Controller, Delete, Post, Request, Response, Route, Security, Suc
 import util from 'util'
 import { findAccountById } from '@abx-service-clients/account'
 import { AccountStatus, OverloadedRequest } from '@abx-types/account'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import * as orderRetrieval from '../../../core'
 import { CancelOrderRequest, Order, PlaceOrderRequest } from '@abx-types/order'
 import { isFiatCurrency } from '@abx-service-clients/reference-data'

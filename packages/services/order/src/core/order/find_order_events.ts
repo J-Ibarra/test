@@ -1,4 +1,4 @@
-import { getModel } from '@abx/db-connection-utils'
+import { getModel } from '@abx-utils/db-connection-utils'
 import { OrderEvent } from '@abx-types/order'
 
 export async function findOrderEvents(query?: {}): Promise<OrderEvent[]> {

@@ -1,4 +1,4 @@
-import { getEpicurusInstance, messageFactory } from '@abx/db-connection-utils'
+import { getEpicurusInstance, messageFactory } from '@abx-utils/db-connection-utils'
 import { findOrderById } from './schemas'
 import { findOrder } from '../../../core'
 import { OrderDataEndpoints } from '@abx-service-clients/order'

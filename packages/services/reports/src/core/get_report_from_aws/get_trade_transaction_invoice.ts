@@ -1,5 +1,5 @@
 import { findAccountById } from '@abx-service-clients/account'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { ValidationError } from '@abx-types/error'
 import { findTradeTransaction } from '@abx-service-clients/order'
 import { TradeTransactionInvoiceUrl } from '@abx-service-clients/report'

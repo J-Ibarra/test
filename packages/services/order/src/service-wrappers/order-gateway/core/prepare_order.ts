@@ -1,5 +1,5 @@
-import { Logger } from '@abx/logging'
-import { sequelize, wrapInTransaction } from '@abx/db-connection-utils'
+import { Logger } from '@abx-utils/logging'
+import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { getCompleteSymbolDetails } from '@abx-service-clients/reference-data'
 import { Order } from '@abx-types/order'
 import { saveOrder } from '../../../core'

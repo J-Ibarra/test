@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js'
 import { taxScale, CurrencyCode, SymbolPair } from '@abx-types/reference-data'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { UsdMidPriceEnrichedOrderMatch, SupportedFxPair, Tax } from '@abx-types/order'
 import { getQuoteFor } from '@abx-utils/fx-rate'
 import { feeTakenFromBase } from '@abx-service-clients/reference-data'

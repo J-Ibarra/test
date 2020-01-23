@@ -1,6 +1,6 @@
 import { Transaction } from 'sequelize'
 import { findAccountWithUserDetails } from '@abx-service-clients/account'
-import { sequelize, wrapInTransaction } from '@abx/db-connection-utils'
+import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { AdminRequestStatus } from '@abx-service-clients/admin-fund-management'
 import { updateAdminRequest } from './requests_repository'
 

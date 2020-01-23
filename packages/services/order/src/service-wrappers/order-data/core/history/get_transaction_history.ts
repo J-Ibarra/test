@@ -1,5 +1,5 @@
 import { orderBy } from 'lodash'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { CurrencyCode, Currency, SymbolPair } from '@abx-types/reference-data'
 import { TradeTransaction, TransactionDirection, CurrencyTransaction } from '@abx-types/order'
 import { TransactionHistory } from './model'

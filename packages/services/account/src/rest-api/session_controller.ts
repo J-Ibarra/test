@@ -4,7 +4,7 @@ import moment from 'moment'
 import { Body, Controller, Delete, Post, Request, Response, Route, Security, SuccessResponse } from 'tsoa'
 import { Environment, localAndTestEnvironments, localTestEnvironments } from '@abx-types/reference-data'
 import { createSessionForUser, hasAccountSuspended, killSession, validateUserCredentials, authenticateMfa, hasMfaEnabled } from '../core'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { ValidationError } from '@abx-types/error'
 import { OverloadedRequest } from '@abx-types/account'
 

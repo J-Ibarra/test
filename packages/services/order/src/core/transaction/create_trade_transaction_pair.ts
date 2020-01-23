@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize'
-import { getModel } from '@abx/db-connection-utils'
+import { getModel } from '@abx-utils/db-connection-utils'
 import { OrderDirection, TradeTransaction, TradeTransactionCall } from '@abx-types/order'
 import { getTradeTransactionIdPair } from './get_trade_transaction_id_pair'
 

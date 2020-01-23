@@ -6,7 +6,7 @@ import { Account, AccountType, User } from '@abx-types/account'
 import { bootstrapRestApi } from '..'
 import { createAccountAndSession, TEST_PASSWORD, createTemporaryTestingAccount } from '@abx-query-libs/account'
 import { updateUser } from '../../core'
-import { truncateTables } from '@abx/db-connection-utils'
+import { truncateTables } from '@abx-utils/db-connection-utils'
 import * as notificationClientOperations from '@abx-service-clients/notification'
 import * as orderClientOperations from '@abx-service-clients/order'
 

@@ -2,7 +2,7 @@ import { Wallet } from 'ethers'
 import { JsonRpcProvider } from 'ethers/providers'
 import Web3 from 'web3'
 import { Environment } from '@abx-types/reference-data'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 
 export const CONFIG = {
   [Environment.development]: {

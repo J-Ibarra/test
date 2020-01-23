@@ -18,7 +18,7 @@
   "dependencies": {
     "@abx-types/order": "1.0.0",
     "@abx-types/depth-cache": "1.0.0",
-    "@abx/db-connection-utils": "1.0.0",
+    "@abx-utils/db-connection-utils": "1.0.0",
     "sequelize": "4.41.0",
     "lodash": "4.17.5"
   },

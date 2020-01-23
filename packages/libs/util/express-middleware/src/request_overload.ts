@@ -1,4 +1,4 @@
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { Session, User, OverloadedRequest } from '@abx-types/account'
 
 import * as crypto from 'crypto'

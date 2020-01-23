@@ -1,5 +1,5 @@
 {
-  "name": "@abx/express-middleware",
+  "name": "@abx-utils/express-middleware",
   "version": "1.0.0",
   "description": "Contains common express-middleware utilities",
   "license": "ISC",
@@ -18,8 +18,8 @@
     "@abx-types/reference-data": "1.0.0",
     "@abx-types/account": "1.0.0",
     "@abx-query-libs/account": "1.0.0",
-    "@abx/db-connection-utils": "1.0.0",
-    "@abx/logging": "1.0.0",
+    "@abx-utils/db-connection-utils": "1.0.0",
+    "@abx-utils/logging": "1.0.0",
     "newrelic": "4.10.0",
     "cors": "2.8.5",
     "express-rate-limit": "3.3.2",

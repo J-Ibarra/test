@@ -1,8 +1,8 @@
 import { Controller, Get, Request, Route, Security } from 'tsoa'
 
 import { CompleteBalanceDetails } from '@abx-types/balance'
-import { Logger } from '@abx/logging'
-import { getApiCacheClient } from '@abx/db-connection-utils'
+import { Logger } from '@abx-utils/logging'
+import { getApiCacheClient } from '@abx-utils/db-connection-utils'
 import { OverloadedRequest } from '@abx-types/account'
 import { BalanceRetrievalFacade } from '../core/balance_retrieval_facade'
 

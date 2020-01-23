@@ -1,4 +1,4 @@
-import { getEpicurusInstance } from '@abx/db-connection-utils'
+import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { DepositEndpoints } from './endpoints'
 import { DepositAddress, DepositRequest } from '@abx-types/deposit'
 

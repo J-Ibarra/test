@@ -1,5 +1,5 @@
 import { SourceEventType } from '@abx-types/balance'
-import { sequelize } from '@abx/db-connection-utils'
+import { sequelize } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import * as marketDataOperations from '@abx-service-clients/market-data'

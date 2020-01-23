@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { Transaction, WhereOptions } from 'sequelize'
-import { getModel } from '@abx/db-connection-utils'
+import { getModel } from '@abx-utils/db-connection-utils'
 import { Currency, SymbolPair } from '@abx-types/reference-data'
 
 let lastCache: Date = new Date()

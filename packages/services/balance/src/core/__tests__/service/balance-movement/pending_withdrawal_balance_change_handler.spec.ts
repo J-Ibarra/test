@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-import { sequelize } from '@abx/db-connection-utils'
+import { sequelize } from '@abx-utils/db-connection-utils'
 import { BalanceChangeParams, SourceEventType } from '@abx-types/balance'
 import { PendingWithdrawalBalanceHandler, BalanceRetrievalHandler, BalanceChangeHandler } from '../../..'
 import { createBalance } from '../../test_utils'

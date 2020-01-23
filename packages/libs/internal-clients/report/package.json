@@ -18,7 +18,7 @@
   "dependencies": {
     "@abx-types/reference-data": "1.0.0",
     "@abx-types/order": "1.0.0",
-    "@abx/db-connection-utils": "1.0.0",
+    "@abx-utils/db-connection-utils": "1.0.0",
     "moment": "2.22.2"
   },
   "devDependencies": {

@@ -1,4 +1,4 @@
-import { getEpicurusInstance } from '@abx/db-connection-utils'
+import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { WithdrawalEndpoints } from './endpoints'
 import { WithdrawalRequest } from '@abx-types/withdrawal'
 import { CurrencyCode } from '@abx-types/reference-data'

@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import proxyquire from 'proxyquire'
-import { getModel } from '@abx/db-connection-utils'
+import { getModel } from '@abx-utils/db-connection-utils'
 import { Email, NotificationStatus } from '@abx-types/notification'
 import { createEmail } from '..'
 

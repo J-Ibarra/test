@@ -2,7 +2,7 @@ import Decimal from 'decimal.js'
 
 import { createReserve } from '@abx-service-clients/balance'
 import { SourceEventType } from '@abx-types/balance'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { SymbolPair } from '@abx-types/reference-data'
 import { Order } from '@abx-types/order'
 import { feeTakenFromBase, findBoundaryForCurrency } from '@abx-service-clients/reference-data'

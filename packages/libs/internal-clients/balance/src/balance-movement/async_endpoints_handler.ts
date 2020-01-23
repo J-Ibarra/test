@@ -6,8 +6,8 @@ import {
   InitialReserveBalanceChangeAsyncRequestPayload,
   BalanceChangeAsyncRequest,
 } from '@abx-types/balance'
-import { Logger } from '@abx/logging'
-import { getEpicurusInstance } from '@abx/db-connection-utils'
+import { Logger } from '@abx-utils/logging'
+import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { Environment } from '@abx-types/reference-data'
 
 const sqs = new AWS.SQS()

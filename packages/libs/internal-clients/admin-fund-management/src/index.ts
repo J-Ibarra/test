@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize'
-import { getEpicurusInstance } from '@abx/db-connection-utils'
+import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { AdminRequest } from './model'
 

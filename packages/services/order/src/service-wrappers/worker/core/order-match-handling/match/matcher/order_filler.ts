@@ -1,7 +1,7 @@
 import Decimal from 'decimal.js'
 import { recordCustomEvent } from 'newrelic'
 import { Transaction } from 'sequelize'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { calculateMidPriceForSymbol } from '@abx-service-clients/market-data'
 import { CurrencyCode, SymbolBoundaries } from '@abx-types/reference-data'
 import {

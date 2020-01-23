@@ -1,4 +1,4 @@
-import { getEpicurusInstance } from '@abx/db-connection-utils'
+import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { TradeTransaction, TransactionDirection, CurrencyTransaction } from '@abx-types/order'
 import { TradeTransactionEndpoints } from './endpoints'
 

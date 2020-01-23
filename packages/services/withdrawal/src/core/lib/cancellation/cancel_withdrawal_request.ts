@@ -1,6 +1,6 @@
 import { Transaction } from 'sequelize'
-import { Logger } from '@abx/logging'
-import { wrapInTransaction, sequelize } from '@abx/db-connection-utils'
+import { Logger } from '@abx-utils/logging'
+import { wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 import { WithdrawalRequest, WithdrawalState } from '@abx-types/withdrawal'
 import { updateWithdrawalRequest } from './../common/update_withdrawal_request'
 

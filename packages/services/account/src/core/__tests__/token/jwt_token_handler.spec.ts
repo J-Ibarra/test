@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import * as jwt from 'jsonwebtoken'
 import moment from 'moment'
 
-import { getEnvironmentConfig } from '@abx/db-connection-utils'
+import { getEnvironmentConfig } from '@abx-utils/db-connection-utils'
 import { JWT_GENERATION_CONFIG, JwtTokenHandler } from '../..'
 
 const testAccountId = 'accountId'

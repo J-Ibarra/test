@@ -1,5 +1,5 @@
-import { Logger } from '@abx/logging'
-import { getEpicurusInstance } from '@abx/db-connection-utils'
+import { Logger } from '@abx-utils/logging'
+import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { disableProcessing, initializeGatekeeper } from './core/gatekeeper'
 import { OrderModuleConfig, UsdMidPriceEnrichedOrderMatch } from '@abx-types/order'
 import { broadcastAskDepthUpdate, broadcastBidDepthUpdate } from './core/handle_broadcast_depth_updated'

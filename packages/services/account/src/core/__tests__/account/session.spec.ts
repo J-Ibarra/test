@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import moment from 'moment'
 import { createSession, createSessionForUser, killSession } from '../..'
 import { createTemporaryTestingAccount } from '@abx-query-libs/account'
-import { truncateTables } from '@abx/db-connection-utils'
+import { truncateTables } from '@abx-utils/db-connection-utils'
 
 describe('session', () => {
   beforeEach(async () => {

@@ -1,6 +1,6 @@
 import { Transaction } from 'sequelize'
 
-import { getModel, sequelize } from '@abx/db-connection-utils'
+import { getModel, sequelize } from '@abx-utils/db-connection-utils'
 import { RawBalance } from '@abx-types/balance'
 import { BalanceLockParams } from '../balance_movement_facade'
 

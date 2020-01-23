@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-import { getCacheClient, CacheGateway, truncateTables } from '@abx/db-connection-utils'
+import { getCacheClient, CacheGateway, truncateTables } from '@abx-utils/db-connection-utils'
 import { OrderDirection, OrderStatus, OrderQueueRequest } from '@abx-types/order'
 import { createOrder as persistOrderInDb } from '../../../../../core'
 import { createOrder } from './test-utils'

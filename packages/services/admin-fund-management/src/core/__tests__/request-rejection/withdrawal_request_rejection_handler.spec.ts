@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 import * as gtid from '../../models/global_transaction_id'
-import { truncateTables } from '@abx/db-connection-utils'
+import { truncateTables } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { AdminRequestStatus, AdminRequestType } from '@abx-service-clients/admin-fund-management'
 import { saveAdminRequest, rejectWithdrawalRequest } from '../..'

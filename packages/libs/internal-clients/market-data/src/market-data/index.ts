@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize'
-import { getEpicurusInstance } from '@abx/db-connection-utils'
+import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { OrderDirection, SymbolDepth } from '@abx-types/order'
 import { DepthMidPrice, MidPricesForSymbolRequest } from '@abx-types/market-data'
 

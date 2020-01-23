@@ -1,7 +1,7 @@
 import Decimal from 'decimal.js'
 
 import { Transaction } from 'sequelize'
-import { getModel } from '@abx/db-connection-utils'
+import { getModel } from '@abx-utils/db-connection-utils'
 import { BalanceAdjustment, BalanceType, SourceEventType } from '@abx-types/balance'
 import { BalanceRepository } from './balance_repository'
 

@@ -1,6 +1,6 @@
 import * as _ from 'lodash'
 import { RuntimeError } from '@abx-types/error'
-import { wrapInTransaction, getModel, sequelize } from '@abx/db-connection-utils'
+import { wrapInTransaction, getModel, sequelize } from '@abx-utils/db-connection-utils'
 import { Order, OrderMetadata, OrderStatus } from '@abx-types/order'
 import { Transaction } from 'sequelize'
 

@@ -1,4 +1,4 @@
-import { getEpicurusInstance } from '@abx/db-connection-utils'
+import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { BalanceRetrievalEndpoints } from './endpoints'
 import { Balance, RawBalance } from '@abx-types/balance'

@@ -1,6 +1,6 @@
 import * as _ from 'lodash'
-import { Logger } from '@abx/logging'
-import { getCacheClient } from '@abx/db-connection-utils'
+import { Logger } from '@abx-utils/logging'
+import { getCacheClient } from '@abx-utils/db-connection-utils'
 import { getAllSymbolPairSummaries } from '@abx-service-clients/reference-data'
 import { Order, OrderStatus, OrderType } from '@abx-types/order'
 import { CancelOrderQueueRequest, OrderQueueRequest, PlaceOrderQueueRequest } from '@abx-types/order'

@@ -1,4 +1,4 @@
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { Order, OrderModuleState } from '@abx-types/order'
 import { matchOrderAgainstDepth } from './order_match_orchestrator'
 
