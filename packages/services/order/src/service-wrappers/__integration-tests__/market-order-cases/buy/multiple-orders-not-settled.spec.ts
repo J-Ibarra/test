@@ -18,7 +18,7 @@ describe('Market Orders: Buy', async () => {
   let pair
 
   beforeEach(async function() {
-    this.timeout(10_000)
+    this.timeout(20_000)
     const { symbol } = await setUp({
       baseCurrency: ETH,
       quoteCurrency: USD,

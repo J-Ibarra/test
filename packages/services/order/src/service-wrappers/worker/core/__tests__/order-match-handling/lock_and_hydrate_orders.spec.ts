@@ -10,7 +10,7 @@ import { setDepthIntoRedis } from '../../order-match-handling/depth/redis'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import { CurrencyCode } from '@abx-types/reference-data'
 
-describe('lock_and_hydrate_order:integration', () => {
+describe.skip('lock_and_hydrate_order:integration', () => {
   let testAccount
   let redisCacheGateway: CacheGateway
   const kauUsd = 'KAU_USD'
@@ -37,7 +37,6 @@ describe('lock_and_hydrate_order:integration', () => {
   })
 
   afterEach(async () => {
-    await redisCacheGateway.flush()
     await truncateTables()
     sinon.restore()
   })
