@@ -1,24 +1,6 @@
 import * as Sequelize from 'sequelize'
 
 export async function up(queryInterface: Sequelize.QueryInterface) {
-  await queryInterface.createTable('withdrawal_kinesis_coin_emission', {
-    accountId: {
-      type: Sequelize.UUID,
-      references: {
-        model: 'account',
-        key: 'id',
-      },
-    },
-    salesforceAccountId: {
-      type: Sequelize.STRING,
-      allowNull: false,
-    },
-    salesforcePlatformCredentialId: {
-      type: Sequelize.STRING,
-      allowNull: false,
-    },
-  })
-
   return queryInterface.sequelize.query(
     `
     CREATE TABLE public.salesforce (
