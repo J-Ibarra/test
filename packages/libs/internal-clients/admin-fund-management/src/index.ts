@@ -1,4 +1,3 @@
-import { Transaction } from 'sequelize'
 import { getEpicurusInstance } from '@abx/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { AdminRequest } from './model'
@@ -19,8 +18,7 @@ export async function saveClientTriggeredFiatWithdrawalAdminRequest(
   accountId: string,
   currencyCode: CurrencyCode,
   amount: number,
-  memo: string,
-  transaction: Transaction,
+  memo: string | null,
 ): Promise<AdminRequest> {
   const epicurus = getEpicurusInstance()
   return epicurus.request(AdminFundManagementEndpoints.saveClientTriggeredFiatWithdrawalAdminRequest, {
@@ -28,7 +26,6 @@ export async function saveClientTriggeredFiatWithdrawalAdminRequest(
     currencyCode,
     amount,
     memo,
-    transaction,
   })
 }
 

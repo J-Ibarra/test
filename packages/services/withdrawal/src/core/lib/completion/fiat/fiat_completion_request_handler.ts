@@ -52,12 +52,17 @@ const runValidation = async (id, withdrawalRequest, balanceForAccountAndCurrency
 }
 
 export async function completeFiatWithdrawal({ id, fee }: CompleteFiatWithdrawalParams) {
-  const withdrawalRequest = await findWithdrawalRequestById(id)
-  const withdrawnCurrency = await findCurrencyForId(withdrawalRequest!.currencyId)
+  let withdrawalRequest = await findWithdrawalRequestById(id)
 
   if (!withdrawalRequest) {
     throw new ValidationError(`No withdrawal request exists with id ${id}`)
   }
+
+  const withdrawnCurrency = await findCurrencyForId(withdrawalRequest!.currencyId)
+  withdrawalRequest = {
+    ...withdrawalRequest,
+    currency: withdrawnCurrency,
+  } as CurrencyEnrichedWithdrawalRequest
 
   const balanceForAccountAndCurrency = await findBalance(withdrawnCurrency.code, withdrawalRequest.accountId)
 

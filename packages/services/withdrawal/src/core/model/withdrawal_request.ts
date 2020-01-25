@@ -41,10 +41,7 @@ export default function withdrawalRequestModel(sequelize: Sequelize.Sequelize) {
       },
       currencyId: {
         type: Sequelize.INTEGER,
-        references: {
-          model: 'currency',
-          key: 'id',
-        },
+        allowNull: false,
       },
       accountId: {
         type: Sequelize.INTEGER,
@@ -66,10 +63,6 @@ export default function withdrawalRequestModel(sequelize: Sequelize.Sequelize) {
       },
       fiatCurrencyCode: {
         type: Sequelize.STRING,
-        references: {
-          model: 'currency',
-          key: 'code',
-        },
         allowNull: false,
       },
       kauConversion: {
