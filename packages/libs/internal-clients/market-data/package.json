@@ -20,6 +20,9 @@
     "@abx-types/market-data": "1.0.0",
     "@abx-types/depth-cache": "1.0.0",
     "@abx/db-connection-utils": "1.0.0",
+    "@abx-service-clients/order": "1.0.0",
+    "@abx-utils/in-memory-depth-cache": "1.0.0",
+    "@abx/logging": "1.0.0",
     "sequelize": "4.41.0",
     "lodash": "4.17.5"
   },

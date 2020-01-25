@@ -2,7 +2,7 @@ import Umzug from 'umzug'
 import Sequelize from 'sequelize'
 import * as _ from 'lodash'
 import Warlock from 'node-redis-warlock'
-import { getVanillaRedisClient } from '../cache/redis'
+import { getVanillaRedisClient } from '../distributed-cache/redis'
 import { sequelize } from './index'
 
 const redisClient = getVanillaRedisClient()

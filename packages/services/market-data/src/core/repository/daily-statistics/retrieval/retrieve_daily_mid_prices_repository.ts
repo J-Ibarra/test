@@ -1,6 +1,6 @@
 import { head, isEmpty, last } from 'lodash'
 import { findLatestMidPriceForSymbol, PRICE_CHANGE_KEY } from '..'
-import { getMemoryCacheClient } from '../../../../../db/memory'
+import { MemoryCache } from '@abx/db-connection-utils'
 
 export const getDailyChange = async (symbolIds: string[]): Promise<Map<string, number>> => {
   const symbolDailyChange = await Promise.all(symbolIds.map(calculateDailyChangeForSymbol))
@@ -8,7 +8,7 @@ export const getDailyChange = async (symbolIds: string[]): Promise<Map<string, n
 }
 
 const calculateDailyChangeForSymbol = async (symbolId: string): Promise<[string, number]> => {
-  let allMidPrices = getMemoryCacheClient().getList<number>(PRICE_CHANGE_KEY(symbolId))
+  let allMidPrices = MemoryCache.getInstance().getList<number>(PRICE_CHANGE_KEY(symbolId))
   if (isEmpty(allMidPrices)) {
     allMidPrices = [await findLatestMidPriceForSymbol(symbolId)]
   }
@@ -20,8 +20,8 @@ const calculateDailyChangeForSymbol = async (symbolId: string): Promise<[string,
   return [symbolId, dailyChangeForSymbol]
 }
 
-export const getLatestMidPrice = (symbolId: string, allMidPrices = getMemoryCacheClient().getList<number>(PRICE_CHANGE_KEY(symbolId))) =>
+export const getLatestMidPrice = (symbolId: string, allMidPrices = MemoryCache.getInstance().getList<number>(PRICE_CHANGE_KEY(symbolId))) =>
   head(allMidPrices) || 0
 
-export const getOldestMidPrice = (symbolId: string, allMidPrices = getMemoryCacheClient().getList<number>(PRICE_CHANGE_KEY(symbolId))) =>
+export const getOldestMidPrice = (symbolId: string, allMidPrices = MemoryCache.getInstance().getList<number>(PRICE_CHANGE_KEY(symbolId))) =>
   last(allMidPrices) || 0

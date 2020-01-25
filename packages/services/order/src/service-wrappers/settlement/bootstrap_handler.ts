@@ -3,7 +3,7 @@ import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-
 import { OrderMatch, OrderMatchStatus, UsdMidPriceEnrichedOrderMatch } from '@abx-types/order'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { getAllCompleteSymbolDetails, getAllSymbolPairSummaries } from '@abx-service-clients/reference-data'
-import { OrderMatchEndpoints } from '@abx-service-clients/order'
+import { SettlementEndpoints } from '@abx-service-clients/order'
 import { addOrderToSettleQueue, settleOrderMatchForPair, runSettlementLogic } from './core'
 import { runOrderDataMigrations } from '../../migrations/migration-runner'
 
@@ -32,7 +32,7 @@ export async function bootstrap() {
   const epicurus = getEpicurusInstance()
 
   epicurus.server(
-    OrderMatchEndpoints.settleOrderMatch,
+    SettlementEndpoints.settleOrderMatch,
     messageFactory(settleOrderMatch, async match => addOrderToSettleQueue(match)),
   )
 
@@ -46,7 +46,7 @@ export async function bootstrapForTesting() {
   const epicurus = getEpicurusInstance()
 
   epicurus.server(
-    OrderMatchEndpoints.settleOrderMatch,
+    SettlementEndpoints.settleOrderMatch,
     messageFactory(settleOrderMatch, async match => {
       return runSettlementLogic(match)
     }),

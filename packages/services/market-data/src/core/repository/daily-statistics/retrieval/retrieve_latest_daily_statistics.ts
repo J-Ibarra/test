@@ -1,6 +1,7 @@
 import { getAskPriceForAllSymbols, getBidPriceForAllSymbols, getDailyChange, getDailyVolume } from '.'
-import { CurrencyCode, getAllCompleteSymbolDetails, getAllSymbolsIncludingCurrency } from '../../../../../symbols'
-import { SymbolMarketDataSnapshot } from '../../../../interface'
+import { getAllCompleteSymbolDetails, getAllSymbolsIncludingCurrency } from '@abx-service-clients/reference-data'
+import { CurrencyCode } from '@abx-types/reference-data'
+import { SymbolMarketDataSnapshot } from '@abx-types/market-data'
 
 export const getDailyMarketDataStats = async (symbolIds: string[]): Promise<SymbolMarketDataSnapshot[]> => {
   const askPriceForAllSymbols = getAskPriceForAllSymbols(symbolIds)

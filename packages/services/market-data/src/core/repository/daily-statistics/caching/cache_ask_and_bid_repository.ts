@@ -1,5 +1,5 @@
 import { ASK_PRICE_KEY, BID_PRICE_KEY, findAskAndBidPricesForSymbols } from '..'
-import { getMemoryCacheClient } from '../../../../../db/memory'
+import { MemoryCache } from '@abx/db-connection-utils'
 
 export const findAndStoreAskAndBidPrices = async (symbolIds: string[]) => {
   const orderDepth = await findAskAndBidPricesForSymbols(symbolIds)
@@ -16,13 +16,13 @@ export const findAndStoreAskAndBidPrices = async (symbolIds: string[]) => {
 }
 
 export const storeBidPrice = (bidPrice: number, symbolId: string) =>
-  getMemoryCacheClient().set<number>({
+  MemoryCache.getInstance().set<number>({
     key: BID_PRICE_KEY(symbolId),
     val: bidPrice,
   })
 
 export const storeAskPrice = (askPrice: number, symbolId: string) =>
-  getMemoryCacheClient().set<number>({
+  MemoryCache.getInstance().set<number>({
     key: ASK_PRICE_KEY(symbolId),
     val: askPrice,
   })

@@ -1,12 +1,11 @@
 import * as Sequelize from 'sequelize'
 
-import * as constants from '../../config/constants'
-import { OHLCMarketData } from '../interface'
+import * as constants from '@abx-types/reference-data'
+import { OHLCMarketData } from '@abx-types/market-data'
 
-export interface OHLCMarketDataInstance extends Sequelize.Instance<OHLCMarketData>, OHLCMarketData {
-}
+export interface OHLCMarketDataInstance extends Sequelize.Instance<OHLCMarketData>, OHLCMarketData {}
 
-export default function (sequelize: Sequelize.Sequelize) {
+export default function(sequelize: Sequelize.Sequelize) {
   return sequelize.define<OHLCMarketDataInstance, OHLCMarketData>('ohlc_market_data', {
     id: {
       type: Sequelize.INTEGER,
@@ -19,43 +18,43 @@ export default function (sequelize: Sequelize.Sequelize) {
       references: {
         model: 'symbol',
         key: 'id',
-      }
+      },
     },
     open: {
       type: Sequelize.DECIMAL(constants.currencyPrecision, constants.currencyScale),
       allowNull: false,
       get(this: OHLCMarketDataInstance) {
         return parseFloat(this.getDataValue('open')) || 0
-      }
+      },
     },
     high: {
       type: Sequelize.DECIMAL(constants.currencyPrecision, constants.currencyScale),
       allowNull: false,
       get(this: OHLCMarketDataInstance) {
         return parseFloat(this.getDataValue('high')) || 0
-      }
+      },
     },
     low: {
       type: Sequelize.DECIMAL(constants.currencyPrecision, constants.currencyScale),
       allowNull: false,
       get(this: OHLCMarketDataInstance) {
         return parseFloat(this.getDataValue('low')) || 0
-      }
+      },
     },
     close: {
       type: Sequelize.DECIMAL(constants.currencyPrecision, constants.currencyScale),
       allowNull: false,
       get(this: OHLCMarketDataInstance) {
         return parseFloat(this.getDataValue('close')) || 0
-      }
+      },
     },
     timeFrame: {
       type: Sequelize.INTEGER,
-      allowNull: false
+      allowNull: false,
     },
     createdAt: {
       type: Sequelize.DATE,
-      allowNull: false
+      allowNull: false,
     },
   })
 }

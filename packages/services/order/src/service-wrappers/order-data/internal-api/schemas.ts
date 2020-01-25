@@ -63,3 +63,44 @@ export const findOrderMatch = {
     },
   },
 }
+
+export const findLastOrderMatchForSymbol = {
+  type: 'object',
+  'x-persist-event': 'find last order match for symbol',
+  properties: {
+    symbolId: {
+      type: 'string',
+      required: true,
+    },
+  },
+}
+
+export const findLastOrderMatchForSymbols = {
+  type: 'object',
+  'x-persist-event': 'find last order match for symbols',
+  properties: {
+    symbolIds: {
+      type: 'array',
+      required: true,
+    },
+  },
+}
+
+export const getOpenOrders = {
+  type: 'object',
+  'x-persist-event': 'get open orders',
+  properties: {
+    symbolId: {
+      type: 'string',
+      required: true,
+    },
+    orderDirection: {
+      type: 'string',
+      required: true,
+    },
+    limit: {
+      type: 'number',
+      required: false,
+    },
+  },
+}

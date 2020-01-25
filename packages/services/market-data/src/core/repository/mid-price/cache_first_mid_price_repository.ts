@@ -1,19 +1,13 @@
-import Decimal from 'decimal.js'
 import { findIndex, head, isEmpty } from 'lodash'
 import moment from 'moment'
-import { getSymbolBoundaries } from '../../../../boundaries'
-import { EpicurusPubSubChannel } from '../../../../commons'
-import { Logger } from '../../../../config/logging'
-import { CacheGateway } from '../../../../db/cache'
-import { getInstance } from '../../../../db/epicurus'
-import { DBOrder } from '../../../../db/interface'
-import { getCacheClient } from '../../../../db/redis'
-import { DepthItem } from '../../../../orders/interface'
-import { getAllCompleteSymbolDetails, SymbolPair } from '../../../../symbols'
-import { DepthMidPrice, MidPricesForSymbolRequest, MidPricesForSymbolsRequest } from '../../../interface'
+import { Logger } from '@abx/logging'
+import { DBOrder, getCacheClient, CacheGateway } from '@abx/db-connection-utils'
+import { DepthItem } from '@abx-types/depth-cache'
+import { SymbolPair } from '@abx-types/reference-data'
+import { getAllCompleteSymbolDetails } from '@abx-service-clients/reference-data'
+import { DepthMidPrice, MidPricesForSymbolRequest, MidPricesForSymbolsRequest } from '@abx-types/market-data'
 import { storeMidPrice } from '../daily-statistics'
 import { DatabaseMidPriceRepository } from './db_mid_price_repository'
-import { calculateMidPrice } from './mid_price_calc_utils'
 import { MidPriceRepository } from './mid_price_repository'
 
 const cacheKeyPrefix = 'exchange:mid-price:'
@@ -53,13 +47,13 @@ export class CacheFirstMidPriceRepository implements MidPriceRepository {
 
     midPrice = await this.permanentStorage.recordDepthMidPriceChange(symbolId, bidDepthTopOrder, askDepthTopOrder)
 
-    if (latestRecordedMidPrice.length === 0 || latestRecordedMidPrice[0].price !== midPrice.price) {
-      await this.cacheGateway.addValueToTailOfList<DepthMidPrice>(`${cacheKeyPrefix}${symbolId}`, midPrice)
+    if (latestRecordedMidPrice.length === 0 || latestRecordedMidPrice[0].price !== midPrice!.price) {
+      await this.cacheGateway.addValueToTailOfList<DepthMidPrice>(`${cacheKeyPrefix}${symbolId}`, midPrice!)
     }
 
     process.nextTick(() =>
       storeMidPrice(
-        midPrice,
+        midPrice!,
         moment()
           .subtract(24, 'hours')
           .toDate(),
@@ -106,7 +100,7 @@ export class CacheFirstMidPriceRepository implements MidPriceRepository {
    * @param request the IDs of the symbols to retrieve the prices for
    */
   public async getMidPricesForSymbols(request: MidPricesForSymbolsRequest): Promise<Map<string, DepthMidPrice[]>> {
-    const symbolMidPrices = await Promise.all(
+    const symbolMidPrices: DepthMidPrice[][] = await Promise.all(
       request.symbolIds.map(symbolId =>
         this.getMidPricesForSymbol({
           symbolId,
@@ -118,7 +112,7 @@ export class CacheFirstMidPriceRepository implements MidPriceRepository {
     )
 
     return symbolMidPrices.reduce((symbolToPricesMap, depthMidPrices) => {
-      return !isEmpty(depthMidPrices) ? symbolToPricesMap.set(head(depthMidPrices).symbolId, depthMidPrices) : symbolToPricesMap
+      return !isEmpty(depthMidPrices) ? symbolToPricesMap.set(head(depthMidPrices)!.symbolId, depthMidPrices) : symbolToPricesMap
     }, new Map<string, DepthMidPrice[]>())
   }
 
@@ -156,7 +150,7 @@ export class CacheFirstMidPriceRepository implements MidPriceRepository {
    * @param request the IDs of the symbols to retrieve the prices for
    */
   public async getOHLCOrderedMidPricesForSymbols(request: MidPricesForSymbolsRequest): Promise<Map<string, DepthMidPrice[]>> {
-    const symbolMidPrices = await Promise.all(
+    const symbolMidPrices: DepthMidPrice[][] = await Promise.all(
       request.symbolIds.map(symbolId =>
         this.getOHLCOrderedMidPricesForSymbol({
           symbolId,
@@ -168,7 +162,7 @@ export class CacheFirstMidPriceRepository implements MidPriceRepository {
     )
 
     return symbolMidPrices.reduce((symbolToPricesMap, depthMidPrices) => {
-      return !isEmpty(depthMidPrices) ? symbolToPricesMap.set(head(depthMidPrices).symbolId, depthMidPrices) : symbolToPricesMap
+      return !isEmpty(depthMidPrices) ? symbolToPricesMap.set(head(depthMidPrices)!.symbolId, depthMidPrices) : symbolToPricesMap
     }, new Map<string, DepthMidPrice[]>())
   }
 

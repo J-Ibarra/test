@@ -1,8 +1,7 @@
-import moment = require('moment')
-import { v4 } from 'node-uuid'
+import moment from 'moment'
 import { findAllMidPricesForSymbols, PRICE_CHANGE_KEY } from '..'
-import { DepthMidPrice } from '../../../..'
-import { getMemoryCacheClient } from '../../../../../db/memory'
+import { MemoryCache } from '@abx/db-connection-utils'
+import { DepthMidPrice } from '@abx-types/market-data'
 
 export const findAndStoreMidPrices = async (symbolIds: string[], timeFilter: Date) => {
   const midPrices = await findAllMidPricesForSymbols(symbolIds, timeFilter)
@@ -13,12 +12,12 @@ export const findAndStoreMidPrices = async (symbolIds: string[], timeFilter: Dat
       ttl: moment(createdAt).diff(moment(timeFilter), 'ms'),
       val: price,
     }))
-    getMemoryCacheClient().setList<number>(cachingMidPrices)
+    MemoryCache.getInstance().setList<number>(cachingMidPrices)
   })
 }
 
 export const storeMidPrice = ({ id, symbolId, price, createdAt }: DepthMidPrice, timeFilter: Date) =>
-  getMemoryCacheClient().set<number>({
+  MemoryCache.getInstance().set<number>({
     key: `${PRICE_CHANGE_KEY(symbolId)}:${id}`,
     ttl: moment(createdAt).diff(moment(timeFilter), 'ms'),
     val: price,

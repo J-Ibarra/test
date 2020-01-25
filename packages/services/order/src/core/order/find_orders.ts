@@ -4,7 +4,7 @@ import { getModel } from '@abx/db-connection-utils'
 import { getApiCacheClient } from '@abx/db-connection-utils'
 import { CurrencyCode, SymbolPair } from '@abx-types/reference-data'
 import { getAllCompleteSymbolDetails, getAllSymbolsIncludingCurrency } from '@abx-service-clients/reference-data'
-import { TradeTransaction } from '@abx-types/order'
+import { TradeTransaction, OrderType, OrderDirection } from '@abx-types/order'
 import { CoreOrderDetails, Order, OrderStatus, OrderWithTradeTransactions } from '@abx-types/order'
 import { findTradeTransactions } from '../transaction'
 
@@ -197,4 +197,38 @@ function calculateAccumulativeMatchPrice(
   })
 
   return orderIdToTransactions
+}
+
+/** Gets all open buy or sell orders for a symbol. */
+export function getOpenOrders(symbolId: string, orderDirection: OrderDirection, limit: number | undefined) {
+  return findOrders({
+    where: {
+      symbolId,
+      direction: orderDirection,
+      $and: [
+        {
+          status: {
+            $not: OrderStatus.fill,
+          },
+        },
+        {
+          status: {
+            $not: OrderStatus.cancel,
+          },
+        },
+        {
+          status: {
+            $not: OrderStatus.pendingCancel,
+          },
+        },
+        {
+          orderType: {
+            $not: OrderType.market,
+          },
+        },
+      ],
+    },
+    order: [orderDirection === OrderDirection.buy ? ['limitPrice', 'DESC'] : ['limitPrice', 'ASC']],
+    limit,
+  })
 }

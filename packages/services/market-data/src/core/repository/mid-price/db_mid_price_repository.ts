@@ -1,14 +1,12 @@
 import Decimal from 'decimal.js'
 import { Transaction, WhereOptions } from 'sequelize'
-import { getSymbolBoundaries } from '../../../../boundaries'
-import sequelize, { getModel } from '../../../../db/abx_modules'
-import { DBOrder } from '../../../../db/interface'
-import { wrapInTransaction } from '../../../../db/transaction_wrapper'
-import { DepthItem } from '../../../../depth_cache/interface'
-import { DepthMidPrice, MidPricesForSymbolRequest, MidPricesForSymbolsRequest } from '../../../interface'
+import { getSymbolBoundaries } from '@abx-service-clients/reference-data'
+import { DBOrder, getModel, wrapInTransaction, sequelize } from '@abx/db-connection-utils'
+import { DepthItem } from '@abx-types/depth-cache'
+import { DepthMidPrice, MidPricesForSymbolRequest, MidPricesForSymbolsRequest } from '@abx-types/market-data'
 import { reduceSymbolsToMappedObject } from '../utils/helpers'
-import { calculateMidPrice } from './mid_price_calc_utils'
 import { MidPriceRepository } from './mid_price_repository'
+import { calculateMidPrice } from '@abx-service-clients/market-data'
 
 /** Defines a {@link MidPriceRepository} using a relation database as its data source. */
 export class DatabaseMidPriceRepository implements MidPriceRepository {

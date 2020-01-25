@@ -1,7 +1,7 @@
 import { Transaction } from 'sequelize'
 
-import { AggregateDepth, DepthItem, OrderDirection } from '../../../../orders/interface'
-import { DepthMidPrice, MidPricesForSymbolRequest, MidPricesForSymbolsRequest } from '../../../interface'
+import { DepthItem } from '@abx-types/depth-cache'
+import { DepthMidPrice, MidPricesForSymbolRequest, MidPricesForSymbolsRequest } from '@abx-types/market-data'
 
 /** The mechanism used for {@link DepthMidPrice} data CRUD operations. */
 export interface MidPriceRepository {

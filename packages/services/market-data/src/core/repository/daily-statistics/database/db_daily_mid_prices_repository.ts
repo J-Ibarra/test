@@ -1,6 +1,5 @@
-import { getModel } from '../../../../../db/abx_modules'
-import { DBOrder } from '../../../../../db/interface'
-import { DepthMidPrice, MidPricesForSymbolsRequest } from '../../../../interface'
+import { DBOrder, getModel } from '@abx/db-connection-utils'
+import { DepthMidPrice, MidPricesForSymbolsRequest } from '@abx-types/market-data'
 import { DatabaseMidPriceRepository } from '../../mid-price/db_mid_price_repository'
 
 export const findAllMidPricesForSymbols = async (symbolIds: string[], timeFilter: Date): Promise<Map<string, DepthMidPrice[]>> => {

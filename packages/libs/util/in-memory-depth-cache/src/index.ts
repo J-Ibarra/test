@@ -5,13 +5,16 @@ import { DepthCache, DepthCacheState, DepthCacheSymbol } from '@abx-types/depth-
 import { get, head, isEmpty } from 'lodash'
 import moment from 'moment'
 
-import { getAggregateDepth } from './depth_aggregator'
+import { getAggregateDepth } from './utils'
+import { getAllSymbolPairSummaries } from '@abx-service-clients/reference-data'
 
 /**
  * Defines a facade which can be used to retrieve a depth aggregation {@link  DepthItem} for buys and sell orders for different symbols.
  * It is intended to be used by clients who need a high level view of the current depth, retrieved in an effective way, without the need to access specific order details.
  */
 export class DepthCacheFacade {
+  private static depthCacheForAllSymbols: DepthCacheFacade
+
   constructor(private state: DepthCacheState) {}
 
   /**
@@ -25,6 +28,16 @@ export class DepthCacheFacade {
     }
 
     return this.state.depthCache || {}
+  }
+
+  public static async createDepthCacheForAllSymbols() {
+    if (!this.depthCacheForAllSymbols) {
+      const symbols = await getAllSymbolPairSummaries()
+
+      this.depthCacheForAllSymbols = new DepthCacheFacade({ symbolIds: symbols.map(({ id }) => id), depthCache: {} })
+    }
+
+    return this.depthCacheForAllSymbols
   }
 
   /**
@@ -108,4 +121,4 @@ export class DepthCacheFacade {
   }
 }
 
-export * from './depth_aggregator'
+export * from './utils'

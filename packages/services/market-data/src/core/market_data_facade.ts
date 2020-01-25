@@ -23,7 +23,7 @@ export class MarketDataFacade {
 
   constructor(private midPriceRepository: MidPriceRepository = CacheFirstMidPriceRepository.getInstance()) {}
 
-  public recordDepthMidPriceChange(symbolId: string, bidDepthTopItem: DepthItem, askDepthTopItem: DepthItem): Promise<DepthMidPrice> {
+  public recordDepthMidPriceChange(symbolId: string, bidDepthTopItem: DepthItem, askDepthTopItem: DepthItem): Promise<DepthMidPrice | null> {
     return this.midPriceRepository.recordDepthMidPriceChange(symbolId, bidDepthTopItem, askDepthTopItem)
   }
 

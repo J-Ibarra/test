@@ -1,9 +1,8 @@
-import moment = require('moment')
+import moment from 'moment'
 
 import { findOrderMatchTransactionsForSymbols, ORDER_MATCH_KEY } from '..'
-import { CachingObject } from '../../../../../db/cache/memory-gateway'
-import { getMemoryCacheClient } from '../../../../../db/memory'
-import { OrderMatch } from '../../../../../orders/interface'
+import { MemoryCache, CachingObject } from '@abx/db-connection-utils'
+import { OrderMatch } from '@abx-types/order'
 
 export const findAndStoreOrderMatchPrices = async (symbolIds: string[], timeFilter: Date) => {
   const orderMatchTransactions = await findOrderMatchTransactionsForSymbols(symbolIds, timeFilter)
@@ -15,12 +14,12 @@ export const findAndStoreOrderMatchPrices = async (symbolIds: string[], timeFilt
         val: amount,
       }),
     )
-    getMemoryCacheClient().setList<number>(cachingOrderMatch)
+    MemoryCache.getInstance().setList<number>(cachingOrderMatch)
   })
 }
 
 export const storeOrderMatchPrice = ({ symbolId, id, createdAt, amount }: OrderMatch, timeFilter: Date) =>
-  getMemoryCacheClient().set<number>({
+  MemoryCache.getInstance().set<number>({
     key: `${ORDER_MATCH_KEY(symbolId)}:${id}`,
     ttl: moment(createdAt).diff(moment(timeFilter), 'ms'),
     val: amount,

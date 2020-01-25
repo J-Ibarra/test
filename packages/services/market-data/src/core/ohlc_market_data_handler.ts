@@ -1,14 +1,12 @@
 import { compact, head, last, max, maxBy, min, minBy, orderBy } from 'lodash'
 import moment from 'moment'
 import { Transaction } from 'sequelize'
-import { Logger } from '../../../config/logging'
-import sequelize, { getModel } from '../../../db/abx_modules'
-import { DBOrder } from '../../../db/interface'
-import { wrapInTransaction } from '../../../db/transaction_wrapper'
-import { getAllCompleteSymbolDetails } from '../../../symbols'
-import { DepthMidPrice, MarketDataTimeFrame, MidPricesForSymbolsRequest, OHLCMarketData } from '../../interface'
-import { calculateRealTimeMidPriceForSymbol } from '../real_time_mid_price_calculator'
-import { CacheFirstMidPriceRepository } from '../repository/mid-price/cache_first_mid_price_repository'
+import { Logger } from '@abx/logging'
+import { sequelize, getModel, DBOrder, wrapInTransaction } from '@abx/db-connection-utils'
+import { getAllCompleteSymbolDetails } from '@abx-service-clients/reference-data'
+import { DepthMidPrice, MarketDataTimeFrame, MidPricesForSymbolsRequest, OHLCMarketData } from '@abx-types/market-data'
+import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-data'
+import { CacheFirstMidPriceRepository } from './repository/mid-price/cache_first_mid_price_repository'
 
 /**
  * Computes the open, high, close and low depth prices for all symbols within an given time frame.
@@ -40,7 +38,7 @@ export async function reconcileOHCLMarketData(timeFrame: MarketDataTimeFrame): P
           symbolId: id,
           timeFrame,
           recordTime: reconciliationTime,
-          midPricesForSymbol: symbolIdToDepthMidPrices.get(id),
+          midPricesForSymbol: symbolIdToDepthMidPrices.get(id)!,
         }),
       ),
     ),
@@ -83,14 +81,14 @@ async function computeOHCLForSymbol({
   logger.debug(`Mid-price updates for ${symbolId} found`)
 
   const orderedByPrices = orderBy(midPricesForSymbol, 'price')
-  const open = !!lastOHLCMarketData ? lastOHLCMarketData.close : head(midPricesForSymbol).price
+  const open = !!lastOHLCMarketData ? lastOHLCMarketData.close : head(midPricesForSymbol)!.price
 
   return {
     symbolId,
     open,
-    close: last(midPricesForSymbol).price,
-    high: max([last(orderedByPrices).price, open]),
-    low: min([head(orderedByPrices).price, open]),
+    close: (last(midPricesForSymbol) || { price: 0 }).price,
+    high: max([(last(orderedByPrices) || { price: 0 }).price, open]) || 0,
+    low: min([(head(orderedByPrices) || { price: 0 }).price, open]) || 0,
     timeFrame,
     createdAt: recordTime,
   }
@@ -144,6 +142,7 @@ export async function generateRealTimeOHLCMarketData(
   if (timeFrame === MarketDataTimeFrame.oneMinute) {
     return generateOneMinuteRealTimeOHLCMarketData(symbolId, timeFrame, lastOHLCMarketData, currentMidPrice)
   }
+
   return generateNonOneMinuteRealTimeOHLCMarketData(symbolId, timeFrame, lastOHLCMarketData, currentMidPrice, createdAt, transaction)
 }
 
@@ -179,8 +178,8 @@ export function generateOneMinuteRealTimeOHLCMarketData(
     timeFrame,
     open,
     close: currentMidPrice,
-    high: max([open, currentMidPrice]),
-    low: min([open, currentMidPrice]),
+    high: max([open, currentMidPrice]) || 0,
+    low: min([open, currentMidPrice]) || 0,
     createdAt,
   }
 }
@@ -228,18 +227,21 @@ async function generateNonOneMinuteRealTimeOHLCMarketData(
         .add(timeFrame, 'minutes')
         .toDate()
     : moment().toDate()
+
   const ohlcDataSet = ohlcMarketData.map(marketData => marketData.get())
   const open = !!lastOHLCMarketData ? lastOHLCMarketData.close : currentMidPrice
   const close = currentMidPrice
+
   const dataWithHighestValue = maxBy(ohlcDataSet, data => data.high)
   const high = !!dataWithHighestValue ? dataWithHighestValue.high : max([open, close])
+
   const dataWithLowestValue = minBy(ohlcDataSet, data => data.low)
   const low = !!dataWithLowestValue ? dataWithLowestValue.low : min([open, close])
   return {
     symbolId,
     open,
-    high,
-    low,
+    high: high || 0,
+    low: low || 0,
     close,
     timeFrame,
     createdAt: newCreatedAt,

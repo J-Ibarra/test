@@ -1,8 +1,8 @@
+import { AggregateDepth } from '@abx-types/depth-cache'
 import { get, head } from 'lodash'
-import { Logger } from '../../../../config/logging'
-import { AggregateDepth } from '../../../../orders/interface'
+import { Logger } from '@abx/logging'
 
-const logger = Logger.getInstance('lib', 'calculateMidPrice')
+const logger = Logger.getInstance('abx-service-clients/market-data', 'mid_price_calculator')
 
 /**
  * Calculates the snapshot mid-price for a given symbol.

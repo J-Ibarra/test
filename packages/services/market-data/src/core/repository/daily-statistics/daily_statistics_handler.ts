@@ -1,7 +1,7 @@
 import moment = require('moment')
 
-import { getAllCompleteSymbolDetails } from '../../../symbols'
-import { findAndStoreAskAndBidPrices, findAndStoreMidPrices, findAndStoreOrderMatchPrices } from '../repository/daily-statistics'
+import { getAllCompleteSymbolDetails } from '@abx-service-clients/reference-data'
+import { findAndStoreAskAndBidPrices, findAndStoreMidPrices, findAndStoreOrderMatchPrices } from '.'
 
 export const initialisePriceChangeStatistics = async () => {
   const timeFrame = moment()
