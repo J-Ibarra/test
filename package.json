@@ -2,8 +2,8 @@
   "name": "root",
   "private": true,
   "devDependencies": {
-    "lerna": "^3.18.4",
-    "mocha": "5.2.0",
-    "@lerna/filter-options": "^3.18.4"
+    "@lerna/filter-options": "^3.18.4",
+    "lerna": "^3.19.0",
+    "mocha": "5.2.0"
   }
 }

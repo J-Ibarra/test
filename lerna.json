@@ -1,4 +1,10 @@
 {
-  "packages": ["packages/services/*", "packages/libs/internal-clients/*", "packages/libs/model/*", "packages/libs/query/*", "packages/libs/util/*"],
+  "packages": [
+    "packages/services/*",
+    "packages/libs/internal-clients/*",
+    "packages/libs/model/*",
+    "packages/libs/query/*",
+    "packages/libs/util/*"
+  ],
   "version": "independent"
 }
