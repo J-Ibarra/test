@@ -20,6 +20,15 @@ export async function findWithdrawalRequest(query: Partial<WithdrawalRequest>) {
   return withdrawalRequest ? withdrawalRequest.get() : null
 }
 
+export async function findAndLockWithdrawalRequestById(id: number, transaction?: Transaction) {
+  const withdrawalRequest = await getModel<WithdrawalRequest>('withdrawalRequest').findByPrimary(id, {
+    transaction,
+    lock: Transaction.LOCK.UPDATE,
+  })
+
+  return withdrawalRequest ? withdrawalRequest.get({ plain: true }) : null
+}
+
 export async function findNonCancelledWithdrawalsForTheLast24Hours(accountId: string): Promise<WithdrawalRequest[]> {
   const withdrawalRequests = await getModel<WithdrawalRequest>('withdrawalRequest').findAll({
     where: {

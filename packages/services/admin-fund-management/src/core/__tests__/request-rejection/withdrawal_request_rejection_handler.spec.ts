@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 import * as gtid from '../../models/global_transaction_id'
-import { truncateTables } from '@abx-utils/db-connection-utils'
+import { truncateTables, cleanSpecificTables } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { AdminRequestStatus, AdminRequestType } from '@abx-service-clients/admin-fund-management'
 import { saveAdminRequest, rejectWithdrawalRequest } from '../..'
@@ -31,6 +31,8 @@ describe('withdrawal_request_rejection_handler', () => {
   after(() => {
     sinon.restore()
   })
+
+  afterEach(async () => await cleanSpecificTables(['admin_request']))
 
   it('should find and deny usd withdrawal admin request', async () => {
     const adminRequest = await saveAdminRequest({

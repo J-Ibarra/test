@@ -16,6 +16,12 @@ const logger = Logger.getInstance('balance-internal-client', 'async_endpoints_ha
 export const environmentsWithLocalRedisQueue = [Environment.development, Environment.e2eLocal, Environment.test]
 export const localRedisBalanceChangeTopic = 'local-balance-change-topic'
 
+/**
+ * Triggers multiple balance change operations on the balance service side
+ * all executed within the same logical database transaction.
+ *
+ * @param changes the balance change operatios to be applied
+ */
 export function triggerMultipleBalanceChanges(changes: BalanceChangeAsyncRequest[]) {
   return sendAsyncChangeMessage({
     requestedChanges: changes,

@@ -92,7 +92,7 @@ export async function setUp({
       code: feeCurrency.currency,
     },
   })
-  sinon.stub(marketDataOperations, 'calculateMidPriceForSymbol').resolves(10)
+  sinon.stub(marketDataOperations, 'calculateRealTimeMidPriceForSymbol').resolves(10)
   sinon.stub(fxRateUtils, 'convertAmountToFiatCurrency').resolves(1)
   sinon.stub(fxRateUtils, 'getQuoteFor').resolves(1)
   sinon.stub(marketDataOperations, 'calculateRealTimeMidPriceForSymbol').resolves(10)

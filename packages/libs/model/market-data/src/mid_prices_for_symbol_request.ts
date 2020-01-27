@@ -13,7 +13,7 @@ export class MidPricesForSymbolRequest {
     public createdAtOrder?: DBOrder,
   ) {}
 
-  public static forSymbolAndLimit(symbolId: string, limit: number): MidPricesForSymbolRequest {
-    return new MidPricesForSymbolRequest(symbolId, undefined, limit)
+  public static forSymbolAndLimit(symbolId: string, limit: number, createdAtOrder: DBOrder): MidPricesForSymbolRequest {
+    return new MidPricesForSymbolRequest(symbolId, undefined, limit, undefined, createdAtOrder)
   }
 }

@@ -7,7 +7,7 @@ export async function up({ sequelize }: { sequelize: Sequelize }) {
         address character varying(255),
         amount numeric(20,8) NOT NULL,
         state withdrawal_state NOT NULL,
-        "accountId" uuid REFERENCES public.account(id),
+        "accountId" uuid,
         "currencyId" integer REFERENCES public.currency(id),
         "txHash" character varying(255),
         "createdAt" timestamp with time zone NOT NULL,

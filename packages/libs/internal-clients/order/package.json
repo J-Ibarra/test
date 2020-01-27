@@ -19,6 +19,7 @@
     "@abx-types/order": "1.0.0",
     "@abx-types/depth-cache": "1.0.0",
     "@abx-utils/db-connection-utils": "1.0.0",
+    "@types/sequelize": "3.30.4",
     "sequelize": "4.41.0",
     "lodash": "4.17.5"
   },

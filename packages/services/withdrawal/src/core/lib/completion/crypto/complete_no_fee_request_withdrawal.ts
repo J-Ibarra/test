@@ -1,7 +1,7 @@
 import Decimal from 'decimal.js'
 
 import { findOrCreateKinesisRevenueAccount } from '@abx-service-clients/account'
-import { SourceEventType } from '@abx-types/balance'
+import { SourceEventType, BalanceAsyncRequestType } from '@abx-types/balance'
 import { Logger } from '@abx-utils/logging'
 import { wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
@@ -11,7 +11,7 @@ import { WithdrawalRequest, WithdrawalState } from '@abx-types/withdrawal'
 import { updateWithdrawalRequest } from '../../common/update_withdrawal_request'
 import { findCurrencyForId } from '@abx-service-clients/reference-data'
 import { createCurrencyTransaction } from '@abx-service-clients/order'
-import { confirmPendingDeposit, confirmPendingWithdrawal } from '@abx-service-clients/balance'
+import { triggerMultipleBalanceChanges } from '@abx-service-clients/balance'
 
 const logger = Logger.getInstance('fiat_withdrawal_completer', 'completeFiatWithdrawal')
 
@@ -51,20 +51,26 @@ async function updateWithdrawerAndKinesisRevenueAccounts(withdrawalRequest: With
     getWithdrawalFee(currencyCode, withdrawalRequest.amount),
   ])
 
-  return Promise.all([
-    confirmPendingDeposit({
-      accountId: kinesisRevenueAccount.id,
-      amount: new Decimal(withdrawalFee).minus(withdrawalRequest.kinesisCoveredOnChainFee!).toNumber(),
-      currencyId: withdrawalRequest.currencyId,
-      sourceEventId: withdrawalRequest.id!,
-      sourceEventType: SourceEventType.currencyWithdrawal,
-    }),
-    confirmPendingWithdrawal({
-      accountId: withdrawalRequest.accountId,
-      amount: totalAmount,
-      currencyId: withdrawalRequest.currencyId,
-      sourceEventId: withdrawalRequest.id!,
-      sourceEventType: SourceEventType.currencyWithdrawal,
-    }),
+  return await triggerMultipleBalanceChanges([
+    {
+      type: BalanceAsyncRequestType.confirmPendingDeposit,
+      payload: {
+        accountId: kinesisRevenueAccount.id,
+        amount: new Decimal(withdrawalFee).minus(withdrawalRequest.kinesisCoveredOnChainFee!).toNumber(),
+        currencyId: withdrawalRequest.currencyId,
+        sourceEventId: withdrawalRequest.id!,
+        sourceEventType: SourceEventType.currencyWithdrawal,
+      },
+    },
+    {
+      type: BalanceAsyncRequestType.confirmPendingWithdrawal,
+      payload: {
+        accountId: withdrawalRequest.accountId,
+        amount: totalAmount,
+        currencyId: withdrawalRequest.currencyId,
+        sourceEventId: withdrawalRequest.id!,
+        sourceEventType: SourceEventType.currencyWithdrawal,
+      },
+    },
   ])
 }

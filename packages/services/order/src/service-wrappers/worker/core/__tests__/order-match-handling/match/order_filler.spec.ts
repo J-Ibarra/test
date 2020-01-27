@@ -124,7 +124,7 @@ describe('fillOrders', () => {
     sinon.stub(libOperations, 'createOrderMatchTransaction').resolves({ get: () => orderMatch })
     sinon.stub(libOperations, 'saveOrder').callsFake(({ order }) => Promise.resolve(order))
     sinon.stub(depthOperations, 'updateOrderInDepth').resolves(true)
-    sinon.stub(marketOperations, 'calculateMidPriceForSymbol').resolves(latestKauUsdMidPrice)
+    sinon.stub(marketOperations, 'calculateRealTimeMidPriceForSymbol').resolves(latestKauUsdMidPrice)
     sinon.stub(referenceDataOperations, 'getCompleteSymbolDetails').resolves({
       base: {
         code: CurrencyCode.kau,

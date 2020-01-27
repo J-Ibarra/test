@@ -1,9 +1,9 @@
 import { isEmpty } from 'lodash'
 
-import { OrderDirection, OrderStatus } from '@abx-types/order'
-import { findOrders } from '../../../../../core'
+import { OrderDirection } from '@abx-types/order'
 import { SymbolDepth } from '@abx-types/order'
 import { getDepthFromCache } from './redis'
+import { getOpenOrders } from '../../../../../core'
 
 /**
  * Retrieves all the bid and ask open orders for a given symbol.
@@ -31,28 +31,4 @@ export async function getDepthForSymbol(symbolId: string, limit?: number): Promi
     [OrderDirection.buy]: buyOrders,
     [OrderDirection.sell]: sellOrders,
   } as any
-}
-
-/** Gets all open buy or sell orders for a symbol. */
-function getOpenOrders(symbolId: string, orderDirection: OrderDirection, limit: number | undefined) {
-  return findOrders({
-    where: {
-      symbolId,
-      direction: orderDirection,
-      $and: [
-        {
-          status: {
-            $not: OrderStatus.fill,
-          },
-        },
-        {
-          status: {
-            $not: OrderStatus.cancel,
-          },
-        },
-      ],
-    },
-    order: [orderDirection === OrderDirection.buy ? ['limitPrice', 'DESC'] : ['limitPrice', 'ASC']],
-    limit,
-  })
 }

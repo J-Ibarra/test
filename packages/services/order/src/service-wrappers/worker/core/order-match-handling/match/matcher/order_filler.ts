@@ -2,7 +2,7 @@ import Decimal from 'decimal.js'
 import { recordCustomEvent } from 'newrelic'
 import { Transaction } from 'sequelize'
 import { Logger } from '@abx-utils/logging'
-import { calculateMidPriceForSymbol } from '@abx-service-clients/market-data'
+import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-data'
 import { CurrencyCode, SymbolBoundaries } from '@abx-types/reference-data'
 import {
   DepthState,
@@ -12,7 +12,6 @@ import {
   OrderMatchStatus,
   OrderStatus,
   OrderType,
-  OrderDepth,
   UsdMidPriceEnrichedOrderMatch,
 } from '@abx-types/order'
 import { saveOrder, createOrderMatchTransaction, validateBoundaries } from '../../../../../../core'
@@ -73,7 +72,7 @@ export async function fillOrders(
   logger.debug(`Created order match ${orderMatch.id} for buy order ${orderMatch.buyOrderId} and sell order ${orderMatch.sellOrderId}`)
 
   const persistedOrderMatch = await createOrderMatchTransaction(orderMatch, transaction)
-  const usdMidPriceEnrichedOrderMatch = await enrichOrderMatchWithUsdMidPrice(persistedOrderMatch.get(), depth.orders, transaction)
+  const usdMidPriceEnrichedOrderMatch = await enrichOrderMatchWithUsdMidPrice(persistedOrderMatch.get())
   const { updatedOrder, updatedMatchingOrder } = await updateOrders(order, matchingOrder, matchAmount, depth, symbolBoundaries, transaction)
 
   return {
@@ -191,11 +190,7 @@ function persistOrderUpdate(order: Order, amount: number, { baseBoundary }: Symb
  * @param depth the current depth for all symbols
  * @param transaction the parent transaction
  */
-async function enrichOrderMatchWithUsdMidPrice(
-  orderMatch: OrderMatch,
-  depth: OrderDepth,
-  transaction: Transaction,
-): Promise<UsdMidPriceEnrichedOrderMatch> {
+async function enrichOrderMatchWithUsdMidPrice(orderMatch: OrderMatch): Promise<UsdMidPriceEnrichedOrderMatch> {
   const symbol = await getCompleteSymbolDetails(orderMatch.symbolId)
   if (symbol.quote.code === CurrencyCode.usd) {
     return {
@@ -204,7 +199,7 @@ async function enrichOrderMatchWithUsdMidPrice(
     }
   }
 
-  const feeCurrencyToUsdMidPrice = await calculateMidPriceForSymbol(`${symbol.fee.code}_USD`, depth[`${symbol.fee.code}_USD`], transaction)
+  const feeCurrencyToUsdMidPrice = await calculateRealTimeMidPriceForSymbol(`${symbol.fee.code}_USD`)
 
   return {
     ...orderMatch,

@@ -54,11 +54,16 @@ export async function updateAdminRequest(id: number, update: Partial<AdminReques
 
 export async function saveAdminRequest(adminRequest: CreateAdminRequestParams, transaction?: Transaction): Promise<AdminRequest> {
   return wrapInTransaction(sequelize, transaction, async t => {
-    const globalTransactionId = await getNextGlobalTransactionId(adminRequest.type, t)
-    const createdAdminRequest = await getModel<AdminRequest>('admin_request').create({ ...adminRequest, globalTransactionId } as AdminRequest, {
-      transaction: t,
-    })
+    try {
+      const globalTransactionId = await getNextGlobalTransactionId(adminRequest.type, t)
+      const createdAdminRequest = await getModel<AdminRequest>('admin_request').create({ ...adminRequest, globalTransactionId } as AdminRequest, {
+        transaction: t,
+      })
 
-    return createdAdminRequest.get()
+      return createdAdminRequest.get()
+    } catch (e) {
+      console.log(JSON.stringify(e))
+      throw e
+    }
   })
 }

@@ -1,4 +1,3 @@
-import { Transaction } from 'sequelize'
 import { findOrCreateKinesisRevenueAccount } from '@abx-service-clients/account'
 import { SourceEventType } from '@abx-types/balance'
 import { Logger } from '@abx-utils/logging'
@@ -30,7 +29,7 @@ export async function completeFiatWithdrawalRequest(withdrawalRequest: CurrencyE
     const { code: withdrawalCurrency } = await findCurrencyForId(withdrawalRequest.currencyId)
     const totalAmount = await getTotalWithdrawalAmount(withdrawalRequest.amount, withdrawalCurrency, fee)
 
-    await updateWithdrawerAndKinesisRevenueAccounts(withdrawalRequest, withdrawalCurrency, totalAmount, transaction, fee)
+    await updateWithdrawerAndKinesisRevenueAccounts(withdrawalRequest, withdrawalCurrency, totalAmount, fee)
 
     await createCurrencyTransaction({
       accountId: completedRequest.accountId,
@@ -64,7 +63,6 @@ async function updateWithdrawerAndKinesisRevenueAccounts(
   withdrawalRequest: WithdrawalRequest,
   currencyCode: CurrencyCode,
   totalAmount: number,
-  transaction: Transaction,
   fee?: number,
 ) {
   const { kinesisRevenueAccount, withdrawalFee } = await getKinesisRevAccountAndFee(currencyCode, withdrawalRequest, fee)
@@ -76,7 +74,6 @@ async function updateWithdrawerAndKinesisRevenueAccounts(
       currencyId: withdrawalRequest.currencyId,
       sourceEventId: withdrawalRequest.id!,
       sourceEventType: SourceEventType.currencyWithdrawal,
-      t: transaction,
     }),
     updateAvailable({
       accountId: withdrawalRequest.accountId,
@@ -84,7 +81,6 @@ async function updateWithdrawerAndKinesisRevenueAccounts(
       currencyId: withdrawalRequest.currencyId,
       sourceEventId: withdrawalRequest.id!,
       sourceEventType: SourceEventType.currencyWithdrawal,
-      t: transaction,
     }),
   ])
 }

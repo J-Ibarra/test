@@ -11,6 +11,7 @@ import * as accountServiceOperations from '@abx-service-clients/account'
 import * as balanceOperations from '@abx-service-clients/balance'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import * as withdrawalOperations from '@abx-service-clients/withdrawal'
+import * as expressMiddleware from '@abx/express-middleware'
 
 import { SourceEventType } from '@abx-types/balance'
 import Decimal from 'decimal.js'
@@ -21,6 +22,7 @@ const kauId = 2
 
 describe('api:admin_request:create', () => {
   let app: ReturnType<typeof bootstrapRestApi>
+
   beforeEach(async () => {
     await truncateTables()
     app = bootstrapRestApi()
@@ -37,12 +39,16 @@ describe('api:admin_request:create', () => {
       const redemptionAmount = 100
       const fee = 1
 
-      const { cookie } = await createAccountAndSession(AccountType.admin)
+      const { account: adminAccount, cookie } = await createAccountAndSession(AccountType.admin)
 
       sinon.stub(referenceDataOperations, 'getCurrencyId').resolves(kauId)
       sinon.stub(accountServiceOperations, 'findAccountWithUserDetails').resolves(testClient)
       sinon.stub(referenceDataOperations, 'findBoundaryForCurrency').resolves({ maxDecimals: 5 })
       const createPendingRedemptionStub = sinon.stub(balanceOperations, 'createPendingRedemption').resolves()
+      sinon.stub(expressMiddleware, 'overloadRequestWithSessionInfo').callsFake(async (request, _, next: () => void = () => ({})) => {
+        request.account = adminAccount
+        next()
+      })
 
       const { status: getStatus, body } = await request(app)
         .post(`/api/admin/fund-management/admin-requests`)
@@ -85,13 +91,18 @@ describe('api:admin_request:create', () => {
       const withdrawalAmount = 90
       const feeAmount = 25
 
-      const { cookie } = await createAccountAndSession(AccountType.admin)
+      const { account: adminAccount, cookie } = await createAccountAndSession(AccountType.admin)
 
       sinon.stub(referenceDataOperations, 'getCurrencyId').resolves(usdId)
       sinon.stub(accountServiceOperations, 'findAccountWithUserDetails').resolves(testClient)
       sinon.stub(referenceDataOperations, 'findBoundaryForCurrency').resolves({ maxDecimals: 2 })
 
       const createFiatWithdrawalStub = sinon.stub(withdrawalOperations, 'createFiatWithdrawal').resolves()
+
+      sinon.stub(expressMiddleware, 'overloadRequestWithSessionInfo').callsFake(async (request, _, next: () => void = () => ({})) => {
+        request.account = adminAccount
+        next()
+      })
 
       const { status: getStatus, body } = await request(app)
         .post(`/api/admin/fund-management/admin-requests`)
@@ -134,13 +145,19 @@ describe('api:admin_request:create', () => {
     const testClient = await createTemporaryTestingAccount()
     const depositAmount = 10
 
-    const { cookie } = await createAccountAndSession(AccountType.admin)
+    const { account: adminAccount, cookie } = await createAccountAndSession(AccountType.admin)
 
     sinon.stub(referenceDataOperations, 'getCurrencyId').resolves(usdId)
     sinon.stub(accountServiceOperations, 'findAccountWithUserDetails').resolves(testClient)
     sinon.stub(referenceDataOperations, 'findBoundaryForCurrency').resolves({ maxDecimals: 2 })
 
     const createPendingDepositStub = sinon.stub(balanceOperations, 'createPendingDeposit').resolves()
+
+    sinon.stub(expressMiddleware, 'overloadRequestWithSessionInfo').callsFake(async (request, _, next: () => void = () => ({})) => {
+      request.account = adminAccount
+      next()
+    })
+
     const { status: getStatus, body } = await request(app)
       .post(`/api/admin/fund-management/admin-requests`)
       .send({
