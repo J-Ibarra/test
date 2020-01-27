@@ -26,6 +26,12 @@ export function findUserByAccountId(accountId: string): Promise<User | null> {
   return epicurus.request(AccountEndpoints.findUserByAccountId, { accountId })
 }
 
+export function isAccountSuspended(accountId: string): Promise<boolean> {
+  const epicurus = getEpicurusInstance()
+
+  return epicurus.request(AccountEndpoints.isAccountSuspended, { accountId })
+}
+
 export function findUsersByAccountId(accountId: string): Promise<User[]> {
   const epicurus = getEpicurusInstance()
 

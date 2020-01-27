@@ -1,0 +1,7 @@
+export * from './deposit_hash_recorder/last_deposit_hash_recorder'
+export * from './new_deposits_poller'
+export * from './new_deposit_processor/new_deposit_request_processor'
+export * from './deposit_gatekeeper'
+export * from './completion_pending_requests_processor'
+export * from './failed_transactions_operations/helper'
+export * from './failed_transactions_operations/failed_holdings_transaction_checker'

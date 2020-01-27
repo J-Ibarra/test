@@ -8,4 +8,5 @@ export enum AccountEndpoints {
   findOrCreateKinesisRevenueAccount = 'exchange:accounts:findOrCreateKinesisRevenueAccount',
   findOrCreateOperatorAccount = 'exchange:accounts:findOrCreateOperatorAccount',
   getNamesAndEmailsOfUsers = 'exchange:accounts:getNamesAndEmailsOfUsers',
+  isAccountSuspended = 'exchange:accounts:isAccountSuspended',
 }
