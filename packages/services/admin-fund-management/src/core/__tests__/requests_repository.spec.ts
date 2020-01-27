@@ -4,7 +4,7 @@ import * as gtid from '../models/global_transaction_id'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { AdminRequestStatus, AdminRequestType } from '@abx-service-clients/admin-fund-management'
 import { findAdminRequest, findAllAdminRequests, saveAdminRequest } from '..'
-import { truncateTables } from '@abx/db-connection-utils'
+import { truncateTables, wrapInTransaction, sequelize } from '@abx/db-connection-utils'
 
 describe('requests_repository', () => {
   const adminRequestParams = {
@@ -24,35 +24,40 @@ describe('requests_repository', () => {
     sinon.stub(gtid, 'getNextGlobalTransactionId').callsFake(type => Promise.resolve(`${type}xxx`))
   })
 
-  beforeEach(async () => await truncateTables())
-
   after(() => {
     sinon.restore()
   })
 
+  afterEach(async () => await truncateTables())
+
   it('should save and retrieve admin requests', async () => {
-    await saveAdminRequest(adminRequestParams)
+    return wrapInTransaction(sequelize, null, async transaction => {
+      await saveAdminRequest(adminRequestParams, transaction)
+      await new Promise(resolve => setTimeout(() => resolve(), 100))
+      const adminRequests = await findAllAdminRequests(transaction)
+      expect(adminRequests.length).to.eql(1)
 
-    const adminRequests = await findAllAdminRequests()
-    expect(adminRequests.length).to.eql(1)
-
-    const [redemptionRequest] = adminRequests
-    expect(redemptionRequest).to.eql({
-      ...adminRequestParams,
-      id: redemptionRequest.id,
-      globalTransactionId: `${AdminRequestType.redemption}xxx`,
-      createdAt: redemptionRequest.createdAt,
-      updatedAt: redemptionRequest.updatedAt,
-      tradingPlatformName: redemptionRequest.tradingPlatformName,
+      const [redemptionRequest] = adminRequests
+      expect(redemptionRequest).to.eql({
+        ...adminRequestParams,
+        id: redemptionRequest.id,
+        globalTransactionId: `${AdminRequestType.redemption}xxx`,
+        createdAt: redemptionRequest.createdAt,
+        updatedAt: redemptionRequest.updatedAt,
+        tradingPlatformName: redemptionRequest.tradingPlatformName,
+      })
     })
   })
 
   it('should save and retrieve admin request for specific account hin', async () => {
-    const accountHin = 'KM12314'
-    await saveAdminRequest({ ...adminRequestParams, hin: accountHin })
+    return wrapInTransaction(sequelize, null, async transaction => {
+      const accountHin = 'KM12314'
+      const adminRequestPersisted = await saveAdminRequest({ ...adminRequestParams, hin: accountHin }, transaction)
 
-    const adminRequest = await findAdminRequest({ hin: accountHin })
+      console.log(JSON.stringify(adminRequestPersisted))
+      const adminRequest = await findAdminRequest({ hin: accountHin }, transaction)
 
-    expect(adminRequest!.client).to.eql(adminRequestParams.client)
+      expect(adminRequest!.client).to.eql(adminRequestParams.client)
+    })
   })
 })

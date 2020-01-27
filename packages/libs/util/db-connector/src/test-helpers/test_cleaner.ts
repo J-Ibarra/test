@@ -34,11 +34,6 @@ const TRANSIENT_TABLES = [
 // Keep this really simple. Only truncate transient tables (i.e. balances, orders etc)
 // Lookup tables (currency, symbol and user will remain untouched)
 export async function truncateTables(additionalTablesToTruncate: string[] = []) {
-  // await sequelize.query(
-  //   `TRUNCATE ${TRANSIENT_TABLES.concat(additionalTablesToTruncate)
-  //     .map(table => `"${table}"`)
-  //     .join(', ')} RESTART IDENTITY CASCADE;`,
-  // )
   await sequelize.query(
     `TRUNCATE ${TRANSIENT_TABLES.concat(additionalTablesToTruncate)
       .map(table => `"${table}"`)
@@ -46,4 +41,8 @@ export async function truncateTables(additionalTablesToTruncate: string[] = []) 
   )
   await sequelize.query('DROP SEQUENCE IF EXISTS abx_transactions_id_seq')
   await sequelize.query('CREATE SEQUENCE IF NOT EXISTS abx_transactions_id_seq')
+}
+
+export async function cleanSpecificTables(tables: string[] = []) {
+  await sequelize.query(`DELETE FROM ${tables.map(table => `"${table}"`).join(', ')};`)
 }

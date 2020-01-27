@@ -7,7 +7,14 @@ import { truncateTables } from '@abx/db-connection-utils'
 import * as realTimeMidPriceCalculationOperations from '@abx-service-clients/market-data'
 import * as fxRateProvider from '@abx-utils/fx-rate'
 import { WithdrawalState, WithdrawalRequestType, WithdrawalConfirmParams } from '@abx-types/withdrawal'
-import { findWithdrawalRequest, createWithdrawalRequest, completeFiatWithdrawal, findWithdrawalRequests } from '../lib'
+import {
+  findWithdrawalRequest,
+  createWithdrawalRequest,
+  completeFiatWithdrawal,
+  findWithdrawalRequests,
+  CryptoWithdrawalGatekeeper,
+  completeWithdrawal,
+} from '..'
 import { USD, stubAccountCreation, KAU } from './utils'
 import * as balanceOperations from '@abx-service-clients/balance'
 import * as accountOperations from '@abx-service-clients/account'
@@ -19,7 +26,6 @@ import { expect } from 'chai'
 import { SourceEventType, BalanceAsyncRequestType } from '@abx-types/balance'
 import { FiatCurrency } from '@abx-types/reference-data'
 import { TransactionDirection } from '@abx-types/order'
-import { CryptoWithdrawalGatekeeper, completeWithdrawal } from '../framework'
 
 const testCurrency = {
   code: TEST_CURRENCY_TICKER,

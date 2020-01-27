@@ -44,11 +44,7 @@ export default function withdrawalRequestModel(sequelize: Sequelize.Sequelize) {
         allowNull: false,
       },
       accountId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'account',
-          key: 'id',
-        },
+        type: Sequelize.UUID,
       },
       memo: {
         type: Sequelize.STRING,

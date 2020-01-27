@@ -51,7 +51,7 @@ describe('Withdrawal Request Cancellation', () => {
       const amount = 1.5
       const account = await stubAccountCreation()
 
-      await createWithdrawalRequest({
+      const withdrawalRequest = await createWithdrawalRequest({
         accountId: account.id,
         address,
         amount,
@@ -62,7 +62,6 @@ describe('Withdrawal Request Cancellation', () => {
         kauConversion: 0,
         type: WithdrawalRequestType.withdrawal,
       })
-      const withdrawalRequest = await findWithdrawalRequest({ accountId: account.id })
       const withdrawalCancelParams: WithdrawalCancelParams = {
         id: withdrawalRequest!.id!,
       }
@@ -101,7 +100,7 @@ describe('Withdrawal Request Cancellation', () => {
       const account = await stubAccountCreation()
       sinon.stub(referenceDataOperations, 'findCurrencyForId').resolves(KAU)
 
-      await createWithdrawalRequest({
+      const withdrawalRequest = await createWithdrawalRequest({
         accountId: account.id,
         address: 'test-address',
         amount: 1,
@@ -112,7 +111,6 @@ describe('Withdrawal Request Cancellation', () => {
         kauConversion: 0,
         type: WithdrawalRequestType.withdrawal,
       })
-      const withdrawalRequest = await findWithdrawalRequest({ accountId: account.id })
 
       const withdrawalConfirmParams: WithdrawalConfirmParams = {
         id: withdrawalRequest!.id!,
@@ -131,7 +129,7 @@ describe('Withdrawal Request Cancellation', () => {
       const account = await stubAccountCreation()
       sinon.stub(referenceDataOperations, 'findCurrencyForId').resolves(USD)
 
-      await createWithdrawalRequest({
+      const withdrawalRequest = await createWithdrawalRequest({
         accountId: account.id,
         address: 'test-address',
         amount: 1,
@@ -142,7 +140,6 @@ describe('Withdrawal Request Cancellation', () => {
         kauConversion: 0,
         type: WithdrawalRequestType.withdrawal,
       })
-      const withdrawalRequest = await findWithdrawalRequest({ accountId: account.id })
 
       const withdrawalCancelParams: WithdrawalConfirmParams = {
         id: withdrawalRequest!.id!,
