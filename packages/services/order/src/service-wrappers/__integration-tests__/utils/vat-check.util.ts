@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { sequelize, getModel } from '@abx/db-connection-utils'
+import { sequelize, getModel } from '@abx-utils/db-connection-utils'
 import { TradeTransaction } from '@abx-types/order'
 
 // The trade amount and CHF tax rates expected for a given order

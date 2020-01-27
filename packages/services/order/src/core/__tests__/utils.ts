@@ -1,4 +1,4 @@
-import { wrapInTransaction, sequelize } from '@abx/db-connection-utils'
+import { wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 import { OrderMatch, OrderType, OrderMatchStatus, OrderStatus, OrderValidity, OrderDirection, Order } from '@abx-types/order'
 import { saveOrder } from '../order'
 import { createOrderMatchTransaction } from '../order-match'

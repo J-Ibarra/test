@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Put, Query, Response, Route, SuccessResponse } from 'tsoa'
 
 import { createAndSaveNewPassword, createResetPasswordConfirmationEmailContent, resetPasswordRequired, validateResetPasswordToken } from '../core'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { createEmail } from '@abx-service-clients/notification'
 import { UserPublicView } from '@abx-types/account'
 

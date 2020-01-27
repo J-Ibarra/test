@@ -1,4 +1,4 @@
-import { getEpicurusInstance as getInstance } from '@abx/db-connection-utils'
+import { getEpicurusInstance as getInstance } from '@abx-utils/db-connection-utils'
 
 import { WithdrawalPubSubChannels, cancelFiatWithdrawal } from '@abx-service-clients/withdrawal'
 import { AdminRequest, WithdrawalUpdateRequest } from '@abx-service-clients/admin-fund-management'

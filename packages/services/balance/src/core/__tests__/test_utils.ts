@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize'
-import { getModel } from '@abx/db-connection-utils'
+import { getModel } from '@abx-utils/db-connection-utils'
 import { BalanceType, RawBalance } from '@abx-types/balance'
 
 export const createAvailableBalance = async (

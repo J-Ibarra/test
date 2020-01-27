@@ -3,7 +3,7 @@ import { JsonRpcProvider } from 'ethers/providers'
 import Web3 from 'web3'
 import Contract from 'web3/eth/contract'
 import { Environment } from '@abx-types/reference-data'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import KinesisVelocityToken from './contracts/KinesisVelocityToken.json'
 
 export const CONFIG = {

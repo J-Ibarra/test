@@ -1,7 +1,7 @@
 import { RuntimeError } from '@abx-types/error'
 import { Order, OrderStatus, PlaceOrderMeta } from '@abx-types/order'
 import { OrderPubSubChannels } from '@abx-service-clients/order'
-import { getEpicurusInstance } from '@abx/db-connection-utils'
+import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 
 export function handleOrderUpdated(order: Order, meta?: PlaceOrderMeta) {
   const epicurus = getEpicurusInstance()

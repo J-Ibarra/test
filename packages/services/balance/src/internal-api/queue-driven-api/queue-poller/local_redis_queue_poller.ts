@@ -1,5 +1,5 @@
 import { QueuePoller } from './queue_poller'
-import { getEpicurusInstance } from '@abx/db-connection-utils'
+import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { BalanceChangeAsyncRequestContainer } from '@abx-types/balance'
 
 /**

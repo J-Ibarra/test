@@ -18,7 +18,7 @@ import {
 
 import { createHash } from 'crypto'
 import { Environment } from '@abx-types/reference-data'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { decryptValue } from '@abx-utils/encryption'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { CurrencyCode, KinesisCurrencies } from '@abx-types/reference-data'

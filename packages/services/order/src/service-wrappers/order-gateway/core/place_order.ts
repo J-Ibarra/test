@@ -1,11 +1,11 @@
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { ValidationError } from '@abx-types/error'
 import { Order, OrderStatus, PlaceOrderRequest } from '@abx-types/order'
 import { OrderPubSubChannels } from '@abx-service-clients/order'
 import { addToQueue } from './add_to_queue'
 import { validatePriceIfAccountBoundByOrderRange } from './last-executed-price-checks/order_validations'
 import { prepareOrder } from './prepare_order'
-import { getEpicurusInstance } from '@abx/db-connection-utils'
+import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { getContractExchangeStatus, ContractExchangeStatus } from '../../../core'
 
 const logger = Logger.getInstance('contract_exchange', 'placeOrder')

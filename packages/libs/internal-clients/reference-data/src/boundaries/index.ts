@@ -1,5 +1,5 @@
 import { CurrencyBoundary, CurrencyCode, SymbolBoundaries } from '@abx-types/reference-data'
-import { getEpicurusInstance } from '@abx/db-connection-utils'
+import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { BoundaryEndpoints } from './endpoints'
 
 export async function findBoundaryForCurrency(currency: CurrencyCode): Promise<CurrencyBoundary> {

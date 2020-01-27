@@ -1,5 +1,5 @@
-import { Logger } from '@abx/logging'
-import { sequelize, wrapInTransaction } from '@abx/db-connection-utils'
+import { Logger } from '@abx-utils/logging'
+import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { AdminRequest, AdminRequestStatusUpdate, AdminRequestType } from '@abx-service-clients/admin-fund-management'
 import { findAdminRequest } from '../requests_repository'
 import { approveDeposit } from './deposit_approval_handler'

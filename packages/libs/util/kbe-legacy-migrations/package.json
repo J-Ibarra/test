@@ -1,5 +1,5 @@
 {
-  "name": "@abx/kbe-legacy-migrations",
+  "name": "@abx-utils/kbe-legacy-migrations",
   "version": "1.0.0",
   "description": "Contains the legacy db-migrations taken from kinesis-secondary-exchange-repository",
   "license": "ISC",
@@ -16,7 +16,7 @@
   },
   "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9",
   "dependencies": {
-    "@abx/db-connection-utils": "1.0.0",
+    "@abx-utils/db-connection-utils": "1.0.0",
     "node-uuid": "1.4.7",
     "sequelize": "4.41.0",
     "validator": "10.2.0"

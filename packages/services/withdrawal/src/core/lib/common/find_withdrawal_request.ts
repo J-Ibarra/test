@@ -1,7 +1,7 @@
 import moment from 'moment'
 import { Transaction } from 'sequelize'
 
-import { getModel } from '@abx/db-connection-utils'
+import { getModel } from '@abx-utils/db-connection-utils'
 import { WithdrawalRequest, WithdrawalState } from '@abx-types/withdrawal'
 
 export async function findWithdrawalRequestById(id: number, transaction?: Transaction) {

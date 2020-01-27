@@ -1,4 +1,4 @@
-import { getCacheClient } from '@abx/db-connection-utils'
+import { getCacheClient } from '@abx-utils/db-connection-utils'
 
 const contractExchangeStatusKey: string = 'contractExchangeStatus'
 

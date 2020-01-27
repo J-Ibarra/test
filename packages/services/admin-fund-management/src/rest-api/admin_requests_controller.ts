@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Patch, Post, Request, Route, Security } from 'tsoa'
 
 import { AdminRequest, AdminRequestStatus, AdminRequestType } from '@abx-service-clients/admin-fund-management'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { findAllAdminRequests, findAllAdminRequestsForAccountHin, rejectAdminRequest, approveAdminRequest, createAdminRequest } from '../core'
 import { OverloadedRequest } from '@abx-types/account'

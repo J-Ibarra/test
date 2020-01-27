@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { getCacheClient, truncateTables } from '@abx/db-connection-utils'
+import { getCacheClient, truncateTables } from '@abx-utils/db-connection-utils'
 import { createDumbOrder, createDumbOrderMatchTransaction } from '../utils'
 import { OrderDirection } from '@abx-types/order'
 import { getLastExecutedPrice, setLastExecutedPrice } from '../../order-match/last_executed_price_redis'

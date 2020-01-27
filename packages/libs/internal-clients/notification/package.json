@@ -17,7 +17,7 @@
   "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9",
   "dependencies": {
     "@abx-types/notification": "1.0.0",
-    "@abx/db-connection-utils": "1.0.0",
+    "@abx-utils/db-connection-utils": "1.0.0",
     "moment": "2.22.2"
   },
   "devDependencies": {

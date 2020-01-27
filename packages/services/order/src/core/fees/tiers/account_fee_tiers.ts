@@ -1,6 +1,6 @@
 import { every } from 'lodash'
 import { Transaction } from 'sequelize'
-import { sequelize, getModel, wrapInTransaction } from '@abx/db-connection-utils'
+import { sequelize, getModel, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { AccountFeeTier } from '@abx-types/order'
 import { AccountFeeTierInstance } from '../../model/account_execution_fee'
 import { validateTiers } from './validation-utils'

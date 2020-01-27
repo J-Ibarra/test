@@ -7,7 +7,7 @@ import { AccountStatus, AccountType, EmailValidationError, PersonalBankDetails }
 import * as notificationClientOperations from '@abx-service-clients/notification'
 
 import { findAccountById, findAccountWithUserDetails, validatePassword } from '../../core'
-import { getModel, truncateTables } from '@abx/db-connection-utils'
+import { getModel, truncateTables } from '@abx-utils/db-connection-utils'
 import { bootstrapRestApi, ACCOUNT_REST_API_PORT } from '../index'
 import { createTemporaryTestingAccount, TEST_PASSWORD, createAccountAndSession } from '@abx-query-libs/account'
 

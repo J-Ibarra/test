@@ -1,4 +1,4 @@
-import { getEpicurusInstance, getModel, messageFactory } from '@abx/db-connection-utils'
+import { getEpicurusInstance, getModel, messageFactory } from '@abx-utils/db-connection-utils'
 import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-data'
 import { OrderMatch, OrderMatchStatus, UsdMidPriceEnrichedOrderMatch } from '@abx-types/order'
 import { CurrencyCode } from '@abx-types/reference-data'

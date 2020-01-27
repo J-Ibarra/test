@@ -1,4 +1,4 @@
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { OnChainCurrencyGateway } from '@abx-query-libs/blockchain-currency-gateway'
 import { FatalError } from '@abx-types/error'
 import { CurrencyCode, Currency } from '@abx-types/reference-data'

@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import { v4 } from 'node-uuid'
 import sinon from 'sinon'
-import { getModel, sequelize, truncateTables } from '@abx/db-connection-utils'
+import { getModel, sequelize, truncateTables } from '@abx-utils/db-connection-utils'
 import { Token } from '@abx-types/account'
 import { JwtTokenHandler } from '../..'
 import { createTokenForAccount, deactivateToken, findToken, findTokensForAccount } from '../..'

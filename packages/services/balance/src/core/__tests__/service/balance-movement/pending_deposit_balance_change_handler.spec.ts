@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-import { sequelize } from '@abx/db-connection-utils'
+import { sequelize } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { BalanceChangeParams, SourceEventType } from '@abx-types/balance'
 import * as referenceDataClientOperations from '@abx-service-clients/reference-data'

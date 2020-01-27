@@ -1,5 +1,5 @@
 import { AccountStatus } from '@abx-types/account'
-import { getModel } from '@abx/db-connection-utils'
+import { getModel } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import {
   CurrencyWithdrawalConfig,

@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { SupportedFxPair } from '@abx-types/order'
 import { errorFxRateResponse, FxPriceSourceResponse, successFxRateResponse } from './fx_source_response'
 

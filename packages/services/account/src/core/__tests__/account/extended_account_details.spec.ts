@@ -6,7 +6,7 @@ import sinon from 'sinon'
 import { Account, SalesforceReferenceTable } from '@abx-types/account'
 import { createAccount, getKycVerifiedAccountDetails } from '../..'
 import * as salesforceOperations from '../../salesforce'
-import { truncateTables, getModel } from '@abx/db-connection-utils'
+import { truncateTables, getModel } from '@abx-utils/db-connection-utils'
 
 describe('extended_account_details', () => {
   const salesforceAccount = {

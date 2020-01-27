@@ -1,5 +1,5 @@
 import { Controller, Get, Query, Route } from 'tsoa'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { findOrderMatchTransactions } from '../../../core'
 
 @Route('order-matches')

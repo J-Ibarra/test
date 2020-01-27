@@ -4,7 +4,7 @@ import request from 'supertest'
 import { createAccount, updateUser } from '../../../core'
 import { bootstrapRestApi } from '../..'
 import { CreateAccountRequest, AccountType } from '@abx-types/account'
-import { truncateTables } from '@abx/db-connection-utils'
+import { truncateTables } from '@abx-utils/db-connection-utils'
 
 const email = 'a@b.com'
 const password = '123qwe'

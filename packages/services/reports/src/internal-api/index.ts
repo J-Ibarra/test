@@ -1,8 +1,8 @@
 import jsreport from 'jsreport'
 
 import { Environment, localAndTestEnvironments } from '@abx-types/reference-data'
-import { Logger } from '@abx/logging'
-import { getEpicurusInstance, messageFactory } from '@abx/db-connection-utils'
+import { Logger } from '@abx-utils/logging'
+import { getEpicurusInstance, messageFactory } from '@abx-utils/db-connection-utils'
 import { report } from './message_schema'
 import { ReportEndpoints } from '@abx-service-clients/report'
 import { createReportAndUploadToS3 } from '../core'

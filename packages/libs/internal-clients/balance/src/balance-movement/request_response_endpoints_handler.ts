@@ -1,4 +1,4 @@
-import { getEpicurusInstance } from '@abx/db-connection-utils'
+import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { BalanceChangeParams } from '@abx-types/balance'
 import { RequestResponseBalanceMovementEndpoints } from './request_response_endpoints'
 

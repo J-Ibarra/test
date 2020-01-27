@@ -1,4 +1,4 @@
-import { getEpicurusInstance } from '@abx/db-connection-utils'
+import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { DepthUpdate } from '@abx-types/order'
 import { OrderPubSubChannels } from '@abx-service-clients/order'
 

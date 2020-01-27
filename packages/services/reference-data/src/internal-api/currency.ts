@@ -1,4 +1,4 @@
-import { getEpicurusInstance, messageFactory } from '@abx/db-connection-utils'
+import { getEpicurusInstance, messageFactory } from '@abx-utils/db-connection-utils'
 import { CurrencyEndpoints } from '@abx-service-clients/reference-data'
 import { emptyPayload } from './schemas'
 import { findAllCurrencies } from '../core'

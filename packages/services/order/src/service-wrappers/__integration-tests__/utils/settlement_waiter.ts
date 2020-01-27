@@ -1,4 +1,4 @@
-import { sequelize, getModel, wrapInTransaction, getEpicurusInstance } from '@abx/db-connection-utils'
+import { sequelize, getModel, wrapInTransaction, getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { OrderMatch, OrderMatchStatus } from '@abx-types/order'
 import { OrderPubSubChannels } from '@abx-service-clients/order'
 

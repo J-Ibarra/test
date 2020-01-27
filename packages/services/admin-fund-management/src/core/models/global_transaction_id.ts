@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize'
-import { sequelize } from '@abx/db-connection-utils'
+import { sequelize } from '@abx-utils/db-connection-utils'
 import { AdminRequestType } from '@abx-service-clients/admin-fund-management'
 
 export enum GTIDInitials {

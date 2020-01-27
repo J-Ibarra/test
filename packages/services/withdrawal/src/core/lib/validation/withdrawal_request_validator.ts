@@ -1,7 +1,7 @@
 import { Account } from '@abx-types/account'
 import { BalanceTypeObj } from '@abx-types/balance'
 import { CurrencyBoundary } from '@abx-types/reference-data'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { CurrencyManager } from '@abx-query-libs/blockchain-currency-gateway'
 import { ValidationError } from '@abx-types/error'
 import { Currency, CurrencyCode } from '@abx-types/reference-data'

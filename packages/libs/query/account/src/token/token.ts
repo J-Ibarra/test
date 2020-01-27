@@ -1,7 +1,7 @@
 import { v4 } from 'node-uuid'
 import { Transaction } from 'sequelize'
 import { Token } from '@abx-types/account'
-import { sequelize, getModel, wrapInTransaction } from '@abx/db-connection-utils'
+import { sequelize, getModel, wrapInTransaction } from '@abx-utils/db-connection-utils'
 
 import { TokenHandler } from './token_handler'
 

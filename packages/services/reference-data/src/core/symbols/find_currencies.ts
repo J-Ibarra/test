@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash'
 
-import { getModel } from '@abx/db-connection-utils'
+import { getModel } from '@abx-utils/db-connection-utils'
 import { Currency, CurrencyCode } from '@abx-types/reference-data'
 import { isCryptoCurrency } from '@abx-service-clients/reference-data'
 

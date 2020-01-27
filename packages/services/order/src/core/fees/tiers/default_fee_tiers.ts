@@ -1,6 +1,6 @@
 import { orderBy } from 'lodash'
 import { Transaction } from 'sequelize'
-import { sequelize, getModel, wrapInTransaction } from '@abx/db-connection-utils'
+import { sequelize, getModel, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { getAllSymbolPairSummaries } from '@abx-service-clients/reference-data'
 import { FeeTier } from '@abx-types/order'
 import { DefaultFeeTierInstance } from '../../model/default_execution_fee'

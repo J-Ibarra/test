@@ -1,7 +1,7 @@
 import * as speakeasy from 'speakeasy'
 
 import { findUserById, updateUser } from '../users'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { ValidationError } from '@abx-types/error'
 
 const logger = Logger.getInstance('verify_mfa', 'verifyMfa')

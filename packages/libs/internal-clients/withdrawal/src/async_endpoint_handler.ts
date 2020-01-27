@@ -1,7 +1,7 @@
 import * as AWS from 'aws-sdk'
 import { Environment } from '@abx-types/reference-data'
 import { AsyncWithdrawalStatusChangeRequest, WithdrawalStatusChangeRequestType, FiatWithdrawalCreationRequest } from './async_change_model'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 
 const sqs = new AWS.SQS()
 const logger = Logger.getInstance('balance-internal-client', 'async_endpoints_handler')

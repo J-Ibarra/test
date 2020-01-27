@@ -1,4 +1,4 @@
-import { getEpicurusInstance } from '@abx/db-connection-utils'
+import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { AccountEndpoints } from './endpoints'
 import { User, Account } from '@abx-types/account'
 

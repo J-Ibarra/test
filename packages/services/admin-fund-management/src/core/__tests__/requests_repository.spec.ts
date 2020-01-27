@@ -4,7 +4,7 @@ import * as gtid from '../models/global_transaction_id'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { AdminRequestStatus, AdminRequestType } from '@abx-service-clients/admin-fund-management'
 import { findAdminRequest, findAllAdminRequests, saveAdminRequest } from '..'
-import { truncateTables, wrapInTransaction, sequelize } from '@abx/db-connection-utils'
+import { truncateTables, wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 
 describe('requests_repository', () => {
   const adminRequestParams = {

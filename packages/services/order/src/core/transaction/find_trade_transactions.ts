@@ -1,5 +1,5 @@
 import { FindOptions, Transaction, WhereOptions } from 'sequelize'
-import { sequelize, getModel } from '@abx/db-connection-utils'
+import { sequelize, getModel } from '@abx-utils/db-connection-utils'
 import { TradeTransaction } from '@abx-types/order'
 
 interface TradeTransactionOrderAggregation {

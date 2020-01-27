@@ -1,5 +1,5 @@
 import { FindOptions } from 'sequelize'
-import { getModel } from '@abx/db-connection-utils'
+import { getModel } from '@abx-utils/db-connection-utils'
 import { RuntimeError } from '@abx-types/error'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { CurrencyTransaction } from '@abx-types/order'

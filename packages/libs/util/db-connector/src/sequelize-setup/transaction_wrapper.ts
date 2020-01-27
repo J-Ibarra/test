@@ -1,5 +1,5 @@
 import { Deferrable, Sequelize, Transaction, TransactionIsolationLevels } from 'sequelize'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 
 const logger = Logger.getInstance('transaction_wrapper', 'wrapInTransaction')
 

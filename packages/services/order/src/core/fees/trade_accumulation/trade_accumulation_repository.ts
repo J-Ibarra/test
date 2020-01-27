@@ -1,6 +1,6 @@
 import { Transaction } from 'sequelize'
 
-import { sequelize, getModel } from '@abx/db-connection-utils'
+import { sequelize, getModel } from '@abx-utils/db-connection-utils'
 import { MonthlyTradeAccumulationInstance } from '../../model/monthly_trade_accumulation'
 import { extractMonthAndYearFromDate } from './utils'
 

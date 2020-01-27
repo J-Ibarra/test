@@ -1,7 +1,7 @@
 import { OrderQueueRequest, Order } from '@abx-types/order'
 import { v4 } from 'node-uuid'
 import { recordCustomEvent } from 'newrelic'
-import { getCacheClient } from '@abx/db-connection-utils'
+import { getCacheClient } from '@abx-utils/db-connection-utils'
 
 const redisClient = getCacheClient()
 

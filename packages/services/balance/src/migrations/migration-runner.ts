@@ -1,4 +1,4 @@
-// import { runMigrations } from '@abx/db-connection-utils'
+// import { runMigrations } from '@abx-utils/db-connection-utils'
 
 export function runBalanceMigrations() {
   // return (

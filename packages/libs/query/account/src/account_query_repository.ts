@@ -1,6 +1,6 @@
 import { Account, User } from '@abx-types/account'
 import { Transaction } from 'sequelize'
-import { sequelize, getModel, wrapInTransaction } from '@abx/db-connection-utils'
+import { sequelize, getModel, wrapInTransaction } from '@abx-utils/db-connection-utils'
 
 export async function findAccountById(id: string, t?: Transaction): Promise<Account | null> {
   return wrapInTransaction(sequelize, t, async tran => {

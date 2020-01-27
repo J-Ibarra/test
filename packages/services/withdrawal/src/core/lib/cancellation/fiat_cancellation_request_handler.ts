@@ -1,4 +1,4 @@
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { ValidationError } from '@abx-types/error'
 import { isFiatCurrency, findCurrencyForId } from '@abx-service-clients/reference-data'
 import { WithdrawalCancelParams, WithdrawalState } from '@abx-types/withdrawal'

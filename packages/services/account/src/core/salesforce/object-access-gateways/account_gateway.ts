@@ -1,6 +1,6 @@
 import { AxiosInstance } from 'axios'
 import { User, SalesforcePostResponse } from '@abx-types/account'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 
 enum SalesforceAccountRecordType {
   individual = '0121r000000ZwqXAAS',

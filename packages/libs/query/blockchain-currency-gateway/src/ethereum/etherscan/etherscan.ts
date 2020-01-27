@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { get } from 'lodash'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { EtherscanInternalTransaction, EtherscanTransaction, EthscanTransactionType } from './interface'
 
 const logger = Logger.getInstance('etherscan', 'getEthScanTransactionsForAddress')
