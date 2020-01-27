@@ -1,6 +1,6 @@
 import jsreport from 'jsreport'
 
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { EmailAttachment, EmailAttachmentType } from '@abx-types/notification'
 import { ReportEngine, ReportRecipe } from '@abx-service-clients/report'
 import { getTemplateFromS3, uploadReportToS3 } from './s3_helpers'

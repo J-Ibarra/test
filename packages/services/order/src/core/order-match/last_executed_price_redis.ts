@@ -1,6 +1,6 @@
 import { isNullOrUndefined } from 'util'
-import { Logger } from '@abx/logging'
-import { getCacheClient } from '@abx/db-connection-utils'
+import { Logger } from '@abx-utils/logging'
+import { getCacheClient } from '@abx-utils/db-connection-utils'
 import { findLastOrderMatchForSymbol } from '..'
 
 const lastExecutedPrefix = 'exchange:symbol:lastExecutedPrice'

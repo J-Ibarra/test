@@ -1,4 +1,4 @@
-import { getEpicurusInstance } from '@abx/db-connection-utils'
+import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { SettlementEndpoints } from './endpoints'
 
 export function settleOrderMatch(id: number, feeCurrencyToUsdMidPrice: number): Promise<void> {

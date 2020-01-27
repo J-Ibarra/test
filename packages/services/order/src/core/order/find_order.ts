@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize'
-import { sequelize, getModel, wrapInTransaction } from '@abx/db-connection-utils'
+import { sequelize, getModel, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { Order } from '@abx-types/order'
 
 export async function findOrder(orderId: number, seqTransaction?: Transaction): Promise<Order | null> {

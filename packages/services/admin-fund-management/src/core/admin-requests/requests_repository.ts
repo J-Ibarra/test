@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize'
-import { sequelize, getModel, wrapInTransaction } from '@abx/db-connection-utils'
+import { sequelize, getModel, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { AdminRequest, CreateAdminRequestParams } from '@abx-service-clients/admin-fund-management'
 import { getNextGlobalTransactionId } from '../models/global_transaction_id'
 

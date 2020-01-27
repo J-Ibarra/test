@@ -1,4 +1,4 @@
-import { getEpicurusInstance, messageFactory } from '@abx/db-connection-utils'
+import { getEpicurusInstance, messageFactory } from '@abx-utils/db-connection-utils'
 import { RequestResponseBalanceMovementEndpoints } from '@abx-service-clients/balance'
 import { balanceChangePayloadSchema } from './schema'
 import { BalanceMovementFacade } from '../../core'

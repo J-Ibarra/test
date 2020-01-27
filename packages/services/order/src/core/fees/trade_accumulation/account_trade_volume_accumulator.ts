@@ -1,6 +1,6 @@
 import moment from 'moment'
 
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { RuntimeError } from '@abx-types/error'
 import { getCompleteSymbolDetails } from '@abx-service-clients/reference-data'
 import { TradeAccumulationRequest } from '@abx-types/order'

@@ -14,7 +14,7 @@ import { EmailTemplates } from '@abx-types/notification'
 import { ResetPasswordValidationError } from '@abx-types/account'
 import { validatePartialMatch } from './helper'
 import { createTemporaryTestingAccount } from '@abx-query-libs/account'
-import { truncateTables } from '@abx/db-connection-utils'
+import { truncateTables } from '@abx-utils/db-connection-utils'
 
 describe('Reset password', () => {
   beforeEach(async () => {

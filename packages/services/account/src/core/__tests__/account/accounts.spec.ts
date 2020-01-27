@@ -2,10 +2,10 @@ import { expect } from 'chai'
 import { v4 } from 'node-uuid'
 import sinon from 'sinon'
 
-import * as dbConnectionUtils from '@abx/db-connection-utils'
+import * as dbConnectionUtils from '@abx-utils/db-connection-utils'
 import { AccountStatus, AccountType } from '@abx-types/account'
 import { findAccountById, verifyUserAccount, createAccount, findUserById, validatePassword, createCookie } from '../..'
-import { truncateTables } from '@abx/db-connection-utils'
+import { truncateTables } from '@abx-utils/db-connection-utils'
 
 describe('accounts', () => {
   beforeEach(async () => {

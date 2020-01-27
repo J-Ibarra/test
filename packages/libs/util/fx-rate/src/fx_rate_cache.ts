@@ -1,4 +1,4 @@
-import { getCacheClient } from '@abx/db-connection-utils'
+import { getCacheClient } from '@abx-utils/db-connection-utils'
 import { SupportedFxPair } from '@abx-types/order'
 import { errorFxRateResponse, FxPriceSourceResponse, successFxRateResponse } from './fx_source_response'
 

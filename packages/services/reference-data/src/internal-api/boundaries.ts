@@ -1,4 +1,4 @@
-import { getEpicurusInstance, messageFactory } from '@abx/db-connection-utils'
+import { getEpicurusInstance, messageFactory } from '@abx-utils/db-connection-utils'
 import { BoundaryEndpoints } from '@abx-service-clients/reference-data'
 import { emptyPayload, findBoundaryForCurrency as findBoundaryForCurrencySchema } from './schemas'
 import { findBoundaryForCurrency, findAllBoundaries, findAllCurrencyCodes } from '../core'

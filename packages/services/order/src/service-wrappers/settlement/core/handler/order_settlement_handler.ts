@@ -3,7 +3,7 @@ import { Transaction } from 'sequelize'
 
 import { recordCustomEvent } from 'newrelic'
 import { findBoundaryForCurrency, feeTakenFromBase } from '@abx-service-clients/reference-data'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { getFeeRateForAccount } from '../../../../core'
 import { OrderMatch } from '@abx-types/order'
 import { SymbolPair } from '@abx-types/reference-data'

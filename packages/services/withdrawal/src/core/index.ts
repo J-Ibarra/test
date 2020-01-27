@@ -1,4 +1,4 @@
-import { setupModel } from '@abx/db-connection-utils'
+import { setupModel } from '@abx-utils/db-connection-utils'
 
 import setupWithdrawalModel from './model'
 

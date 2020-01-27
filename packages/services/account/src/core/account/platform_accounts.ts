@@ -1,7 +1,7 @@
 import { v4 } from 'node-uuid'
 import { Transaction } from 'sequelize'
 
-import { getModel } from '@abx/db-connection-utils'
+import { getModel } from '@abx-utils/db-connection-utils'
 import { Account, AccountStatus, AccountType } from '@abx-types/account'
 import { findAccountWithUserDetails } from './accounts'
 

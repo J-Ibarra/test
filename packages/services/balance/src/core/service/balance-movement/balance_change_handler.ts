@@ -1,4 +1,4 @@
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { BalanceChangeParams, BalanceParams, BalanceType, RawBalance } from '@abx-types/balance'
 import { BalanceLockParams } from '../../balance_movement_facade'
 import { BalanceAdjustmentRepository } from '../../repository/balance_adjustment_repository'

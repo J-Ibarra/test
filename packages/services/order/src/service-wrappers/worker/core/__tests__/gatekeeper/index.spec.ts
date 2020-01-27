@@ -1,5 +1,5 @@
 const expect = require('chai').expect
-import { sequelize, CacheGateway, getCacheClient, getVanillaRedisClient } from '@abx/db-connection-utils'
+import { sequelize, CacheGateway, getCacheClient, getVanillaRedisClient } from '@abx-utils/db-connection-utils'
 import { Order, OrderDirection, OrderStatus, OrderType, OrderValidity, OrderQueueRequest } from '@abx-types/order'
 import { SymbolPairSummary } from '@abx-types/reference-data'
 import { addToQueue, hydrateGateKeeper, initializeGatekeeper, processContract, resetGate } from '../../gatekeeper'

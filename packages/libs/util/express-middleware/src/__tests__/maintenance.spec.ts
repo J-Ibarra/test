@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import MockExpressRequest from 'mock-express-request'
-import { getApiCacheClient } from '@abx/db-connection-utils'
+import { getApiCacheClient } from '@abx-utils/db-connection-utils'
 import { maintenanceMiddleware } from '../maintenance'
 
 describe('maintenance middleware', () => {

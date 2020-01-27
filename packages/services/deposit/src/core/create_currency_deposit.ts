@@ -1,5 +1,5 @@
 import { SourceEventType } from '@abx-types/balance'
-import { wrapInTransaction, sequelize } from '@abx/db-connection-utils'
+import { wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 import { RuntimeError } from '@abx-types/error'
 import { createCurrencyTransaction } from '@abx-service-clients/order'
 import { CurrencyTransaction } from '@abx-types/order'

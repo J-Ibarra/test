@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import moment from 'moment'
 import sinon from 'sinon'
-import { getModel, truncateTables } from '@abx/db-connection-utils'
+import { getModel, truncateTables } from '@abx-utils/db-connection-utils'
 import { CurrencyCode, FiatCurrency } from '@abx-types/reference-data'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import { TradeTransaction, Order, OrderDirection, OrderStatus, OrderType, OrderValidity } from '@abx-types/order'

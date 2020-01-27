@@ -5,7 +5,7 @@ import sinon from 'sinon'
 import { generateResetPasswordPayload, validateUserCredentials, generateJWToken } from '../../core'
 import { bootstrapRestApi } from '..'
 import { createTemporaryTestingAccount } from '@abx-query-libs/account'
-import { truncateTables } from '@abx/db-connection-utils'
+import { truncateTables } from '@abx-utils/db-connection-utils'
 import * as notificationClientOperations from '@abx-service-clients/notification'
 
 describe('api:reset-password', () => {

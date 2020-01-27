@@ -1,4 +1,4 @@
-import { getEpicurusInstance, messageFactory } from '@abx/db-connection-utils'
+import { getEpicurusInstance, messageFactory } from '@abx-utils/db-connection-utils'
 import { findAccountByIdSchema, findUserByAccountIdSchema, findAccountsByIdWithUserDetailsSchema } from './schema'
 import { findAccountById, findUserByAccountId, findUsersByAccountId, findAccountsByIdWithUserDetails } from '../core'
 import { AccountEndpoints } from '@abx-service-clients/account'

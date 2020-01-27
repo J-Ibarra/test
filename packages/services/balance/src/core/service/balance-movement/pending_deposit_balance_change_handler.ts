@@ -1,4 +1,4 @@
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { ValidationError } from '@abx-types/error'
 import { BalanceChangeParams } from '@abx-types/balance'
 import { BalanceRetrievalHandler } from '../balance_retrieval_handler'

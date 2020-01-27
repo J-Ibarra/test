@@ -6,7 +6,7 @@ import { EmailTemplates } from '@abx-types/notification'
 import * as notificationClientOperations from '@abx-service-clients/notification'
 import { User } from '@abx-types/account'
 import { createAccountVerificationUrl, sendReferralCodeEmail, sendVerificationEmail, findSession } from '../..'
-import { truncateTables } from '@abx/db-connection-utils'
+import { truncateTables } from '@abx-utils/db-connection-utils'
 
 describe('users-email-notifications-dispatcher', () => {
   let createEmailStub

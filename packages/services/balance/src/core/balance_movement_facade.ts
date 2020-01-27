@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { BalanceChangeParams } from '@abx-types/balance'
 import { PendingDepositBalanceHandler, PendingWithdrawalBalanceHandler, ReserveBalanceHandler } from './service/balance-movement'
 import { BalanceChangeHandler } from './service/balance-movement'

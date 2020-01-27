@@ -2,7 +2,7 @@ import * as _ from 'lodash'
 const validate = require('jsonschema').validate
 const nr = require('newrelic')
 
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { handleUnexpectedError, ValidationError } from '@abx-types/error'
 import { createExchangeEvent } from './exchange_event_operations'
 import { ExchangeEvents } from './exchange_event.model'

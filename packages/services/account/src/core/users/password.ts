@@ -1,4 +1,4 @@
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { ValidationError } from '@abx-types/error'
 import { generateJWToken, verifyJWToken } from '../token/jwt_token'
 import { ResetPasswordValidationError, User, UserPublicView } from '@abx-types/account'

@@ -1,3 +1,3 @@
-# `@abx/logging`
+# `@abx-utils/logging`
 
 > TODO: description

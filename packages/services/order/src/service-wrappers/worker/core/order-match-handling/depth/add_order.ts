@@ -1,4 +1,4 @@
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { DepthState, Order, OrderDirection } from '@abx-types/order'
 
 const logger = Logger.getInstance('lib', 'add_order')

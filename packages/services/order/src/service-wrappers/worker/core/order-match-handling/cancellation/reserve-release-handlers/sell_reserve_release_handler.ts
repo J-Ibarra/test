@@ -1,7 +1,7 @@
 import Decimal from 'decimal.js'
 import { SourceEventType } from '@abx-types/balance'
 import { findBoundaryForCurrency, feeTakenFromBase } from '@abx-service-clients/reference-data'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { TradeTransaction, Order } from '@abx-types/order'
 import { SymbolPair } from '@abx-types/reference-data'
 import { releaseReserve } from '@abx-service-clients/balance'

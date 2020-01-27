@@ -1,4 +1,4 @@
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { CryptoCurrency, getEnvironment } from '@abx-types/reference-data'
 import { completeWithdrawal, CryptoWithdrawalGatekeeper, transferCryptoForLatestWithdrawalRequest } from './core/framework'
 import { WithdrawalState } from '@abx-types/withdrawal'

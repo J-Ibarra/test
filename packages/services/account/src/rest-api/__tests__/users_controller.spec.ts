@@ -3,7 +3,7 @@ import request from 'supertest'
 import { bootstrapRestApi } from '..'
 import { findOrCreateOperatorAccount } from '../../core'
 import { createAccountAndSession } from '@abx-query-libs/account'
-import { truncateTables } from '@abx/db-connection-utils'
+import { truncateTables } from '@abx-utils/db-connection-utils'
 
 describe('api:users', () => {
   let app

@@ -1,5 +1,5 @@
 import { FindOptions, Transaction } from 'sequelize'
-import { wrapInTransaction, getModel, sequelize } from '@abx/db-connection-utils'
+import { wrapInTransaction, getModel, sequelize } from '@abx-utils/db-connection-utils'
 import { StoredReport } from '@abx-service-clients/report'
 
 export async function storeReport({ accountId, reportType, s3Key }: StoredReport, transaction?: Transaction): Promise<StoredReport> {

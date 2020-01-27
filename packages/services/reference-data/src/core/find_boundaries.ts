@@ -1,6 +1,6 @@
 import moment from 'moment'
 
-import { getModel } from '@abx/db-connection-utils'
+import { getModel } from '@abx-utils/db-connection-utils'
 import { CurrencyCode, CurrencyBoundary } from '@abx-types/reference-data'
 import { findAllCurrencyCodes } from './symbols/find_currencies'
 

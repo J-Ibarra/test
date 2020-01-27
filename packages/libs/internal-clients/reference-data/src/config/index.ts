@@ -1,4 +1,4 @@
-import { getEpicurusInstance } from '@abx/db-connection-utils'
+import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { ConfigEndpoints } from './endpoints'
 import {
   SupportedFeatureFlags,

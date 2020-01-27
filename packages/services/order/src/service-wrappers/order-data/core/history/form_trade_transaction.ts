@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js'
 
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { OrderDirection, TradeTransaction, TransactionType } from '@abx-types/order'
 import { CurrencyCode, SymbolPair, CurrencyBoundary } from '@abx-types/reference-data'
 import { TransactionHistory, TransactionHistoryDirection } from './model'

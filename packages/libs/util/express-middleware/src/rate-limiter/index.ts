@@ -2,7 +2,7 @@ import { Express } from 'express'
 import RateLimit from 'express-rate-limit'
 import { recordCustomEvent } from 'newrelic'
 import RedisStore from 'rate-limit-redis'
-import { getVanillaRedisClient } from '@abx/db-connection-utils'
+import { getVanillaRedisClient } from '@abx-utils/db-connection-utils'
 import { EndpointConfigDataGateway } from './endpoint-config-data-gateway'
 import { InMemoryApiRateConfigGateway } from './in-memory-endpoint-config-gateway'
 

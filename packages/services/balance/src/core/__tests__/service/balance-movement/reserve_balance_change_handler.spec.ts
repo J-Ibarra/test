@@ -1,4 +1,4 @@
-import { sequelize } from '@abx/db-connection-utils'
+import { sequelize } from '@abx-utils/db-connection-utils'
 import { BalanceChangeParams, SourceEventType } from '@abx-types/balance'
 import * as referenceDataClientOperations from '@abx-service-clients/reference-data'
 import { CurrencyCode } from '@abx-types/reference-data'

@@ -1,4 +1,4 @@
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { getCompleteSymbolDetails } from '@abx-service-clients/reference-data'
 import { Order, OrderDirection } from '@abx-types/order'
 import { releaseRemainingReserveForBuyOrder } from './buy_reserve_release_handler'

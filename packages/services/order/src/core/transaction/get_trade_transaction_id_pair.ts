@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize'
-import { sequelize } from '@abx/db-connection-utils'
+import { sequelize } from '@abx-utils/db-connection-utils'
 
 export async function getTradeTransactionIdPair(t?: Transaction) {
   const sequelizeReturn = await Promise.all([

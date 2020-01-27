@@ -18,7 +18,7 @@
   "dependencies": {
     "@abx-types/order": "1.0.0",
     "@abx-types/depth-cache": "1.0.0",
-    "@abx/db-connection-utils": "1.0.0",
+    "@abx-utils/db-connection-utils": "1.0.0",
     "@abx-service-clients/reference-data": "1.0.0",
     "decimal.js": "10.2.0",
     "sequelize": "4.41.0",

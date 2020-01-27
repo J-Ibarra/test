@@ -1,6 +1,6 @@
 import { BalanceChangeAsyncRequestContainer } from '@abx-types/balance'
 import { BalanceMovementFacade } from '../../core/balance_movement_facade'
-import { sequelize, wrapInTransaction } from '@abx/db-connection-utils'
+import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 
 const balanceMovementFacade = BalanceMovementFacade.getInstance()
 

@@ -1,5 +1,5 @@
 import sinon from 'sinon'
-import { sequelize } from '@abx/db-connection-utils'
+import { sequelize } from '@abx-utils/db-connection-utils'
 import { BalanceChangeParams, BalanceType, RawBalance, SourceEventType } from '@abx-types/balance'
 import { BalanceAdjustmentRepository, BalanceRepository, BalanceChangeHandler } from '../..'
 

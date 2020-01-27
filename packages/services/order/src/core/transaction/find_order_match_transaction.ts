@@ -1,5 +1,5 @@
 import { FindOptions, Transaction } from 'sequelize'
-import { sequelize, getModel, wrapInTransaction } from '@abx/db-connection-utils'
+import { sequelize, getModel, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { RuntimeError } from '@abx-types/error'
 import { OrderMatch } from '@abx-types/order'
 

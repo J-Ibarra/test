@@ -1,5 +1,5 @@
 {
-  "name": "@abx/logging",
+  "name": "@abx-utils/logging",
   "version": "1.0.0",
   "description": "Contains common logging utilities",
   "license": "ISC",

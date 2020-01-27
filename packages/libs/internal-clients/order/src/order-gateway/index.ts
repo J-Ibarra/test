@@ -1,4 +1,4 @@
-import { getEpicurusInstance } from '@abx/db-connection-utils'
+import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { OrderGatewayEndpoints } from './endpoints'
 import { PlaceOrderRequest } from '@abx-types/order'
 

@@ -1,5 +1,5 @@
 import { NextFunction, Response } from 'express'
-import { getApiCacheClient } from '@abx/db-connection-utils'
+import { getApiCacheClient } from '@abx-utils/db-connection-utils'
 import { OverloadedRequest } from '@abx-types/account'
 
 export async function maintenanceMiddleware(_req: OverloadedRequest, _res: Response, next: NextFunction): Promise<any> {

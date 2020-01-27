@@ -1,4 +1,4 @@
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { ReportType, S3SignedUrlParams, TradeTransactionInvoiceUrl } from '@abx-service-clients/report'
 import { createSignedUrl } from '../generate_report/shared/s3_helpers'
 

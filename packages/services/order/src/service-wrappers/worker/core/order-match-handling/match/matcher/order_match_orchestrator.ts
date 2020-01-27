@@ -1,6 +1,6 @@
 import { Transaction } from 'sequelize'
-import { Logger } from '@abx/logging'
-import { sequelize, wrapInTransaction } from '@abx/db-connection-utils'
+import { Logger } from '@abx-utils/logging'
+import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { FatalError } from '@abx-types/error'
 import { Order, OrderModuleState, OrderStatus, OrderType } from '@abx-types/order'
 import { addOrderToDepth } from '../../depth'

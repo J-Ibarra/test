@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Request, Route, Security, SuccessResponse } from 'tsoa'
 
 import { initialiseWithdrawal, CryptoWithdrawalGatekeeper, prepareWithdrawalRequestEmail, PENDING_WITHDRAWAL_GATEKEEPER_NAME } from '../core'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { createEmail } from '@abx-service-clients/notification'
 import { getWithdrawalConfig, getWithdrawalConfigForCurrency, isFiatCurrency } from '@abx-service-clients/reference-data'
 import { OverloadedRequest } from '@abx-types/account'

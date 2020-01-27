@@ -1,7 +1,7 @@
 import * as jwt from 'jsonwebtoken'
 import moment from 'moment'
 
-import { getEnvironmentConfig } from '@abx/db-connection-utils'
+import { getEnvironmentConfig } from '@abx-utils/db-connection-utils'
 import { TokenHandler } from './token_handler'
 import { AuthToken, TokenClaims, TokenVerificationResult } from './model'
 

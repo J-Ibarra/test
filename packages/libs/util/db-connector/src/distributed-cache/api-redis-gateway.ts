@@ -1,7 +1,7 @@
 import bluebird from 'bluebird'
 import moment from 'moment'
 import redis from 'redis'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { RedisGateway } from './redis-gateway'
 
 bluebird.promisifyAll(redis.RedisClient.prototype)

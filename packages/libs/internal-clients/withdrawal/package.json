@@ -18,10 +18,10 @@
   "dependencies": {
     "@abx-types/reference-data": "1.0.0",
     "@abx-types/withdrawal": "1.0.0",
-    "@abx/db-connection-utils": "1.0.0",
+    "@abx-utils/db-connection-utils": "1.0.0",
     "moment": "2.22.2",
     "aws-sdk": "2.574.0",
-    "@abx/logging": "1.0.0"
+    "@abx-utils/logging": "1.0.0"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",

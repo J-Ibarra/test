@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { Order, OrderDirection, OrderModuleState, OrderStatus, OrderType, UsdMidPriceEnrichedOrderMatch } from '@abx-types/order'
 import { getTopOrder, removeOrderFromDepth } from '../../depth'
 import { OrderCancellationHandler } from '../../cancellation'

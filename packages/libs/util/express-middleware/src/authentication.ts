@@ -1,6 +1,6 @@
 import { OverloadedRequest, AccountType } from '@abx-types/account'
 import { JwtTokenHandler } from '@abx-query-libs/account'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 
 const logger = Logger.getInstance('express-middleware', 'authentication-middleware')
 

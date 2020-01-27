@@ -1,5 +1,5 @@
 import { Currency, CurrencyCode } from '@abx-types/reference-data'
-import { getEpicurusInstance } from '@abx/db-connection-utils'
+import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { CurrencyEndpoints } from './endpoints'
 import { isCryptoCurrency } from '../utils'
 
