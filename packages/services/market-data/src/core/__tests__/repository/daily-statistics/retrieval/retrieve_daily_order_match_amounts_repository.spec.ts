@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { MemoryCache, truncateTables } from '@ABX/db-connection-utils'
+import { MemoryCache, truncateTables } from '@abx/db-connection-utils'
 import { getDailyVolume } from '../../../../repository/daily-statistics'
 
 describe('Retrieve the order match amounts', async () => {
