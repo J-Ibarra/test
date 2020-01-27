@@ -15,6 +15,7 @@ import { createEmail } from '@abx-service-clients/notification'
 
 const suspendDepositLogger = Logger.getInstance('suspended_deposit_request_processor', 'processSuspendedDepositRequestForCurrency')
 const checkDepositLogger = Logger.getInstance('suspended_deposit_request_processor', 'processCheckingSuspendedDepositRequest')
+let cachedOperationsEmail = ''
 
 export async function processSuspendedDepositRequestForCurrency(
   pendingSuspendedDepositGatekeeper: DepositGatekeeper,
@@ -85,7 +86,7 @@ async function sendDepositSuspendedEmail(depositRequest: DepositRequest, currenc
   suspendDepositLogger.info(`Send email for suspended deposit request: ${depositRequest.id}`)
   suspendDepositLogger.info(JSON.stringify(templateContent))
 
-  const operationsEmail = await getOperationsEmail()
+  const operationsEmail = await getOperationsEmailWithFallBack()
 
   const emailRequest: Email = {
     to: operationsEmail,
@@ -124,4 +125,11 @@ async function activateSuspendedDepositRequest(
     status: DepositRequestStatus.pendingHoldingsTransaction,
   })
   pendingSuspendedDepositGatekeeper.removeRequest(currency, depositRequest.id!)
+}
+
+async function getOperationsEmailWithFallBack() {
+  const opsEmail = cachedOperationsEmail || (await getOperationsEmail())
+  cachedOperationsEmail = opsEmail
+
+  return cachedOperationsEmail
 }

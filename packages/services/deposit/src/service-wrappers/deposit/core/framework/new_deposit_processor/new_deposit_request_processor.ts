@@ -70,6 +70,8 @@ async function checkTransactionConfirmation(currency: CurrencyCode, depositReque
   } catch (e) {
     logger.error(`Error encountered while checking confirmation of deposit transaction ${depositRequest.depositTxHash}`)
     logger.error(JSON.stringify(util.inspect(e)))
+
+    return false
   }
 }
 

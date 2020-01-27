@@ -3,17 +3,22 @@ import * as sinon from 'sinon'
 import { TestCurrencyManager } from '@abx-query-libs/blockchain-currency-gateway'
 import { CurrencyCode, FiatCurrency } from '@abx-types/reference-data'
 import { DepositRequestStatus } from '@abx-types/deposit'
-import * as depositAddressOperations from '../../../../core/deposit_address'
-import * as depositRequestOperations from '../../../../core/deposit_request'
+import * as depositCoreOperations from '../../../../core'
 import * as potentialDepositRequestOperations from '../deposit_transactions_fetcher'
 import { checkForNewDepositsForCurrency } from '../framework/new_deposits_poller'
 import { DepositGatekeeper } from '../framework'
+import * as referenceData from '@abx-service-clients/reference-data'
 
 describe('new_deposits_poller', () => {
   let testCurrencyManager: TestCurrencyManager
   let pendingHoldingsTransferGatekeeper: DepositGatekeeper
-
+  const currency = {
+    id: 1,
+    code: CurrencyCode.kau,
+  }
   beforeEach(async () => {
+    sinon.stub(referenceData, 'findCurrencyForCode').resolves(currency)
+
     testCurrencyManager = new TestCurrencyManager()
     pendingHoldingsTransferGatekeeper = new DepositGatekeeper('test')
   })
@@ -24,9 +29,9 @@ describe('new_deposits_poller', () => {
 
   it('should not retrieve the current pending deposit requests if no new potential deposit requests', async () => {
     sinon.stub(potentialDepositRequestOperations, 'getPotentialDepositRequests').resolves([])
-    sinon.stub(depositAddressOperations, 'findKycOrEmailVerifiedDepositAddresses').resolves([])
+    sinon.stub(depositCoreOperations, 'findKycOrEmailVerifiedDepositAddresses').resolves([])
 
-    const getDepositRequestsStub = sinon.stub(depositRequestOperations, 'getPendingDepositRequests')
+    const getDepositRequestsStub = sinon.stub(depositCoreOperations, 'getPendingDepositRequests')
 
     await checkForNewDepositsForCurrency(pendingHoldingsTransferGatekeeper, CurrencyCode.kau, testCurrencyManager)
 
@@ -46,7 +51,7 @@ describe('new_deposits_poller', () => {
     }
     sinon.stub(potentialDepositRequestOperations, 'getPotentialDepositRequests').resolves([newDeposit])
 
-    sinon.stub(depositAddressOperations, 'findKycOrEmailVerifiedDepositAddresses').resolves([
+    sinon.stub(depositCoreOperations, 'findKycOrEmailVerifiedDepositAddresses').resolves([
       {
         id: 1,
         accountId: 'accId',
@@ -55,8 +60,8 @@ describe('new_deposits_poller', () => {
         publicKey: 'publicKey',
       },
     ])
-    sinon.stub(depositRequestOperations, 'getPendingDepositRequests').resolves([])
-    const storeDepositRequestsStub = sinon.stub(depositRequestOperations, 'storeDepositRequests').resolves([newDeposit])
+    sinon.stub(depositCoreOperations, 'getPendingDepositRequests').resolves([])
+    const storeDepositRequestsStub = sinon.stub(depositCoreOperations, 'storeDepositRequests').resolves([newDeposit])
 
     await checkForNewDepositsForCurrency(pendingHoldingsTransferGatekeeper, CurrencyCode.kau, testCurrencyManager)
 

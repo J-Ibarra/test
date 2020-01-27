@@ -1,6 +1,5 @@
 import { Transaction } from 'sequelize'
-import { getEnvironment, CurrencyCode } from '@abx-types/reference-data'
-import { Account, AccountStatus } from '@abx-types/account'
+import { getEnvironment, CurrencyCode, Currency } from '@abx-types/reference-data'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyManager, OnChainCurrencyGateway } from '@abx-query-libs/blockchain-currency-gateway'
 import { getModel } from '@abx-utils/db-connection-utils'
@@ -9,8 +8,11 @@ import { findCryptoCurrencies, isFiatCurrency } from '@abx-service-clients/refer
 import { DepositAddress } from '@abx-types/deposit'
 import { encryptValue } from '@abx-utils/encryption'
 import { groupBy } from 'lodash'
+import { getAllKycVerifiedAccountIds } from '@abx-service-clients/account'
 
 const logger = Logger.getInstance('lib', 'deposit_address')
+const KYC_ACCOUNTS_CACHE_EXPIRY_10_MINUTES = 10 * 60 * 1000
+let cryptoCurrencies: Currency[] = []
 
 export async function generateNewDepositAddress(accountId: string, currency: OnChainCurrencyGateway) {
   const privateKey = currency.generatePrivateKey()
@@ -34,33 +36,25 @@ export async function findDepositAddresses(query: Partial<DepositAddress>, trans
 }
 
 export async function findKycOrEmailVerifiedDepositAddresses(currencyId: number, transaction?: Transaction) {
-  const depositAddressForVerifiedUsers = await getModel<DepositAddress>('depositAddress').findAll({
-    include: [
-      {
-        model: getModel<Account>('account'),
-        attributes: ['id', 'type'],
-        where: { status: [AccountStatus.emailVerified, AccountStatus.kycVerified] },
-      },
-      {
-        model: getModel<CurrencyCode>('currency'),
-        attributes: ['id', 'code'],
-        where: { id: currencyId },
-      },
-    ],
+  const kycVefifiedAccounts = await getAllKycVerifiedAccountIds(KYC_ACCOUNTS_CACHE_EXPIRY_10_MINUTES)
+  const depositAddressInstances = await getModel<DepositAddress>('depositAddress').findAll({
+    where: { currencyId },
     transaction,
   })
+  const depositAddresses = depositAddressInstances.map(depositAddressInstance => depositAddressInstance.get())
 
-  return depositAddressForVerifiedUsers.map(address => address.get())
+  return depositAddresses.filter(({ accountId }) => kycVefifiedAccounts.has(accountId))
 }
 
 export async function findOrCreateDepositAddressesForAccount(accountId: string) {
   logger.debug(`Finding existing deposit addresses for account ${accountId}`)
 
   const existingDepositAddresses = await findDepositAddressesForAccount(accountId, true)
-
   logger.debug(`Found existing deposit addresses for currency: ${existingDepositAddresses.map(({ currencyId }) => currencyId).join(',')}`)
 
-  const cryptoCurrencies = await findCryptoCurrencies()
+  if (cryptoCurrencies.length === 0) {
+    cryptoCurrencies = await findCryptoCurrencies()
+  }
 
   if (existingDepositAddresses.length < cryptoCurrencies.length) {
     const missingDepositAddresses = await createMissingDepositAddressesForAccount(accountId, existingDepositAddresses)
@@ -76,12 +70,6 @@ export async function findOrCreateDepositAddressesForAccount(accountId: string) 
 export async function findDepositAddressForId(id: number) {
   const depositAddress = await getModel<DepositAddress>('depositAddress').findOne({
     where: { id },
-    include: [
-      {
-        model: getModel<CurrencyCode>('currency'),
-        attributes: ['id', 'code'],
-      },
-    ],
   })
 
   return !!depositAddress ? depositAddress.get() : null
@@ -90,15 +78,10 @@ export async function findDepositAddressForId(id: number) {
 export async function findDepositAddressesForAccount(accountId: string, includeCurrencyDetail: boolean = false) {
   const depositAddresses = await getModel<DepositAddress>('depositAddress').findAll({
     where: { accountId },
-    include: includeCurrencyDetail
-      ? [
-          {
-            model: getModel<CurrencyCode>('currency'),
-            attributes: ['id', 'code'],
-          },
-        ]
-      : [],
   })
+
+  if (includeCurrencyDetail) {
+  }
 
   return depositAddresses.map(address => address.get({ plain: true }))
 }
@@ -113,7 +96,9 @@ export async function createMissingDepositAddressesForAccount(
   existingDepositAddresses: DepositAddress[],
 ): Promise<DepositAddress[]> {
   logger.debug(`Creating missing deposit addresses`)
-  const cryptoCurrencies = await findCryptoCurrencies()
+  if (cryptoCurrencies.length === 0) {
+    cryptoCurrencies = await findCryptoCurrencies()
+  }
 
   logger.debug(`Crypto currencies ${cryptoCurrencies.join(', ')}`)
   const manager = new CurrencyManager(

@@ -1,6 +1,8 @@
-import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
+import { getEpicurusInstance, MemoryCache } from '@abx-utils/db-connection-utils'
 import { AccountEndpoints } from './endpoints'
 import { User, Account } from '@abx-types/account'
+
+const memoryCache = MemoryCache.getInstance()
 
 export function findAccountById(accountId: string) {
   const epicurus = getEpicurusInstance()
@@ -60,6 +62,49 @@ export function getNamesAndEmailsOfUsers() {
   const epicurus = getEpicurusInstance()
 
   return epicurus.request(AccountEndpoints.getNamesAndEmailsOfUsers, {})
+}
+
+/**
+ * Retrieves the IDs of all KYC verified accounts.
+ * Since this is an expensive operations, a {@code cacheExpiryInSeconds} can be used if we want to cache the
+ * result in memory for x number of seconds.
+ *
+ * @param cacheExpiryInSeconds the cache expiry in seconds
+ */
+export async function getAllKycVerifiedAccountIds(cacheExpiryInSeconds?: number): Promise<Set<string>> {
+  let kycVerifiedAccountIds: string[] = []
+  if (!!cacheExpiryInSeconds) {
+    kycVerifiedAccountIds = await returnCachedValueOrRetrieveFromSource<string[]>(
+      AccountEndpoints.getAllKycVerifiedAccountIds,
+      'getAllKycVerifiedAccountIds',
+      cacheExpiryInSeconds,
+    )
+  }
+
+  const epicurus = getEpicurusInstance()
+
+  kycVerifiedAccountIds = await epicurus.request(AccountEndpoints.getAllKycVerifiedAccountIds, {})
+
+  return new Set<string>(kycVerifiedAccountIds)
+}
+
+async function returnCachedValueOrRetrieveFromSource<T>(endpoint: AccountEndpoints, cacheKey: string, cacheExpiryInSeconds: number): Promise<T> {
+  const cachedValue = await memoryCache.get(cacheKey)
+
+  if (!!cachedValue) {
+    return cachedValue as T
+  }
+
+  const epicurus = getEpicurusInstance()
+
+  const freshValue = await epicurus.request(endpoint, {})
+  await memoryCache.set<string[]>({
+    key: cacheKey,
+    ttl: cacheExpiryInSeconds,
+    val: freshValue,
+  })
+
+  return freshValue
 }
 
 export * from './endpoints'

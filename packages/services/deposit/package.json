@@ -67,6 +67,7 @@
     "@types/sequelize": "3.30.4",
     "@types/validator": "6.3.0",
     "@types/lodash": "4.14.92",
+    "@abx-query-libs/account": "1.0.0",
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "mocha": "5.2.0",
@@ -76,6 +77,7 @@
     "ts-mocha": "6.0.0",
     "ts-node": "8.5.2",
     "ts-node-dev": "1.0.0-pre.44",
+    "node-uuid": "1.4.7",
     "tslint": "5.20.1",
     "typescript": "3.7.2"
   },

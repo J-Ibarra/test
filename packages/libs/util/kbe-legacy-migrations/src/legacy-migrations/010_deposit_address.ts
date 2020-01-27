@@ -3,8 +3,8 @@ export function up(queryInterface) {
     `
       CREATE TABLE public.deposit_address (
           id SERIAL,
-          "accountId" uuid REFERENCES public.account(id),
-          "currencyId" integer REFERENCES public.currency(id),
+          "accountId" uuid,
+          "currencyId" integer,
           "privateKey" character varying(255) NOT NULL,
           "createdAt" timestamp with time zone NOT NULL,
           "updatedAt" timestamp with time zone NOT NULL

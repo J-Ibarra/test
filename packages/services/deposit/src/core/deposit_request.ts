@@ -6,6 +6,8 @@ import { findCurrencyForCodes } from '@abx-service-clients/reference-data'
 import { DepositAddress, DepositRequest, DepositRequestStatus } from '../../interfaces'
 import { getMinimumDepositAmountForCurrency } from './deposit_amount_validator'
 
+let cachedCryptoCurrencies: Currency[] = []
+
 export async function storeDepositRequests(deposits: DepositRequest[], transaction?: Transaction): Promise<DepositRequest[]> {
   const depositAddressIdToDepositAddress: Map<number, DepositAddress> = deposits.reduce(
     (idToDepsitAddress, request) => idToDepsitAddress.set(request.depositAddress.id, request.depositAddress),
@@ -45,9 +47,11 @@ export async function getAllDepositRequests(query: Partial<DepositRequest>, pare
 }
 
 export async function loadAllPendingDepositRequestsAboveMinimumAmount(): Promise<DepositRequest[]> {
-  const cryptoCurrencies = await findCurrencyForCodes(Object.values(CryptoCurrency) as any)
+  if (cachedCryptoCurrencies.length === 0) {
+    cachedCryptoCurrencies = await findCurrencyForCodes(Object.values(CryptoCurrency) as any)
+  }
 
-  const depositRequestsForAllCurrenciesPromise = cryptoCurrencies.map(cryptoCurrency =>
+  const depositRequestsForAllCurrenciesPromise = cachedCryptoCurrencies.map(cryptoCurrency =>
     getAllPendingDepositRequestsForCurrencyAboveMinimumAmount(cryptoCurrency),
   )
 
