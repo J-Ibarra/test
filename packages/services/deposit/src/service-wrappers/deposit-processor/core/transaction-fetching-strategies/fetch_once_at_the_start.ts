@@ -1,15 +1,15 @@
 import Decimal from 'decimal.js'
 
-import { TransactionRetrievalResult } from '.'
+import { TransactionRetrievalResult } from '../transaction-fetching-strategies'
 import { Logger } from '@abx-utils/logging'
 import { OnChainCurrencyGateway, DepositTransaction, DepositTransactionWithFiatConversion } from '@abx-query-libs/blockchain-currency-gateway'
 import { FiatCurrency } from '@abx-types/reference-data'
 import { DepositAddress } from '@abx-types/deposit'
 import { getDepositTransactionAndRecordLastSeenTransaction } from './new_transactions_retriever'
+import { AmountTruncationFunction } from '../../../../core'
 
 const logger = Logger.getInstance('fetch_once_at_the_start', 'fetchTransactionsForEachDepositAddress')
 const FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION = FiatCurrency.usd
-export type AmountTruncationFunction = (amount: number) => number
 
 export async function fetchAllNewTransactionsUpfront(params: {
   depositAddresses: DepositAddress[]

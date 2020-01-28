@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js'
 import util from 'util'
-import { TransactionRetrievalResult } from '.'
+import { TransactionRetrievalResult } from '../transaction-fetching-strategies'
 import { Logger } from '@abx-utils/logging'
 import { OnChainCurrencyGateway } from '@abx-query-libs/blockchain-currency-gateway'
 import { FiatCurrency } from '@abx-types/reference-data'

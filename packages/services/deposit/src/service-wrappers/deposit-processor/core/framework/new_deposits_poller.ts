@@ -3,9 +3,13 @@ import { CurrencyManager } from '@abx-query-libs/blockchain-currency-gateway'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { DepositAddress } from '@abx-types/deposit'
-import { getPendingDepositRequests, storeDepositRequests, findKycOrEmailVerifiedDepositAddresses } from '../../../../core'
+import {
+  getPendingDepositRequests,
+  storeDepositRequests,
+  findKycOrEmailVerifiedDepositAddresses,
+  splitDepositAddressesIntoBatches,
+} from '../../../../core'
 import { getPotentialDepositRequests } from '../deposit_transactions_fetcher'
-import { splitDepositAddressesIntoBatches } from './deposit_address_batcher'
 import { depositAmountAboveMinimumForCurrency } from './deposit_amount_validator'
 import { DepositGatekeeper } from './deposit_gatekeeper'
 import { findCurrencyForCode } from '@abx-service-clients/reference-data'

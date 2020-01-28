@@ -1,3 +1,3 @@
-import { runReferenceDataMigrations } from './migration-runner'
+import { runDepositDataMigrations } from './migration-runner'
 
-runReferenceDataMigrations().then(() => process.exit(0))
+runDepositDataMigrations().then(() => process.exit(0))
