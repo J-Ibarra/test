@@ -7,7 +7,7 @@ import { Logger } from '@abx-utils/logging'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { AdminRequest, AdminRequestStatus } from '@abx-service-clients/admin-fund-management'
 import { getEnvironment } from '@abx-types/reference-data'
-import { getOnChainCurrencyManagerForEnvironment, Kinesis } from '@abx-query-libs/blockchain-currency-gateway'
+import { getOnChainCurrencyManagerForEnvironment, Kinesis } from '@abx-utils/blockchain-currency-gateway'
 
 import { updateAdminRequestStatus } from '../update_admin_request'
 import { triggerMultipleBalanceChanges } from '@abx-service-clients/balance'

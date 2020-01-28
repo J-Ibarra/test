@@ -1,5 +1,5 @@
 import { Logger } from '@abx-utils/logging'
-import { DepositTransaction, OnChainCurrencyGateway } from '@abx-query-libs/blockchain-currency-gateway'
+import { DepositTransaction, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
 import * as LastDepositHashRecorder from '../framework/deposit_hash_recorder/last_deposit_hash_recorder'
 
 const logger = Logger.getInstance('new_transactions_retriever', 'getDepositTransactionAndRecordLastSeenTransaction')

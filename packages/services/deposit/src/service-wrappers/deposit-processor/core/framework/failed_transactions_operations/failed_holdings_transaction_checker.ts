@@ -1,7 +1,7 @@
 import { isEmpty } from 'lodash'
 import { SourceEventType } from '@abx-types/balance'
 import { Logger } from '@abx-utils/logging'
-import { CurrencyManager, OnChainCurrencyGateway } from '@abx-query-libs/blockchain-currency-gateway'
+import { CurrencyManager, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { CryptoCurrency, CurrencyCode } from '@abx-types/reference-data'
 import { DepositRequest, DepositRequestStatus } from '@abx-types/deposit'

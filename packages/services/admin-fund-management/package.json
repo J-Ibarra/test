@@ -31,8 +31,8 @@
     "@abx-types/balance": "1.0.0",
     "@abx-types/reference-data": "1.0.0",
     "@abx-types/notification": "1.0.0",
-    "@abx-query-libs/blockchain-currency-gateway": "1.0.0",
-    "@abx-query-libs/account": "1.0.0",
+    "@abx-utils/blockchain-currency-gateway": "1.0.0",
+    "@abx-utils/account": "1.0.0",
     "@abx-types/withdrawal": "1.0.0",
     "@abx-types/account": "1.0.0",
     "@abx-utils/db-connection-utils": "1.0.0",
@@ -60,7 +60,7 @@
     "node-uuid": "1.4.7"
   },
   "devDependencies": {
-    "@abx-query-libs/account": "1.0.0",
+    "@abx-utils/account": "1.0.0",
     "@lerna/filter-options": "^3.18.4",
     "@types/body-parser": "1.17.0",
     "@types/chai": "4.0.3",

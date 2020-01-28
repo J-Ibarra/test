@@ -11,7 +11,7 @@ import { Account } from '@abx-types/account'
 import sinon from 'sinon'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { AccountStatus } from '@abx-types/account'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 
 export const updateDumbWithdrawalRequest = ({
   accountId,

@@ -4,7 +4,7 @@ import { v4 } from 'node-uuid'
 import request from 'supertest'
 import { getEnvironmentConfig, truncateTables } from '@abx-utils/db-connection-utils'
 import { bootstrapRestApi } from '..'
-import { createTemporaryTestingAccount, TEST_PASSWORD, createAccountAndSession } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount, TEST_PASSWORD, createAccountAndSession } from '@abx-utils/account'
 import { TokenResponse } from '../token_controller'
 
 describe('api:tokens', () => {

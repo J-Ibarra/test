@@ -4,7 +4,7 @@ import { getCacheClient, CacheGateway, truncateTables } from '@abx-utils/db-conn
 import { OrderDirection, OrderStatus, OrderQueueRequest } from '@abx-types/order'
 import { createOrder as persistOrderInDb } from '../../../../../core'
 import { createOrder } from './test-utils'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 import { publishDbOrdersToQueue } from '../../order-match-handling/lock_and_hydrate_orders'
 import { setDepthIntoRedis } from '../../order-match-handling/depth/redis'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'

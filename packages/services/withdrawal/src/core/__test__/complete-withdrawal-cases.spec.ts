@@ -21,7 +21,7 @@ import * as accountOperations from '@abx-service-clients/account'
 import * as orderOperations from '@abx-service-clients/order'
 import * as notificationOperations from '@abx-service-clients/notification'
 
-import { TEST_CURRENCY_TICKER } from '@abx-query-libs/blockchain-currency-gateway'
+import { TEST_CURRENCY_TICKER } from '@abx-utils/blockchain-currency-gateway'
 import { expect } from 'chai'
 import { SourceEventType, BalanceAsyncRequestType } from '@abx-types/balance'
 import { FiatCurrency } from '@abx-types/reference-data'

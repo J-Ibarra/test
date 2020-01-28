@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import moment from 'moment'
 import { createSession, createSessionForUser, killSession } from '../..'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 import { truncateTables } from '@abx-utils/db-connection-utils'
 
 describe('session', () => {

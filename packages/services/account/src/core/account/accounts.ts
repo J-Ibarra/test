@@ -6,7 +6,7 @@ import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { Email, EmailTemplates } from '@abx-types/notification'
 
 import { Logger } from '@abx-utils/logging'
-import { apiCookieIv, apiCookieSecret } from '@abx-query-libs/account'
+import { apiCookieIv, apiCookieSecret } from '@abx-utils/account'
 import { sequelize, getModel, wrapInTransaction } from '@abx-utils/db-connection-utils'
 
 import { ValidationError } from '@abx-types/error'

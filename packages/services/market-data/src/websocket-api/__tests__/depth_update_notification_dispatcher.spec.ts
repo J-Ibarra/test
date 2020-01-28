@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 import { OrderDirection } from '@abx-types/order'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 import { recordSubscriptionForAccount, emitAskDepthChange, DEPTH_UPDATE_EVENT_PREFIX } from '../depth_update_notification_dispatcher'
 
 describe('depth_update_notification_dispatcher', () => {

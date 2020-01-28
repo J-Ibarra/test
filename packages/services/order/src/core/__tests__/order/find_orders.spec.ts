@@ -6,7 +6,7 @@ import { CurrencyCode, FiatCurrency } from '@abx-types/reference-data'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import { TradeTransaction, Order, OrderDirection, OrderStatus, OrderType, OrderValidity } from '@abx-types/order'
 import { extractCoreOrderDetails, findAllOrdersForAccount, findAllOrdersForAccountAndSymbols, findOrdersForCurrency } from '../../order/find_orders'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 import { GTIDInitials } from '@abx-service-clients/admin-fund-management'
 
 const kauUsdSymbol = 'KAU_USD'

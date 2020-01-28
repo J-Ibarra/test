@@ -10,7 +10,7 @@ import { CurrencyCode } from '@abx-types/reference-data'
 import { BuyerOrderSettlementHandler } from '../../handler'
 import * as sharedUtils from '../../handler/shared.utils'
 import { createOrder, createOrderMatch, createSymbol } from './test_utils'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 
 const boundary = 5
 const symbolId = 'KAU_USD'

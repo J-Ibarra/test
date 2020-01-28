@@ -10,7 +10,7 @@ import {
 } from '../../last-executed-price-checks/order_validations'
 import * as orderCoreOperations from '../../../../../core'
 import * as executedPriceRedis from '../../../../../core/order-match/last_executed_price_redis'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 import * as accountClient from '@abx-service-clients/account'
 
 describe('order_validations', () => {

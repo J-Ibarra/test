@@ -3,7 +3,7 @@ import { MemoryCache } from '@abx/db-connection-utils'
 import { truncateTables } from '@abx/db-connection-utils'
 import { findAndStoreAskAndBidPrices, storeAskPrice, storeBidPrice } from '../../../../repository'
 import { initialiseRedis } from '../test-helper'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 import sinon from 'sinon'
 // import * as referenceDataOperations from '@abx-service-clients/reference-data'
 

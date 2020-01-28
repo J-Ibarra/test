@@ -2,7 +2,7 @@ import util from 'util'
 
 import { findUserByAccountId } from '@abx-service-clients/account'
 import { Logger } from '@abx-utils/logging'
-import { CurrencyManager } from '@abx-query-libs/blockchain-currency-gateway'
+import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 import { Email, EmailTemplates } from '@abx-types/notification'
 import { createEmail } from '@abx-service-clients/notification'
 import { isFiatCurrency } from '@abx-service-clients/reference-data'

@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 import { CurrencyCode, FiatCurrency } from '@abx-types/reference-data'
 import { WithdrawalRequest, WithdrawalRequestType, WithdrawalState } from '@abx-types/withdrawal'
 import { createWithdrawalRequest, createWithdrawalEmission, findWithdrawalEmission, getLatestWithdrawalEmissionSequenceNumber } from '../..'

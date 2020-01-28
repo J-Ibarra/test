@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { AccountType } from '@abx-types/account'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 import {
   findDepositAddresses,
   findDepositAddressesForAccount,
@@ -14,7 +14,7 @@ import sinon from 'sinon'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import { truncateTables } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
-import * as onChainIntegration from '@abx-query-libs/blockchain-currency-gateway'
+import * as onChainIntegration from '@abx-utils/blockchain-currency-gateway'
 
 describe('Deposit Address module', () => {
   let ACCOUNT_ID: string

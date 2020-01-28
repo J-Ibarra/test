@@ -1,5 +1,5 @@
 import sinon from 'sinon'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 import * as accountOperations from '@abx-service-clients/account'
 import { times } from 'lodash'
 

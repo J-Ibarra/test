@@ -5,7 +5,7 @@ import * as crypto from 'crypto'
 import * as express from 'express'
 import { get } from 'lodash'
 
-import { apiCookieSecret, apiCookieIv, findSession, findAccountById, JwtTokenHandler, findUserByIdWithAccount } from '@abx-query-libs/account'
+import { apiCookieSecret, apiCookieIv, findSession, findAccountById, JwtTokenHandler, findUserByIdWithAccount } from '@abx-utils/account'
 
 const logger = Logger.getInstance('express-middleware', 'Request Overloads')
 const algo = 'aes-256-ctr'

@@ -1,5 +1,5 @@
 import { getEnvironment, DepositPollingFrequency, CryptoCurrency, Currency, CurrencyCode } from '@abx-types/reference-data'
-import { CurrencyManager } from '@abx-query-libs/blockchain-currency-gateway'
+import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 import {
   checkForNewDepositsForCurrency,
   processNewestDepositRequestForCurrency,

@@ -2,7 +2,7 @@ import { Logger } from '@abx-utils/logging'
 import { CryptoCurrency, getEnvironment } from '@abx-types/reference-data'
 import { completeWithdrawal, CryptoWithdrawalGatekeeper, transferCryptoForLatestWithdrawalRequest } from './core/framework'
 import { WithdrawalState } from '@abx-types/withdrawal'
-import { CurrencyManager } from '@abx-query-libs/blockchain-currency-gateway'
+import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 
 export * from './core/framework'
 export * from './core/lib'

@@ -6,7 +6,7 @@ import { sequelize, wrapInTransaction, truncateTables } from '@abx-utils/db-conn
 import * as coreOperations from '../../../../../core'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { createOrderMatch, createSymbol } from './test_utils'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 import { BuyerOrderSettlementHandler } from '../../handler'
 
 const symbolId = 'KAU_KAG'

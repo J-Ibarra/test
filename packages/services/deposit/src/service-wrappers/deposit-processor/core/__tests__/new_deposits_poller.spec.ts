@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import * as sinon from 'sinon'
-import { TestCurrencyManager } from '@abx-query-libs/blockchain-currency-gateway'
+import { TestCurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 import { CurrencyCode, FiatCurrency } from '@abx-types/reference-data'
 import { DepositRequestStatus } from '@abx-types/deposit'
 import * as depositCoreOperations from '../../../../core'

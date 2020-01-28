@@ -2,7 +2,7 @@ import { expect } from 'chai'
 
 import { AccountType } from '@abx-types/account'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 import { BalanceType, SourceEventType } from '@abx-types/balance'
 import { DebitCardTopUpChangeHandler, BalanceRepository } from '../../..'
 

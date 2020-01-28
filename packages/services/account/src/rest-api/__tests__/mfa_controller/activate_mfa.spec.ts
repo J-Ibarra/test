@@ -3,7 +3,7 @@ import * as http from 'http'
 import request from 'supertest'
 import { updateUser } from '../../../core'
 import { bootstrapRestApi } from '../..'
-import { createAccountAndSession } from '@abx-query-libs/account'
+import { createAccountAndSession } from '@abx-utils/account'
 import { truncateTables } from '@abx-utils/db-connection-utils'
 
 describe('api:mfa/activation', () => {

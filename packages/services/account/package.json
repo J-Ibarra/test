@@ -37,7 +37,7 @@
     "@abx-utils/logging": "1.0.0",
     "@abx-utils/kbe-legacy-migrations": "1.0.0",
     "@abx-utils/encryption": "1.0.0",
-    "@abx-query-libs/account": "1.0.0",
+    "@abx-utils/account": "1.0.0",
     "@abx-service-clients/reference-data": "1.0.0",
     "@abx-service-clients/notification": "1.0.0",
     "@abx-service-clients/account": "1.0.0",

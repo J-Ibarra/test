@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 import { SourceEventType } from '@abx-types/balance'
 import { BalanceAdjustmentRepository } from '../..'
 import { createAvailableBalance } from '../test_utils'

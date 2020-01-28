@@ -4,7 +4,7 @@ import * as speakeasy from 'speakeasy'
 import request from 'supertest'
 import { activateMfa } from '../../../core'
 import { bootstrapRestApi } from '../..'
-import { createAccountAndSession } from '@abx-query-libs/account'
+import { createAccountAndSession } from '@abx-utils/account'
 import { truncateTables } from '@abx-utils/db-connection-utils'
 
 describe('api:mfa/verification', () => {

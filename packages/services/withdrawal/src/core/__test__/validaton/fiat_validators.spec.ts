@@ -7,7 +7,7 @@ import { Environment, Currency, CurrencyCode, FiatCurrency } from '@abx-types/re
 import { Account, AccountStatus } from '@abx-types/account'
 import { BalanceTypeObj } from '@abx-types/balance'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
-import { CurrencyManager } from '@abx-query-libs/blockchain-currency-gateway'
+import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 import * as conversion from '@abx-utils/fx-rate'
 import { WithdrawalRequest, WithdrawalRequestType, WithdrawalState } from '@abx-types/withdrawal'
 import * as helper from '../../lib'

@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { Logger } from '@abx-utils/logging'
-import { DepositTransaction, OnChainCurrencyGateway } from '@abx-query-libs/blockchain-currency-gateway'
+import { DepositTransaction, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { DepositRequestStatus } from '@abx-types/deposit'

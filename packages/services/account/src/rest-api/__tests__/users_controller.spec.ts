@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import request from 'supertest'
 import { bootstrapRestApi } from '..'
 import { findOrCreateOperatorAccount } from '../../core'
-import { createAccountAndSession } from '@abx-query-libs/account'
+import { createAccountAndSession } from '@abx-utils/account'
 import { truncateTables } from '@abx-utils/db-connection-utils'
 
 describe('api:users', () => {

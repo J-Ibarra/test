@@ -2,7 +2,7 @@ import Decimal from 'decimal.js'
 
 import { TransactionRetrievalResult } from '../transaction-fetching-strategies'
 import { Logger } from '@abx-utils/logging'
-import { OnChainCurrencyGateway, DepositTransaction, DepositTransactionWithFiatConversion } from '@abx-query-libs/blockchain-currency-gateway'
+import { OnChainCurrencyGateway, DepositTransaction, DepositTransactionWithFiatConversion } from '@abx-utils/blockchain-currency-gateway'
 import { FiatCurrency } from '@abx-types/reference-data'
 import { DepositAddress } from '@abx-types/deposit'
 import { getDepositTransactionAndRecordLastSeenTransaction } from './new_transactions_retriever'

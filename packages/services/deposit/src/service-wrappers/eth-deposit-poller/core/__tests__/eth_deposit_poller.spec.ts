@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import Decimal from 'decimal.js'
 import sinon, { SinonStub } from 'sinon'
 
-import { TestCurrency } from '@abx-query-libs/blockchain-currency-gateway'
+import { TestCurrency } from '@abx-utils/blockchain-currency-gateway'
 import { DepositRequestStatus } from '@abx-types/deposit'
 import * as depositRequestOperations from '../../../../core'
 import * as midPriceCalculatorOperations from '@abx-service-clients/market-data'

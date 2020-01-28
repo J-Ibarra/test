@@ -1,5 +1,5 @@
 import { WithdrawalRequest } from '@abx-types/withdrawal'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 import { CurrencyCode } from '@abx-types/reference-data'
 
 export const createAccountsAndWithdrawalFunctions = async () => {

@@ -1,7 +1,7 @@
 import { Transaction } from 'sequelize'
 import { getEnvironment, CurrencyCode, Currency } from '@abx-types/reference-data'
 import { Logger } from '@abx-utils/logging'
-import { CurrencyManager, OnChainCurrencyGateway } from '@abx-query-libs/blockchain-currency-gateway'
+import { CurrencyManager, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
 import { getModel } from '@abx-utils/db-connection-utils'
 import { ValidationError } from '@abx-types/error'
 import { findCryptoCurrencies, isFiatCurrency } from '@abx-service-clients/reference-data'
