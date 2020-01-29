@@ -106,3 +106,9 @@ export let cancelAllOrdersForAccountMessage = {
     },
   },
 }
+
+export let cancelAllExpiredOrdersMessage = {
+  type: 'object',
+  'x-persist-event': 'cancel all expired orders',
+  properties: {},
+}

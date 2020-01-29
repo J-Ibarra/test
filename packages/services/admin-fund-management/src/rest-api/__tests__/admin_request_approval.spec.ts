@@ -3,7 +3,7 @@ import request from 'supertest'
 import sinon from 'sinon'
 import { AdminRequestStatus, AdminRequestType } from '@abx-service-clients/admin-fund-management'
 import { findAllAdminRequests, saveAdminRequest } from '../../core'
-import { SourceEventType, BalanceAsyncRequestType } from '@abx-types/balance'
+import { SourceEventType } from '@abx-types/balance'
 import { getEpicurusInstance, truncateTables } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { TransactionDirection } from '@abx-types/order'
@@ -192,7 +192,7 @@ describe.skip('api:admin_request:approval', () => {
     expect(
       triggerMultipleBalanceChangesStub.calledWith([
         {
-          type: BalanceAsyncRequestType.confirmPendingRedemption,
+          type: balanceOperations.BalanceAsyncRequestType.confirmPendingRedemption,
           payload: {
             sourceEventType: SourceEventType.adminRequest,
             sourceEventId: adminRequest.id,
@@ -205,7 +205,7 @@ describe.skip('api:admin_request:approval', () => {
           },
         },
         {
-          type: BalanceAsyncRequestType.updateAvailable,
+          type: balanceOperations.BalanceAsyncRequestType.updateAvailable,
           payload: {
             sourceEventType: SourceEventType.adminRequest,
             sourceEventId: adminRequest.id,

@@ -1,7 +1,7 @@
 import Decimal from 'decimal.js'
 import { Transaction } from 'sequelize'
 import { findAccountWithUserDetails, findOrCreateKinesisRevenueAccount } from '@abx-service-clients/account'
-import { SourceEventType, BalanceAsyncRequestType } from '@abx-types/balance'
+import { SourceEventType } from '@abx-types/balance'
 import { findBoundaryForCurrency, getCurrencyId } from '@abx-service-clients/reference-data'
 import { Logger } from '@abx-utils/logging'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
@@ -10,7 +10,7 @@ import { getEnvironment } from '@abx-types/reference-data'
 import { getOnChainCurrencyManagerForEnvironment, Kinesis } from '@abx-query-libs/blockchain-currency-gateway'
 
 import { updateAdminRequestStatus } from '../update_admin_request'
-import { triggerMultipleBalanceChanges } from '@abx-service-clients/balance'
+import { triggerMultipleBalanceChanges, BalanceAsyncRequestType } from '@abx-service-clients/balance'
 
 const logger = Logger.getInstance('redemption_approval_handler', 'approveRedemption')
 

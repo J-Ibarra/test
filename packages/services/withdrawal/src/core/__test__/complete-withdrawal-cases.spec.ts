@@ -23,7 +23,7 @@ import * as notificationOperations from '@abx-service-clients/notification'
 
 import { TEST_CURRENCY_TICKER } from '@abx-query-libs/blockchain-currency-gateway'
 import { expect } from 'chai'
-import { SourceEventType, BalanceAsyncRequestType } from '@abx-types/balance'
+import { SourceEventType } from '@abx-types/balance'
 import { FiatCurrency } from '@abx-types/reference-data'
 import { TransactionDirection } from '@abx-types/order'
 
@@ -259,7 +259,7 @@ describe('Withdrawal Request Completion', () => {
     expect(
       triggerMultipleBalanceChangesStub.calledWith([
         {
-          type: BalanceAsyncRequestType.confirmPendingDeposit,
+          type: balanceOperations.BalanceAsyncRequestType.confirmPendingDeposit,
           payload: {
             accountId: kinesisRevenueAccount.id,
             amount: new Decimal(feeAmount).minus(request1.kinesisCoveredOnChainFee!).toNumber(),
@@ -269,7 +269,7 @@ describe('Withdrawal Request Completion', () => {
           },
         },
         {
-          type: BalanceAsyncRequestType.confirmPendingWithdrawal,
+          type: balanceOperations.BalanceAsyncRequestType.confirmPendingWithdrawal,
           payload: {
             accountId: request1.accountId,
             amount: request1.amount + feeAmount,

@@ -10,12 +10,13 @@
     "lib"
   ],
   "scripts": {
-    "swagger-gen": "tsoa swagger",
+    "swagger-gen": "tsoa swagger ",
     "routes-gen": "tsoa routes",
-    "api-build": "npm run swagger-gen && npm run routes-gen",
+    "api-build-order-data": "npm run swagger-gen -- -c ./src/service-wrappers/order-data/tsoa.json && npm run routes-gen -- -c ./src/service-wrappers/order-data/tsoa.json",
+    "api-build-order-gateway": "npm run swagger-gen -- -c ./src/service-wrappers/order-gateway/tsoa.json && npm run routes-gen -- -c ./src/service-wrappers/order-gateway/tsoa.json",
     "build": "npm run clean && npm run compile",
     "clean": "rm -rf ./dist",
-    "compile": "tsc -p tsconfig.build.json --skipLibCheck",
+    "compile": "npm run api-build-order-data && tsc -p tsconfig.build.json --skipLibCheck",
     "migrate-db": "npm run build && NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test NODE_PATH=dist node dist/migrations/index.js",
     "start-local:worker": "NODE_ENV=dev ts-node-dev src/service-wrappers/worker/bootstrap.ts > ../../../_logs/worker.logs",
     "start-local:order-data": "NODE_ENV=dev ts-node-dev src/service-wrappers/order-data/bootstrap.ts > ../../../_logs/order-data.logs",

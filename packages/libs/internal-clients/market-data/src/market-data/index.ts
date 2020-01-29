@@ -1,7 +1,7 @@
 import { get, isEmpty } from 'lodash'
 import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { OrderMatch } from '@abx-types/order'
-import { DepthMidPrice, MidPricesForSymbolRequest } from '@abx-types/market-data'
+import { DepthMidPrice, MidPricesForSymbolRequest, MarketDataTimeFrame } from '@abx-types/market-data'
 
 import { MarketDataEndpoints } from './endpoints'
 import { calculateMidPrice } from './mid_price_calculator'
@@ -56,6 +56,18 @@ function calculateMidPriceOrUseLatestMatchPrice(
   }
 
   return calculateMidPrice({ ...currencyDepthForSymbol, symbolId })
+}
+
+export async function cleanOldMidPrices(): Promise<void> {
+  const epicurus = getEpicurusInstance()
+
+  return epicurus.request(MarketDataEndpoints.cleanOldMidPrices, {})
+}
+
+export async function reconcileOHCLMarketData(timeFrame: MarketDataTimeFrame): Promise<void> {
+  const epicurus = getEpicurusInstance()
+
+  return epicurus.request(MarketDataEndpoints.reconcileOHCLMarketData, { timeFrame })
 }
 
 export async function getMidPricesForSymbol(request: MidPricesForSymbolRequest): Promise<DepthMidPrice[]> {

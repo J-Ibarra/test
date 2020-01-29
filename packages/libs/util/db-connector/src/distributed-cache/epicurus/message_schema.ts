@@ -27,10 +27,11 @@ export function messageFactory(schemaLogic: any, handlerFn: HandlerFn) {
         pickedMessage = _.pick(msg, validProps)
 
         jsonSchemaValidation(pickedMessage, schema)
-          .then(() => writeExchangeEvents(msg, schema, createExchangeEvent))
           .then(() => handlerFn(pickedMessage))
           .then(results => {
             nr.endTransaction()
+            // TODO this has performance implications, should rather write that to a queue and let it be persisted by a different process
+            process.nextTick(() => writeExchangeEvents(msg, schema, createExchangeEvent))
             if (respond) {
               respond(null, results) // callback style
             } else {

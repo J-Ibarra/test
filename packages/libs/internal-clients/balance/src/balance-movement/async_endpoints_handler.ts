@@ -1,18 +1,13 @@
-import * as AWS from 'aws-sdk'
 import {
   BalanceAsyncRequestType,
-  BalanceChangeAsyncRequestContainer,
   BasicBalanceAsyncRequestPayload,
   InitialReserveBalanceChangeAsyncRequestPayload,
   BalanceChangeAsyncRequest,
-} from '@abx-types/balance'
-import { Logger } from '@abx-utils/logging'
-import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
+  BalanceChangeAsyncRequestContainer,
+} from '../queue-request'
 import { Environment } from '@abx-types/reference-data'
+import { sendAsyncChangeMessage } from '@abx-utils/async-message-publisher'
 
-const sqs = new AWS.SQS()
-
-const logger = Logger.getInstance('balance-internal-client', 'async_endpoints_handler')
 export const environmentsWithLocalRedisQueue = [Environment.development, Environment.e2eLocal, Environment.test]
 export const localRedisBalanceChangeTopic = 'local-balance-change-topic'
 
@@ -23,160 +18,212 @@ export const localRedisBalanceChangeTopic = 'local-balance-change-topic'
  * @param changes the balance change operatios to be applied
  */
 export function triggerMultipleBalanceChanges(changes: BalanceChangeAsyncRequest[]) {
-  return sendAsyncChangeMessage({
-    requestedChanges: changes,
+  return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    type: 'triggerMultipleBalanceChanges',
+    target: {
+      local: localRedisBalanceChangeTopic,
+      deployedEnvironment: process.env.BALANCE_CHANGE_QUEUE_URL!,
+    },
+    payload: {
+      requestedChanges: changes,
+    },
   })
 }
 
 export function releaseReserve(payload: BasicBalanceAsyncRequestPayload) {
-  return sendAsyncChangeMessage({
-    requestedChanges: [
-      {
-        type: BalanceAsyncRequestType.releaseReserve,
-        payload,
-      },
-    ],
+  return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    type: 'releaseReserve',
+    target: {
+      local: localRedisBalanceChangeTopic,
+      deployedEnvironment: process.env.BALANCE_CHANGE_QUEUE_URL!,
+    },
+    payload: {
+      requestedChanges: [
+        {
+          type: BalanceAsyncRequestType.releaseReserve,
+          payload,
+        },
+      ],
+    },
   })
 }
 
 export function finaliseReserve(payload: InitialReserveBalanceChangeAsyncRequestPayload) {
-  return sendAsyncChangeMessage({
-    requestedChanges: [
-      {
-        type: BalanceAsyncRequestType.finaliseReserve,
-        payload,
-      },
-    ],
+  return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    type: 'finaliseReserve',
+    target: {
+      local: localRedisBalanceChangeTopic,
+      deployedEnvironment: process.env.BALANCE_QUEUE_URL!,
+    },
+    payload: {
+      requestedChanges: [
+        {
+          type: BalanceAsyncRequestType.finaliseReserve,
+          payload,
+        },
+      ],
+    },
   })
 }
 
 export function confirmPendingRedemption(payload: BasicBalanceAsyncRequestPayload) {
-  return sendAsyncChangeMessage({
-    requestedChanges: [
-      {
-        type: BalanceAsyncRequestType.confirmPendingRedemption,
-        payload,
-      },
-    ],
+  return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    type: 'confirmPendingRedemption',
+    target: {
+      local: localRedisBalanceChangeTopic,
+      deployedEnvironment: process.env.BALANCE_QUEUE_URL!,
+    },
+    payload: {
+      requestedChanges: [
+        {
+          type: BalanceAsyncRequestType.confirmPendingRedemption,
+          payload,
+        },
+      ],
+    },
   })
 }
 
 export function denyPendingRedemption(payload: BasicBalanceAsyncRequestPayload) {
-  return sendAsyncChangeMessage({
-    requestedChanges: [
-      {
-        type: BalanceAsyncRequestType.denyPendingRedemption,
-        payload,
-      },
-    ],
+  return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    type: 'denyPendingRedemption',
+    target: {
+      local: localRedisBalanceChangeTopic,
+      deployedEnvironment: process.env.BALANCE_QUEUE_URL!,
+    },
+    payload: {
+      requestedChanges: [
+        {
+          type: BalanceAsyncRequestType.denyPendingRedemption,
+          payload,
+        },
+      ],
+    },
   })
 }
 
 export function createPendingDeposit(payload: BasicBalanceAsyncRequestPayload) {
-  return sendAsyncChangeMessage({
-    requestedChanges: [
-      {
-        type: BalanceAsyncRequestType.createPendingDeposit,
-        payload,
-      },
-    ],
+  return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    type: 'createPendingDeposit',
+    target: {
+      local: localRedisBalanceChangeTopic,
+      deployedEnvironment: process.env.BALANCE_QUEUE_URL!,
+    },
+    payload: {
+      requestedChanges: [
+        {
+          type: BalanceAsyncRequestType.createPendingDeposit,
+          payload,
+        },
+      ],
+    },
   })
 }
 
 export function confirmPendingDeposit(payload: BasicBalanceAsyncRequestPayload) {
-  return sendAsyncChangeMessage({
-    requestedChanges: [
-      {
-        type: BalanceAsyncRequestType.confirmPendingDeposit,
-        payload,
-      },
-    ],
+  return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    type: BalanceAsyncRequestType.createPendingDeposit,
+    target: {
+      local: localRedisBalanceChangeTopic,
+      deployedEnvironment: process.env.BALANCE_QUEUE_URL!,
+    },
+    payload: {
+      requestedChanges: [
+        {
+          type: BalanceAsyncRequestType.createPendingDeposit,
+          payload,
+        },
+      ],
+    },
   })
 }
 
 export function denyPendingDeposit(payload: BasicBalanceAsyncRequestPayload) {
-  return sendAsyncChangeMessage({
-    requestedChanges: [
-      {
-        type: BalanceAsyncRequestType.denyPendingDeposit,
-        payload,
-      },
-    ],
+  return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    type: BalanceAsyncRequestType.denyPendingDeposit,
+    target: {
+      local: localRedisBalanceChangeTopic,
+      deployedEnvironment: process.env.BALANCE_QUEUE_URL!,
+    },
+    payload: {
+      requestedChanges: [
+        {
+          type: BalanceAsyncRequestType.denyPendingDeposit,
+          payload,
+        },
+      ],
+    },
   })
 }
 
 export function confirmPendingWithdrawal(payload: BasicBalanceAsyncRequestPayload) {
-  return sendAsyncChangeMessage({
-    requestedChanges: [
-      {
-        type: BalanceAsyncRequestType.confirmPendingWithdrawal,
-        payload,
-      },
-    ],
+  return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    type: BalanceAsyncRequestType.confirmPendingWithdrawal,
+    target: {
+      local: localRedisBalanceChangeTopic,
+      deployedEnvironment: process.env.BALANCE_QUEUE_URL!,
+    },
+    payload: {
+      requestedChanges: [
+        {
+          type: BalanceAsyncRequestType.confirmPendingWithdrawal,
+          payload,
+        },
+      ],
+    },
   })
 }
 
 export function denyPendingWithdrawal(payload: BasicBalanceAsyncRequestPayload) {
-  return sendAsyncChangeMessage({
-    requestedChanges: [
-      {
-        type: BalanceAsyncRequestType.denyPendingWithdrawal,
-        payload,
-      },
-    ],
+  return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    type: BalanceAsyncRequestType.denyPendingWithdrawal,
+    target: {
+      local: localRedisBalanceChangeTopic,
+      deployedEnvironment: process.env.BALANCE_QUEUE_URL!,
+    },
+    payload: {
+      requestedChanges: [
+        {
+          type: BalanceAsyncRequestType.denyPendingWithdrawal,
+          payload,
+        },
+      ],
+    },
   })
 }
 
 export function confirmPendingDebitCardTopUp(payload: BasicBalanceAsyncRequestPayload) {
-  return sendAsyncChangeMessage({
-    requestedChanges: [
-      {
-        type: BalanceAsyncRequestType.confirmPendingDebitCardTopUp,
-        payload,
-      },
-    ],
+  return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    type: BalanceAsyncRequestType.confirmPendingDebitCardTopUp,
+    target: {
+      local: localRedisBalanceChangeTopic,
+      deployedEnvironment: process.env.BALANCE_QUEUE_URL!,
+    },
+    payload: {
+      requestedChanges: [
+        {
+          type: BalanceAsyncRequestType.confirmPendingDebitCardTopUp,
+          payload,
+        },
+      ],
+    },
   })
 }
 
 export function recordDebitCardToExchangeWithdrawal(payload: BasicBalanceAsyncRequestPayload) {
-  return sendAsyncChangeMessage({
-    requestedChanges: [
-      {
-        type: BalanceAsyncRequestType.recordDebitCardToExchangeWithdrawal,
-        payload,
-      },
-    ],
+  return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    type: BalanceAsyncRequestType.recordDebitCardToExchangeWithdrawal,
+    target: {
+      local: localRedisBalanceChangeTopic,
+      deployedEnvironment: process.env.BALANCE_QUEUE_URL!,
+    },
+    payload: {
+      requestedChanges: [
+        {
+          type: BalanceAsyncRequestType.recordDebitCardToExchangeWithdrawal,
+          payload,
+        },
+      ],
+    },
   })
-}
-
-function sendAsyncChangeMessage(changes: BalanceChangeAsyncRequestContainer): Promise<void> {
-  return environmentsWithLocalRedisQueue.includes(process.env.NODE_ENV as Environment)
-    ? publishChangeThroughRedis(changes)
-    : queueChangeInSQS(changes)
-}
-
-function queueChangeInSQS(changes: BalanceChangeAsyncRequestContainer): Promise<void> {
-  return new Promise((resolve, reject) => {
-    sqs.sendMessage(
-      {
-        QueueUrl: process.env.BALANCE_QUEUE_URL!,
-        MessageBody: JSON.stringify(changes),
-      },
-      err => {
-        if (!!err) {
-          logger.error(`Error encountered while trying to place ${changes.requestedChanges[0].type} message on queue: ${JSON.stringify(err)}`)
-          reject(err)
-        }
-
-        resolve()
-      },
-    )
-  })
-}
-
-function publishChangeThroughRedis(changes: BalanceChangeAsyncRequestContainer): Promise<void> {
-  const epicurus = getEpicurusInstance()
-  epicurus.publish(localRedisBalanceChangeTopic, changes)
-
-  return Promise.resolve()
 }

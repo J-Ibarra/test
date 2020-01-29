@@ -108,4 +108,4 @@ async function returnCachedValueOrRetrieveFromSource<T>(endpoint: AccountEndpoin
 }
 
 export * from './endpoints'
-export * from './notification_topics'
+export * from './pub_sub_channels'

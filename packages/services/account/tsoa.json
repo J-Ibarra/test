@@ -1,7 +1,7 @@
 {
   "swagger": {
     "outputDirectory": "./dist",
-    "entryFile": "./src/rest-api/index.ts",
+    "entryFile": "./src/service-wrappers/account/rest-api/index.ts",
     "basePath": "/api",
     "securityDefinitions": {
       "cookieAuth": {
@@ -18,9 +18,9 @@
   },
   "routes": {
     "basePath": "/api",
-    "entryFile": "./src/rest-api/index.ts",
-    "routesDir": "./src/rest-api",
-    "authenticationModule": "./src/rest-api/middleware/authentication.ts"
+    "entryFile": "./src/service-wrappers/account/rest-api/index.ts",
+    "routesDir": "./src/service-wrappers/account/rest-api",
+    "authenticationModule": "./src/service-wrappers/account/rest-api/middleware/authentication.ts"
   },
   "compilerOptions": {
     "baseUrl": "src"

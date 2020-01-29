@@ -1,7 +1,7 @@
 import Decimal from 'decimal.js'
 
 import { findOrCreateKinesisRevenueAccount } from '@abx-service-clients/account'
-import { SourceEventType, BalanceAsyncRequestType } from '@abx-types/balance'
+import { SourceEventType } from '@abx-types/balance'
 import { Logger } from '@abx-utils/logging'
 import { wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
@@ -11,7 +11,7 @@ import { WithdrawalRequest, WithdrawalState } from '@abx-types/withdrawal'
 import { updateWithdrawalRequest } from '../../common/update_withdrawal_request'
 import { findCurrencyForId } from '@abx-service-clients/reference-data'
 import { createCurrencyTransaction } from '@abx-service-clients/order'
-import { triggerMultipleBalanceChanges } from '@abx-service-clients/balance'
+import { triggerMultipleBalanceChanges, BalanceAsyncRequestType } from '@abx-service-clients/balance'
 
 const logger = Logger.getInstance('fiat_withdrawal_completer', 'completeFiatWithdrawal')
 

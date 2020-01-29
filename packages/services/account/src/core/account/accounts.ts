@@ -10,7 +10,7 @@ import { apiCookieIv, apiCookieSecret } from '@abx-query-libs/account'
 import { sequelize, getModel, wrapInTransaction } from '@abx-utils/db-connection-utils'
 
 import { ValidationError } from '@abx-types/error'
-import { AccountNotificationTopics } from '@abx-service-clients/account'
+import { AccountPubSubTopics } from '@abx-service-clients/account'
 import { createEmail } from '@abx-service-clients/notification'
 // import { findCryptoCurrencies } from '@abx-service-clients/reference-data'
 import {
@@ -72,7 +72,7 @@ export async function createAccountAndPrepareWelcomeEmail(
 
     logger.debug(`Publishing accountCreated event for account: ${JSON.stringify(account)}`)
 
-    epicurus.publish(AccountNotificationTopics.accountCreated, account)
+    epicurus.publish(AccountPubSubTopics.accountCreated, account)
 
     return {
       account,
@@ -219,7 +219,7 @@ export async function verifyUserAccount(userToken: string, trans?: Transaction):
       )
 
       // Publish for other services to work with
-      getEpicurusInstance().publish(AccountNotificationTopics.accountVerified, { accountId: user!.accountId })
+      getEpicurusInstance().publish(AccountPubSubTopics.accountVerified, { accountId: user!.accountId })
 
       const updatedAccount = updatedAccountInstance.get()
       const userPublicView: UserPublicView = {
@@ -242,17 +242,6 @@ export async function verifyUserAccount(userToken: string, trans?: Transaction):
   })
 }
 
-// export async function generateWalletAddresses(accountId: string) {
-//   const cryptoCurrencies = await findCryptoCurrencies()
-//   const manager = new CurrencyManager(getEnvironment(), cryptoCurrencies)
-
-//   return Promise.all(
-//     cryptoCurrencies.map(async (currency: CurrencyCode) => {
-//       return createNewDepositAddress(manager, accountId, currency)
-//     }),
-//   )
-// }
-
 /**
  * Returns an account's suspended status
  *
@@ -274,7 +263,7 @@ export async function updateAccountStatus(id: string, status: AccountStatus): Pr
 
     const epicurus = getEpicurusInstance()
 
-    epicurus.publish(AccountNotificationTopics.accountKycStatusChange, { accountId: id, status: KycStatusChange.approved })
+    epicurus.publish(AccountPubSubTopics.accountKycStatusChange, { accountId: id, status: KycStatusChange.approved })
   }
 
   await getModel<Partial<Account>>('account').update(updatedValues, {

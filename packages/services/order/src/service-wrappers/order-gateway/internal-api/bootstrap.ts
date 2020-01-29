@@ -1,8 +1,8 @@
 import { getEpicurusInstance, messageFactory } from '@abx-utils/db-connection-utils'
 import { Logger } from '@abx-utils/logging'
 import { OrderType } from '@abx-types/order'
-import { marketOrderMessage, limitOrderMessage, cancelAllOrdersForAccountMessage, cancelOrderMessage } from './schema'
-import { placeOrder, OrderCancellationGateway } from '../core'
+import { marketOrderMessage, limitOrderMessage, cancelAllOrdersForAccountMessage, cancelOrderMessage, cancelAllExpiredOrdersMessage } from './schema'
+import { placeOrder, OrderCancellationGateway, expireOrders } from '../core'
 import { OrderGatewayEndpoints } from '@abx-service-clients/order'
 
 const logger = Logger.getInstance('order-gateway', 'bootstrapInternalApi')
@@ -40,6 +40,13 @@ export function bootstrapInternalApi() {
     OrderGatewayEndpoints.cancelOrder,
     messageFactory(cancelOrderMessage, msg => {
       return orderCancellationGateway.cancelOrder(msg).then((order: any) => ({ orderId: order.id }))
+    }),
+  )
+
+  epicurus.server(
+    OrderGatewayEndpoints.cancelAllExpiredOrders,
+    messageFactory(cancelAllExpiredOrdersMessage, () => {
+      return expireOrders()
     }),
   )
 

@@ -17,4 +17,9 @@ export function cancelOrder(orderId: string, cancellationReason: string) {
   return epicurus.request(OrderGatewayEndpoints.cancelOrder, { orderId, cancellationReason })
 }
 
+export function cancelAllExpiredOrders() {
+  const epicurus = getEpicurusInstance()
+  return epicurus.request(OrderGatewayEndpoints.cancelAllExpiredOrders, {})
+}
+
 export * from './endpoints'

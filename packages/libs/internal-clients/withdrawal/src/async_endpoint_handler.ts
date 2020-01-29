@@ -1,44 +1,36 @@
-import * as AWS from 'aws-sdk'
 import { Environment } from '@abx-types/reference-data'
-import { AsyncWithdrawalStatusChangeRequest, WithdrawalStatusChangeRequestType, FiatWithdrawalCreationRequest } from './async_change_model'
-import { Logger } from '@abx-utils/logging'
+import { WithdrawalStatusChangeRequestType, FiatWithdrawalCreationRequest, AsyncWithdrawalStatusChangeRequest } from './async_change_model'
+import { sendAsyncChangeMessage } from '@abx-utils/async-message-publisher'
 
-const sqs = new AWS.SQS()
-const logger = Logger.getInstance('balance-internal-client', 'async_endpoints_handler')
 export const environmentsWithLocalRedisQueue = [Environment.development, Environment.e2eLocal, Environment.test]
 export const localRedisWithdrawalChangeTopic = 'local-withdrawal-change-topic'
 
 export function cancelFiatWithdrawal(adminRequestId: number) {
-  return queueChangeInSQS({
+  return sendAsyncChangeMessage<AsyncWithdrawalStatusChangeRequest>({
     type: WithdrawalStatusChangeRequestType.cancelFiatWithdrawal,
+    target: {
+      local: 'localRedisWithdrawalChangeTopic',
+      deployedEnvironment: process.env.WITHDRAWAL_STATUS_CHANGE_QUEUE_URL!,
+    },
     payload: {
-      adminRequestId,
+      type: WithdrawalStatusChangeRequestType.cancelFiatWithdrawal,
+      payload: {
+        adminRequestId,
+      },
     },
   })
 }
 
 export function createFiatWithdrawal(fiatWithdrawalCreationParams: FiatWithdrawalCreationRequest) {
-  return queueChangeInSQS({
-    type: WithdrawalStatusChangeRequestType.cancelFiatWithdrawal,
-    payload: fiatWithdrawalCreationParams,
-  })
-}
-
-function queueChangeInSQS(changes: AsyncWithdrawalStatusChangeRequest): Promise<void> {
-  return new Promise((resolve, reject) => {
-    sqs.sendMessage(
-      {
-        QueueUrl: process.env.WITHDRAWAL_STATUS_CHANGE_QUEUE_URL!,
-        MessageBody: JSON.stringify(changes),
-      },
-      err => {
-        if (!!err) {
-          logger.error(`Error encountered while trying to place ${changes.type} message on queue: ${JSON.stringify(err)}`)
-          reject(err)
-        }
-
-        resolve()
-      },
-    )
+  return sendAsyncChangeMessage<AsyncWithdrawalStatusChangeRequest>({
+    type: WithdrawalStatusChangeRequestType.createFiatWithdrawal,
+    target: {
+      local: 'localRedisWithdrawalChangeTopic',
+      deployedEnvironment: process.env.WITHDRAWAL_STATUS_CHANGE_QUEUE_URL!,
+    },
+    payload: {
+      type: WithdrawalStatusChangeRequestType.createFiatWithdrawal,
+      payload: fiatWithdrawalCreationParams,
+    },
   })
 }

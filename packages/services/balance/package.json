@@ -26,6 +26,7 @@
     "update-service-integration": "echo updating integration service here"
   },
   "dependencies": {
+    "@abx-utils/async-message-consumer": "1.0.0",
     "@abx-types/reference-data": "1.0.0",
     "@abx-types/account": "1.0.0",
     "@abx-types/balance": "1.0.0",
