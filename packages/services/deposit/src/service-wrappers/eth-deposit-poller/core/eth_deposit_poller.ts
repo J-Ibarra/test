@@ -1,7 +1,7 @@
 import util from 'util'
 
 import { Logger } from '@abx-utils/logging'
-import { OnChainCurrencyGateway, DepositTransaction } from '@abx-query-libs/blockchain-currency-gateway'
+import { OnChainCurrencyGateway, DepositTransaction } from '@abx-utils/blockchain-currency-gateway'
 import { DepositAddress, DepositRequest, DepositRequestStatus } from '@abx-types/deposit'
 import {
   getPendingDepositRequests,

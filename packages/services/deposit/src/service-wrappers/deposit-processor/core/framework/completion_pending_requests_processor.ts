@@ -2,7 +2,7 @@ import util from 'util'
 
 import { noticeError } from 'newrelic'
 import { Logger } from '@abx-utils/logging'
-import { CurrencyManager } from '@abx-query-libs/blockchain-currency-gateway'
+import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { DepositRequest } from '@abx-types/deposit'

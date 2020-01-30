@@ -1,7 +1,7 @@
 import { findBoundaryForCurrency, truncateCurrencyDecimals } from '@abx-service-clients/reference-data'
 import { DepositAddress } from '@abx-types/deposit'
 import { fetchTransactionsForEachDepositAddress } from './fetch_for_each_address'
-import { DepositTransactionWithFiatConversion, CurrencyManager } from '@abx-query-libs/blockchain-currency-gateway'
+import { DepositTransactionWithFiatConversion, CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 
 export interface TransactionRetrievalResult {
   success: boolean

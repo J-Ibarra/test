@@ -4,7 +4,7 @@ import { expect } from 'chai'
 import { findAllMidPricesForSymbols, findLatestMidPriceForSymbol } from '../../../../repository'
 import { initialiseRedis } from '../test-helper'
 import { truncateTables } from '@abx/db-connection-utils'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 import sinon from 'sinon'
 
 describe('db_daily_mid_prices_repository', async () => {

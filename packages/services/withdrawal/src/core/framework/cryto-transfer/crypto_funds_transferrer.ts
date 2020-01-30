@@ -1,4 +1,4 @@
-import { OnChainCurrencyGateway } from '@abx-query-libs/blockchain-currency-gateway'
+import { OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
 import { FatalError } from '@abx-types/error'
 import { WithdrawalRequest } from '@abx-types/withdrawal'
 

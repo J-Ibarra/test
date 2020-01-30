@@ -53,7 +53,7 @@
     "@abx-utils/express-middleware": "1.0.0",
     "@abx-utils/fx-rate": "1.0.0",
     "@abx-utils/in-memory-depth-cache": "1.0.0",
-    "@abx-query-libs/account": "1.0.0",
+    "@abx-utils/account": "1.0.0",
     "@abx-utils/logging": "1.0.0",
     "body-parser": "1.18.3",
     "cookie-parser": "1.4.3",

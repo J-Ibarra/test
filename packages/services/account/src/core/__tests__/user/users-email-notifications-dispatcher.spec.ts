@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import * as crypto from 'crypto'
 import sinon from 'sinon'
-import { apiCookieIv, apiCookieSecret, createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { apiCookieIv, apiCookieSecret, createTemporaryTestingAccount } from '@abx-utils/account'
 import { EmailTemplates } from '@abx-types/notification'
 import * as notificationClientOperations from '@abx-service-clients/notification'
 import { User } from '@abx-types/account'

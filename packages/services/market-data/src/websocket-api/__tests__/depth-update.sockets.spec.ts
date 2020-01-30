@@ -6,7 +6,7 @@ import { AccountType } from '@abx-types/account'
 import { getEpicurusInstance } from '@abx/db-connection-utils'
 import { closeSocket, openSocket } from '../depth-update.sockets'
 import { clientsConnectedToSocket, DEPTH_UPDATE_EVENT_PREFIX } from '../depth_update_notification_dispatcher'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 import { OrderPubSubChannels } from '@abx-service-clients/order'
 import * as middlewareOperations from '@abx/express-middleware'
 

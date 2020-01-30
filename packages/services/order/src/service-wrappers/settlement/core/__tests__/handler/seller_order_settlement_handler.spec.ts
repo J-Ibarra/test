@@ -8,7 +8,7 @@ import { sequelize } from '@abx-utils/db-connection-utils'
 import * as coreOperations from '../../../../../core'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { createOrderMatch, createSymbol } from './test_utils'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 import { SellerOrderSettlementHandler } from '../../handler'
 
 const boundary = 5

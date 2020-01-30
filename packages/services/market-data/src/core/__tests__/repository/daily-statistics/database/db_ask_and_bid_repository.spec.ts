@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import { truncateTables } from '@abx/db-connection-utils'
 import { findAskAndBidPricesForSymbols } from '../../../../repository/daily-statistics'
 import { initialiseRedis } from '../test-helper'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 import sinon from 'sinon'
 
 describe('db_ask_and_bid_repository', async () => {

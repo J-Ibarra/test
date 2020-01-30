@@ -8,7 +8,7 @@ import { getEpicurusInstance, truncateTables } from '@abx-utils/db-connection-ut
 import { CurrencyCode } from '@abx-types/reference-data'
 import { bootstrapRestApi } from '..'
 import { WithdrawalPubSubChannels } from '@abx-service-clients/withdrawal'
-import { createTemporaryTestingAccount, createAccountAndSession } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount, createAccountAndSession } from '@abx-utils/account'
 import { AccountType } from '@abx-types/account'
 import * as accountServiceOperations from '@abx-service-clients/account'
 import * as balanceOperations from '@abx-service-clients/balance'

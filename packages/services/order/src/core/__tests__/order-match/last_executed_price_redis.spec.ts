@@ -3,7 +3,7 @@ import { getCacheClient, truncateTables } from '@abx-utils/db-connection-utils'
 import { createDumbOrder, createDumbOrderMatchTransaction } from '../utils'
 import { OrderDirection } from '@abx-types/order'
 import { getLastExecutedPrice, setLastExecutedPrice } from '../../order-match/last_executed_price_redis'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 
 describe('last_executed_price_redis', () => {
   beforeEach(async function() {

@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import * as sinon from 'sinon'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 import { CurrencyCode, FiatCurrency } from '@abx-types/reference-data'
 import { DepositAddress, DepositRequest, DepositRequestStatus } from '@abx-types/deposit'
 import { storeDepositAddress } from '../deposit_address'

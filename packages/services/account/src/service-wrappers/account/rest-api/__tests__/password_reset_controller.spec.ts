@@ -4,7 +4,7 @@ import sinon from 'sinon'
 
 import { generateResetPasswordPayload, validateUserCredentials, generateJWToken } from '../../../../core'
 import { bootstrapRestApi } from '..'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 import { truncateTables } from '@abx-utils/db-connection-utils'
 import * as notificationClientOperations from '@abx-service-clients/notification'
 

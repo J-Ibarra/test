@@ -52,7 +52,7 @@
     "node-uuid": "1.4.7"
   },
   "devDependencies": {
-    "@abx-query-libs/account": "1.0.0",
+    "@abx-utils/account": "1.0.0",
     "@lerna/filter-options": "^3.18.4",
     "@types/body-parser": "1.17.0",
     "@types/chai": "4.0.3",

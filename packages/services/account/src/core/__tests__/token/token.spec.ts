@@ -5,7 +5,7 @@ import { getModel, sequelize, truncateTables } from '@abx-utils/db-connection-ut
 import { Token } from '@abx-types/account'
 import { JwtTokenHandler } from '../..'
 import { createTokenForAccount, deactivateToken, findToken, findTokensForAccount } from '../..'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 
 const testAuthToken = {
   token: 'foo',

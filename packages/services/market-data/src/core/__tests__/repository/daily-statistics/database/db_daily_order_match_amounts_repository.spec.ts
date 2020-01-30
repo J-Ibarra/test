@@ -3,7 +3,7 @@ import moment from 'moment'
 import { expect } from 'chai'
 import { MemoryCache, truncateTables } from '@abx/db-connection-utils'
 import { initialiseRedis } from '../test-helper'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 import { findOrderMatchTransactionsForSymbols } from '../../../../repository'
 
 describe('db_daily_order_match_amounts_repository', async () => {

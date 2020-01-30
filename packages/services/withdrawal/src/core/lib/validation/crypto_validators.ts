@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js'
-import { CurrencyManager } from '@abx-query-libs/blockchain-currency-gateway'
+import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { commonWithdrawalRequestValidators } from './common_validators'
 import { CompleteValidationParams, WithdrawalRequestValidator } from './withdrawal_request_validator'

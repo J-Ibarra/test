@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 
-import { TestCurrency } from '@abx-query-libs/blockchain-currency-gateway'
+import { TestCurrency } from '@abx-utils/blockchain-currency-gateway'
 import * as depositAddressOperations from '../../../../core'
 import { filterOutAllAddressesWithPositiveBalance } from '../deposit_address_filter'
 import { ETH_MINIMUM_DEPOSIT_AMOUNT } from '../../../../core'

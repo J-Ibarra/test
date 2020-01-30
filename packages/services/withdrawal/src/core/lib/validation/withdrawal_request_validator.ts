@@ -1,7 +1,7 @@
 import { Account } from '@abx-types/account'
 import { CurrencyBoundary } from '@abx-types/reference-data'
 import { Logger } from '@abx-utils/logging'
-import { CurrencyManager } from '@abx-query-libs/blockchain-currency-gateway'
+import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 import { ValidationError } from '@abx-types/error'
 import { Currency, CurrencyCode } from '@abx-types/reference-data'
 import { cryptoWithdrawalAddressNotContractAddress, cryptoWithdrawalRequestValidators } from './crypto_validators'

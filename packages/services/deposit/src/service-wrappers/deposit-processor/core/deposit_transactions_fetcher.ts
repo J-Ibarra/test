@@ -1,5 +1,5 @@
 import { Logger } from '@abx-utils/logging'
-import { CurrencyManager } from '@abx-query-libs/blockchain-currency-gateway'
+import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-data'
 import { FiatCurrency } from '@abx-types/reference-data'
 import { DepositAddress, DepositRequest, DepositRequestStatus } from '@abx-types/deposit'

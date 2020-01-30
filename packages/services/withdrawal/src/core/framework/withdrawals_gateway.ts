@@ -1,6 +1,6 @@
 import { getWithdrawalConfigForCurrency, isFiatCurrency, findCurrencyForCodes } from '@abx-service-clients/reference-data'
 import { Logger } from '@abx-utils/logging'
-import { CurrencyManager } from '@abx-query-libs/blockchain-currency-gateway'
+import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 import { InitialiseWithdrawalParams } from '@abx-types/withdrawal'
 import { validateWithdrawal } from '../lib'
 import { handleCryptoCurrencyWithdrawalRequest, handleFiatCurrencyWithdrawalRequest } from './request-handlers'

@@ -5,7 +5,7 @@ import { MemoryCache, truncateTables } from '@abx/db-connection-utils'
 import { OrderMatchStatus } from '@abx-types/order'
 import { findAndStoreOrderMatchPrices, storeOrderMatchPrice } from '../../../../repository/daily-statistics'
 import { initialiseRedis } from '../test-helper'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 
 describe('Caching the volume amounts', async () => {
   let testAccount

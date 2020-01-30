@@ -1,5 +1,5 @@
 import { Logger } from '@abx-utils/logging'
-import { OnChainCurrencyGateway } from '@abx-query-libs/blockchain-currency-gateway'
+import { OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
 import { FatalError } from '@abx-types/error'
 import { CurrencyCode, Currency } from '@abx-types/reference-data'
 import { InitialiseWithdrawalParams } from '@abx-types/withdrawal'

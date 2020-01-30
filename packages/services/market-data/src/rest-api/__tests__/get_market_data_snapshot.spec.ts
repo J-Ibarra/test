@@ -6,7 +6,7 @@ import { Order, OrderDirection, OrderMatchStatus, OrderStatus, OrderType, OrderV
 import { CurrencyCode } from '@abx-types/reference-data'
 import { bootstrapRestApi as bootstrapApi } from '..'
 import * as orderOperations from '@abx-service-clients/order'
-import { createTemporaryTestingAccount, createAccountAndSession } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount, createAccountAndSession } from '@abx-utils/account'
 import sinon from 'sinon'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
 

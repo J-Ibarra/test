@@ -16,8 +16,8 @@
       "@abx-types/withdrawal": ["packages/libs/model/withdrawal/src"],
       
 
-      "@abx-query-libs/account": ["packages/libs/query/account/src"],
-      "@abx-query-libs/blockchain-currency-gateway": ["/packages/libs/query/blockchain-currency-gateway/src"], 
+      "@abx-utils/account": ["packages/libs/query/account/src"],
+      "@abx-utils/blockchain-currency-gateway": ["/packages/libs/query/blockchain-currency-gateway/src"], 
 
       "@abx-utils/express-middleware": ["packages/libs/util/express-middleware/src"],
       "@abx-utils/db-connection-utils": ["packages/libs/util/db-connection-utils/src"],

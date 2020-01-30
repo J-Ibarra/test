@@ -10,7 +10,7 @@ import {
   validateUserCredentials,
   validateUserEmail,
 } from '../..'
-import { createTemporaryTestingAccount, TEST_PASSWORD } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount, TEST_PASSWORD } from '@abx-utils/account'
 import { truncateTables } from '@abx-utils/db-connection-utils'
 
 describe('users', () => {

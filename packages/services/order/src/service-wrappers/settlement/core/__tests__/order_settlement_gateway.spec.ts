@@ -10,7 +10,7 @@ import * as symbolOperations from '@abx-service-clients/reference-data'
 import { CurrencyCode, FiatCurrency } from '@abx-types/reference-data'
 import * as orderCore from '../../../../core'
 import { BuyerOrderSettlementHandler, SellerOrderSettlementHandler } from '../handler'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 import { OrderSettlementGateway } from '../order_settlement_gateway'
 import * as balanceOperations from '@abx-service-clients/balance'
 

@@ -18,7 +18,7 @@
     "@abx-types/reference-data": "1.0.0",
     "@abx-types/account": "1.0.0",
     "@abx-types/error": "1.0.0",
-    "@abx-query-libs/account": "1.0.0",
+    "@abx-utils/account": "1.0.0",
     "@abx-utils/db-connection-utils": "1.0.0",
     "@abx-utils/logging": "1.0.0",
     "newrelic": "4.10.0",

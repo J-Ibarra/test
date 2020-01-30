@@ -3,7 +3,7 @@ import moment from 'moment'
 import { truncateTables, MemoryCache } from '@abx/db-connection-utils'
 import { findAndStoreMidPrices, storeMidPrice } from '../../../../repository'
 import { initialiseRedis } from '../test-helper'
-import { createTemporaryTestingAccount } from '@abx-query-libs/account'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 
 describe('Caching the mid prices', async () => {
   let testAccount
