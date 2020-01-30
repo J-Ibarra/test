@@ -20,7 +20,71 @@ export const findBalancePayloadSchema = {
 
 export const findAllBalancesForAccountSchema = {
   type: 'object',
-  'x-persist-event': 'find all balances for account',
+  'x-persist-event': 'find all balances for account and currencies',
+  properties: {
+    accountId: {
+      type: 'string',
+      required: true,
+    },
+    currencies: {
+      type: 'array',
+      required: true,
+    },
+  },
+}
+
+export const retrieveTotalOrderValueReceivedByAccountSchema = {
+  type: 'object',
+  'x-persist-event': 'retrieve total order value received by account',
+  properties: {
+    currencyReceivedId: {
+      type: 'number',
+      required: true,
+    },
+    accountId: {
+      type: 'string',
+      required: true,
+    },
+    tradeTransactionIds: {
+      type: 'array',
+      required: true,
+    },
+  },
+}
+
+export const getOrderBalanceReserveAdjustmentSchema = {
+  type: 'object',
+  'x-persist-event': 'get order balance reserve adjustment',
+  properties: {
+    orderId: {
+      type: 'number',
+      required: true,
+    },
+    balanceId: {
+      type: 'number',
+      required: true,
+    },
+  },
+}
+
+export const getBalanceAdjustmentsForBalanceAndTradeTransactionsSchema = {
+  type: 'object',
+  'x-persist-event': 'get balance adjustments for balance and trade transactions',
+  properties: {
+    balanceId: {
+      type: 'number',
+      required: true,
+    },
+    tradeTransactionIds: {
+      type: 'number',
+      required: true,
+    },
+  },
+}
+
+export const findCurrencyBalancesSchema = {
+  type: 'object',
+  'x-persist-event': 'find currency balances schema',
   properties: {
     accountId: {
       type: 'string',

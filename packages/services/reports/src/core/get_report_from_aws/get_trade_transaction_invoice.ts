@@ -8,7 +8,7 @@ import { generatePreSignedUrlForTradeTransactionReport } from './s3_presigned_ur
 const logger = Logger.getInstance('trade transaction report', 'getTradeTransactionInvoicePreSignedUrl')
 
 export async function getTradeTransactionInvoicePreSignedUrl(userAccountId: string, transactionId: number): Promise<TradeTransactionInvoiceUrl> {
-  const { accountId: accountIdInTransaction } = await findTradeTransaction({ id: transactionId })
+  const { accountId: accountIdInTransaction } = await findTradeTransaction(transactionId)
   logger.debug(`Fetched account id ${accountIdInTransaction} for validating permission to view report`)
 
   if (accountIdInTransaction !== userAccountId) {

@@ -5,7 +5,6 @@ import sinon from 'sinon'
 
 import { Environment, Currency, CurrencyCode, FiatCurrency } from '@abx-types/reference-data'
 import { Account, AccountStatus } from '@abx-types/account'
-import { BalanceTypeObj } from '@abx-types/balance'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import { CurrencyManager } from '@abx-query-libs/blockchain-currency-gateway'
 import * as conversion from '@abx-utils/fx-rate'
@@ -178,13 +177,13 @@ describe('fiat_validators', async () => {
   })
 
   describe('validateWithdrawal', () => {
-    let usdFiatBalance: BalanceTypeObj
+    let usdFiatBalance
 
     beforeEach(async () => {
       const { accountOne, usdCurrency, usdBalance } = await createAccountsAndWithdrawalFunctions()
       accountGiver = accountOne
       fiatUsdCurrency = usdCurrency
-      usdFiatBalance = { id: usdBalance.id, value: usdBalance.value }
+      usdFiatBalance = usdBalance.value
     })
 
     afterEach(() => {
@@ -259,8 +258,8 @@ describe('fiat_validators', async () => {
     })
 
     it('throws error if withdrawal request amount is greater than available balance', async () => {
-      const balance = { id: 1, value: 10 }
-      const amount = balance.value + 1
+      const balance = 10
+      const amount = balance + 1
       const feeAmount = 10
       const conversionStub = sinon.stub(conversion, 'convertAndTruncateCurrencyValue').resolves('100')
       sinon.stub(referenceDataOperations, 'validateValueWithinBoundary').returns({ valid: true })

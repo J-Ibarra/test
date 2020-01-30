@@ -109,6 +109,14 @@ export async function findAccountWithUserDetails(accountQuery: Partial<Account>,
   })
 }
 
+export async function findAllKycVerifiedAccountIds(): Promise<Account[]> {
+  const kycVerifiedAccountInstances = await getModel<Account>('account').findAll({
+    where: { status: AccountStatus.kycVerified } as any,
+  })
+
+  return kycVerifiedAccountInstances.map(kycVerifiedAccountInstance => kycVerifiedAccountInstance.get())
+}
+
 export async function findAccountsByIdWithUserDetails(id: string[], t?: Transaction): Promise<Account[]> {
   return wrapInTransaction(sequelize, t, async tran => {
     const accountInstances = await getModel<Account>('account').findAll({
@@ -247,7 +255,7 @@ export async function verifyUserAccount(userToken: string, trans?: Transaction):
  *
  * @param accountId The account ID to check against
  */
-export async function hasAccountSuspended(accountId: string): Promise<boolean> {
+export async function isAccountSuspended(accountId: string): Promise<boolean> {
   const account = await findAccountById(accountId)
 
   return account && !account.suspended ? account.suspended : true

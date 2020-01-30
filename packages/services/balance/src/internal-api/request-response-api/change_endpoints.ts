@@ -1,4 +1,4 @@
-import { getEpicurusInstance, messageFactory } from '@abx-utils/db-connection-utils'
+import { getEpicurusInstance, messageFactory, wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 import { RequestResponseBalanceMovementEndpoints } from '@abx-service-clients/balance'
 import { balanceChangePayloadSchema } from './schema'
 import { BalanceMovementFacade } from '../../core'
@@ -18,18 +18,26 @@ export function bootstrapChangeEndpoints() {
   )
 
   epicurus.server(
-    RequestResponseBalanceMovementEndpoints.createPendingWithdrawalFee,
-    messageFactory(balanceChangePayloadSchema, params => balanceMovementFacade.createPendingWithdrawalFee(params)),
+    RequestResponseBalanceMovementEndpoints.createPendingWithdrawal,
+    messageFactory(balanceChangePayloadSchema, ({ pendingWithdrawalParams, pendingWithdrawalFeeParams }) => {
+      return wrapInTransaction(sequelize, null, transaction => {
+        return Promise.all([
+          balanceMovementFacade.createPendingWithdrawal({
+            ...pendingWithdrawalParams,
+            t: transaction,
+          }),
+          balanceMovementFacade.createPendingWithdrawalFee({
+            ...pendingWithdrawalFeeParams,
+            t: transaction,
+          }),
+        ])
+      })
+    }),
   )
 
   epicurus.server(
     RequestResponseBalanceMovementEndpoints.createPendingRedemption,
     messageFactory(balanceChangePayloadSchema, params => balanceMovementFacade.createPendingRedemption(params)),
-  )
-
-  epicurus.server(
-    RequestResponseBalanceMovementEndpoints.createPendingWithdrawal,
-    messageFactory(balanceChangePayloadSchema, params => balanceMovementFacade.createPendingWithdrawal(params)),
   )
 
   epicurus.server(

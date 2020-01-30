@@ -2,7 +2,6 @@ import { expect } from 'chai'
 import sinon from 'sinon'
 import { Environment } from '@abx-types/reference-data'
 import { Account } from '@abx-types/account'
-import { BalanceTypeObj } from '@abx-types/balance'
 import * as boundaryOperations from '@abx-service-clients/reference-data'
 import { CurrencyManager } from '@abx-query-libs/blockchain-currency-gateway'
 import { Currency, CurrencyCode } from '@abx-types/reference-data'
@@ -23,8 +22,8 @@ const manager = new CurrencyManager(Environment.test, [CurrencyCode.kau, Currenc
 
 describe('crypto_validators', async () => {
   const sandbox = sinon.createSandbox()
-  let kauCryptoBalance: BalanceTypeObj
-  let ethCryptoBalance: BalanceTypeObj
+  let kauCryptoBalance = 100
+  let ethCryptoBalance = 100
   const kagCurrency = {
     id: 1,
     code: CurrencyCode.kag,
@@ -46,13 +45,11 @@ describe('crypto_validators', async () => {
     sinon.stub(boundaryOperations, 'validateValueWithinBoundary').returns({ valid: true, expects: '' })
     sinon.stub(boundaryOperations, 'getWithdrawalLimit').returns(1000000)
 
-    const { accountOne, kauCurrency, kauBalance, ethCurrency, ethBalance } = await createAccountsAndWithdrawalFunctions()
+    const { accountOne, kauCurrency, ethCurrency } = await createAccountsAndWithdrawalFunctions()
 
     accountGiver = accountOne
     cryptoKauCurrency = kauCurrency
     cryptoEthCurrency = ethCurrency
-    kauCryptoBalance = { id: kauBalance.id, value: 100 }
-    ethCryptoBalance = { id: ethBalance.id, value: 100 }
   })
 
   afterEach(() => sinon.restore())
@@ -65,7 +62,7 @@ describe('crypto_validators', async () => {
       response = await helper.validateWithdrawal({
         currency: cryptoKauCurrency,
         currencyCode: cryptoKauCurrency.code,
-        amount: kauCryptoBalance.value! - 30,
+        amount: kauCryptoBalance - 30,
         availableBalance: kauCryptoBalance,
         account: accountGiver,
         manager,
@@ -89,7 +86,7 @@ describe('crypto_validators', async () => {
       response = await helper.validateWithdrawal({
         currency: cryptoEthCurrency,
         currencyCode: cryptoEthCurrency.code,
-        amount: ethCryptoBalance.value! - 30,
+        amount: ethCryptoBalance - 30,
         availableBalance: ethCryptoBalance,
         account: accountGiver,
         manager,
@@ -109,7 +106,7 @@ describe('crypto_validators', async () => {
   it('fee currency same as withdrawn currency, available balance not enough to cover both fee and withdrawal amount . Should return validation error', async () => {
     let response
     manager.getCurrencyFromTicker(CurrencyCode.kau).validateAddress = sandbox.stub().returns(true)
-    const amount = kauCryptoBalance.value! - 5
+    const amount = kauCryptoBalance - 5
 
     try {
       response = await helper.validateWithdrawal({
@@ -140,13 +137,13 @@ describe('crypto_validators', async () => {
       response = await helper.validateWithdrawal({
         currency: cryptoKauCurrency,
         currencyCode: cryptoKauCurrency.code,
-        amount: kauCryptoBalance.value! - 10,
+        amount: kauCryptoBalance - 10,
         availableBalance: kauCryptoBalance,
         account: accountGiver,
         manager,
         address: '4324',
         feeCurrency: kagCurrency,
-        feeCurrencyAvailableBalance: { id: 2, value: 0 },
+        feeCurrencyAvailableBalance: 0,
         feeAmount,
       })
     } catch (e) {

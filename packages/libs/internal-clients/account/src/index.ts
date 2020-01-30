@@ -3,6 +3,8 @@ import { AccountEndpoints } from './endpoints'
 import { User, Account } from '@abx-types/account'
 
 const memoryCache = MemoryCache.getInstance()
+let operatorAccount: Account | null
+let kinesisRevenueAccount: Account | null
 
 export function findAccountById(accountId: string) {
   const epicurus = getEpicurusInstance()
@@ -40,28 +42,28 @@ export function findUsersByAccountId(accountId: string): Promise<User[]> {
   return epicurus.request(AccountEndpoints.findUsersByAccountId, { accountId })
 }
 
-export function findUser(criteria: Partial<User>, includeAccountDetails: boolean) {
+export async function findOrCreateKinesisRevenueAccount(): Promise<Account> {
+  if (!!kinesisRevenueAccount) {
+    return kinesisRevenueAccount
+  }
+
   const epicurus = getEpicurusInstance()
 
-  return epicurus.request(AccountEndpoints.findUser, { criteria, includeAccountDetails })
+  kinesisRevenueAccount = await epicurus.request(AccountEndpoints.findOrCreateKinesisRevenueAccount, {})
+
+  return kinesisRevenueAccount!
 }
 
-export function findOrCreateKinesisRevenueAccount(): Promise<Account> {
+export async function findOrCreateOperatorAccount(): Promise<Account> {
+  if (!!operatorAccount) {
+    return operatorAccount
+  }
+
   const epicurus = getEpicurusInstance()
 
-  return epicurus.request(AccountEndpoints.findOrCreateKinesisRevenueAccount, {})
-}
+  operatorAccount = await epicurus.request(AccountEndpoints.findOrCreateOperatorAccount, {})
 
-export function findOrCreateOperatorAccount() {
-  const epicurus = getEpicurusInstance()
-
-  return epicurus.request(AccountEndpoints.findOrCreateOperatorAccount, {})
-}
-
-export function getNamesAndEmailsOfUsers() {
-  const epicurus = getEpicurusInstance()
-
-  return epicurus.request(AccountEndpoints.getNamesAndEmailsOfUsers, {})
+  return operatorAccount!
 }
 
 /**

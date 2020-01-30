@@ -10,14 +10,12 @@ export const cryptoWithdrawalRequestValidators: WithdrawalRequestValidator[] = [
   ({ amount, availableBalance, currencyCode, feeAmount, feeCurrency }: CompleteValidationParams) => {
     return {
       isInvalid:
-        currencyCode !== feeCurrency.code
-          ? amount > availableBalance!.value!
-          : new Decimal(amount).add(feeAmount).greaterThan(availableBalance.value || 0),
+        currencyCode !== feeCurrency.code ? amount > availableBalance : new Decimal(amount).add(feeAmount).greaterThan(availableBalance || 0),
       error: `Withdrawal request amount ${currencyCode}${amount} is greater than available balance`,
     }
   },
   ({ feeAmount, feeCurrencyAvailableBalance, currencyCode, feeCurrency }: CompleteValidationParams) => ({
-    isInvalid: currencyCode !== feeCurrency.code && feeAmount > feeCurrencyAvailableBalance.value!,
+    isInvalid: currencyCode !== feeCurrency.code && feeAmount > feeCurrencyAvailableBalance,
     error: `Withdrawal request fee amount ${feeCurrency ? feeCurrency.code : ''} ${feeAmount} is greater than available balance`,
   }),
   ({ currencyCode, address, manager }: CompleteValidationParams) => ({

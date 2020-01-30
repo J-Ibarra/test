@@ -7,7 +7,7 @@ import { Logger } from '@abx-utils/logging'
 import { ValidationError } from '@abx-types/error'
 import { isFiatCurrency } from '@abx-service-clients/reference-data'
 import { CompleteFiatWithdrawalParams, WithdrawalState, CurrencyEnrichedWithdrawalRequest } from '@abx-types/withdrawal'
-import { findWithdrawalRequestById } from '../../common/find_withdrawal_request'
+import { findWithdrawalRequestByAdminRequestId } from '../../common/find_withdrawal_request'
 import { completeFiatWithdrawalRequest } from './fiat_withdrawal_completer'
 import { findBalance } from '@abx-service-clients/balance'
 
@@ -51,11 +51,11 @@ const runValidation = async (id, withdrawalRequest, balanceForAccountAndCurrency
   }
 }
 
-export async function completeFiatWithdrawal({ id, fee }: CompleteFiatWithdrawalParams) {
-  let withdrawalRequest = await findWithdrawalRequestById(id)
+export async function completeFiatWithdrawal({ adminRequestId, fee }: CompleteFiatWithdrawalParams) {
+  let withdrawalRequest = await findWithdrawalRequestByAdminRequestId(adminRequestId)
 
   if (!withdrawalRequest) {
-    throw new ValidationError(`No withdrawal request exists with id ${id}`)
+    throw new ValidationError(`No withdrawal request exists for admin request id ${adminRequestId}`)
   }
 
   const withdrawnCurrency = await findCurrencyForId(withdrawalRequest!.currencyId)
@@ -66,17 +66,17 @@ export async function completeFiatWithdrawal({ id, fee }: CompleteFiatWithdrawal
 
   const balanceForAccountAndCurrency = await findBalance(withdrawnCurrency.code, withdrawalRequest.accountId)
 
-  const validationResults = await runValidation(id, withdrawalRequest, balanceForAccountAndCurrency, fee)
+  const validationResults = await runValidation(withdrawalRequest.id, withdrawalRequest, balanceForAccountAndCurrency, fee)
   const failedValidations = validationResults.filter(({ isInvalid }) => isInvalid)
 
   if (failedValidations.length > 0) {
-    logger.warn(`Withdrawal completion for ${id} failed validation`)
+    logger.warn(`Withdrawal completion for ${withdrawalRequest.id} failed validation`)
     failedValidations.forEach(({ error }) => logger.warn(error))
 
     throw new ValidationError(failedValidations[0].error!)
   }
 
-  logger.info(`Completing Fiat Withdrawal ${id}`)
+  logger.info(`Completing Fiat Withdrawal ${withdrawalRequest.id}`)
 
   return completeFiatWithdrawalRequest({ ...withdrawalRequest, currency: withdrawnCurrency }, fee)
 }

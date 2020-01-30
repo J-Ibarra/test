@@ -7,7 +7,7 @@ import { CompleteValidationParams, WithdrawalRequestValidator } from './withdraw
 export const fiatWithdrawalRequestValidators: WithdrawalRequestValidator[] = [
   ...commonWithdrawalRequestValidators,
   ({ amount, availableBalance, currencyCode, feeAmount }: CompleteValidationParams) => ({
-    isInvalid: new Decimal(amount).add(feeAmount).greaterThan(availableBalance.value || 0),
+    isInvalid: new Decimal(amount).add(feeAmount).greaterThan(availableBalance || 0),
     error: `Withdrawal request amount ${currencyCode}${amount} and fee ${feeAmount} is greater than available balance`,
   }),
   ({ account }: CompleteValidationParams) => ({

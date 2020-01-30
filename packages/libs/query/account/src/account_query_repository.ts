@@ -52,7 +52,7 @@ export async function findAccountsByIdWithUserDetails(id: string[], t?: Transact
  *
  * @param accountId The account ID to check against
  */
-export async function hasAccountSuspended(accountId: string): Promise<boolean> {
+export async function isAccountSuspended(accountId: string): Promise<boolean> {
   const account = await findAccountById(accountId)
 
   return account && !account.suspended ? account.suspended : true

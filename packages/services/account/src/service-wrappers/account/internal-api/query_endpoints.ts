@@ -1,6 +1,25 @@
 import { getEpicurusInstance, messageFactory } from '@abx-utils/db-connection-utils'
-import { findAccountByIdSchema, findUserByAccountIdSchema, findAccountsByIdWithUserDetailsSchema } from './schema'
-import { findAccountById, findUserByAccountId, findUsersByAccountId, findAccountsByIdWithUserDetails } from '../../../core'
+import {
+  findAccountByIdSchema,
+  findUserByAccountIdSchema,
+  findUsersByAccountIdSchema,
+  findOrCreateKinesisRevenueAccountSchema,
+  findAccountWithUserDetailsSchema,
+  findAccountsByIdWithUserDetailsSchema,
+  isAccountSuspendedSchema,
+  findOrCreateOperatorAccountSchema,
+  getAllKycVerifiedAccountIdsSchema,
+} from './schema'
+import {
+  findAccountById,
+  findUserByAccountId,
+  findAccountsByIdWithUserDetails,
+  findAccountWithUserDetails,
+  findOrCreateKinesisRevenueAccount,
+  findOrCreateOperatorAccount,
+  findAllKycVerifiedAccountIds,
+  isAccountSuspended,
+} from '../../../core'
 import { AccountEndpoints } from '@abx-service-clients/account'
 
 export function bootstrapQueryEndpoints() {
@@ -23,6 +42,31 @@ export function bootstrapQueryEndpoints() {
 
   epicurus.server(
     AccountEndpoints.findUsersByAccountId,
-    messageFactory(findUsersByAccountId, ({ accountIds }) => findAccountsByIdWithUserDetails(accountIds)),
+    messageFactory(findUsersByAccountIdSchema, ({ accountIds }) => findAccountsByIdWithUserDetails(accountIds)),
+  )
+
+  epicurus.server(
+    AccountEndpoints.findAccountWithUserDetails,
+    messageFactory(findAccountWithUserDetailsSchema, request => findAccountWithUserDetails(request)),
+  )
+
+  epicurus.server(
+    AccountEndpoints.findOrCreateKinesisRevenueAccount,
+    messageFactory(findOrCreateKinesisRevenueAccountSchema, () => findOrCreateKinesisRevenueAccount()),
+  )
+
+  epicurus.server(
+    AccountEndpoints.findOrCreateOperatorAccount,
+    messageFactory(findOrCreateOperatorAccountSchema, () => findOrCreateOperatorAccount()),
+  )
+
+  epicurus.server(
+    AccountEndpoints.isAccountSuspended,
+    messageFactory(isAccountSuspendedSchema, ({ accountId }) => isAccountSuspended(accountId)),
+  )
+
+  epicurus.server(
+    AccountEndpoints.getAllKycVerifiedAccountIds,
+    messageFactory(getAllKycVerifiedAccountIdsSchema, () => findAllKycVerifiedAccountIds()),
   )
 }

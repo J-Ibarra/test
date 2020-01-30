@@ -52,7 +52,6 @@ describe('Order Expiry module', () => {
   afterEach(() => sinon.restore())
 
   it('calls the expire function on the expired orders', async () => {
-    const expiredOrders: number[] = []
     const expectedExpiredOrders = [13, 1, 3, 4, 6]
 
     sinon.stub(referenceDataOperations, 'getAllSymbolPairSummaries').resolves([
@@ -68,6 +67,5 @@ describe('Order Expiry module', () => {
     await expireOrders()
 
     expectedExpiredOrders.forEach(orderId => expect(cancelOrderStub.calledWith({ cancellationReason: 'Order Expired', orderId })).to.eql(true))
-    expect(expiredOrders).to.eql(expectedExpiredOrders)
   })
 })

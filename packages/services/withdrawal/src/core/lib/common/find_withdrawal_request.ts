@@ -12,6 +12,15 @@ export async function findWithdrawalRequestById(id: number, transaction?: Transa
   return withdrawalRequest ? withdrawalRequest.get({ plain: true }) : null
 }
 
+export async function findWithdrawalRequestByAdminRequestId(adminRequestId: number, transaction?: Transaction) {
+  const withdrawalRequest = await getModel<WithdrawalRequest>('withdrawalRequest').find({
+    where: { adminRequestId },
+    transaction,
+  })
+
+  return withdrawalRequest ? withdrawalRequest.get({ plain: true }) : null
+}
+
 export async function findWithdrawalRequest(query: Partial<WithdrawalRequest>) {
   const withdrawalRequest = await getModel<WithdrawalRequest>('withdrawalRequest').findOne({
     where: { ...query } as any,

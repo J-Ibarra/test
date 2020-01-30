@@ -6,7 +6,7 @@ import { Transaction } from 'sequelize'
 import { Logger } from '@abx-utils/logging'
 import { getModel, sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { ValidationError } from '@abx-types/error'
-import { Account, AccountType, CreateUserRequest, EmailValidationError, User, UserDetails, UserPublicView } from '@abx-types/account'
+import { Account, AccountType, CreateUserRequest, EmailValidationError, User, UserPublicView } from '@abx-types/account'
 import { UserInstance } from '../models/user'
 import { findAccountById, findAccountWithUserDetails } from '../account/accounts'
 
@@ -192,10 +192,6 @@ export async function updateUser(request: Partial<User>, t?: Transaction): Promi
       returning: true,
     })) as any
   })
-}
-
-export function getNamesAndEmailsOfUsers(users: User[]): UserDetails[] {
-  return users.map(({ firstName, lastName, email }) => ({ firstName, lastName, email }))
 }
 
 async function findUser(criteria: Partial<User>, includeAccountDetails: boolean, trans?: Transaction): Promise<User | null> {

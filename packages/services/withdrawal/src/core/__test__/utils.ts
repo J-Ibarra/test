@@ -71,10 +71,20 @@ export function stubFindCurrencyForCodesCall(withdrawnCurrencyCode: CurrencyCode
   ])
 }
 
-export function stubFindCurrencyBalancesCall(withdrawnCurrencyBalance: number, feeCurrencyBalance?: number) {
-  sinon
-    .stub(balanceOperations, 'findCurrencyBalances')
-    .resolves([{ available: { value: withdrawnCurrencyBalance } }, { available: { value: feeCurrencyBalance || withdrawnCurrencyBalance } }])
+export function stubFindCurrencyBalancesCall(
+  withdrawalCurrency: CurrencyCode,
+  withdrawnCurrencyBalance: number,
+  feeCurrency?: CurrencyCode,
+  feeCurrencyBalance?: number,
+) {
+  sinon.stub(balanceOperations, 'findCurrencyAvailableBalances').resolves(
+    feeCurrency
+      ? new Map<CurrencyCode, number>([
+          [withdrawalCurrency, withdrawnCurrencyBalance],
+          [feeCurrency, feeCurrencyBalance || withdrawnCurrencyBalance],
+        ])
+      : new Map<CurrencyCode, number>([[withdrawalCurrency, withdrawnCurrencyBalance]]),
+  )
 }
 
 export const USD = {

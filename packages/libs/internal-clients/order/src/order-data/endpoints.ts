@@ -5,12 +5,11 @@ export enum OrderDataEndpoints {
 
   findLastOrderMatchForSymbol = 'exchange:order-data:findLastOrderMatchForSymbol',
   findLastOrderMatchForSymbols = 'exchange:order-data:findLastOrderMatchForSymbols',
-  findOrderMatch = 'exchange:order:findOrderMatch',
-  findOrderMatches = 'exchange:order:findOrderMatches',
+  findOrderMatch = 'exchange:order-data:findOrderMatch',
+  findOrderMatches = 'exchange:order-data:findOrderMatches',
 
-  findTradeTransaction = 'exchange:order:findTradeTransaction',
-  findTradeTransactions = 'exchange:order:findTradeTransactions',
+  findTradeTransaction = 'exchange:order-data:findTradeTransaction',
 
   /** Creation endpoints. */
-  createCurrencyTransaction = 'exchange:order:createCurrencyTransaction',
+  createCurrencyTransaction = 'exchange:order-data:createCurrencyTransaction',
 }

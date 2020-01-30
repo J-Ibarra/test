@@ -1,5 +1,4 @@
 import { Account } from '@abx-types/account'
-import { BalanceTypeObj } from '@abx-types/balance'
 import { CurrencyBoundary } from '@abx-types/reference-data'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyManager } from '@abx-query-libs/blockchain-currency-gateway'
@@ -13,13 +12,13 @@ export interface WithdrawalValidationParams {
   currency: Currency
   currencyCode: CurrencyCode
   amount: number
-  availableBalance: BalanceTypeObj
+  availableBalance: number
   account: Account
   manager: CurrencyManager
   memo?: string
   address?: string
   feeCurrency: Currency
-  feeCurrencyAvailableBalance: BalanceTypeObj
+  feeCurrencyAvailableBalance: number
   feeAmount: number
 }
 

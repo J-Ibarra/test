@@ -37,6 +37,14 @@ export async function findAdminRequest(queryParams: Partial<AdminRequest>, trans
   })
 }
 
+export async function findSpecificAdminRequests(ids: string[]): Promise<AdminRequest[]> {
+  const requests = await getModel<AdminRequest>('admin_request').findAll({
+    where: { id: { $in: ids } },
+  })
+
+  return requests.map(request => request.get())
+}
+
 export async function updateAdminRequest(id: number, update: Partial<AdminRequest>, transaction?: Transaction): Promise<AdminRequest> {
   return wrapInTransaction(sequelize, transaction, async t => {
     const updateResult = await getModel<Partial<AdminRequest>>('admin_request').update(

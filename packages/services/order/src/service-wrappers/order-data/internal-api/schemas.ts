@@ -1,4 +1,4 @@
-export const findOrderById = {
+export const findOrderByIdSchema = {
   type: 'object',
   'x-persist-event': 'find order by id',
   properties: {
@@ -9,7 +9,7 @@ export const findOrderById = {
   },
 }
 
-export const findOrderMatch = {
+export const findOrderMatchSchema = {
   type: 'object',
   'x-persist-event': 'find order match',
   properties: {
@@ -64,7 +64,7 @@ export const findOrderMatch = {
   },
 }
 
-export const findLastOrderMatchForSymbol = {
+export const findLastOrderMatchForSymbolSchema = {
   type: 'object',
   'x-persist-event': 'find last order match for symbol',
   properties: {
@@ -75,7 +75,7 @@ export const findLastOrderMatchForSymbol = {
   },
 }
 
-export const findLastOrderMatchForSymbols = {
+export const findLastOrderMatchForSymbolsSchema = {
   type: 'object',
   'x-persist-event': 'find last order match for symbols',
   properties: {
@@ -86,7 +86,7 @@ export const findLastOrderMatchForSymbols = {
   },
 }
 
-export const getOpenOrders = {
+export const getOpenOrdersSchema = {
   type: 'object',
   'x-persist-event': 'get open orders',
   properties: {
@@ -101,6 +101,15 @@ export const getOpenOrders = {
     limit: {
       type: 'number',
       required: false,
+    },
+  },
+}
+
+export const findTradeTransactionSchema = {
+  properties: {
+    id: {
+      type: 'string',
+      required: true,
     },
   },
 }

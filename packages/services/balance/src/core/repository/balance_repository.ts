@@ -39,6 +39,29 @@ export class BalanceRepository {
     })
   }
 
+  public async findAccountRawBalancesForCurrencies({
+    accountId,
+    currencyIds,
+    transaction,
+  }: {
+    accountId: string
+    currencyIds: number[]
+    transaction?: Transaction
+  }): Promise<RawBalance[]> {
+    const balances = await getModel<RawBalance>('balance').findAll({
+      where: { currencyId: { $in: { currencyIds } }, accountId },
+      transaction,
+    })
+
+    return balances.map(b => {
+      const balance = b.get()
+
+      return {
+        ...balance,
+      }
+    })
+  }
+
   /**
    * Creates a balance of a given type and currency for a user.
    * If an account of that type and currency already exists for the account, the increment is added to the account.

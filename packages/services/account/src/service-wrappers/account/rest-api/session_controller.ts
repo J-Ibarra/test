@@ -3,7 +3,7 @@ import { sign } from 'jsonwebtoken'
 import moment from 'moment'
 import { Body, Controller, Delete, Post, Request, Response, Route, Security, SuccessResponse } from 'tsoa'
 import { Environment, localAndTestEnvironments, localTestEnvironments } from '@abx-types/reference-data'
-import { createSessionForUser, hasAccountSuspended, killSession, validateUserCredentials, authenticateMfa, hasMfaEnabled } from '../../../core'
+import { createSessionForUser, isAccountSuspended, killSession, validateUserCredentials, authenticateMfa, hasMfaEnabled } from '../../../core'
 import { Logger } from '@abx-utils/logging'
 import { ValidationError } from '@abx-types/error'
 import { OverloadedRequest } from '@abx-types/account'
@@ -61,9 +61,9 @@ export class SessionsController extends Controller {
     try {
       const user = await validateUserCredentials(email, password)
 
-      const isAccountSuspended: boolean = await hasAccountSuspended(user.accountId)
+      const accountSuspended: boolean = await isAccountSuspended(user.accountId)
 
-      if (isAccountSuspended) {
+      if (accountSuspended) {
         this.setStatus(403)
         return { message: 'Account suspended' }
       }

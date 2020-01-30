@@ -30,16 +30,10 @@ export function findOrderMatches(criteria: FindOptions): Promise<OrderMatch[]> {
   return epicurus.request(OrderDataEndpoints.findOrderMatches, { criteria })
 }
 
-export function findTradeTransaction(criteria: Partial<TradeTransaction>): Promise<TradeTransaction> {
+export function findTradeTransaction(id: number): Promise<TradeTransaction> {
   const epicurus = getEpicurusInstance()
 
-  return epicurus.request(OrderDataEndpoints.findTradeTransaction, { criteria })
-}
-
-export function findTradeTransactions(criteria: Partial<TradeTransaction>): Promise<TradeTransaction[]> {
-  const epicurus = getEpicurusInstance()
-
-  return epicurus.request(OrderDataEndpoints.findTradeTransactions, { criteria })
+  return epicurus.request(OrderDataEndpoints.findTradeTransaction, { id })
 }
 
 export function getOpenOrders(symbolId: string, direction: OrderDirection, limit?: number): Promise<Order[]> {

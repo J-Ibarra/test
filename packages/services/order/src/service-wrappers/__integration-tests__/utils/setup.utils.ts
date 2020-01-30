@@ -95,7 +95,6 @@ export async function setUp({
   sinon.stub(marketDataOperations, 'calculateRealTimeMidPriceForSymbol').resolves(10)
   sinon.stub(fxRateUtils, 'convertAmountToFiatCurrency').resolves(1)
   sinon.stub(fxRateUtils, 'getQuoteFor').resolves(1)
-  sinon.stub(marketDataOperations, 'calculateRealTimeMidPriceForSymbol').resolves(10)
 
   sinon.stub(accountClientOperations, 'findOrCreateOperatorAccount').resolves({
     id: OPERATOR_ACCOUNT_ID,

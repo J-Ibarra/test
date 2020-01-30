@@ -145,6 +145,15 @@ export async function findDepositRequestById(id: number): Promise<DepositRequest
   return !!depositRequest ? depositRequest.get({ plain: true }) : null
 }
 
+export async function findDepositAddressForIds(ids: number[]): Promise<DepositRequest[]> {
+  const depositRequests = await getModel<DepositRequest>('depositRequest').findAll({
+    where: { id: { $in: ids } },
+    include: [getModel<DepositAddress>('depositAddress')],
+  })
+
+  return depositRequests.map(depositRequestInstance => depositRequestInstance.get())
+}
+
 export async function updateAllDepositRequests(id: number[], update: Partial<DepositRequest>, transaction: Transaction) {
   const [, updatedDepositRequests] = await getModel<DepositRequest>('depositRequest').update({ ...update } as DepositRequest, {
     where: { id },

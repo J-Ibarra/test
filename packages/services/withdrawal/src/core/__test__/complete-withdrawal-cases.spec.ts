@@ -6,7 +6,7 @@ import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import { truncateTables } from '@abx/db-connection-utils'
 import * as realTimeMidPriceCalculationOperations from '@abx-service-clients/market-data'
 import * as fxRateProvider from '@abx-utils/fx-rate'
-import { WithdrawalState, WithdrawalRequestType, WithdrawalConfirmParams } from '@abx-types/withdrawal'
+import { WithdrawalState, WithdrawalRequestType } from '@abx-types/withdrawal'
 import {
   findWithdrawalRequest,
   createWithdrawalRequest,
@@ -94,11 +94,12 @@ describe('Withdrawal Request Completion', () => {
         fiatConversion: 0,
         kauConversion: 0,
         type: WithdrawalRequestType.withdrawal,
+        adminRequestId: 1,
       })
       const withdrawalRequest = await findWithdrawalRequest({ accountId: account.id })
 
-      await completeFiatWithdrawal({ id: withdrawalRequest!.id! })
-      const completedWithdrawal = (await findWithdrawalRequest({ id: withdrawalRequest!.id! }))!
+      await completeFiatWithdrawal({ adminRequestId: withdrawalRequest!.adminRequestId! })
+      const completedWithdrawal = (await findWithdrawalRequest({ adminRequestId: withdrawalRequest!.adminRequestId! }))!
 
       expect(completedWithdrawal.accountId).to.equal(account.id)
       expect(completedWithdrawal.amount).to.equal(amount)
@@ -137,9 +138,9 @@ describe('Withdrawal Request Completion', () => {
     })
 
     it('throws error if withdrawal request does not exist', async () => {
-      const id = 1
-      const withdrawalConfirmParams: WithdrawalConfirmParams = {
-        id,
+      const adminRequestId = 1
+      const withdrawalConfirmParams = {
+        adminRequestId,
       }
 
       try {
@@ -147,7 +148,7 @@ describe('Withdrawal Request Completion', () => {
 
         throw new Error(`Incorrect error thrown`)
       } catch ({ message }) {
-        expect(message).to.equal(`No withdrawal request exists with id ${id}`)
+        expect(message).to.equal(`No withdrawal request exists for admin request id ${adminRequestId}`)
       }
     })
 
@@ -163,11 +164,12 @@ describe('Withdrawal Request Completion', () => {
         fiatConversion: 0,
         kauConversion: 0,
         type: WithdrawalRequestType.withdrawal,
+        adminRequestId: 1,
       })
       const withdrawalRequest = await findWithdrawalRequest({ accountId: account.id })
 
-      const withdrawalConfirmParams: WithdrawalConfirmParams = {
-        id: withdrawalRequest!.id!,
+      const withdrawalConfirmParams = {
+        adminRequestId: withdrawalRequest!.id!,
       }
 
       try {

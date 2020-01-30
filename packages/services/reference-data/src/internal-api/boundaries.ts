@@ -1,7 +1,12 @@
 import { getEpicurusInstance, messageFactory } from '@abx-utils/db-connection-utils'
-import { BoundaryEndpoints } from '@abx-service-clients/reference-data'
-import { emptyPayload, findBoundaryForCurrency as findBoundaryForCurrencySchema } from './schemas'
-import { findBoundaryForCurrency, findAllBoundaries, findAllCurrencyCodes } from '../core'
+import { BoundaryEndpoints, getSymbolBoundaries } from '@abx-service-clients/reference-data'
+import {
+  emptyPayload,
+  findBoundaryForCurrency as findBoundaryForCurrencySchema,
+  getBoundariesForCurrenciesSchema,
+  getSymbolBoundariesSchema,
+} from './schemas'
+import { findBoundaryForCurrency, findAllBoundaries, findAllCurrencyCodes, findBoundariesForAll } from '../core'
 
 export function boot() {
   const epicurus = getEpicurusInstance()
@@ -18,5 +23,15 @@ export function boot() {
 
       findAllBoundaries(allCurrencies)
     }),
+  )
+
+  epicurus.server(
+    BoundaryEndpoints.getBoundariesForCurrencies,
+    messageFactory(getBoundariesForCurrenciesSchema, ({ currencies }) => findBoundariesForAll(currencies)),
+  )
+
+  epicurus.server(
+    BoundaryEndpoints.getSymbolBoundaries,
+    messageFactory(getSymbolBoundariesSchema, ({ symbolId }) => getSymbolBoundaries(symbolId)),
   )
 }

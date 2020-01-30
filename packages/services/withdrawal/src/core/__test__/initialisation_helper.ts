@@ -26,22 +26,10 @@ export const createAccountsAndWithdrawalFunctions = async () => {
     available: { value: 10000 },
     currencyId: ethCurrency.id,
   }
-  // const allDepositAddressForAccountReceiver = await findOrCreateDepositAddressesForAccount(accountTwo.id)
-
-  // const accountReceiverKauDepositAddress = allDepositAddressForAccountReceiver.find(deposit => deposit.currencyId === kauCurrency.id) || {
-  //   publicKey: 'test-address',
-  //   encryptedPrivateKey: 'test-hash',
-  // }
 
   const usdWithdrawalGenerator = createWithdrawalParams({
     accountId: tempAccountGiver.id,
   })
-
-  // const kauWithdrawalGenerator = createWithdrawalParams({
-  //   address: accountReceiverKauDepositAddress.publicKey,
-  //   accountId: tempAccountGiver.id,
-  //   txHash: 'kau tx hash',
-  // })
 
   return {
     accountOne: tempAccountGiver,

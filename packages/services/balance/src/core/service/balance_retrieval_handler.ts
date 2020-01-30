@@ -18,6 +18,25 @@ export class BalanceRetrievalHandler {
     return this.instance
   }
 
+  public async findCurrencyAvailableBalances(accountId: string, currencyCodes: CurrencyCode[]): Promise<Map<CurrencyCode, number>> {
+    const allCurrencies = await findAllCurrencies()
+
+    const currencyIdToCode = allCurrencies.reduce(
+      (acc, { code, id }) => (currencyCodes.includes(code) ? acc.set(id, code) : acc),
+      new Map<number, CurrencyCode>(),
+    )
+    const rawBalances = await this.repository.findAccountRawBalancesForCurrencies({
+      accountId,
+      currencyIds: Array.from(currencyIdToCode.keys()),
+    })
+
+    return rawBalances.reduce(
+      (acc, { currencyId, balanceTypeId, value }) =>
+        balanceTypeId === BalanceType.available ? acc.set(currencyIdToCode.get(currencyId)!, value || 0) : acc,
+      new Map<CurrencyCode, number>(),
+    )
+  }
+
   /**
    * Retrieves a merged view of the balances for all balance types for a given account and currency.
    *

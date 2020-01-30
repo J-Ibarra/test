@@ -32,7 +32,7 @@ export async function saveClientTriggeredFiatWithdrawalAdminRequest(
   currencyCode: CurrencyCode,
   amount: number,
   memo: string,
-  transaction: Transaction,
+  transaction?: Transaction,
 ): Promise<AdminRequest> {
   const clientAccount = await findAccountWithUserDetails({ id: accountId })
   const { feeAmount } = await getWithdrawalConfigForCurrency({ currencyCode })

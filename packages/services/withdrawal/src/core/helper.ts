@@ -80,3 +80,32 @@ export async function getWithdrawalFee(
     feeCurrencyCode,
   }
 }
+
+async function getWithdrawalFeeForRequest(
+  withdrawalRequestId: number,
+  currencyCode: CurrencyCode,
+  withdrawalAmount: number,
+  adminRequestId?: number,
+): Promise<{ withdrawalRequestId: number; withdrawalFee: number; feeCurrencyCode: CurrencyCode }> {
+  const withdrawalFeeDetails = await getWithdrawalFee(currencyCode, withdrawalAmount, adminRequestId)
+
+  return {
+    withdrawalRequestId,
+    ...withdrawalFeeDetails,
+  }
+}
+
+export async function getWithdrawalFees(
+  currencyCode: CurrencyCode,
+  withdrawalParams: {
+    withdrawalRequestId: number
+    withdrawalAmount: number
+    adminRequestId?: number
+  }[],
+) {
+  return Promise.all(
+    withdrawalParams.map(params =>
+      getWithdrawalFeeForRequest(params.withdrawalRequestId, currencyCode, params.withdrawalAmount, params.adminRequestId),
+    ),
+  )
+}

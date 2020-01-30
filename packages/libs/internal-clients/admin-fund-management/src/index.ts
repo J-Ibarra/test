@@ -6,7 +6,7 @@ import { AdminFundManagementEndpoints } from './endpoints'
 
 export async function findAdminRequest(queryParams: Partial<AdminRequest>): Promise<AdminRequest> {
   const epicurus = getEpicurusInstance()
-  return epicurus.request(AdminFundManagementEndpoints.findAdminRequest, { queryParams })
+  return epicurus.request(AdminFundManagementEndpoints.findAdminRequest, { ...queryParams })
 }
 
 export async function findAdminRequests(ids: number[]): Promise<AdminRequest[]> {

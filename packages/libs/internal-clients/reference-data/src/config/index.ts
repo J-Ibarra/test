@@ -64,3 +64,5 @@ export async function getExcludedAccountTypesFromOrderRangeValidations(): Promis
   const epicurus = getEpicurusInstance()
   return epicurus.request(ConfigEndpoints.getExcludedAccountTypesFromOrderRangeValidations, {})
 }
+
+export * from './endpoints'

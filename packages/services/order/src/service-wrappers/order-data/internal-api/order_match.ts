@@ -1,13 +1,14 @@
 import { getEpicurusInstance, messageFactory } from '@abx-utils/db-connection-utils'
 import { OrderDataEndpoints, findOrderMatch } from '@abx-service-clients/order'
-import { findOrderMatchTransaction, findOrderMatchTransactions } from '../../../core'
+import { findOrderMatchTransaction, findOrderMatchTransactions, findTradeTransaction } from '../../../core'
+import { findOrderMatchSchema, findLastOrderMatchForSymbolSchema, findLastOrderMatchForSymbolsSchema, findTradeTransactionSchema } from './schemas'
 
 export function boot() {
   const epicurus = getEpicurusInstance()
 
   epicurus.server(
     OrderDataEndpoints.findOrderMatch,
-    messageFactory(findOrderMatch, queries => findOrderMatchTransaction({ where: queries })),
+    messageFactory(findOrderMatchSchema, queries => findOrderMatchTransaction({ where: queries })),
   )
 
   epicurus.server(
@@ -17,13 +18,20 @@ export function boot() {
 
   epicurus.server(
     OrderDataEndpoints.findLastOrderMatchForSymbol,
-    messageFactory(findOrderMatch, ({ symbolId }) => findOrderMatchTransactions({ where: { symbolId }, order: [['createdAt', 'DESC']], limit: 1 })),
+    messageFactory(findLastOrderMatchForSymbolSchema, ({ symbolId }) =>
+      findOrderMatchTransactions({ where: { symbolId }, order: [['createdAt', 'DESC']], limit: 1 }),
+    ),
   )
 
   epicurus.server(
     OrderDataEndpoints.findLastOrderMatchForSymbols,
-    messageFactory(findOrderMatch, ({ symbolIds }) =>
+    messageFactory(findLastOrderMatchForSymbolsSchema, ({ symbolIds }) =>
       findOrderMatchTransactions({ where: { symbolId: { $in: symbolIds } }, order: [['createdAt', 'DESC']], limit: 1 }),
     ),
+  )
+
+  epicurus.server(
+    OrderDataEndpoints.findTradeTransaction,
+    messageFactory(findTradeTransactionSchema, ({ id }) => findTradeTransaction({ where: { id } })),
   )
 }

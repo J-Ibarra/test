@@ -1,5 +1,5 @@
 import { getEpicurusInstance, messageFactory } from '@abx-utils/db-connection-utils'
-import { findOrderById, getOpenOrders as getOpenOrdersSchema } from './schemas'
+import { findOrderByIdSchema, getOpenOrdersSchema } from './schemas'
 import { findOrder, getOpenOrders } from '../../../core'
 import { OrderDataEndpoints } from '@abx-service-clients/order'
 
@@ -8,7 +8,7 @@ export function boot() {
 
   epicurus.server(
     OrderDataEndpoints.findOrderById,
-    messageFactory(findOrderById, ({ orderId }) => findOrder(orderId)),
+    messageFactory(findOrderByIdSchema, ({ orderId }) => findOrder(orderId)),
   )
 
   epicurus.server(

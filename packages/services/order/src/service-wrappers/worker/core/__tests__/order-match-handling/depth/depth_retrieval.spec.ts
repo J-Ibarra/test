@@ -35,13 +35,13 @@ describe('depth_retrieval', () => {
       }),
     )
 
-    const findOrdersStub = sinon.stub(orderOperations, 'findOrders')
+    const findOrdersStub = sinon.stub(orderOperations, 'getOpenOrders')
 
     const buyOrders = [createOrder(OrderDirection.buy)]
     const sellOrders = [createOrder(OrderDirection.sell)]
 
-    findOrdersStub.onFirstCall().returns(Promise.resolve(buyOrders))
-    findOrdersStub.onSecondCall().returns(Promise.resolve(sellOrders))
+    findOrdersStub.onFirstCall().resolves(buyOrders)
+    findOrdersStub.onSecondCall().resolves(sellOrders)
 
     const depth = await getDepthForSymbol(symbolId, 1)
     expect(depth).to.eql({

@@ -12,7 +12,7 @@ export function findWithdrawalRequestForTransactionHash(txHash: string): Promise
 export function findWithdrawalRequestsForTransactionHashes(txHashes: string[]): Promise<WithdrawalRequest[]> {
   const epicurus = getEpicurusInstance()
 
-  return epicurus.request(WithdrawalEndpoints.findWithdrawalRequestForTransactionHash, { txHashes })
+  return epicurus.request(WithdrawalEndpoints.findWithdrawalRequestsForTransactionHashes, { txHashes })
 }
 
 export function findWithdrawalRequestById(id: number): Promise<WithdrawalRequest | null> {

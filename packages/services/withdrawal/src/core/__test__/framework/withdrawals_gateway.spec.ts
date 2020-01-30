@@ -47,7 +47,7 @@ describe('withdrawals_gateway', () => {
 
     sinon.stub(referenceDataOperations, 'getWithdrawalConfigForCurrency').resolves({ feeAmount, feeCurrency: CurrencyCode.usd })
     sinon.stub(referenceDataOperations, 'findCurrencyForCodes').resolves([currency, currency])
-    sinon.stub(balanceOperations, 'findCurrencyBalances').resolves([{ available: balance.available }, { available: balance.available }])
+    sinon.stub(balanceOperations, 'findCurrencyAvailableBalances').resolves(new Map([[CurrencyCode.usd, balance.available.value]]))
     const handleFiatCurrencyWithdrawalRequestStub = sinon.stub(requestHandlers, 'handleFiatCurrencyWithdrawalRequest')
     const validateWithdrawalStub = sinon.stub(withdrawalOperations, 'validateWithdrawal').resolves()
 
@@ -59,11 +59,11 @@ describe('withdrawals_gateway', () => {
     expect(args.currency).to.eql(currency)
     expect(args.currencyCode).to.eql(currency.code)
     expect(args.amount).to.eql(withdrawalAmount)
-    expect(args.availableBalance).to.eql(balance.available)
+    expect(args.availableBalance).to.eql(balance.available.value)
     expect(args.account).to.eql(account)
     expect(args.memo).to.eql(withdrawalParams.memo)
     expect(args.feeCurrency).to.eql(currency)
-    expect(args.feeCurrencyAvailableBalance).to.eql(balance.available)
+    expect(args.feeCurrencyAvailableBalance).to.eql(balance.available.value)
     expect(args.feeAmount).to.eql(feeAmount)
   })
 
@@ -81,7 +81,7 @@ describe('withdrawals_gateway', () => {
 
     sinon.stub(referenceDataOperations, 'getWithdrawalConfigForCurrency').resolves({ feeAmount, feeCurrency: CurrencyCode.kau })
     sinon.stub(referenceDataOperations, 'findCurrencyForCodes').resolves([currency, currency])
-    sinon.stub(balanceOperations, 'findCurrencyBalances').resolves([{ available: balance.available }, { available: balance.available }])
+    sinon.stub(balanceOperations, 'findCurrencyAvailableBalances').resolves(new Map([[CurrencyCode.kau, balance.available.value]]))
     const handleCryptoCurrencyWithdrawalRequest = sinon.stub(requestHandlers, 'handleCryptoCurrencyWithdrawalRequest')
     const validateWithdrawalStub = sinon.stub(withdrawalOperations, 'validateWithdrawal').resolves()
 
@@ -92,11 +92,11 @@ describe('withdrawals_gateway', () => {
     expect(args.currency).to.eql(currency)
     expect(args.currencyCode).to.eql(currency.code)
     expect(args.amount).to.eql(withdrawalAmount)
-    expect(args.availableBalance).to.eql(balance.available)
+    expect(args.availableBalance).to.eql(balance.available.value)
     expect(args.account).to.eql(account)
     expect(args.memo).to.eql(withdrawalParams.memo)
     expect(args.feeCurrency).to.eql(currency)
-    expect(args.feeCurrencyAvailableBalance).to.eql(balance.available)
+    expect(args.feeCurrencyAvailableBalance).to.eql(balance.available.value)
     expect(args.feeAmount).to.eql(feeAmount)
 
     expect(

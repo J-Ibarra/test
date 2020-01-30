@@ -89,7 +89,7 @@ describe('Withdrawal Request Initialisation', () => {
         feeAmount,
         minimumAmount: 5,
       })
-      stubFindCurrencyBalancesCall(startingBalance)
+      stubFindCurrencyBalancesCall(TEST_CURRENCY_TICKER, startingBalance)
       stubFindCurrencyForCodesCall(blockChainOperations.TEST_CURRENCY_TICKER)
 
       const withdrawalParams: InitialiseWithdrawalParams = {
@@ -153,7 +153,7 @@ describe('Withdrawal Request Initialisation', () => {
         feeAmount,
         minimumAmount: 5,
       })
-      stubFindCurrencyBalancesCall(startingBalance)
+      stubFindCurrencyBalancesCall(CurrencyCode.usd, startingBalance)
       stubFindCurrencyForCodesCall(USD.code)
 
       await initialiseWithdrawal(withdrawalParams, pendingHoldingsAccountTransferGatekeeper)
@@ -188,7 +188,7 @@ describe('Withdrawal Request Initialisation', () => {
         feeAmount: 25,
         minimumAmount: 5,
       })
-      stubFindCurrencyBalancesCall(0)
+      stubFindCurrencyBalancesCall(CurrencyCode.usd, 0)
       stubFindCurrencyForCodesCall(USD.code)
 
       try {
@@ -219,7 +219,7 @@ describe('Withdrawal Request Initialisation', () => {
         feeAmount: 0,
         minimumAmount: 5,
       })
-      stubFindCurrencyBalancesCall(startingBalance)
+      stubFindCurrencyBalancesCall(TEST_CURRENCY_TICKER, startingBalance)
       stubFindCurrencyForCodesCall(blockChainOperations.TEST_CURRENCY_TICKER)
 
       const withdrawalParams: InitialiseWithdrawalParams = {
@@ -258,7 +258,7 @@ describe('Withdrawal Request Initialisation', () => {
         feeAmount: 0,
         minimumAmount: 5,
       })
-      stubFindCurrencyBalancesCall(startingBalance)
+      stubFindCurrencyBalancesCall(CurrencyCode.usd, startingBalance)
       stubFindCurrencyForCodesCall(USD.code)
 
       try {
@@ -290,7 +290,7 @@ describe('Withdrawal Request Initialisation', () => {
         feeAmount: 0,
         minimumAmount: 5,
       })
-      stubFindCurrencyBalancesCall(startingBalance)
+      stubFindCurrencyBalancesCall(TEST_CURRENCY_TICKER, startingBalance)
       stubFindCurrencyForCodesCall(blockChainOperations.TEST_CURRENCY_TICKER)
 
       try {

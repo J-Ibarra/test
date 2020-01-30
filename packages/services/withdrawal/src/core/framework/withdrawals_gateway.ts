@@ -6,7 +6,7 @@ import { validateWithdrawal } from '../lib'
 import { handleCryptoCurrencyWithdrawalRequest, handleFiatCurrencyWithdrawalRequest } from './request-handlers'
 import { CryptoWithdrawalGatekeeper } from './withdrawals_gatekeeper'
 import { Currency } from '@abx-types/reference-data'
-import { findCurrencyBalances } from '@abx-service-clients/balance'
+import { findCurrencyAvailableBalances } from '@abx-service-clients/balance'
 import { getEnvironment } from '@abx-types/reference-data'
 import { findAccountsByIdWithUserDetails } from '@abx-service-clients/account'
 
@@ -45,13 +45,14 @@ async function validateRequest(
   const configForCurrency = await getWithdrawalConfigForCurrency({ currencyCode })
   const feeCurrencyCode = configForCurrency.feeCurrency
 
-  const [currencies, account, balances] = await Promise.all([
+  const [currencies, account, availableBalances] = await Promise.all([
     findCurrencyForCodes([currencyCode, feeCurrencyCode]),
     findAccountsByIdWithUserDetails([accountId]),
-    findCurrencyBalances([currencyCode, feeCurrencyCode], accountId),
+    findCurrencyAvailableBalances([currencyCode, feeCurrencyCode], accountId),
   ])
   const [withdrawalRequestCurrency, feeCurrency] = currencies
-  const [{ available: availableBalance }, { available: feeCurrencyAvailableBalance }] = balances
+  const availableBalance = availableBalances.get(currencyCode)
+  const feeCurrencyAvailableBalance = availableBalances.get(feeCurrency.code)
 
   await validateWithdrawal({
     currency: withdrawalRequestCurrency,
