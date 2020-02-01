@@ -4,8 +4,15 @@ import cookieParser from 'cookie-parser'
 import methodOverride from 'method-override'
 import { mw as requestIpMiddleware } from 'request-ip'
 import { Logger } from '@abx-utils/logging'
-import { auditMiddleware, configureCORS, RateLimiter, maintenanceMiddleware, overloadRequestWithSessionInfo } from '@abx-utils/express-middleware'
-// import { RegisterRoutes } from './routes'
+import {
+  auditMiddleware,
+  configureCORS,
+  RateLimiter,
+  maintenanceMiddleware,
+  overloadRequestWithSessionInfo,
+  healthcheckMiddleware,
+} from '@abx-utils/express-middleware'
+import { RegisterRoutes } from './routes'
 
 import './order_change_controller'
 
@@ -22,6 +29,7 @@ export function bootstrapRestApi() {
   app.use(bodyParser.json())
   app.use(methodOverride())
   app.use(maintenanceMiddleware)
+  app.use(healthcheckMiddleware)
   app.use(overloadRequestWithSessionInfo)
   app.all('*', auditMiddleware)
 
@@ -29,13 +37,13 @@ export function bootstrapRestApi() {
   configureCORS(app)
 
   if (process.env.NODE_ENV !== 'test') {
-    logger.debug(`Starting reference-data server on port ${REST_API_PORT}...`)
+    logger.debug(`Starting order-gateway server on port ${REST_API_PORT}...`)
 
     configureApiRateLimiting = new RateLimiter().configureForApp(app).then(() => logger.debug('API rate limiting configured.'))
   }
 
   configureApiRateLimiting.then(() => {
-    // RegisterRoutes(app)
+    RegisterRoutes(app)
 
     // @ts-ignore
     app.use((err, req, res, next) => {
@@ -49,6 +57,6 @@ export function bootstrapRestApi() {
 
   app.on('unhandledRejection', e => logger.error(e as any))
 
-  console.log(`Reference Data API on port ${REST_API_PORT}`)
+  console.log(`Order Gateway API on port ${REST_API_PORT}`)
   return app.listen(REST_API_PORT)
 }

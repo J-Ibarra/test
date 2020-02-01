@@ -23,14 +23,6 @@ export class FeesController extends Controller {
     return Object.values(symbolIdToFeeTiers).reduce((acc, tiers) => acc.concat(tiers))
   }
 
-  // TODO - this needs to be changed to reference-data
-  // @Security('cookieAuth')
-  // @Security('tokenAuth')
-  // @Get('/fees/transaction')
-  // public async getTransactionFeeCaps(): Promise<Record<CurrencyCode, number>> {
-  //   return getTransactionFeeCaps()
-  // }
-
   @Security('cookieAuth')
   @Get('/fees/account')
   public async getAllAccountTiers(@Request() request: OverloadedRequest): Promise<any> {

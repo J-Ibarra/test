@@ -12,7 +12,7 @@ export function handleUnexpectedError(error) {
     console.log('!!!!!Unexpected Error!!!!!!')
     console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-    console.log(error)
+    console.log(JSON.stringify(error))
     console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!')
   }
@@ -25,6 +25,7 @@ process.on('uncaughtException', err => {
     if (nrError) {
       console.error('error shutting down newrelic agent')
     }
+
     process.exit(1)
   })
 })

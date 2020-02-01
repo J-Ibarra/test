@@ -1,6 +1,10 @@
 {
   "name": "root",
   "private": true,
+  "scripts": {
+    "start-api-debug": "lerna run start-api-debug --stream",
+    "build:services": "lerna run build --scope @abx/*"
+  },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",
     "lerna": "^3.19.0",

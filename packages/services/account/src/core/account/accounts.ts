@@ -13,16 +13,7 @@ import { ValidationError } from '@abx-types/error'
 import { AccountPubSubTopics } from '@abx-service-clients/account'
 import { createEmail } from '@abx-service-clients/notification'
 // import { findCryptoCurrencies } from '@abx-service-clients/reference-data'
-import {
-  Account,
-  AccountStatus,
-  AccountType,
-  CreateAccountRequest,
-  KinesisBankDetails,
-  KycStatusChange,
-  User,
-  UserPublicView,
-} from '@abx-types/account'
+import { Account, AccountStatus, AccountType, CreateAccountRequest, KycStatusChange, User, UserPublicView } from '@abx-types/account'
 import { findSession } from './session'
 import { createAccountVerificationUrl, createUser, findUserByAccountId, findUserById, prepareWelcomeEmail, validateUserEmail } from '../users'
 import { cancelAllOrdersForAccount } from '@abx-service-clients/order'
@@ -278,13 +269,4 @@ export async function updateAccountStatus(id: string, status: AccountStatus): Pr
     where: { id },
     returning: true,
   })
-}
-
-export function getKinesisBankDetails(): KinesisBankDetails {
-  return {
-    bankName: process.env.KINESIS_BANK_NAME!,
-    bankCode: process.env.KINESIS_BANK_CODE!,
-    accountNumber: process.env.KINESIS_BANK_ACCOUNT_NUMBER!,
-    accountName: process.env.KINESIS_BANK_ACCOUNT_NAME!,
-  }
 }

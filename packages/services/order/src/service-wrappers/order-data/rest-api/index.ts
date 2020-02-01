@@ -4,14 +4,22 @@ import cookieParser from 'cookie-parser'
 import methodOverride from 'method-override'
 import { mw as requestIpMiddleware } from 'request-ip'
 import { Logger } from '@abx-utils/logging'
-import { auditMiddleware, configureCORS, RateLimiter, maintenanceMiddleware, overloadRequestWithSessionInfo } from '@abx-utils/express-middleware'
-// import { RegisterRoutes } from './routes'
+import {
+  auditMiddleware,
+  configureCORS,
+  RateLimiter,
+  maintenanceMiddleware,
+  overloadRequestWithSessionInfo,
+  healthcheckMiddleware,
+} from '@abx-utils/express-middleware'
+import { RegisterRoutes } from './routes'
 
 import './order_retrieval_controller'
 import './fees_controller'
 import './order_match_controller'
 import './orders_admin_controller'
 import './transaction_history_controller'
+import './depth_controller'
 
 const logger = Logger.getInstance('api', 'bootstrapRestApi')
 
@@ -26,6 +34,7 @@ export function bootstrapRestApi() {
   app.use(bodyParser.json())
   app.use(methodOverride())
   app.use(maintenanceMiddleware)
+  app.use(healthcheckMiddleware)
   app.use(overloadRequestWithSessionInfo)
   app.all('*', auditMiddleware)
 
@@ -39,19 +48,18 @@ export function bootstrapRestApi() {
   }
 
   configureApiRateLimiting.then(() => {
-    // RegisterRoutes(app)
+    RegisterRoutes(app)
 
     // @ts-ignore
     app.use((err, req, res, next) => {
-      logger.error(err)
+      logger.error(`An error has ocurred while processing ${req.url!}: ${err.message}`)
+      logger.error(JSON.stringify(err.stack))
       res.status(err.status || res.status || 500)
       res.json({
         error: err.message,
       })
     })
   })
-
-  app.on('unhandledRejection', e => logger.error(e as any))
 
   console.log(`Order Data API on port ${ORDER_DATA_API_PORT}`)
   return app.listen(ORDER_DATA_API_PORT)

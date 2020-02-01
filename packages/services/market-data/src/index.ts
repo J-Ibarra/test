@@ -1,17 +1,2 @@
-import { bootstrapRestApi } from './rest-api'
-import { bootstrapInternalApi } from './internal-api'
-import { runReferenceDataMigrations } from './migrations/migration-runner'
-import { Environment } from '@abx-types/reference-data'
-import { openSocket } from './websocket-api/depth-update.sockets'
-
-bootstrap()
-
-async function bootstrap() {
-  await runReferenceDataMigrations()
-  bootstrapInternalApi()
-  const server = bootstrapRestApi()
-
-  if (process.env.NODE_ENV !== Environment.test) {
-    openSocket(server)
-  }
-}
+export * from './service_starter'
+export { MARKET_DATA_REST_API_PORT } from './rest-api'

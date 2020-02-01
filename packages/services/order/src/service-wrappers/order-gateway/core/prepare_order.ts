@@ -20,11 +20,8 @@ export async function prepareOrder(order: Order): Promise<Order> {
       logger.error(
         `Error validating available balance for ${order.direction} order for ${order.amount} ${order.symbolId} and account ${order.accountId}`,
       )
-      if (e.name !== 'ValidationError') {
-        return prepareOrder(order)
-      } else {
-        throw e
-      }
+
+      throw e
     }
   })
 }

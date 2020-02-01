@@ -10,11 +10,6 @@ import { OverloadedRequest } from '@abx-types/account'
 export class DepthController extends Controller {
   private depthCacheFacade: DepthCacheFacade
 
-  constructor() {
-    super()
-    this.initialiseDepthCache()
-  }
-
   private async initialiseDepthCache() {
     this.depthCacheFacade = await DepthCacheFacade.createDepthCacheForAllSymbols()
   }
@@ -33,6 +28,7 @@ export class DepthController extends Controller {
     @Request() request: OverloadedRequest,
     @Query() direction?: OrderDirection,
   ) {
+    await this.initialiseDepthCache()
     const symbolDepth = await this.depthCacheFacade.getDepthForCurrencyPair(symbolId, limit)
     const openOrdersForAccount = await this.getOpenOrdersForAccount(request.account!.id, symbolId, direction)
 

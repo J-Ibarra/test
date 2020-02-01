@@ -1,3 +1,3 @@
-import { bootstrap } from './bootstrap_handler'
+import { bootstrapOrderGatewayService } from './service_starter'
 
-bootstrap()
+bootstrapOrderGatewayService()

@@ -2,12 +2,11 @@
   "name": "@abx/exchange-reference-data-service",
   "version": "1.0.0",
   "description": "> TODO: description",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
+  "main": "dist/index",
+  "types": "src/index",
   "files": [
-    "lib"
+    "dist",
+    "src"
   ],
   "scripts": {
     "swagger-gen": "tsoa swagger",
@@ -28,6 +27,7 @@
   "dependencies": {
     "@abx-types/reference-data": "1.0.0",
     "@abx-types/account": "1.0.0",
+    "@abx-types/error": "1.0.0",
     "@abx-utils/db-connection-utils": "1.0.0",
     "@abx-utils/express-middleware": "1.0.0",
     "@abx-utils/kbe-legacy-migrations": "1.0.0",

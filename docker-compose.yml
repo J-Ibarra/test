@@ -8,10 +8,10 @@ services:
   postgres:
     image: postgres:9.6
     container_name: postgres-dev
+    volumes:
+      - ./data/postgres-exchange-2:/var/lib/postgresql/data
     ports:
       - '6432:5432'
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=kinesis_exchange
-volumes:
-  postgres-data:

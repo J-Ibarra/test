@@ -1,3 +1,3 @@
-import { bootstrap } from './bootstrap_handler'
+import { bootstrapWorkerService } from './service_starter'
 
-bootstrap()
+bootstrapWorkerService()

@@ -1,6 +1,8 @@
-import { Controller, Get, Route, Query } from 'tsoa'
-import { getAllCompleteSymbolDetails } from '../core'
+import { Controller, Get, Route, Query, Security, Request } from 'tsoa'
+import { getAllCompleteSymbolDetails, getExcludedAccountTypesFromOrderRangeValidations } from '../core'
 import { SymbolPairApiResponse, SymbolPair } from '@abx-types/reference-data'
+import { OverloadedRequest } from '@abx-types/account'
+import { ApiErrorPayload } from '@abx-types/error'
 
 @Route()
 export class SymbolsController extends Controller {
@@ -23,5 +25,23 @@ export class SymbolsController extends Controller {
 
     const sortSymbols = sortableSymbols.some(({ sortOrder }) => !!sortOrder)
     return sortSymbols ? sortableSymbols.sort((symbol1, symbol2) => symbol1.sortOrder! - symbol2.sortOrder!) : sortableSymbols
+  }
+
+  /**
+   * This will find out if your account is bound to the symbols order ranges or not.
+   * Returns true if you are bound and false if you aren't
+   */
+  @Security('tokenAuth')
+  @Security('cookieAuth')
+  @Get('/symbols/apply-threshold')
+  public async getApplySymbolsThresholdStatus(@Request() { account }: OverloadedRequest): Promise<boolean | ApiErrorPayload> {
+    const accountTypesExcludedFromValidation = await getExcludedAccountTypesFromOrderRangeValidations()
+
+    try {
+      return !accountTypesExcludedFromValidation.includes(account!.type!)
+    } catch (e) {
+      this.setStatus(400)
+      return { message: `Failed to find symbols threshold details for your account` }
+    }
   }
 }

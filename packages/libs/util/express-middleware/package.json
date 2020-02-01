@@ -4,9 +4,10 @@
   "description": "Contains common express-middleware utilities",
   "license": "ISC",
   "main": "dist/index",
-  "types": "dist/index",
+  "types": "src/index",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "scripts": {
     "build": "npm run clean && npm run compile",
@@ -25,7 +26,8 @@
     "cors": "2.8.5",
     "express-rate-limit": "3.3.2",
     "rate-limit-redis": "1.6.0",
-    "jsonwebtoken": "8.5.1"
+    "jsonwebtoken": "8.5.1",
+    "tsoa": "2.3.81"
   },
   "devDependencies": {
     "@types/express": "4.11.1",

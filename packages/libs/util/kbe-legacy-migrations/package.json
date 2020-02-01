@@ -4,15 +4,17 @@
   "description": "Contains the legacy db-migrations taken from kinesis-secondary-exchange-repository",
   "license": "ISC",
   "main": "dist/index",
-  "types": "dist/index",
+  "types": "src/index",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "scripts": {
     "build": "npm run clean && npm run compile",
     "clean": "rm -rf ./dist",
     "compile": "tsc -p tsconfig.build.json --skipLibCheck",
-    "run-legacy-migrations": "npm run compile && NODE_ENV=test NODE_PATH=dist node dist/runner.js"
+    "run-legacy-migrations-test": "npm run compile && NODE_ENV=test NODE_PATH=dist node dist/runner.js",
+    "run-legacy-migrations-dev": "npm run compile && NODE_ENV=dev NODE_PATH=dist node dist/runner.js"
   },
   "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9",
   "dependencies": {

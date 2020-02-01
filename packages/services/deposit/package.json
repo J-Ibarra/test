@@ -2,18 +2,19 @@
   "name": "@abx/exchange-deposit-service",
   "version": "1.0.0",
   "description": "> TODO: description",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
+  "main": "dist/index",
+  "types": "src/index",
   "files": [
-    "lib"
+    "dist",
+    "src"
   ],
   "scripts": {
-    "build": "npm run clean && npm run compile",
+    "swagger-gen": "tsoa swagger ",
+    "routes-gen": "tsoa routes",
     "clean": "rm -rf ./dist",
-    "compile": "tsc -p tsconfig.build.json --skipLibCheck",
     "migrate-db": "npm run build && NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test NODE_PATH=dist node dist/migrations/index.js",
+    "build-deposit-processor": "npm run swagger-gen -- -c ./src/service-wrappers/deposit-processor/tsoa.json && npm run routes-gen -- -c ./src/service-wrappers/deposit-processor/tsoa.json",
+    "build": "npm run clean && npm run build-deposit-processor && tsc -p tsconfig.build.json --skipLibCheck",
     "start": "ts-node-dev src/index.ts",
     "test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_PATH=dist ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts --require ../../../_test-setup/test_globals.js src/**/*.spec.ts --exit",
     "build-image-latest": "echo build image here",

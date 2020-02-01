@@ -4,7 +4,14 @@ import cookieParser from 'cookie-parser'
 import methodOverride from 'method-override'
 import { mw as requestIpMiddleware } from 'request-ip'
 import { Logger } from '@abx-utils/logging'
-import { auditMiddleware, configureCORS, RateLimiter, maintenanceMiddleware, overloadRequestWithSessionInfo } from '@abx-utils/express-middleware'
+import {
+  auditMiddleware,
+  configureCORS,
+  RateLimiter,
+  maintenanceMiddleware,
+  overloadRequestWithSessionInfo,
+  healthcheckMiddleware,
+} from '@abx-utils/express-middleware'
 import { RegisterRoutes } from './routes'
 
 import './account_summary_controller'
@@ -24,6 +31,7 @@ export function bootstrapRestApi() {
   app.use(bodyParser.urlencoded({ extended: true }))
   app.use(bodyParser.json())
   app.use(methodOverride())
+  app.use(healthcheckMiddleware)
   app.use(maintenanceMiddleware)
   app.use((request: OverloadedRequest, _: express.Response = {} as any, next: () => void = () => ({})) => {
     overloadRequestWithSessionInfo(request, undefined, next)

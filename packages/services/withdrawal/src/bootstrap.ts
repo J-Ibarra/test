@@ -1,11 +1,3 @@
-import { bootstrapInternalApi } from './internal-api'
-import { bootstrapRestApi } from './rest-api'
-import { configureWithdrawalHandler } from '.'
+import { bootstrapWithdrawalService } from './service_starter'
 
-async function bootstrap() {
-  await configureWithdrawalHandler()
-  bootstrapInternalApi()
-  bootstrapRestApi()
-}
-
-bootstrap()
+bootstrapWithdrawalService()

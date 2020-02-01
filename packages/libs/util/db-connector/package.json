@@ -4,9 +4,10 @@
   "description": "Contains common utilities for connecting to data storage(Postrgres/Redis) and manipulating the data stored there.",
   "license": "ISC",
   "main": "dist/index",
-  "types": "dist/index",
+  "types": "src/index",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "scripts": {
     "build": "npm run clean && npm run compile",

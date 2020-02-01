@@ -2,12 +2,11 @@
   "name": "@abx/exchange-scheduler-service",
   "version": "1.0.0",
   "description": "> TODO: description",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
+  "main": "dist/index",
+  "types": "src/index",
   "files": [
-    "lib"
+    "dist",
+    "src"
   ],
   "scripts": {
     "build": "npm run clean && npm run compile",
@@ -28,6 +27,7 @@
     "@abx-service-clients/market-data": "1.0.0",
     "@abx-service-clients/order": "1.0.0",
     "@abx-service-clients/account": "1.0.0",
+    "@abx/exchange-reference-data-service": "1.0.0",
     "@abx-utils/logging": "1.0.0",
     "body-parser": "1.18.3",
     "cookie-parser": "1.4.3",
@@ -43,7 +43,7 @@
     "newrelic": "4.10.0"
   },
   "devDependencies": {
-    "@abx-query-libs/account": "1.0.0",
+    "@abx-utils/account": "1.0.0",
     "@lerna/filter-options": "^3.18.4",
     "@types/body-parser": "1.17.0",
     "@types/chai": "4.0.3",

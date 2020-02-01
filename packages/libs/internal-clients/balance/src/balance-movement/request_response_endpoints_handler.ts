@@ -4,17 +4,17 @@ import { RequestResponseBalanceMovementEndpoints } from './request_response_endp
 
 export function createReserve(changeParams: BalanceChangeParams) {
   const epicurus = getEpicurusInstance()
-  return epicurus.request(RequestResponseBalanceMovementEndpoints.createReserve, { changeParams })
+  return epicurus.request(RequestResponseBalanceMovementEndpoints.createReserve, { ...changeParams })
 }
 
 export function updateAvailable(changeParams: BalanceChangeParams) {
   const epicurus = getEpicurusInstance()
-  return epicurus.request(RequestResponseBalanceMovementEndpoints.updateAvailable, { changeParams })
+  return epicurus.request(RequestResponseBalanceMovementEndpoints.updateAvailable, { ...changeParams })
 }
 
 export function createPendingRedemption(changeParams: BalanceChangeParams) {
   const epicurus = getEpicurusInstance()
-  return epicurus.request(RequestResponseBalanceMovementEndpoints.createPendingRedemption, { changeParams })
+  return epicurus.request(RequestResponseBalanceMovementEndpoints.createPendingRedemption, { ...changeParams })
 }
 
 export function createPendingWithdrawal({
@@ -33,7 +33,7 @@ export function createPendingWithdrawal({
 
 export function createPendingDebitCardTopUp(changeParams: BalanceChangeParams) {
   const epicurus = getEpicurusInstance()
-  return epicurus.request(RequestResponseBalanceMovementEndpoints.createPendingDebitCardTopUp, { changeParams })
+  return epicurus.request(RequestResponseBalanceMovementEndpoints.createPendingDebitCardTopUp, { ...changeParams })
 }
 
 export * from './request_response_endpoints'

@@ -5,6 +5,7 @@ import { FeesController } from './fees_controller';
 import { OrderMatchesController } from './order_match_controller';
 import { AdminOrdersController } from './orders_admin_controller';
 import { TransactionHistoryController } from './transaction_history_controller';
+import { DepthController } from './depth_controller';
 import { expressAuthentication } from './middleware/authentication';
 import * as express from 'express';
 
@@ -367,6 +368,49 @@ export function RegisterRoutes(app: express.Express) {
 
 
             const promise = controller.getTransactionHistoryForCurrency.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.get('/api/depth/:symbolId/:direction/top',
+        authenticateMiddleware([{ "cookieAuth": [] }, { "tokenAuth": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                symbolId: { "in": "path", "name": "symbolId", "required": true, "dataType": "string" },
+                direction: { "in": "path", "name": "direction", "required": true, "dataType": "enum", "enums": ["buy", "sell"] },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new DepthController();
+
+
+            const promise = controller.getTopOfDepthForCurrencyPairAndDirection.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.get('/api/depth/:symbolId',
+        function(request: any, response: any, next: any) {
+            const args = {
+                symbolId: { "in": "path", "name": "symbolId", "required": true, "dataType": "string" },
+                limit: { "default": 100, "in": "query", "name": "limit", "dataType": "double" },
+                request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+                direction: { "in": "query", "name": "direction", "dataType": "enum", "enums": ["buy", "sell"] },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new DepthController();
+
+
+            const promise = controller.getDepthForCurrencyPair.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
 

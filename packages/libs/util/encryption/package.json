@@ -4,9 +4,10 @@
   "description": "Contains common encryption utilities",
   "license": "ISC",
   "main": "dist/index",
-  "types": "dist/index",
+  "types": "src/index",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "scripts": {
     "build": "npm run clean && npm run compile",

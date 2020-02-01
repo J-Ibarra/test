@@ -1,9 +1,3 @@
-import { bootstrapRestApi } from './rest-api'
-import { bootstrapInternalApi } from './internal-api'
+import { bootstrapAccountsService } from './service_starter'
 
-async function bootstrap() {
-  await bootstrapRestApi()
-  await bootstrapInternalApi()
-}
-
-bootstrap()
+bootstrapAccountsService()

@@ -3,7 +3,7 @@ import { Transaction } from 'sequelize'
 import { getModel } from '@abx-utils/db-connection-utils'
 import { CurrencyCode, CryptoCurrency, Currency } from '@abx-types/reference-data'
 import { findCurrencyForCodes } from '@abx-service-clients/reference-data'
-import { DepositAddress, DepositRequest, DepositRequestStatus } from '../../interfaces'
+import { DepositAddress, DepositRequest, DepositRequestStatus } from '@abx-types/deposit'
 import { getMinimumDepositAmountForCurrency } from './deposit_amount_validator'
 
 let cachedCryptoCurrencies: Currency[] = []

@@ -134,3 +134,18 @@ export const balanceChangePayloadSchema = {
     },
   },
 }
+
+export const createPendingWithdrawalPayloadSchema = {
+  type: 'object',
+  'x-persist-event': 'create pending withdrawal payload schema',
+  properties: {
+    pendingWithdrawalParams: {
+      type: 'object',
+      required: true,
+    },
+    pendingWithdrawalFeeParams: {
+      type: 'object',
+      required: false,
+    },
+  },
+}

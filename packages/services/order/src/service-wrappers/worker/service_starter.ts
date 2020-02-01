@@ -14,7 +14,7 @@ export const noBody = {
   properties: {},
 }
 
-export async function bootstrap() {
+export async function bootstrapWorkerService() {
   await runOrderDataMigrations()
 
   // Start the required Gatekeeper listeners

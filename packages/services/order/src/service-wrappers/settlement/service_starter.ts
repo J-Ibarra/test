@@ -27,7 +27,7 @@ interface OrderMatchFeeCurrencyMidPriceDetails {
   feeCurrencyToUsdMidPrice: number
 }
 
-export async function bootstrap() {
+export async function bootstrapSettlementService() {
   await runOrderDataMigrations()
   const epicurus = getEpicurusInstance()
 

@@ -1,14 +1,14 @@
 import { expect } from 'chai'
 import request from 'supertest'
 import { CurrencyBoundary, CurrencyCode } from '@abx-types/reference-data'
-import { bootstrap } from '../../bootstrap'
+import { bootstrapReferenceDataService } from '../../service_starter'
 import { Server } from 'http'
 
 describe('api:boundaries', () => {
   let app: Server
 
   beforeEach(async () => {
-    app = await bootstrap()
+    app = await bootstrapReferenceDataService()
   })
 
   afterEach(async () => {

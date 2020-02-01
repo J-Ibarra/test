@@ -1,11 +1,3 @@
-import { bootstrapRestApi } from './rest-api'
-import { bootstrapInternalApi } from './internal-api'
-import { runReferenceDataMigrations } from './migrations/migration-runner'
+import { bootstrapReferenceDataService } from './service_starter'
 
-import './core'
-
-export async function bootstrap() {
-  await runReferenceDataMigrations()
-  bootstrapInternalApi()
-  return bootstrapRestApi()
-}
+bootstrapReferenceDataService()

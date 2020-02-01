@@ -53,3 +53,6 @@ dist
 
 # The local logs
 _logs
+
+# The local db data
+data

@@ -52,9 +52,15 @@ export class BalanceRetrievalFacade {
 
     const preferredCurrencyQuotePairMidPrices = await calculateRealTimeMidPriceForSymbols(allSymbolsWithPreferredCurrencyAsQuote.map(({ id }) => id))
 
-    const preferredCurrencyEnrichedBalances = await Promise.all(
-      balances.map(balance => this.enrichBalanceWithPreferredCurrencyDetails(balance, preferredCurrencyQuotePairMidPrices)),
-    )
+    let preferredCurrencyEnrichedBalances: PreferredCurrencyEnrichedBalance[] = []
+
+    try {
+      preferredCurrencyEnrichedBalances = await Promise.all(
+        balances.map(balance => this.enrichBalanceWithPreferredCurrencyDetails(balance, preferredCurrencyQuotePairMidPrices)),
+      )
+    } catch (e) {
+      console.log(e)
+    }
 
     const balanceInfo: CompleteBalanceDetails = {
       accountId,
@@ -72,7 +78,7 @@ export class BalanceRetrievalFacade {
     balance: Balance,
     symbolIdToMidPrices: Map<string, number>,
   ): Promise<PreferredCurrencyEnrichedBalance> {
-    const preferredCurrencyForOneBalanceCurrency = await this.computeUsdAmountForOne(balance.currency!, symbolIdToMidPrices)
+    const preferredCurrencyForOneBalanceCurrency = (await this.computeUsdAmountForOne(balance.currency!, symbolIdToMidPrices)).toNumber()
     const availableBalance = balance.available.value!
     const reservedBalance = balance.reserved.value!
     const pendingDepositBalance = balance.pendingDeposit.value!

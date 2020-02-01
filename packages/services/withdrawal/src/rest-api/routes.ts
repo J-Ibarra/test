@@ -1,6 +1,8 @@
 /* tslint:disable */
 import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute } from 'tsoa';
 import { WithdrawalsController } from './withdrawal_controller';
+import { CryptoController } from './address_validation_controller';
+import { ContactsController } from './contacts_controller';
 import { expressAuthentication } from './middleware/authentication';
 import * as express from 'express';
 
@@ -14,6 +16,13 @@ const models: TsoaRoute.Models = {
             "amount": { "dataType": "double", "required": true },
             "currencyCode": { "ref": "CurrencyCode", "required": true },
             "memo": { "dataType": "string" },
+        },
+    },
+    "ContactCreateRequest": {
+        "properties": {
+            "currency": { "ref": "CurrencyCode", "required": true },
+            "name": { "dataType": "string", "required": true },
+            "publicKey": { "dataType": "string", "required": true },
         },
     },
 };
@@ -78,6 +87,69 @@ export function RegisterRoutes(app: express.Express) {
 
 
             const promise = controller.getWithdrawalConfigForCurrency.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.get('/api/crypto/validate',
+        authenticateMiddleware([{ "cookieAuth": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                code: { "in": "query", "name": "code", "required": true, "dataType": "enum", "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USD", "EUR", "GBP"] },
+                address: { "in": "query", "name": "address", "required": true, "dataType": "string" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new CryptoController();
+
+
+            const promise = controller.validateAddressForCrypto.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.get('/api/contacts/:currencyCode',
+        authenticateMiddleware([{ "cookieAuth": [] }, { "tokenAuth": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                currencyCode: { "in": "path", "name": "currencyCode", "required": true, "dataType": "enum", "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USD", "EUR", "GBP"] },
+                request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new ContactsController();
+
+
+            const promise = controller.retrieveContactsForCurrencyForAccount.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.post('/api/contacts',
+        authenticateMiddleware([{ "cookieAuth": [] }, { "tokenAuth": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+                contactCreateRequest: { "in": "body", "name": "contactCreateRequest", "required": true, "ref": "ContactCreateRequest" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new ContactsController();
+
+
+            const promise = controller.createContactForCurrencyForAccount.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
 

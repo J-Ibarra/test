@@ -1,0 +1,50 @@
+{
+  "name": "@abx/local-service-starter",
+  "version": "1.0.0",
+  "description": "This packages is used to bootstrap the exchange services locally",
+  "scripts": {
+    "start": "ts-node-dev src/bootstrap.ts",
+    "start-api-debug": "ABX_LOG_LEVEL=debug NEW_RELIC_NO_CONFIG_FILE=true TZ=UTC NODE_ENV=development tsnd --inspect --respawn src/bootstrap.ts"
+  },
+  "dependencies": {
+    "@abx/admin-fund-management-service": "1.0.0",
+    "@abx/exchange-account-data-service": "1.0.0",
+    "@abx/exchange-balance-service": "1.0.0",
+    "@abx/exchange-deposit-service": "1.0.0",
+    "@abx/exchange-market-data-service": "1.0.0",
+    "@abx/exchange-notification-service": "1.0.0",
+    "@abx/exchange-reference-data-service": "1.0.0",
+    "@abx/exchange-report-service": "1.0.0",
+    "@abx/exchange-scheduler-service": "1.0.0",
+    "@abx/exchange-withdrawal-service": "1.0.0",
+    "@abx/order-service": "1.0.0",
+    "http-proxy": "1.18.0",
+    "source-map-support": "0.5.16"
+  },
+  "devDependencies": {
+    "@types/http-proxy": "1.17.3",
+    "@lerna/filter-options": "^3.18.4",
+    "@types/body-parser": "1.17.0",
+    "@types/chai": "4.0.3",
+    "@types/chai-as-promised": "7.1.0",
+    "@types/express": "4.11.1",
+    "@types/mocha": "2.2.41",
+    "@types/node": "12.12.11",
+    "@types/sequelize": "3.30.4",
+    "@types/validator": "6.3.0",
+    "chai": "4.2.0",
+    "chai-as-promised": "7.1.1",
+    "mocha": "5.2.0",
+    "source-map-support": "0.5.9",
+    "@types/sinon": "5.0.7",
+    "sinon": "7.2.0",
+    "supertest": "3.3.0",
+    "ts-mocha": "6.0.0",
+    "ts-node": "8.5.2",
+    "ts-node-dev": "1.0.0-pre.44",
+    "tslint": "5.20.1",
+    "typescript": "3.7.2"
+  },
+  "private": true,
+  "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9"
+}

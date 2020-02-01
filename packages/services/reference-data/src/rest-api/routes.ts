@@ -118,6 +118,26 @@ export function RegisterRoutes(app: express.Express) {
             const promise = controller.getSymbols.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
+    app.get('/api/symbols/apply-threshold',
+        authenticateMiddleware([{ "tokenAuth": [] }, { "cookieAuth": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                undefined: { "in": "request", "required": true, "dataType": "object" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new SymbolsController();
+
+
+            const promise = controller.getApplySymbolsThresholdStatus.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
 
     function authenticateMiddleware(security: TsoaRoute.Security[] = []) {
         return (request: any, _response: any, next: any) => {

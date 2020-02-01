@@ -1,6 +1,6 @@
 import { getEpicurusInstance, messageFactory, wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 import { RequestResponseBalanceMovementEndpoints } from '@abx-service-clients/balance'
-import { balanceChangePayloadSchema } from './schema'
+import { balanceChangePayloadSchema, createPendingWithdrawalPayloadSchema } from './schema'
 import { BalanceMovementFacade } from '../../core'
 
 export function bootstrapChangeEndpoints() {
@@ -19,7 +19,7 @@ export function bootstrapChangeEndpoints() {
 
   epicurus.server(
     RequestResponseBalanceMovementEndpoints.createPendingWithdrawal,
-    messageFactory(balanceChangePayloadSchema, ({ pendingWithdrawalParams, pendingWithdrawalFeeParams }) => {
+    messageFactory(createPendingWithdrawalPayloadSchema, ({ pendingWithdrawalParams, pendingWithdrawalFeeParams }) => {
       return wrapInTransaction(sequelize, null, transaction => {
         return Promise.all([
           balanceMovementFacade.createPendingWithdrawal({

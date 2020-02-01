@@ -1,13 +1,2 @@
-import { bootstrapRestApi } from './rest-api'
-import { bootstrapInternalApi } from './internal-api'
-import { runBalanceMigrations } from './migrations/migration-runner'
-
-import './core'
-
-bootstrap()
-
-async function bootstrap() {
-  await runBalanceMigrations()
-  bootstrapInternalApi()
-  bootstrapRestApi()
-}
+export * from './service_starter'
+export { BALANCE_REST_API_PORT } from './rest-api'

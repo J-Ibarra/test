@@ -4,9 +4,10 @@
   "description": "Creates pdf files from raw data using jsreport, and uploads them to AWS S3 ",
   "license": "ISC",
   "main": "dist/index",
-  "types": "dist/index",
+  "types": "src/index",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "scripts": {
     "build": "npm run clean && npm run compile",
