@@ -1,62 +1,46 @@
-import { getEpicurusInstance, messageFactory } from '@abx-utils/db-connection-utils'
 import { BalanceRetrievalEndpoints } from '@abx-service-clients/balance'
-import {
-  findBalancePayloadSchema,
-  findAllBalancesForAccountSchema,
-  findCurrencyBalancesSchema,
-  retrieveTotalOrderValueReceivedByAccountSchema,
-  getBalanceAdjustmentsForBalanceAndTradeTransactionsSchema,
-  getOrderBalanceReserveAdjustmentSchema,
-} from './schema'
 import { BalanceRetrievalFacade, BalanceRepository, BalanceRetrievalHandler, BalanceAdjustmentRepository } from '../../core'
+import { InternalRoute } from '@abx-utils/internal-api-tools'
 
-export function bootstrapQueryEndpoints() {
-  const epicurus = getEpicurusInstance()
+export function createQueryEndpointHandlers(): InternalRoute<any, any>[] {
   const balanceRetrievalFacade = new BalanceRetrievalFacade()
   const balanceRepository = new BalanceRepository()
   const balanceAdjustmentRepository = new BalanceAdjustmentRepository()
   const balanceRetrievalHandler = new BalanceRetrievalHandler()
 
-  epicurus.server(
-    BalanceRetrievalEndpoints.findBalance,
-    messageFactory(findBalancePayloadSchema, ({ currency, accountId }) => balanceRetrievalFacade.findBalance(currency, accountId)),
-  )
+  return [
+    {
+      path: BalanceRetrievalEndpoints.findBalance,
+      handler: ({ currency, accountId }) => balanceRetrievalFacade.findBalance(currency, accountId),
+    },
+    {
+      path: BalanceRetrievalEndpoints.findAllBalancesForAccount,
+      handler: ({ accountId }) => balanceRetrievalHandler.findAllBalancesForAccount(accountId),
+    },
+    {
+      path: BalanceRetrievalEndpoints.findCurrencyAvailableBalances,
+      handler: ({ accountId, currencies }) => balanceRetrievalHandler.findCurrencyAvailableBalances(accountId, currencies),
+    },
+    {
+      path: BalanceRetrievalEndpoints.findRawBalances,
+      handler: ({ currencyId, accountId }) => balanceRepository.findRawBalances({ currencyId, accountId }),
+    },
+    {
+      path: BalanceRetrievalEndpoints.retrieveTotalOrderValueReceivedByAccount,
+      handler: async ({ currencyReceivedId, accountId, tradeTransactionIds }) => {
+        const amount = await balanceAdjustmentRepository.retrieveTotalOrderValueReceivedByAccount(currencyReceivedId, accountId, tradeTransactionIds)
 
-  epicurus.server(
-    BalanceRetrievalEndpoints.findAllBalancesForAccount,
-    messageFactory(findAllBalancesForAccountSchema, ({ accountId }) => balanceRetrievalHandler.findAllBalancesForAccount(accountId)),
-  )
-
-  epicurus.server(
-    BalanceRetrievalEndpoints.findCurrencyAvailableBalances,
-    messageFactory(findCurrencyBalancesSchema, ({ accountId, currencies }) =>
-      balanceRetrievalHandler.findCurrencyAvailableBalances(accountId, currencies),
-    ),
-  )
-
-  epicurus.server(
-    BalanceRetrievalEndpoints.findRawBalances,
-    messageFactory(findBalancePayloadSchema, ({ currencyId, accountId }) => balanceRepository.findRawBalances({ currencyId, accountId })),
-  )
-
-  epicurus.server(
-    BalanceRetrievalEndpoints.retrieveTotalOrderValueReceivedByAccount,
-    messageFactory(retrieveTotalOrderValueReceivedByAccountSchema, ({ currencyReceivedId, accountId, tradeTransactionIds }) =>
-      balanceAdjustmentRepository.retrieveTotalOrderValueReceivedByAccount(currencyReceivedId, accountId, tradeTransactionIds),
-    ),
-  )
-
-  epicurus.server(
-    BalanceRetrievalEndpoints.getOrderBalanceReserveAdjustment,
-    messageFactory(getOrderBalanceReserveAdjustmentSchema, ({ accountId, orderId }) =>
-      balanceAdjustmentRepository.getOrderBalanceReserveAdjustment(accountId, orderId),
-    ),
-  )
-
-  epicurus.server(
-    BalanceRetrievalEndpoints.getBalanceAdjustmentsForBalanceAndTradeTransactions,
-    messageFactory(getBalanceAdjustmentsForBalanceAndTradeTransactionsSchema, ({ balanceId, tradeTransactionIds }) =>
-      balanceAdjustmentRepository.getBalanceAdjustmentsForBalanceAndTradeTransactions(balanceId, tradeTransactionIds),
-    ),
-  )
+        return { amount }
+      },
+    },
+    {
+      path: BalanceRetrievalEndpoints.getOrderBalanceReserveAdjustment,
+      handler: ({ orderId }) => balanceAdjustmentRepository.getOrderBalanceReserveAdjustment(orderId),
+    },
+    {
+      path: BalanceRetrievalEndpoints.getBalanceAdjustmentsForBalanceAndTradeTransactions,
+      handler: ({ balanceId, tradeTransactionIds }) =>
+        balanceAdjustmentRepository.getBalanceAdjustmentsForBalanceAndTradeTransactions(balanceId, tradeTransactionIds),
+    },
+  ]
 }

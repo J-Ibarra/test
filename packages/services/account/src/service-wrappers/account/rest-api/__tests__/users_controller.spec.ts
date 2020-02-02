@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import request from 'supertest'
-import { bootstrapRestApi } from '..'
+import { bootstrapRestApi, ACCOUNT_REST_API_PORT } from '..'
 import { findOrCreateOperatorAccount } from '../../../../core'
 import { createAccountAndSession } from '@abx-utils/account'
 import { truncateTables } from '@abx-utils/db-connection-utils'
@@ -11,7 +11,7 @@ describe('api:users', () => {
   beforeEach(async () => {
     await truncateTables()
     await findOrCreateOperatorAccount()
-    app = bootstrapRestApi()
+    app = bootstrapRestApi().listen(ACCOUNT_REST_API_PORT)
   })
 
   afterEach(async () => {

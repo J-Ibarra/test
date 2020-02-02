@@ -62,5 +62,5 @@ export function bootstrapRestApi() {
   })
 
   console.log(`Order Data API on port ${ORDER_DATA_API_PORT}`)
-  return app.listen(ORDER_DATA_API_PORT)
+  return app
 }

@@ -1,5 +1,4 @@
 import { get, isEmpty } from 'lodash'
-import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { OrderMatch } from '@abx-types/order'
 import { DepthMidPrice, MidPricesForSymbolRequest, MarketDataTimeFrame } from '@abx-types/market-data'
 
@@ -9,6 +8,11 @@ import { DepthCacheFacade } from '@abx-utils/in-memory-depth-cache'
 
 import { findLastOrderMatchForSymbol, findLastOrderMatchForSymbols } from '@abx-service-clients/order'
 import { DepthCacheSymbol } from '@abx-types/depth-cache'
+import { InternalApiRequestDispatcher } from '@abx-utils/internal-api-tools'
+
+const MARKET_DATA_REST_API_PORT = 3110
+
+const internalApiRequestDispatcher = new InternalApiRequestDispatcher(MARKET_DATA_REST_API_PORT)
 
 export async function calculateRealTimeMidPriceForSymbol(symbolId: string): Promise<number> {
   const depthCache = await DepthCacheFacade.createDepthCacheForAllSymbols()
@@ -59,21 +63,15 @@ function calculateMidPriceOrUseLatestMatchPrice(
 }
 
 export async function cleanOldMidPrices(): Promise<void> {
-  const epicurus = getEpicurusInstance()
-
-  return epicurus.request(MarketDataEndpoints.cleanOldMidPrices, {})
+  return internalApiRequestDispatcher.fireRequestToInternalApi<void>(MarketDataEndpoints.cleanOldMidPrices)
 }
 
 export async function reconcileOHCLMarketData(timeFrame: MarketDataTimeFrame): Promise<void> {
-  const epicurus = getEpicurusInstance()
-
-  return epicurus.request(MarketDataEndpoints.reconcileOHCLMarketData, { timeFrame })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<void>(MarketDataEndpoints.cleanOldMidPrices, { timeFrame })
 }
 
 export async function getMidPricesForSymbol(request: MidPricesForSymbolRequest): Promise<DepthMidPrice[]> {
-  const epicurus = getEpicurusInstance()
-
-  return epicurus.request(MarketDataEndpoints.getMidPricesForSymbol, { request })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<DepthMidPrice[]>(MarketDataEndpoints.cleanOldMidPrices, { ...request })
 }
 
 export * from './endpoints'

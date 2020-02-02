@@ -47,5 +47,5 @@ export const isAccountBoundByOrderRange = async (accountId: string) => {
     getExcludedAccountTypesFromOrderRangeValidations(),
   ])
 
-  return !accountTypesToBeExcluded.includes(accountDetails.type)
+  return !accountTypesToBeExcluded.includes(accountDetails.type!)
 }

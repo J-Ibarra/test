@@ -1,10 +1,12 @@
-import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { SettlementEndpoints } from './endpoints'
+import { InternalApiRequestDispatcher } from '@abx-utils/internal-api-tools'
+
+export const SETTLEMENT_API_ROOT = 3113
+
+const internalApiRequestDispatcher = new InternalApiRequestDispatcher(SETTLEMENT_API_ROOT)
 
 export function settleOrderMatch(id: number, feeCurrencyToUsdMidPrice: number): Promise<void> {
-  const epicurus = getEpicurusInstance()
-
-  return epicurus.request(SettlementEndpoints.settleOrderMatch, { id, feeCurrencyToUsdMidPrice })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<void>(SettlementEndpoints.settleOrderMatch, { id, feeCurrencyToUsdMidPrice })
 }
 
 export * from './endpoints'

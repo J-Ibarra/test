@@ -1,20 +1,22 @@
-import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { BalanceChangeParams } from '@abx-types/balance'
 import { RequestResponseBalanceMovementEndpoints } from './request_response_endpoints'
+import { InternalApiRequestDispatcher } from '@abx-utils/internal-api-tools'
+import { BALANCE_REST_API_PORT } from '../balance-retrieval'
+
+const internalApiRequestDispatcher = new InternalApiRequestDispatcher(BALANCE_REST_API_PORT)
 
 export function createReserve(changeParams: BalanceChangeParams) {
-  const epicurus = getEpicurusInstance()
-  return epicurus.request(RequestResponseBalanceMovementEndpoints.createReserve, { ...changeParams })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<void>(RequestResponseBalanceMovementEndpoints.createReserve, { ...changeParams })
 }
 
 export function updateAvailable(changeParams: BalanceChangeParams) {
-  const epicurus = getEpicurusInstance()
-  return epicurus.request(RequestResponseBalanceMovementEndpoints.updateAvailable, { ...changeParams })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<void>(RequestResponseBalanceMovementEndpoints.updateAvailable, { ...changeParams })
 }
 
 export function createPendingRedemption(changeParams: BalanceChangeParams) {
-  const epicurus = getEpicurusInstance()
-  return epicurus.request(RequestResponseBalanceMovementEndpoints.createPendingRedemption, { ...changeParams })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<void>(RequestResponseBalanceMovementEndpoints.createPendingRedemption, {
+    ...changeParams,
+  })
 }
 
 export function createPendingWithdrawal({
@@ -24,16 +26,16 @@ export function createPendingWithdrawal({
   pendingWithdrawalParams: BalanceChangeParams
   pendingWithdrawalFeeParams?: BalanceChangeParams
 }) {
-  const epicurus = getEpicurusInstance()
-  return epicurus.request(RequestResponseBalanceMovementEndpoints.createPendingWithdrawal, {
-    pendingWithdrawalFeeParams: pendingWithdrawalFeeParams || null,
+  return internalApiRequestDispatcher.fireRequestToInternalApi<void>(RequestResponseBalanceMovementEndpoints.createPendingWithdrawal, {
     pendingWithdrawalParams,
+    pendingWithdrawalFeeParams,
   })
 }
 
 export function createPendingDebitCardTopUp(changeParams: BalanceChangeParams) {
-  const epicurus = getEpicurusInstance()
-  return epicurus.request(RequestResponseBalanceMovementEndpoints.createPendingDebitCardTopUp, { ...changeParams })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<void>(RequestResponseBalanceMovementEndpoints.createPendingWithdrawal, {
+    ...changeParams,
+  })
 }
 
 export * from './request_response_endpoints'

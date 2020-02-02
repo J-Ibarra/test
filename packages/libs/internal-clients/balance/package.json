@@ -18,8 +18,8 @@
   "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9",
   "dependencies": {
     "@abx-utils/async-message-publisher": "1.0.0",
-    "@abx-utils/db-connection-utils": "1.0.0",
     "@abx-types/reference-data": "1.0.0",
+    "@abx-utils/internal-api-tools": "1.0.0",
     "@abx-utils/logging": "1.0.0",
     "sequelize": "4.41.0",
     "@abx-types/balance": "1.0.0"

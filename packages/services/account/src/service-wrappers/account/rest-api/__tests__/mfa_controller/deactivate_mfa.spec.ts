@@ -3,7 +3,7 @@ import * as http from 'http'
 import * as speakeasy from 'speakeasy'
 import request from 'supertest'
 import { updateUser } from '../../../../../core'
-import { bootstrapRestApi } from '../..'
+import { bootstrapRestApi, ACCOUNT_REST_API_PORT } from '../..'
 import { createAccountAndSession } from '@abx-utils/account'
 import { truncateTables } from '@abx-utils/db-connection-utils'
 
@@ -12,7 +12,7 @@ describe('api:mfa/deactivation', () => {
 
   beforeEach(async () => {
     await truncateTables()
-    app = bootstrapRestApi()
+    app = bootstrapRestApi().listen(ACCOUNT_REST_API_PORT)
   })
 
   afterEach(async () => {

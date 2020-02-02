@@ -36,6 +36,7 @@
     "@abx-utils/db-connection-utils": "1.0.0",
     "@abx-utils/express-middleware": "1.0.0",
     "@abx-utils/fx-rate": "1.0.0",
+    "@abx-utils/internal-api-tools": "1.0.0",
     "@abx-utils/async-message-consumer": "1.0.0",
     "@abx-utils/kbe-legacy-migrations": "1.0.0",
     "@abx-service-clients/reference-data": "1.0.0",

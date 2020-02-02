@@ -1,24 +1,19 @@
-import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { DepositQueryEndpoints } from './request_response_endpoints'
 import { DepositAddress, DepositRequest } from '@abx-types/deposit'
+import { InternalApiRequestDispatcher } from '@abx-utils/internal-api-tools'
+
+export const DEPOSIT_API_PORT = 3112
+
+const internalApiRequestDispatcher = new InternalApiRequestDispatcher(DEPOSIT_API_PORT)
 
 export function findDepositAddressesForAccount(accountId: string): Promise<DepositAddress[]> {
-  const epicurus = getEpicurusInstance()
-
-  return epicurus.request(DepositQueryEndpoints.findDepositAddressesForAccount, { accountId })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<DepositAddress[]>(DepositQueryEndpoints.findDepositAddressesForAccount, { accountId })
 }
 
 export function findDepositRequestById(id: number): Promise<DepositRequest | null> {
-  const epicurus = getEpicurusInstance()
-
-  return epicurus.request(DepositQueryEndpoints.findDepositRequestById, { id })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<DepositRequest | null>(DepositQueryEndpoints.findDepositAddressesForAccount, { id })
 }
 
 export function findDepositRequestsByIds(ids: number[]): Promise<DepositRequest[]> {
-  const epicurus = getEpicurusInstance()
-
-  return epicurus.request(DepositQueryEndpoints.findDepositRequestsByIds, { ids })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<DepositRequest[]>(DepositQueryEndpoints.findDepositRequestsByIds, { ids })
 }
-
-export * from './request_response_endpoints'
-export * from './pub_sub_channels'

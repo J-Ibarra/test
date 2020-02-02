@@ -6,7 +6,7 @@ import { findAllAdminRequests, saveAdminRequest } from '../../core'
 import { SourceEventType } from '@abx-types/balance'
 import { getEpicurusInstance, truncateTables } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
-import { bootstrapRestApi } from '..'
+import { bootstrapRestApi, ADMIN_FUND_MANAGEMENT_REST_API_PORT } from '..'
 import { WithdrawalPubSubChannels } from '@abx-service-clients/withdrawal'
 import { createTemporaryTestingAccount, createAccountAndSession } from '@abx-utils/account'
 import { AccountType } from '@abx-types/account'
@@ -23,11 +23,11 @@ const kauId = 2
 const revenueAccountId = 'adasd-5'
 
 describe.skip('api:admin_request:rejection', () => {
-  let app: ReturnType<typeof bootstrapRestApi>
+  let app
 
   beforeEach(async () => {
     await truncateTables()
-    app = bootstrapRestApi()
+    app = bootstrapRestApi().listen(ADMIN_FUND_MANAGEMENT_REST_API_PORT)
     sinon.stub(accountServiceOperations, 'findOrCreateKinesisRevenueAccount').resolves({ id: revenueAccountId })
     sinon
       .stub(referenceDataOperations, 'getCurrencyId')

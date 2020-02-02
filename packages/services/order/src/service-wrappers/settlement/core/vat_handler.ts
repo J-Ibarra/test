@@ -63,13 +63,19 @@ export async function calculateVatValue(
   feeCurrencyToUsdMidPrice: number,
   chfForOneUsd: Decimal,
 ): Promise<VatValue> {
-  const vatFeeCurrencyValue = calculateVat(executionFee, vatRate)
+  const vatFeeCurrencyValue = calculateVat(executionFee, vatRate).toNumber()
   const vatUsdValue = await calculateVatUsdValue(executionFee, symbol, feeCurrencyToUsdMidPrice, vatRate)
-  const vatChfValue = vatUsdValue.times(chfForOneUsd)
 
-  return {
-    valueInFeeCurrency: new Decimal(vatFeeCurrencyValue.toDP(taxScale, Decimal.ROUND_DOWN)),
-    valueInCHF: new Decimal(vatChfValue.toDP(taxScale, Decimal.ROUND_DOWN)),
+  try {
+    const vatChfValue = new Decimal(vatUsdValue).times(chfForOneUsd.toNumber())
+
+    return {
+      valueInFeeCurrency: new Decimal(vatFeeCurrencyValue).toDP(taxScale, Decimal.ROUND_DOWN),
+      valueInCHF: new Decimal(vatChfValue.toDP(taxScale, Decimal.ROUND_DOWN)),
+    }
+  } catch (e) {
+    logger.error(`Error occured while calculating vat value for ${symbol.id} and execution fee:executionFee ${executionFee}: ${JSON.stringify(e)}`)
+    throw e
   }
 }
 

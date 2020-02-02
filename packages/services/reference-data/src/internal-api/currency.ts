@@ -1,13 +1,12 @@
-import { getEpicurusInstance, messageFactory } from '@abx-utils/db-connection-utils'
 import { CurrencyEndpoints } from '@abx-service-clients/reference-data'
-import { emptyPayload } from './schemas'
 import { findAllCurrencies } from '../core'
+import { InternalRoute } from '@abx-utils/internal-api-tools'
 
-export function boot() {
-  const epicurus = getEpicurusInstance()
-
-  epicurus.server(
-    CurrencyEndpoints.getAllCurrencies,
-    messageFactory(emptyPayload, () => findAllCurrencies()),
-  )
+export function createCurrencyEndpointHandlers(): InternalRoute<any, any>[] {
+  return [
+    {
+      path: CurrencyEndpoints.getAllCurrencies,
+      handler: () => findAllCurrencies(),
+    },
+  ]
 }

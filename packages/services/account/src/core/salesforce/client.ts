@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosInstance } from 'axios'
 import moment from 'moment'
 
 import { Environment } from '@abx-types/reference-data'
@@ -8,7 +8,7 @@ const subDomain = process.env.NODE_ENV === 'production' ? 'login' : 'test'
 const SALESFORCE_HOST = `https://${subDomain}.salesforce.com`
 let accessData: AccessToken
 
-export async function getSalesforceClient() {
+export async function getSalesforceClient(): Promise<AxiosInstance> {
   if (process.env.NODE_ENV === Environment.e2eLocal) {
     return axios.create({
       baseURL: 'http://localhost:9001', // The API Stub runs on this port for local E2E tests

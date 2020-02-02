@@ -1,18 +1,4 @@
-import { getEpicurusInstance, messageFactory } from '@abx-utils/db-connection-utils'
 import { ConfigEndpoints } from '@abx-service-clients/reference-data'
-import {
-  isFeatureFlagEnabledSchema,
-  getExchangeHoldingsWalletsSchema,
-  getTransactionFeeCapsSchema,
-  getExchangeDepositPollingFrequencySchema,
-  getVatRateSchema,
-  getWithdrawalConfigForCurrencySchema,
-  getWithdrawalConfigSchema,
-  getWithdrawalLimitSchema,
-  getOperationsEmailSchema,
-  getEthereumDepositMaxBlockCheckSchema,
-  getExcludedAccountTypesFromOrderRangeValidationsSchema,
-} from './schemas'
 import {
   isFeatureFlagEnabled,
   getExchangeHoldingsWallets,
@@ -26,62 +12,73 @@ import {
   getEthereumDepositMaxBlockCheck,
   getExcludedAccountTypesFromOrderRangeValidations,
 } from '../core'
+import { InternalRoute } from '@abx-utils/internal-api-tools'
 
-export function boot() {
-  const epicurus = getEpicurusInstance()
+export function createConfigEndpointHandlers(): InternalRoute<any, any>[] {
+  return [
+    {
+      path: ConfigEndpoints.isFeatureFlagEnabled,
+      handler: async ({ flag }) => {
+        const enabled = await isFeatureFlagEnabled(flag)
 
-  epicurus.server(
-    ConfigEndpoints.isFeatureFlagEnabled,
-    messageFactory(isFeatureFlagEnabledSchema, ({ flag }) => isFeatureFlagEnabled(flag)),
-  )
+        return { enabled }
+      },
+    },
+    {
+      path: ConfigEndpoints.getExchangeHoldingsWallets,
+      handler: () => getExchangeHoldingsWallets(),
+    },
+    {
+      path: ConfigEndpoints.getTransactionFeeCaps,
+      handler: () => getTransactionFeeCaps(),
+    },
+    {
+      path: ConfigEndpoints.getExchangeDepositPollingFrequency,
+      handler: () => getExchangeDepositPollingFrequency(),
+    },
+    {
+      path: ConfigEndpoints.getVatRate,
+      handler: async () => {
+        const vatRate = await getVatRate()
 
-  epicurus.server(
-    ConfigEndpoints.getExchangeHoldingsWallets,
-    messageFactory(getExchangeHoldingsWalletsSchema, () => getExchangeHoldingsWallets()),
-  )
+        return { vatRate }
+      },
+    },
+    {
+      path: ConfigEndpoints.getWithdrawalConfigForCurrency,
+      handler: ({ currencyCode }) => getWithdrawalConfigForCurrency(currencyCode),
+    },
+    {
+      path: ConfigEndpoints.getWithdrawalConfig,
+      handler: () => getWithdrawalConfig(),
+    },
+    {
+      path: ConfigEndpoints.getWithdrawalLimit,
+      handler: async ({ accountStatus }) => {
+        const limit = await getWithdrawalLimit(accountStatus)
 
-  epicurus.server(
-    ConfigEndpoints.getTransactionFeeCaps,
-    messageFactory(getTransactionFeeCapsSchema, () => getTransactionFeeCaps()),
-  )
+        return { limit }
+      },
+    },
+    {
+      path: ConfigEndpoints.getOperationsEmail,
+      handler: async () => {
+        const email = await getOperationsEmail()
 
-  epicurus.server(
-    ConfigEndpoints.getExchangeDepositPollingFrequency,
-    messageFactory(getExchangeDepositPollingFrequencySchema, () => getExchangeDepositPollingFrequency()),
-  )
+        return { email }
+      },
+    },
+    {
+      path: ConfigEndpoints.getEthereumDepositMaxBlockCheck,
+      handler: async () => {
+        const blocks = await getEthereumDepositMaxBlockCheck()
 
-  epicurus.server(
-    ConfigEndpoints.getVatRate,
-    messageFactory(getVatRateSchema, () => getVatRate()),
-  )
-
-  epicurus.server(
-    ConfigEndpoints.getWithdrawalConfigForCurrency,
-    messageFactory(getWithdrawalConfigForCurrencySchema, ({ currencyCode }) => getWithdrawalConfigForCurrency(currencyCode)),
-  )
-
-  epicurus.server(
-    ConfigEndpoints.getWithdrawalConfig,
-    messageFactory(getWithdrawalConfigSchema, () => getWithdrawalConfig()),
-  )
-
-  epicurus.server(
-    ConfigEndpoints.getWithdrawalLimit,
-    messageFactory(getWithdrawalLimitSchema, ({ accountStatus }) => getWithdrawalLimit(accountStatus)),
-  )
-
-  epicurus.server(
-    ConfigEndpoints.getOperationsEmail,
-    messageFactory(getOperationsEmailSchema, () => getOperationsEmail()),
-  )
-
-  epicurus.server(
-    ConfigEndpoints.getEthereumDepositMaxBlockCheck,
-    messageFactory(getEthereumDepositMaxBlockCheckSchema, () => getEthereumDepositMaxBlockCheck()),
-  )
-
-  epicurus.server(
-    ConfigEndpoints.getExcludedAccountTypesFromOrderRangeValidations,
-    messageFactory(getExcludedAccountTypesFromOrderRangeValidationsSchema, () => getExcludedAccountTypesFromOrderRangeValidations()),
-  )
+        return { blocks }
+      },
+    },
+    {
+      path: ConfigEndpoints.getExcludedAccountTypesFromOrderRangeValidations,
+      handler: () => getExcludedAccountTypesFromOrderRangeValidations(),
+    },
+  ]
 }

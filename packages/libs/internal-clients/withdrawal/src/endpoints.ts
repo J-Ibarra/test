@@ -1,11 +1,11 @@
 export enum WithdrawalEndpoints {
-  findWithdrawalRequestForTransactionHash = 'exchange:withdrawal:findWithdrawalRequestForTransactionHash',
-  findWithdrawalRequestsForTransactionHashes = 'exchange:withdrawal:findWithdrawalRequestsForTransactionHashes',
-  findWithdrawalRequestById = 'exchange:withdrawal:findWithdrawalRequestById',
-  findWithdrawalRequestsByIds = 'exchange:withdrawal:findWithdrawalRequestsByIds',
+  findWithdrawalRequestForTransactionHash = 'withdrawals/findWithdrawalRequestForTransactionHash',
+  findWithdrawalRequestsForTransactionHashes = 'withdrawals/findWithdrawalRequestsForTransactionHashes',
+  findWithdrawalRequestById = 'withdrawals/findWithdrawalRequestById',
+  findWithdrawalRequestsByIds = 'withdrawals/findWithdrawalRequestsByIds',
 
-  getWithdrawalFee = 'exchange:withdrawal:getWithdrawalFee',
-  getWithdrawalFees = 'exchange:withdrawal:getWithdrawalFees',
+  getWithdrawalFee = 'withdrawals/getWithdrawalFee',
+  getWithdrawalFees = 'withdrawals/getWithdrawalFees',
 
-  completeFiatWithdrawal = 'exchange:withdrawal:completeFiatWithdrawal',
+  completeFiatWithdrawal = 'withdrawals/completeFiatWithdrawal',
 }

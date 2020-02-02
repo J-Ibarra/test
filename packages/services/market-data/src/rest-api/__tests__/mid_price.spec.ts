@@ -3,7 +3,7 @@ import * as sinon from 'sinon'
 import request from 'supertest'
 import * as realTimeMidPriceCalculatorFunctions from '@abx-service-clients/market-data'
 import { CurrencyCode } from '@abx-types/reference-data'
-import { bootstrapRestApi as bootstrapApi } from '..'
+import { bootstrapRestApi as bootstrapApi, MARKET_DATA_REST_API_PORT } from '..'
 import { createAccountAndSession } from '@abx-utils/account'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import * as depthCacheUtils from '@abx-utils/in-memory-depth-cache'
@@ -15,7 +15,7 @@ describe('api:mid-price', () => {
   let targetSymbolId = `${CurrencyCode.kau}_${CurrencyCode.usd}`
 
   beforeEach(async () => {
-    app = bootstrapApi()
+    app = bootstrapApi().listen(MARKET_DATA_REST_API_PORT)
     sinon.stub(referenceDataOperations, 'getAllSymbolPairSummaries').resolves([
       {
         id: targetSymbolId,

@@ -21,7 +21,7 @@ const logger = Logger.getInstance('api', 'bootstrapRestApi')
 
 export const DEPOSIT_API_PORT = 3112
 
-export function bootstrapRestApi() {
+export function bootstrapRestApi(): express.Express {
   const app = express()
 
   app.use(requestIpMiddleware())
@@ -59,5 +59,5 @@ export function bootstrapRestApi() {
   app.on('unhandledRejection', e => logger.error(e as any))
 
   console.log(`Deposit Data API on port ${DEPOSIT_API_PORT}`)
-  return app.listen(DEPOSIT_API_PORT)
+  return app
 }

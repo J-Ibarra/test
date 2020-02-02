@@ -1,5 +1,5 @@
 export enum DepositQueryEndpoints {
-  findDepositRequestById = 'exchange:deposit:findDepositRequestById',
-  findDepositRequestsByIds = 'exchange:deposit:findDepositRequestsByIds',
-  findDepositAddressesForAccount = 'exchange:deposit:findDepositAddressesForAccount',
+  findDepositRequestById = 'deposits/findDepositRequestById',
+  findDepositRequestsByIds = 'deposits/findDepositRequestsByIds',
+  findDepositAddressesForAccount = 'deposits/findDepositAddressesForAccount',
 }

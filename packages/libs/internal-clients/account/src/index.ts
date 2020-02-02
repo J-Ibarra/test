@@ -1,45 +1,43 @@
-import { getEpicurusInstance, MemoryCache } from '@abx-utils/db-connection-utils'
+import { MemoryCache } from '@abx-utils/db-connection-utils'
 import { AccountEndpoints } from './endpoints'
 import { User, Account } from '@abx-types/account'
+import { InternalApiRequestDispatcher } from '@abx-utils/internal-api-tools'
+
+export const ACCOUNT_REST_API_PORT = 3103
 
 const memoryCache = MemoryCache.getInstance()
 let operatorAccount: Account | null
 let kinesisRevenueAccount: Account | null
 
-export function findAccountById(accountId: string) {
-  const epicurus = getEpicurusInstance()
+const internalApiRequestDispatcher = new InternalApiRequestDispatcher(ACCOUNT_REST_API_PORT)
 
-  return epicurus.request(AccountEndpoints.findAccountById, { accountId })
+export function findAccountById(accountId: string): Promise<Account> {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<Account>(AccountEndpoints.findAccountById, { accountId })
 }
 
 export function findAccountWithUserDetails(criteria: Partial<Account>): Promise<Account | null> {
-  const epicurus = getEpicurusInstance()
-
-  return epicurus.request(AccountEndpoints.findUserByAccountId, { ...criteria })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<Account | null>(AccountEndpoints.findAccountWithUserDetails, { ...criteria })
 }
 
-export function findAccountsByIdWithUserDetails(accountIds: string[]) {
-  const epicurus = getEpicurusInstance()
-
-  return epicurus.request(AccountEndpoints.findAccountsByIdWithUserDetails, { accountIds })
+export function findAccountsByIdWithUserDetails(accountIds: string[]): Promise<Account[]> {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<Account[]>(AccountEndpoints.findAccountsByIdWithUserDetails, { accountIds })
 }
 
 export function findUserByAccountId(accountId: string): Promise<User | null> {
-  const epicurus = getEpicurusInstance()
-
-  return epicurus.request(AccountEndpoints.findUserByAccountId, { accountId })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<User | null>(AccountEndpoints.findUserByAccountId, { accountId })
 }
 
-export function isAccountSuspended(accountId: string): Promise<boolean> {
-  const epicurus = getEpicurusInstance()
+export async function isAccountSuspended(accountId: string): Promise<boolean> {
+  const { accountSuspended } = await internalApiRequestDispatcher.fireRequestToInternalApi<{ accountSuspended: boolean }>(
+    AccountEndpoints.isAccountSuspended,
+    { accountId },
+  )
 
-  return epicurus.request(AccountEndpoints.isAccountSuspended, { accountId })
+  return accountSuspended
 }
 
 export function findUsersByAccountId(accountId: string): Promise<User[]> {
-  const epicurus = getEpicurusInstance()
-
-  return epicurus.request(AccountEndpoints.findUsersByAccountId, { accountId })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<User[]>(AccountEndpoints.findUsersByAccountId, { accountId })
 }
 
 export async function findOrCreateKinesisRevenueAccount(): Promise<Account> {
@@ -47,11 +45,7 @@ export async function findOrCreateKinesisRevenueAccount(): Promise<Account> {
     return kinesisRevenueAccount
   }
 
-  const epicurus = getEpicurusInstance()
-
-  kinesisRevenueAccount = await epicurus.request(AccountEndpoints.findOrCreateKinesisRevenueAccount, {})
-
-  return kinesisRevenueAccount!
+  return internalApiRequestDispatcher.fireRequestToInternalApi<Account>(AccountEndpoints.findOrCreateKinesisRevenueAccount)
 }
 
 export async function findOrCreateOperatorAccount(): Promise<Account> {
@@ -59,11 +53,7 @@ export async function findOrCreateOperatorAccount(): Promise<Account> {
     return operatorAccount
   }
 
-  const epicurus = getEpicurusInstance()
-
-  operatorAccount = await epicurus.request(AccountEndpoints.findOrCreateOperatorAccount, {})
-
-  return operatorAccount!
+  return internalApiRequestDispatcher.fireRequestToInternalApi<Account>(AccountEndpoints.findOrCreateOperatorAccount)
 }
 
 /**
@@ -83,9 +73,7 @@ export async function getAllKycVerifiedAccountIds(cacheExpiryInSeconds?: number)
     )
   }
 
-  const epicurus = getEpicurusInstance()
-
-  kycVerifiedAccountIds = await epicurus.request(AccountEndpoints.getAllKycVerifiedAccountIds, {})
+  kycVerifiedAccountIds = await internalApiRequestDispatcher.fireRequestToInternalApi<string[]>(AccountEndpoints.getAllKycVerifiedAccountIds)
 
   return new Set<string>(kycVerifiedAccountIds)
 }
@@ -97,10 +85,8 @@ async function returnCachedValueOrRetrieveFromSource<T>(endpoint: AccountEndpoin
     return cachedValue as T
   }
 
-  const epicurus = getEpicurusInstance()
-
-  const freshValue = await epicurus.request(endpoint, {})
-  await memoryCache.set<string[]>({
+  const freshValue = await await internalApiRequestDispatcher.fireRequestToInternalApi<T>(endpoint)
+  await memoryCache.set<T>({
     key: cacheKey,
     ttl: cacheExpiryInSeconds,
     val: freshValue,

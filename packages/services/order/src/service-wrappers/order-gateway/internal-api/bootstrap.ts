@@ -1,64 +1,27 @@
-import { getEpicurusInstance, messageFactory } from '@abx-utils/db-connection-utils'
 import { Logger } from '@abx-utils/logging'
-import { OrderType } from '@abx-types/order'
-import { marketOrderMessage, limitOrderMessage, cancelAllOrdersForAccountMessage, cancelOrderMessage, cancelAllExpiredOrdersMessage } from './schema'
 import { placeOrder, OrderCancellationGateway, expireOrders } from '../core'
 import { OrderGatewayEndpoints } from '@abx-service-clients/order'
+import express from 'express'
+import { setupInternalApi } from '@abx-utils/internal-api-tools'
 
 const logger = Logger.getInstance('order-gateway', 'bootstrapInternalApi')
 
 const orderCancellationGateway = new OrderCancellationGateway()
 
-export function bootstrapInternalApi() {
-  const epicurus = getEpicurusInstance()
-
+export function bootstrapInternalApi(app: express.Express) {
   logger.debug('Setting up place order epicurus endpoint')
-  epicurus.server(
-    OrderGatewayEndpoints.placeOrder,
-    messageFactory(
-      msg => (msg.orderType === OrderType.market ? marketOrderMessage : limitOrderMessage),
-      request => {
-        logger.debug(
-          `Received a ${request.direction} ${request.orderType} order request issued by account ${request.accountId} for pair ${request.symbolId}`,
-        )
-
-        return placeOrder(request)
-      },
-    ),
-  )
-
-  logger.debug('Setting up place order epicurus endpoint')
-  epicurus.server(
-    OrderGatewayEndpoints.cancelAllOrdersForAccount,
-    messageFactory(cancelAllOrdersForAccountMessage, ({ accountId }) => {
-      return orderCancellationGateway.cancelOrdersOnAccount(accountId)
-    }),
-  )
-
-  logger.debug('Setting up cancel order epicurus endpoint')
-  epicurus.server(
-    OrderGatewayEndpoints.cancelOrder,
-    messageFactory(cancelOrderMessage, msg => {
-      return orderCancellationGateway.cancelOrder(msg).then((order: any) => ({ orderId: order.id }))
-    }),
-  )
-
-  epicurus.server(
-    OrderGatewayEndpoints.cancelAllExpiredOrders,
-    messageFactory(cancelAllExpiredOrdersMessage, () => {
-      return expireOrders()
-    }),
-  )
+  const routes = createRoutes()
+  setupInternalApi(app, routes)
 
   // Clean shutdown Process
   process.on('SIGINT', () => {
     logger.warn('Contract exchange received SIGINT')
-    gracefulShutdown().then(() => process.exit(0))
+    process.exit(0)
   })
 
   process.on('SIGTERM', () => {
     logger.warn('Contract exchange received SIGTERM')
-    gracefulShutdown().then(() => process.exit(0))
+    process.exit(0)
   })
 
   process.on('exit', code => {
@@ -66,9 +29,35 @@ export function bootstrapInternalApi() {
       logger.warn(`Calling EXIT with code ${code}`)
     }
   })
+}
 
-  async function gracefulShutdown() {
-    epicurus.shutdown()
-    logger.debug('Graceful shutdown complete')
-  }
+function createRoutes() {
+  return [
+    {
+      path: OrderGatewayEndpoints.placeOrder,
+      handler: request => {
+        logger.debug(
+          `Received a ${request.direction} ${request.orderType} order request issued by account ${request.accountId} for pair ${request.symbolId}`,
+        )
+
+        return placeOrder(request)
+      },
+    },
+    {
+      path: OrderGatewayEndpoints.cancelAllOrdersForAccount,
+      handler: ({ accountId }) => {
+        return orderCancellationGateway.cancelOrdersOnAccount(accountId)
+      },
+    },
+    {
+      path: OrderGatewayEndpoints.cancelOrder,
+      handler: msg => {
+        return orderCancellationGateway.cancelOrder(msg).then((order: any) => ({ orderId: order.id }))
+      },
+    },
+    {
+      path: OrderGatewayEndpoints.cancelAllExpiredOrders,
+      handler: () => expireOrders(),
+    },
+  ]
 }

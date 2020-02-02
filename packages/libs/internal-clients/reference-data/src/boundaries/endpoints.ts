@@ -1,6 +1,6 @@
 export enum BoundaryEndpoints {
-  findBoundaryForCurrency = 'exchange:reference-data:findBoundaryForCurrency',
-  getAllCurrencyBoundaries = 'exchange:reference-data:getAllCurrencyBoundaries',
-  getBoundariesForCurrencies = 'exchange:reference-data:getBoundariesForCurrencies',
-  getSymbolBoundaries = 'exchange:reference-data:getSymbolBoundaries',
+  findBoundaryForCurrency = 'reference-data/config/findBoundaryForCurrency',
+  getAllCurrencyBoundaries = 'reference-data/config/getAllCurrencyBoundaries',
+  getBoundariesForCurrencies = 'reference-data/config/getBoundariesForCurrencies',
+  getSymbolBoundaries = 'reference-data/config/getSymbolBoundaries',
 }

@@ -3,16 +3,16 @@ import jwt from 'jsonwebtoken'
 import { v4 } from 'node-uuid'
 import request from 'supertest'
 import { getEnvironmentConfig, truncateTables } from '@abx-utils/db-connection-utils'
-import { bootstrapRestApi } from '..'
+import { bootstrapRestApi, ACCOUNT_REST_API_PORT } from '..'
 import { createTemporaryTestingAccount, TEST_PASSWORD, createAccountAndSession } from '@abx-utils/account'
 import { TokenResponse } from '../token_controller'
 
 describe('api:tokens', () => {
-  let app: ReturnType<typeof bootstrapRestApi>
+  let app
 
   beforeEach(async () => {
     await truncateTables()
-    app = bootstrapRestApi()
+    app = bootstrapRestApi().listen(ACCOUNT_REST_API_PORT)
   })
 
   afterEach(async () => {

@@ -1,13 +1,12 @@
-import { getEpicurusInstance, messageFactory } from '@abx-utils/db-connection-utils'
 import { SymbolEndpoints } from '@abx-service-clients/reference-data'
-import { emptyPayload } from './schemas'
 import { getAllCompleteSymbolDetails } from '../core'
+import { InternalRoute } from '@abx-utils/internal-api-tools'
 
-export function boot() {
-  const epicurus = getEpicurusInstance()
-
-  epicurus.server(
-    SymbolEndpoints.getAllCompleteSymbolDetails,
-    messageFactory(emptyPayload, () => getAllCompleteSymbolDetails()),
-  )
+export function createSymbolEndpointHandlers(): InternalRoute<any, any>[] {
+  return [
+    {
+      path: SymbolEndpoints.getAllCompleteSymbolDetails,
+      handler: () => getAllCompleteSymbolDetails(),
+    },
+  ]
 }

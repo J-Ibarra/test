@@ -1,11 +1,11 @@
-import { getEpicurusInstance, getModel, messageFactory } from '@abx-utils/db-connection-utils'
+import { getModel } from '@abx-utils/db-connection-utils'
 import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-data'
 import { OrderMatch, OrderMatchStatus, UsdMidPriceEnrichedOrderMatch } from '@abx-types/order'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { getAllCompleteSymbolDetails, getAllSymbolPairSummaries } from '@abx-service-clients/reference-data'
-import { SettlementEndpoints } from '@abx-service-clients/order'
-import { addOrderToSettleQueue, settleOrderMatchForPair, runSettlementLogic } from './core'
+import { addOrderToSettleQueue, settleOrderMatchForPair } from './core'
 import { runOrderDataMigrations } from '../../migrations/migration-runner'
+import { bootstrapInternalApi } from './internal_api_handler'
 
 export const settleOrderMatch = {
   type: 'object',
@@ -29,28 +29,12 @@ interface OrderMatchFeeCurrencyMidPriceDetails {
 
 export async function bootstrapSettlementService() {
   await runOrderDataMigrations()
-  const epicurus = getEpicurusInstance()
-
-  epicurus.server(
-    SettlementEndpoints.settleOrderMatch,
-    messageFactory(settleOrderMatch, async match => addOrderToSettleQueue(match)),
-  )
+  await bootstrapInternalApi()
 
   const symbols = await getAllSymbolPairSummaries()
   symbols.forEach(({ id }) => setTimeout(() => settleOrderMatchForPair(id), 100))
 
   await addAllMatchesPendingCompletionToQueue()
-}
-
-export async function bootstrapForTesting() {
-  const epicurus = getEpicurusInstance()
-
-  epicurus.server(
-    SettlementEndpoints.settleOrderMatch,
-    messageFactory(settleOrderMatch, async match => {
-      return runSettlementLogic(match)
-    }),
-  )
 }
 
 async function addAllMatchesPendingCompletionToQueue() {

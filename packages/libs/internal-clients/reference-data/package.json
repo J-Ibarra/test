@@ -19,7 +19,7 @@
   "dependencies": {
     "@abx-types/account": "1.0.0",
     "@abx-types/reference-data": "1.0.0",
-    "@abx-utils/db-connection-utils": "1.0.0",
+    "@abx-utils/internal-api-tools": "1.0.0",
     "moment": "2.22.2",
     "decimal.js": "10.2.0",
     "lodash": "4.17.5"

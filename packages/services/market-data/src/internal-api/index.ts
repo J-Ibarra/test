@@ -5,7 +5,9 @@ import { OrderDirection, OrderMatch } from '@abx-types/order'
 import { DepthItem } from '@abx-types/depth-cache'
 import { getEpicurusInstance } from '@abx/db-connection-utils'
 import { OrderPubSubChannels } from '@abx-service-clients/order'
-import { bootstrapInternalApiEndpoints } from './internal_api_endponts_handler'
+import { createQueryEndpointHandlers } from './internal_api_endponts_handler'
+import express from 'express'
+import { setupInternalApi } from '@abx-utils/internal-api-tools'
 
 interface DepthUpdated {
   topOfDepthUpdated: boolean
@@ -16,9 +18,9 @@ interface DepthUpdated {
 
 const logger = Logger.getInstance('market_data_reconciliation', 'bootstrap')
 
-export async function bootstrapInternalApi() {
+export async function bootstrapInternalApi(app: express.Express) {
   await initialisePriceChangeStatistics()
-  bootstrapInternalApiEndpoints()
+  setupInternalApi(app, createQueryEndpointHandlers())
 
   const epicurus = getEpicurusInstance()
 

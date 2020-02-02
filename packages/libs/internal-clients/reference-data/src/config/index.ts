@@ -1,4 +1,3 @@
-import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { ConfigEndpoints } from './endpoints'
 import {
   SupportedFeatureFlags,
@@ -8,61 +7,64 @@ import {
   DepositPollingFrequency,
   WithdrawalConfig,
 } from '@abx-types/reference-data'
-import { AccountStatus } from '@abx-types/account'
+import { AccountStatus, AccountType } from '@abx-types/account'
+import { InternalApiRequestDispatcher } from '@abx-utils/internal-api-tools'
+import { REFERENCE_DATA_REST_API_PORT } from '../boundaries'
+
+const internalApiRequestDispatcher = new InternalApiRequestDispatcher(REFERENCE_DATA_REST_API_PORT)
 
 export async function isFeatureFlagEnabled(flag: SupportedFeatureFlags): Promise<boolean> {
-  const epicurus = getEpicurusInstance()
-  return epicurus.request(ConfigEndpoints.isFeatureFlagEnabled, { flag })
+  const result = await internalApiRequestDispatcher.fireRequestToInternalApi<{ enabled: boolean }>(ConfigEndpoints.isFeatureFlagEnabled, { flag })
+  return result.enabled
 }
 
 export async function getExchangeHoldingsWallets(): Promise<ExchangeHoldingsWallet[]> {
-  const epicurus = getEpicurusInstance()
-  return epicurus.request(ConfigEndpoints.getExchangeHoldingsWallets, {})
+  return internalApiRequestDispatcher.fireRequestToInternalApi<ExchangeHoldingsWallet[]>(ConfigEndpoints.getExchangeHoldingsWallets)
 }
 
 export async function getTransactionFeeCaps(): Promise<Record<CurrencyCode, number>> {
-  const epicurus = getEpicurusInstance()
-  return epicurus.request(ConfigEndpoints.getTransactionFeeCaps, {})
+  return internalApiRequestDispatcher.fireRequestToInternalApi<Record<CurrencyCode, number>>(ConfigEndpoints.getTransactionFeeCaps)
 }
 
 export async function getExchangeDepositPollingFrequency(): Promise<DepositPollingFrequency[]> {
-  const epicurus = getEpicurusInstance()
-  return epicurus.request(ConfigEndpoints.getExchangeDepositPollingFrequency, {})
+  return internalApiRequestDispatcher.fireRequestToInternalApi<DepositPollingFrequency[]>(ConfigEndpoints.getExchangeDepositPollingFrequency)
 }
 
 export async function getVatRate(): Promise<number> {
-  const epicurus = getEpicurusInstance()
-  return epicurus.request(ConfigEndpoints.getVatRate, {})
+  const { vatRate } = await internalApiRequestDispatcher.fireRequestToInternalApi<{ vatRate: number }>(ConfigEndpoints.getVatRate)
+  return vatRate
 }
 
 export async function getWithdrawalConfigForCurrency({ currencyCode }: { currencyCode: CurrencyCode }): Promise<CurrencyWithdrawalConfig> {
-  const epicurus = getEpicurusInstance()
-  return epicurus.request(ConfigEndpoints.getWithdrawalConfigForCurrency, { currencyCode })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<CurrencyWithdrawalConfig>(ConfigEndpoints.getWithdrawalConfigForCurrency, {
+    currencyCode,
+  })
 }
 
 export async function getWithdrawalConfig(): Promise<WithdrawalConfig> {
-  const epicurus = getEpicurusInstance()
-  return epicurus.request(ConfigEndpoints.getWithdrawalConfig, {})
+  return internalApiRequestDispatcher.fireRequestToInternalApi<WithdrawalConfig>(ConfigEndpoints.getWithdrawalConfig)
 }
 
 export async function getWithdrawalLimit(accountStatus: AccountStatus) {
-  const epicurus = getEpicurusInstance()
-  return epicurus.request(ConfigEndpoints.getWithdrawalLimit, { accountStatus })
+  const { limit } = await internalApiRequestDispatcher.fireRequestToInternalApi<{ limit: number }>(ConfigEndpoints.getWithdrawalConfig, {
+    accountStatus,
+  })
+
+  return limit
 }
 
 export async function getOperationsEmail(): Promise<string> {
-  const epicurus = getEpicurusInstance()
-  return epicurus.request(ConfigEndpoints.getOperationsEmail, {})
+  const { email } = await internalApiRequestDispatcher.fireRequestToInternalApi<{ email: string }>(ConfigEndpoints.getOperationsEmail)
+  return email
 }
 
 export async function getEthereumDepositMaxBlockCheck(): Promise<number> {
-  const epicurus = getEpicurusInstance()
-  return epicurus.request(ConfigEndpoints.getEthereumDepositMaxBlockCheck, {})
+  const { blocks } = await internalApiRequestDispatcher.fireRequestToInternalApi<{ blocks: number }>(ConfigEndpoints.getEthereumDepositMaxBlockCheck)
+  return blocks
 }
 
-export async function getExcludedAccountTypesFromOrderRangeValidations(): Promise<number> {
-  const epicurus = getEpicurusInstance()
-  return epicurus.request(ConfigEndpoints.getExcludedAccountTypesFromOrderRangeValidations, {})
+export async function getExcludedAccountTypesFromOrderRangeValidations(): Promise<AccountType[]> {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<AccountType[]>(ConfigEndpoints.getExcludedAccountTypesFromOrderRangeValidations)
 }
 
 export * from './endpoints'

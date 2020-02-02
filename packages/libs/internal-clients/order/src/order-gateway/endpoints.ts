@@ -1,6 +1,6 @@
 export enum OrderGatewayEndpoints {
-  placeOrder = 'exchange:order:placeOrder',
-  cancelAllOrdersForAccount = 'exchange:order:cancelAllOrdersForAccount',
-  cancelOrder = 'exchange:order:cancelOrder',
-  cancelAllExpiredOrders = 'exchange:order:cancelAllExpiredOrders',
+  placeOrder = 'order-gateway/placeOrder',
+  cancelAllOrdersForAccount = 'order-gateway/cancelAllOrdersForAccount',
+  cancelOrder = 'order-gateway/cancelOrder',
+  cancelAllExpiredOrders = 'order-gateway/cancelAllExpiredOrders',
 }

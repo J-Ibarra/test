@@ -1,47 +1,44 @@
-import { getEpicurusInstance, messageFactory, wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
+import { wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 import { RequestResponseBalanceMovementEndpoints } from '@abx-service-clients/balance'
-import { balanceChangePayloadSchema, createPendingWithdrawalPayloadSchema } from './schema'
 import { BalanceMovementFacade } from '../../core'
+import { InternalRoute } from '@abx-utils/internal-api-tools'
 
-export function bootstrapChangeEndpoints() {
-  const epicurus = getEpicurusInstance()
+export function createChangeEndpointHandlers(): InternalRoute<any, any>[] {
   const balanceMovementFacade = BalanceMovementFacade.getInstance()
 
-  epicurus.server(
-    RequestResponseBalanceMovementEndpoints.createReserve,
-    messageFactory(balanceChangePayloadSchema, params => balanceMovementFacade.createReserve(params)),
-  )
-
-  epicurus.server(
-    RequestResponseBalanceMovementEndpoints.updateAvailable,
-    messageFactory(balanceChangePayloadSchema, params => balanceMovementFacade.updateAvailable(params)),
-  )
-
-  epicurus.server(
-    RequestResponseBalanceMovementEndpoints.createPendingWithdrawal,
-    messageFactory(createPendingWithdrawalPayloadSchema, ({ pendingWithdrawalParams, pendingWithdrawalFeeParams }) => {
-      return wrapInTransaction(sequelize, null, transaction => {
-        return Promise.all([
-          balanceMovementFacade.createPendingWithdrawal({
-            ...pendingWithdrawalParams,
-            t: transaction,
-          }),
-          balanceMovementFacade.createPendingWithdrawalFee({
-            ...pendingWithdrawalFeeParams,
-            t: transaction,
-          }),
-        ])
-      })
-    }),
-  )
-
-  epicurus.server(
-    RequestResponseBalanceMovementEndpoints.createPendingRedemption,
-    messageFactory(balanceChangePayloadSchema, params => balanceMovementFacade.createPendingRedemption(params)),
-  )
-
-  epicurus.server(
-    RequestResponseBalanceMovementEndpoints.createPendingDebitCardTopUp,
-    messageFactory(balanceChangePayloadSchema, params => balanceMovementFacade.createPendingDebitCardTopUp(params)),
-  )
+  return [
+    {
+      path: RequestResponseBalanceMovementEndpoints.createReserve,
+      handler: params => balanceMovementFacade.createReserve(params),
+    },
+    {
+      path: RequestResponseBalanceMovementEndpoints.updateAvailable,
+      handler: params => balanceMovementFacade.updateAvailable(params),
+    },
+    {
+      path: RequestResponseBalanceMovementEndpoints.createPendingWithdrawal,
+      handler: ({ pendingWithdrawalParams, pendingWithdrawalFeeParams }) => {
+        return wrapInTransaction(sequelize, null, transaction => {
+          return Promise.all([
+            balanceMovementFacade.createPendingWithdrawal({
+              ...pendingWithdrawalParams,
+              t: transaction,
+            }),
+            balanceMovementFacade.createPendingWithdrawalFee({
+              ...pendingWithdrawalFeeParams,
+              t: transaction,
+            }),
+          ])
+        })
+      },
+    },
+    {
+      path: RequestResponseBalanceMovementEndpoints.createPendingRedemption,
+      handler: params => balanceMovementFacade.createPendingRedemption(params),
+    },
+    {
+      path: RequestResponseBalanceMovementEndpoints.createPendingDebitCardTopUp,
+      handler: params => balanceMovementFacade.createPendingDebitCardTopUp(params),
+    },
+  ]
 }

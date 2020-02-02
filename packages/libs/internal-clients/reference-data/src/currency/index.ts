@@ -1,7 +1,10 @@
 import { Currency, CurrencyCode } from '@abx-types/reference-data'
-import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { CurrencyEndpoints } from './endpoints'
 import { isCryptoCurrency } from '../utils'
+import { InternalApiRequestDispatcher } from '@abx-utils/internal-api-tools'
+import { REFERENCE_DATA_REST_API_PORT } from '../boundaries'
+
+const internalApiRequestDispatcher = new InternalApiRequestDispatcher(REFERENCE_DATA_REST_API_PORT)
 
 export async function findAllCurrencyCodes(): Promise<CurrencyCode[]> {
   const currencies = await findAllCurrencies()
@@ -48,8 +51,7 @@ export async function getCurrencyCode(currencyId: number) {
 }
 
 export async function findAllCurrencies(): Promise<Currency[]> {
-  const epicurus = getEpicurusInstance()
-  return epicurus.request(CurrencyEndpoints.getAllCurrencies, {})
+  return internalApiRequestDispatcher.fireRequestToInternalApi<Currency[]>(CurrencyEndpoints.getAllCurrencies)
 }
 
 export * from './endpoints'

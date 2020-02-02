@@ -1,11 +1,11 @@
 export enum RequestResponseBalanceMovementEndpoints {
-  createReserve = 'exchange:balance:createReserve',
-  updateAvailable = 'exchange:balance:updateAvailable',
+  createReserve = 'balance/createReserve',
+  updateAvailable = 'balance/updateAvailable',
 
-  createPendingRedemption = 'exchange:balance:createPendingRedemption',
+  createPendingRedemption = 'balance/createPendingRedemption',
 
-  createPendingWithdrawal = 'exchange:balance:createPendingWithdrawal',
-  createPendingWithdrawalFee = 'exchange:balance:createPendingWithdrawalFee',
+  createPendingWithdrawal = 'balance/createPendingWithdrawal',
+  createPendingWithdrawalFee = 'balance/createPendingWithdrawalFee',
 
-  createPendingDebitCardTopUp = 'exchange:balance:createPendingDebitCardTopUp',
+  createPendingDebitCardTopUp = 'balance/createPendingDebitCardTopUp',
 }

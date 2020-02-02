@@ -68,5 +68,5 @@ export function bootstrapRestApi() {
   app.on('unhandledRejection', e => logger.error(e as any))
 
   console.log(`Account API running on port ${ACCOUNT_REST_API_PORT}`)
-  return app.listen(ACCOUNT_REST_API_PORT)
+  return app
 }

@@ -4,7 +4,7 @@ import { AccountType } from '@abx-types/account'
 import { AdminRequestType } from '@abx-service-clients/admin-fund-management'
 import { findAllAdminRequests } from '../../core'
 import { CurrencyCode } from '@abx-types/reference-data'
-import { bootstrapRestApi } from '..'
+import { bootstrapRestApi, ADMIN_FUND_MANAGEMENT_REST_API_PORT } from '..'
 import { createTemporaryTestingAccount, createAccountAndSession } from '@abx-utils/account'
 import sinon from 'sinon'
 import * as accountServiceOperations from '@abx-service-clients/account'
@@ -21,11 +21,11 @@ const usdId = 5
 const kauId = 2
 
 describe('api:admin_request:create', () => {
-  let app: ReturnType<typeof bootstrapRestApi>
+  let app
 
   beforeEach(async () => {
     await truncateTables()
-    app = bootstrapRestApi()
+    app = bootstrapRestApi().listen(ADMIN_FUND_MANAGEMENT_REST_API_PORT)
   })
 
   afterEach(async () => {

@@ -1,7 +1,7 @@
 import { getQueuePoller } from '@abx-utils/async-message-consumer'
 import { DepositAsyncRequest, localDepositChangeTopic, DepositPubSubChannels } from '@abx-service-clients/deposit'
 import { DepositAsyncEndpoints } from '@abx-service-clients/deposit/dist/async_endpoints'
-import { createMissingDepositAddressesForAccount } from '../../../../core'
+import { createMissingDepositAddressesForAccount } from '../../../core'
 import { Logger } from '@abx-utils/logging'
 import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 

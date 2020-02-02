@@ -3,7 +3,7 @@ import * as speakeasy from 'speakeasy'
 import request from 'supertest'
 import sinon from 'sinon'
 import { Account, AccountType, User } from '@abx-types/account'
-import { bootstrapRestApi } from '..'
+import { bootstrapRestApi, ACCOUNT_REST_API_PORT } from '..'
 import { createAccountAndSession, TEST_PASSWORD, createTemporaryTestingAccount } from '@abx-utils/account'
 import { updateUser } from '../../../../core'
 import { truncateTables } from '@abx-utils/db-connection-utils'
@@ -11,13 +11,13 @@ import * as notificationClientOperations from '@abx-service-clients/notification
 import * as orderClientOperations from '@abx-service-clients/order'
 
 describe('api:sessions', () => {
-  let app: ReturnType<typeof bootstrapRestApi>
+  let app
 
   beforeEach(async () => {
     await truncateTables()
     // Needed because MFA is disabled by default in the test environment
     process.env.NODE_ENV = 'test-2'
-    app = bootstrapRestApi()
+    app = bootstrapRestApi().listen(ACCOUNT_REST_API_PORT)
     sinon.stub(notificationClientOperations, 'createEmail')
     sinon.stub(orderClientOperations, 'cancelAllOrdersForAccount')
   })

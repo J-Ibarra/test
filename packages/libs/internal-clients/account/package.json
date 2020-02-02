@@ -19,7 +19,7 @@
   "dependencies": {
     "@abx-types/account": "1.0.0",
     "@abx-service-clients/reference-data": "1.0.0",
-    "@abx-utils/db-connection-utils": "1.0.0"
+    "@abx-utils/internal-api-tools": "1.0.0"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",

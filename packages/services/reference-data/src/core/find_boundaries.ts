@@ -1,8 +1,9 @@
 import moment from 'moment'
 
 import { getModel } from '@abx-utils/db-connection-utils'
-import { CurrencyCode, CurrencyBoundary } from '@abx-types/reference-data'
+import { CurrencyCode, CurrencyBoundary, SymbolBoundaries } from '@abx-types/reference-data'
 import { findAllCurrencyCodes } from './symbols/find_currencies'
+import { getCompleteSymbolDetails } from './symbols'
 
 let cache = {
   lastInvalidation: new Date(),
@@ -28,6 +29,22 @@ export async function findAllBoundaries(currencyCodeFilter: CurrencyCode[] = [])
   }
 
   return formatBoundaryMap(boundaries.filter(({ currencyCode }) => currencyCodes.includes(currencyCode)))
+}
+
+export async function findSymbolBoundaries(symbolId: string): Promise<SymbolBoundaries> {
+  const { base, quote, fee } = await getCompleteSymbolDetails(symbolId)
+  const { code: baseCode } = base
+  const { code: quoteCode } = quote
+
+  const { [baseCode]: baseBoundary, [quoteCode]: quoteBoundary } = await findBoundariesForAll([baseCode, quoteCode])
+
+  return {
+    baseBoundary,
+    quoteBoundary,
+    base,
+    quote,
+    fee,
+  }
 }
 
 export async function findBoundaryForCurrency(currencyCode: CurrencyCode): Promise<CurrencyBoundary> {

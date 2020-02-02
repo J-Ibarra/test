@@ -1,6 +1,6 @@
 export enum AdminFundManagementEndpoints {
-  findAdminRequest = 'exchange:admin-fund-management:findAdminRequest',
-  findAdminRequests = 'exchange:admin-fund-management:findAdminRequests',
-  saveClientTriggeredFiatWithdrawalAdminRequest = 'exchange:admin-fund-management:saveClientTriggeredFiatWithdrawalAdminRequest',
-  updateAdminRequest = 'exchange:admin-fund-management:updateAdminRequest',
+  findAdminRequest = 'admin-fund-management/findAdminRequest',
+  findAdminRequests = 'admin-fund-management/findAdminRequests',
+  saveClientTriggeredFiatWithdrawalAdminRequest = 'admin-fund-management/saveClientTriggeredFiatWithdrawalAdminRequest',
+  updateAdminRequest = 'admin-fund-management/updateAdminRequest',
 }

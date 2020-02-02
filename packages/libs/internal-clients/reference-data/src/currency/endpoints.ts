@@ -1,3 +1,3 @@
 export enum CurrencyEndpoints {
-  getAllCurrencies = 'exchange:currencies:getAllCurrencies',
+  getAllCurrencies = 'reference-data/currencies/getAllCurrencies',
 }

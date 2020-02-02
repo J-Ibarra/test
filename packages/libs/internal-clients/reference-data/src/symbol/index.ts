@@ -1,6 +1,9 @@
-import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { SymbolEndpoints } from './endpoints'
 import { CurrencyCode, SymbolPair, SymbolPairSummary } from '@abx-types/reference-data'
+import { InternalApiRequestDispatcher } from '@abx-utils/internal-api-tools'
+import { REFERENCE_DATA_REST_API_PORT } from '../boundaries'
+
+const internalApiRequestDispatcher = new InternalApiRequestDispatcher(REFERENCE_DATA_REST_API_PORT)
 
 export function getAllCompleteSymbolDetails(): Promise<SymbolPair[]> {
   return fetchSymbolsIfInMemoryCacheExpired()
@@ -59,8 +62,7 @@ export function transformToSummary({ id, base, quote, fee, orderRange, sortOrder
 }
 
 function fetchSymbolsIfInMemoryCacheExpired(): Promise<SymbolPair[]> {
-  const epicurus = getEpicurusInstance()
-  return epicurus.request(SymbolEndpoints.getAllCompleteSymbolDetails, {})
+  return internalApiRequestDispatcher.fireRequestToInternalApi<SymbolPair[]>(SymbolEndpoints.getAllCompleteSymbolDetails)
 }
 
 export * from './endpoints'

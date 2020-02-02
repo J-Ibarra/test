@@ -20,7 +20,7 @@ export async function bootstrapSchedulerService() {
     },
     {
       name: 'midPriceCleanup',
-      task: triggerMidPriceOlderThanOneDayCleanup,
+      task: triggerMidPriceOlderThanOneDayCleanup as any,
     },
     {
       name: 'accountKycCheck',

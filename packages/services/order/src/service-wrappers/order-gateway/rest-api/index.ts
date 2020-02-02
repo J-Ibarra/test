@@ -58,5 +58,5 @@ export function bootstrapRestApi() {
   app.on('unhandledRejection', e => logger.error(e as any))
 
   console.log(`Order Gateway API on port ${REST_API_PORT}`)
-  return app.listen(REST_API_PORT)
+  return app
 }

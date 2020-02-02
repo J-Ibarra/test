@@ -39,6 +39,7 @@
     "@abx-service-clients/balance": "1.0.0",
     "@abx-utils/logging": "1.0.0",
     "@abx-utils/fx-rate": "1.0.0",
+    "@abx-utils/internal-api-tools": "1.0.0",
     "aws-sdk": "2.574.0",
     "body-parser": "1.18.3",
     "cookie-parser": "1.4.3",

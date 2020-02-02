@@ -1,3 +1,3 @@
 export enum SymbolEndpoints {
-  getAllCompleteSymbolDetails = 'exchange:symbols:getAllCompleteSymbolDetails',
+  getAllCompleteSymbolDetails = 'reference-data/symbols/getAllCompleteSymbolDetails',
 }

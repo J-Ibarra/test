@@ -1,9 +1,9 @@
 export enum BalanceRetrievalEndpoints {
-  findBalance = 'exchange:balance:findBalance',
-  findCurrencyAvailableBalances = 'exchange:balance:findCurrencyBalances',
-  findAllBalancesForAccount = 'exchange:balance:findAllBalancesForAccount',
-  findRawBalances = 'exchange:balance:findRawBalances',
-  retrieveTotalOrderValueReceivedByAccount = 'exchange:balance:retrieveTotalOrderValueReceivedByAccount',
-  getBalanceAdjustmentsForBalanceAndTradeTransactions = 'exchange:balance:getBalanceAdjustmentsForBalanceAndTradeTransactions',
-  getOrderBalanceReserveAdjustment = 'exchange:balance:getOrderBalanceReserveAdjustment',
+  findBalance = 'balance/findBalance',
+  findCurrencyAvailableBalances = 'balance/findCurrencyBalances',
+  findAllBalancesForAccount = 'balance/findAllBalancesForAccount',
+  findRawBalances = 'balance/findRawBalances',
+  retrieveTotalOrderValueReceivedByAccount = 'balance/retrieveTotalOrderValueReceivedByAccount',
+  getBalanceAdjustmentsForBalanceAndTradeTransactions = 'balance/getBalanceAdjustmentsForBalanceAndTradeTransactions',
+  getOrderBalanceReserveAdjustment = 'balance/getOrderBalanceReserveAdjustment',
 }

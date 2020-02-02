@@ -19,7 +19,7 @@
   "dependencies": {
     "@abx-utils/async-message-publisher": "1.0.0",
     "@abx-types/deposit": "1.0.0",
-    "@abx-utils/db-connection-utils": "1.0.0",
+    "@abx-utils/internal-api-tools": "1.0.0",
     "moment": "2.22.2",
     "aws-sdk": "2.574.0"
   },

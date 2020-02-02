@@ -1,15 +1,3 @@
-import { getEpicurusInstance, messageFactory } from '@abx-utils/db-connection-utils'
-import {
-  findAccountByIdSchema,
-  findUserByAccountIdSchema,
-  findUsersByAccountIdSchema,
-  findOrCreateKinesisRevenueAccountSchema,
-  findAccountWithUserDetailsSchema,
-  findAccountsByIdWithUserDetailsSchema,
-  isAccountSuspendedSchema,
-  findOrCreateOperatorAccountSchema,
-  getAllKycVerifiedAccountIdsSchema,
-} from './schema'
 import {
   findAccountById,
   findUserByAccountId,
@@ -17,56 +5,55 @@ import {
   findAccountWithUserDetails,
   findOrCreateKinesisRevenueAccount,
   findOrCreateOperatorAccount,
-  findAllKycVerifiedAccountIds,
   isAccountSuspended,
 } from '../../../core'
 import { AccountEndpoints } from '@abx-service-clients/account'
+import { InternalRoute } from '@abx-utils/internal-api-tools'
 
-export function bootstrapQueryEndpoints() {
-  const epicurus = getEpicurusInstance()
+export function createQueryEndpointHandlers(): InternalRoute<any, any>[] {
+  return [
+    {
+      path: AccountEndpoints.findAccountById,
+      handler: ({ accountId }) => findAccountById(accountId),
+    },
+    {
+      path: AccountEndpoints.findUserByAccountId,
+      handler: ({ accountId }) => findUserByAccountId(accountId),
+    },
+    {
+      path: AccountEndpoints.findAccountsByIdWithUserDetails,
+      handler: ({ accountIds }) => findAccountsByIdWithUserDetails(accountIds),
+    },
+    {
+      path: AccountEndpoints.findUsersByAccountId,
+      handler: ({ accountIds }) => findAccountsByIdWithUserDetails(accountIds),
+    },
+    {
+      path: AccountEndpoints.findAccountWithUserDetails,
+      handler: request => findAccountWithUserDetails(request),
+    },
+    {
+      path: AccountEndpoints.findOrCreateKinesisRevenueAccount,
+      handler: () => findOrCreateKinesisRevenueAccount(),
+    },
+    {
+      path: AccountEndpoints.findOrCreateOperatorAccount,
+      handler: async () => {
+        try {
+          const acc = await findOrCreateOperatorAccount()
+          return acc
+        } catch (e) {
+          throw e
+        }
+      },
+    },
+    {
+      path: AccountEndpoints.isAccountSuspended,
+      handler: async ({ account }) => {
+        const accountSuspended = await isAccountSuspended(account)
 
-  epicurus.server(
-    AccountEndpoints.findAccountById,
-    messageFactory(findAccountByIdSchema, ({ accountId }) => findAccountById(accountId)),
-  )
-
-  epicurus.server(
-    AccountEndpoints.findUserByAccountId,
-    messageFactory(findUserByAccountIdSchema, ({ accountId }) => findUserByAccountId(accountId)),
-  )
-
-  epicurus.server(
-    AccountEndpoints.findAccountsByIdWithUserDetails,
-    messageFactory(findAccountsByIdWithUserDetailsSchema, ({ accountIds }) => findAccountsByIdWithUserDetails(accountIds)),
-  )
-
-  epicurus.server(
-    AccountEndpoints.findUsersByAccountId,
-    messageFactory(findUsersByAccountIdSchema, ({ accountIds }) => findAccountsByIdWithUserDetails(accountIds)),
-  )
-
-  epicurus.server(
-    AccountEndpoints.findAccountWithUserDetails,
-    messageFactory(findAccountWithUserDetailsSchema, request => findAccountWithUserDetails(request)),
-  )
-
-  epicurus.server(
-    AccountEndpoints.findOrCreateKinesisRevenueAccount,
-    messageFactory(findOrCreateKinesisRevenueAccountSchema, () => findOrCreateKinesisRevenueAccount()),
-  )
-
-  epicurus.server(
-    AccountEndpoints.findOrCreateOperatorAccount,
-    messageFactory(findOrCreateOperatorAccountSchema, () => findOrCreateOperatorAccount()),
-  )
-
-  epicurus.server(
-    AccountEndpoints.isAccountSuspended,
-    messageFactory(isAccountSuspendedSchema, ({ accountId }) => isAccountSuspended(accountId)),
-  )
-
-  epicurus.server(
-    AccountEndpoints.getAllKycVerifiedAccountIds,
-    messageFactory(getAllKycVerifiedAccountIdsSchema, () => findAllKycVerifiedAccountIds()),
-  )
+        return { accountSuspended }
+      },
+    },
+  ]
 }

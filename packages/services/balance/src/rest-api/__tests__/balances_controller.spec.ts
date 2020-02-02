@@ -7,7 +7,7 @@ import { createAccountAndSession } from '@abx-utils/account'
 import { expect } from 'chai'
 import sinon from 'sinon'
 import request from 'supertest'
-import { bootstrapRestApi } from '..'
+import { bootstrapBalanceService } from '../../service_starter'
 import { BalanceMovementFacade } from '../../core'
 
 const balanceMovementFacade = BalanceMovementFacade.getInstance()
@@ -60,7 +60,7 @@ describe.skip('api:balances', function() {
   })
 
   beforeEach(async () => {
-    app = bootstrapRestApi()
+    app = bootstrapBalanceService()
   })
 
   afterEach(async () => {

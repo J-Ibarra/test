@@ -30,7 +30,7 @@ describe('withdrawals_gateway', () => {
   const feeAmount = 12
 
   beforeEach(() => {
-    sinon.stub(accountOperations, 'findAccountsByIdWithUserDetails').resolves(account)
+    sinon.stub(accountOperations, 'findAccountWithUserDetails').resolves(account)
     sinon.stub(balanceOperations, 'findBalance').resolves(balance)
   })
 

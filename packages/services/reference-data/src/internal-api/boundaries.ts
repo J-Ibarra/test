@@ -1,37 +1,28 @@
-import { getEpicurusInstance, messageFactory } from '@abx-utils/db-connection-utils'
-import { BoundaryEndpoints, getSymbolBoundaries } from '@abx-service-clients/reference-data'
-import {
-  emptyPayload,
-  findBoundaryForCurrency as findBoundaryForCurrencySchema,
-  getBoundariesForCurrenciesSchema,
-  getSymbolBoundariesSchema,
-} from './schemas'
-import { findBoundaryForCurrency, findAllBoundaries, findAllCurrencyCodes, findBoundariesForAll } from '../core'
+import { BoundaryEndpoints } from '@abx-service-clients/reference-data'
+import { findSymbolBoundaries, findBoundaryForCurrency, findAllBoundaries, findAllCurrencyCodes, findBoundariesForAll } from '../core'
+import { InternalRoute } from '@abx-utils/internal-api-tools'
 
-export function boot() {
-  const epicurus = getEpicurusInstance()
+export function createBoundaryEndpointHandlers(): InternalRoute<any, any>[] {
+  return [
+    {
+      path: BoundaryEndpoints.findBoundaryForCurrency,
+      handler: ({ currency }) => findBoundaryForCurrency(currency),
+    },
+    {
+      path: BoundaryEndpoints.getAllCurrencyBoundaries,
+      handler: async () => {
+        const allCurrencies = await findAllCurrencyCodes()
 
-  epicurus.server(
-    BoundaryEndpoints.findBoundaryForCurrency,
-    messageFactory(findBoundaryForCurrencySchema, ({ currency }) => findBoundaryForCurrency(currency)),
-  )
-
-  epicurus.server(
-    BoundaryEndpoints.getAllCurrencyBoundaries,
-    messageFactory(emptyPayload, async () => {
-      const allCurrencies = await findAllCurrencyCodes()
-
-      findAllBoundaries(allCurrencies)
-    }),
-  )
-
-  epicurus.server(
-    BoundaryEndpoints.getBoundariesForCurrencies,
-    messageFactory(getBoundariesForCurrenciesSchema, ({ currencies }) => findBoundariesForAll(currencies)),
-  )
-
-  epicurus.server(
-    BoundaryEndpoints.getSymbolBoundaries,
-    messageFactory(getSymbolBoundariesSchema, ({ symbolId }) => getSymbolBoundaries(symbolId)),
-  )
+        return findAllBoundaries(allCurrencies)
+      },
+    },
+    {
+      path: BoundaryEndpoints.getBoundariesForCurrencies,
+      handler: ({ currencies }) => findBoundariesForAll(currencies),
+    },
+    {
+      path: BoundaryEndpoints.getSymbolBoundaries,
+      handler: ({ symbolId }) => findSymbolBoundaries(symbolId),
+    },
+  ]
 }

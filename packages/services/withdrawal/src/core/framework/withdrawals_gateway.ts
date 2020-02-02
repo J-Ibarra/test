@@ -8,7 +8,7 @@ import { CryptoWithdrawalGatekeeper } from './withdrawals_gatekeeper'
 import { Currency } from '@abx-types/reference-data'
 import { findCurrencyAvailableBalances } from '@abx-service-clients/balance'
 import { getEnvironment } from '@abx-types/reference-data'
-import { findAccountsByIdWithUserDetails } from '@abx-service-clients/account'
+import { findAccountWithUserDetails } from '@abx-service-clients/account'
 
 const logger = Logger.getInstance('withdrawals_gateway', 'initialiseWithdrawal')
 const onChainCurrencyManager = new CurrencyManager(getEnvironment())
@@ -47,19 +47,19 @@ async function validateRequest(
 
   const [currencies, account, availableBalances] = await Promise.all([
     findCurrencyForCodes([currencyCode, feeCurrencyCode]),
-    findAccountsByIdWithUserDetails([accountId]),
+    findAccountWithUserDetails({ id: accountId }),
     findCurrencyAvailableBalances([currencyCode, feeCurrencyCode], accountId),
   ])
-  const [withdrawalRequestCurrency, feeCurrency] = currencies
-  const availableBalance = availableBalances.get(currencyCode)
-  const feeCurrencyAvailableBalance = availableBalances.get(feeCurrency.code)
+  const [withdrawalRequestCurrency, feeCurrency] = currencies!
+  const availableBalance = availableBalances!.get(currencyCode) || 0
+  const feeCurrencyAvailableBalance = availableBalances!.get(feeCurrency.code) || 0
 
   await validateWithdrawal({
     currency: withdrawalRequestCurrency,
     currencyCode,
     amount,
     availableBalance,
-    account,
+    account: account!,
     manager,
     memo,
     address,

@@ -5,7 +5,7 @@ import request from 'supertest'
 import { getModel } from '@abx/db-connection-utils'
 import { MarketDataTimeFrame, OHLCMarketData } from '@abx-types/market-data'
 import * as realTimeMidPriceCalculator from '@abx-service-clients/market-data'
-import { bootstrapRestApi as bootstrapApi } from '..'
+import { bootstrapRestApi as bootstrapApi, MARKET_DATA_REST_API_PORT } from '..'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
 
 describe('api:market-data', () => {
@@ -13,7 +13,7 @@ describe('api:market-data', () => {
   const symbolId = 'KAU_USD'
 
   beforeEach(async () => {
-    app = bootstrapApi()
+    app = bootstrapApi().listen(MARKET_DATA_REST_API_PORT)
     sinon.stub(referenceDataOperations, 'getAllSymbolPairSummaries').resolves([
       {
         id: symbolId,

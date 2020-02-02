@@ -63,5 +63,5 @@ export function bootstrapRestApi() {
   app.on('unhandledRejection', e => logger.error(e as any))
 
   console.log(`Market Data API running on port ${MARKET_DATA_REST_API_PORT}`)
-  return app.listen(MARKET_DATA_REST_API_PORT)
+  return app
 }

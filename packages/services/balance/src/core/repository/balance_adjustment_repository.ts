@@ -49,9 +49,9 @@ export class BalanceAdjustmentRepository {
     return adjustmentInstances.map(adjustment => adjustment.get())
   }
 
-  public async getOrderBalanceReserveAdjustment(balanceId: number, orderId: number, t?: Transaction): Promise<BalanceAdjustment | null> {
+  public async getOrderBalanceReserveAdjustment(orderId: number, t?: Transaction): Promise<BalanceAdjustment | null> {
     const balanceAdjustmentInstance = await getModel<BalanceAdjustment>('balanceAdjustment').findOne({
-      where: { balanceId, sourceEventType: SourceEventType.orderReserve, sourceEventId: orderId },
+      where: { sourceEventType: 'order', sourceEventId: orderId },
       transaction: t,
     })
 

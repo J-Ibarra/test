@@ -63,5 +63,5 @@ export function bootstrapRestApi() {
   app.on('unhandledRejection', e => logger.error(e as any))
 
   console.log(`Admin Fund Management API running on port ${ADMIN_FUND_MANAGEMENT_REST_API_PORT}`)
-  return app.listen(ADMIN_FUND_MANAGEMENT_REST_API_PORT)
+  return app
 }

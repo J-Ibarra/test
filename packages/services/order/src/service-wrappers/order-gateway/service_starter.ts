@@ -1,4 +1,4 @@
-import { bootstrapRestApi } from './rest-api'
+import { bootstrapRestApi, REST_API_PORT } from './rest-api'
 import { bootstrapInternalApi } from './internal-api/bootstrap'
 import '../../core'
 import { runOrderDataMigrations } from '../../migrations/migration-runner'
@@ -8,8 +8,8 @@ export async function bootstrapOrderGatewayService() {
   await runOrderDataMigrations()
 
   if (process.env.NODE_ENV !== Environment.test) {
-    bootstrapRestApi()
+    const publicApi = bootstrapRestApi()
+    bootstrapInternalApi(publicApi)
+    publicApi.listen(REST_API_PORT)
   }
-
-  bootstrapInternalApi()
 }

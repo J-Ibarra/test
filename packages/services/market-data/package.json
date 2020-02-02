@@ -36,6 +36,7 @@
     "@abx-utils/in-memory-depth-cache": "1.0.0",
     "@abx-utils/kbe-legacy-migrations": "1.0.0",
     "@abx-utils/logging": "1.0.0",
+    "@abx-utils/internal-api-tools": "1.0.0",
     "@abx-service-clients/reference-data": "1.0.0",
     "@abx-service-clients/market-data": "1.0.0",
     "@abx-service-clients/order": "1.0.0",

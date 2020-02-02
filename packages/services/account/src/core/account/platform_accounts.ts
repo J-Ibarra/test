@@ -40,7 +40,7 @@ export async function findOrCreateAccount(forceRefresh, type: AccountType, t?: T
     platformAccount = await createAccount(type, t!)
   }
 
-  platformAccount[type] = platformAccount
+  platformAccounts[type] = platformAccount
 
   return platformAccount
 }

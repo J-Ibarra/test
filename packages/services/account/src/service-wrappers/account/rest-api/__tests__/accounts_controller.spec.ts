@@ -12,11 +12,11 @@ import { bootstrapRestApi, ACCOUNT_REST_API_PORT } from '../index'
 import { createTemporaryTestingAccount, TEST_PASSWORD, createAccountAndSession } from '@abx-utils/account'
 
 describe('api:accounts', () => {
-  let app: ReturnType<typeof bootstrapRestApi>
+  let app
 
   beforeEach(async () => {
     await truncateTables()
-    app = bootstrapRestApi()
+    app = bootstrapRestApi().listen(ACCOUNT_REST_API_PORT)
     sinon.stub(notificationClientOperations, 'createEmail')
   })
 

@@ -1,5 +1,5 @@
 export enum MarketDataEndpoints {
-  getMidPricesForSymbol = 'exchange:marketdata:getMidPricesForSymbol',
-  cleanOldMidPrices = 'exchange:marketdata:cleanOldMidPrices',
-  reconcileOHCLMarketData = 'exchange:marketData:reconcileOHCLMarketData',
+  getMidPricesForSymbol = 'market-data/getMidPricesForSymbol',
+  cleanOldMidPrices = 'market-data/cleanOldMidPrices',
+  reconcileOHCLMarketData = 'market-data/reconcileOHCLMarketData',
 }

@@ -5,12 +5,22 @@ import { ACCOUNT_REST_API_PORT } from '@abx/exchange-account-data-service'
 import { BALANCE_REST_API_PORT } from '@abx/exchange-balance-service'
 import { ADMIN_FUND_MANAGEMENT_REST_API_PORT } from '@abx/admin-fund-management-service'
 import { MARKET_DATA_REST_API_PORT } from '@abx/exchange-market-data-service'
-import { ORDER_DATA_API_PORT, ORDER_GATEWAY_API_PORT } from '@abx/order-service'
+import { ORDER_DATA_API_PORT, ORDER_GATEWAY_API_PORT, SETTLEMENT_API_ROOT } from '@abx/order-service'
 import { WITHDRAWAL_REST_API_PORT } from '@abx/exchange-withdrawal-service'
 import { DEPOSIT_API_PORT } from '@abx/exchange-deposit-service'
 
-const accountRoutes = ['/api/accounts', '/api/admin/account', '/api/mfa', '/api/reset-password', '/api/sessions', '/api/tokens', '/api/users']
+const accountRoutes = [
+  'internal-api/accounts',
+  '/api/accounts',
+  '/api/admin/account',
+  '/api/mfa',
+  '/api/reset-password',
+  '/api/sessions',
+  '/api/tokens',
+  '/api/users',
+]
 const referenceDataRoutes = [
+  '/internal-api/reference-data',
   '/api/fees/transaction',
   '/api/boundaries',
   '/api/currencies',
@@ -18,12 +28,22 @@ const referenceDataRoutes = [
   '/api/symbols',
   '/api/symbols/apply-threshold',
 ]
-const balanceRoutes = ['/api/balances']
-const adminFundManagementRoutes = ['/api/admin/fund-management']
-const marketDataRoutes = ['/api/market-data', '/api/mid-price', '/notifications/market-data-v2']
-const orderDataRoutes = ['/api/fees', 'api/admin/fees', '/api/depth', '/api/order-matches', '/api/admin/orders', '/api/transaction-history']
-const withdrawalRoutes = ['/api/withdrawals', '/api/contacts', '/api/crypto']
-const depositRoutes = ['/api/vault', '/api/wallets']
+const balanceRoutes = ['/internal-api/balances', '/api/balances']
+const adminFundManagementRoutes = ['/internal-api/admin-fund-management', '/api/admin/fund-management']
+const marketDataRoutes = ['/internal-api/market-data', '/api/market-data', '/api/mid-price', '/notifications/market-data-v2']
+const orderDataRoutes = [
+  '/internal-api/orders',
+  '/api/fees',
+  'api/admin/fees',
+  '/api/depth',
+  '/api/order-matches',
+  '/api/admin/orders',
+  '/api/transaction-history',
+]
+const orderGatewayRoutes = ['/internal-api/order-gateway']
+const orderSettlementRoutes = ['/internal-api/order-settlement']
+const withdrawalRoutes = ['/internal-api/withdrawals', '/api/withdrawals', '/api/contacts', '/api/crypto']
+const depositRoutes = ['/internal-api/deposit', '/api/vault', '/api/wallets']
 
 const routesToPort: { routes: string[]; port: number }[] = [
   {
@@ -47,12 +67,16 @@ const routesToPort: { routes: string[]; port: number }[] = [
     port: ORDER_DATA_API_PORT,
   },
   {
-    routes: withdrawalRoutes,
-    port: WITHDRAWAL_REST_API_PORT,
+    routes: orderGatewayRoutes,
+    port: ORDER_GATEWAY_API_PORT,
   },
   {
-    routes: orderDataRoutes,
-    port: ORDER_DATA_API_PORT,
+    routes: orderSettlementRoutes,
+    port: SETTLEMENT_API_ROOT,
+  },
+  {
+    routes: withdrawalRoutes,
+    port: WITHDRAWAL_REST_API_PORT,
   },
   {
     routes: referenceDataRoutes,

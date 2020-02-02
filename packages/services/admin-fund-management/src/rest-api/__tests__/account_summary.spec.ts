@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import request from 'supertest'
 import sinon from 'sinon'
 import { CurrencyCode } from '@abx-types/reference-data'
-import { bootstrapRestApi } from '..'
+import { bootstrapRestApi, ADMIN_FUND_MANAGEMENT_REST_API_PORT } from '..'
 import { createTemporaryTestingAccount, createAccountAndSession } from '@abx-utils/account'
 import { AccountType } from '@abx-types/account'
 import * as accountServiceOperations from '@abx-service-clients/account'
@@ -11,10 +11,10 @@ import { ValidationError } from '@abx-types/error'
 import * as expressMiddleware from '@abx/express-middleware'
 
 describe('api:account_summary', () => {
-  let app: ReturnType<typeof bootstrapRestApi>
+  let app
 
   beforeEach(async () => {
-    app = bootstrapRestApi()
+    app = bootstrapRestApi().listen(ADMIN_FUND_MANAGEMENT_REST_API_PORT)
   })
 
   afterEach(async () => {

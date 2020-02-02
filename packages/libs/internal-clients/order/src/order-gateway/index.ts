@@ -1,25 +1,25 @@
-import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { OrderGatewayEndpoints } from './endpoints'
-import { PlaceOrderRequest } from '@abx-types/order'
+import { PlaceOrderRequest, Order } from '@abx-types/order'
+import { InternalApiRequestDispatcher } from '@abx-utils/internal-api-tools'
 
-export function placeOrder(orderToPlace: PlaceOrderRequest) {
-  const epicurus = getEpicurusInstance()
-  return epicurus.request(OrderGatewayEndpoints.placeOrder, { orderToPlace })
+export const ORDER_GATEWAY_API_PORT = 3105
+
+const internalApiRequestDispatcher = new InternalApiRequestDispatcher(ORDER_GATEWAY_API_PORT)
+
+export function placeOrder(orderToPlace: PlaceOrderRequest): Promise<Order> {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<Order>(OrderGatewayEndpoints.placeOrder, orderToPlace)
 }
 
 export function cancelAllOrdersForAccount(accountId: string) {
-  const epicurus = getEpicurusInstance()
-  return epicurus.request(OrderGatewayEndpoints.cancelAllOrdersForAccount, { accountId })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<void>(OrderGatewayEndpoints.cancelAllOrdersForAccount, { accountId })
 }
 
 export function cancelOrder(orderId: string, cancellationReason: string) {
-  const epicurus = getEpicurusInstance()
-  return epicurus.request(OrderGatewayEndpoints.cancelOrder, { orderId, cancellationReason })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<void>(OrderGatewayEndpoints.cancelOrder, { orderId, cancellationReason })
 }
 
 export function cancelAllExpiredOrders() {
-  const epicurus = getEpicurusInstance()
-  return epicurus.request(OrderGatewayEndpoints.cancelAllExpiredOrders, {})
+  return internalApiRequestDispatcher.fireRequestToInternalApi<void>(OrderGatewayEndpoints.cancelAllExpiredOrders)
 }
 
 export * from './endpoints'

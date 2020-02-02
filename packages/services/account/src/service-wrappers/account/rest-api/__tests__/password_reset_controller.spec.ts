@@ -3,7 +3,7 @@ import request from 'supertest'
 import sinon from 'sinon'
 
 import { generateResetPasswordPayload, validateUserCredentials, generateJWToken } from '../../../../core'
-import { bootstrapRestApi } from '..'
+import { bootstrapRestApi, ACCOUNT_REST_API_PORT } from '..'
 import { createTemporaryTestingAccount } from '@abx-utils/account'
 import { truncateTables } from '@abx-utils/db-connection-utils'
 import * as notificationClientOperations from '@abx-service-clients/notification'
@@ -19,7 +19,7 @@ describe('api:reset-password', () => {
   beforeEach(async () => {
     sinon.stub(notificationClientOperations, 'createEmail')
     await truncateTables()
-    app = bootstrapRestApi()
+    app = bootstrapRestApi().listen(ACCOUNT_REST_API_PORT)
   })
 
   afterEach(async () => {

@@ -1,30 +1,31 @@
-import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { WithdrawalEndpoints } from './endpoints'
 import { WithdrawalRequest } from '@abx-types/withdrawal'
 import { CurrencyCode } from '@abx-types/reference-data'
+import { InternalApiRequestDispatcher } from '@abx-utils/internal-api-tools'
+
+export const WITHDRAWAL_REST_API_PORT = 3105
+
+const internalApiRequestDispatcher = new InternalApiRequestDispatcher(WITHDRAWAL_REST_API_PORT)
 
 export function findWithdrawalRequestForTransactionHash(txHash: string): Promise<WithdrawalRequest | null> {
-  const epicurus = getEpicurusInstance()
-
-  return epicurus.request(WithdrawalEndpoints.findWithdrawalRequestForTransactionHash, { txHash })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<WithdrawalRequest | null>(
+    WithdrawalEndpoints.findWithdrawalRequestForTransactionHash,
+    { txHash },
+  )
 }
 
 export function findWithdrawalRequestsForTransactionHashes(txHashes: string[]): Promise<WithdrawalRequest[]> {
-  const epicurus = getEpicurusInstance()
-
-  return epicurus.request(WithdrawalEndpoints.findWithdrawalRequestsForTransactionHashes, { txHashes })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<WithdrawalRequest[]>(WithdrawalEndpoints.findWithdrawalRequestsForTransactionHashes, {
+    txHashes,
+  })
 }
 
 export function findWithdrawalRequestById(id: number): Promise<WithdrawalRequest | null> {
-  const epicurus = getEpicurusInstance()
-
-  return epicurus.request(WithdrawalEndpoints.findWithdrawalRequestById, { id })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<WithdrawalRequest | null>(WithdrawalEndpoints.findWithdrawalRequestById, { id })
 }
 
 export function findWithdrawalRequestsByIds(ids: number[]): Promise<WithdrawalRequest[]> {
-  const epicurus = getEpicurusInstance()
-
-  return epicurus.request(WithdrawalEndpoints.findWithdrawalRequestsByIds, { ids })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<WithdrawalRequest[]>(WithdrawalEndpoints.findWithdrawalRequestsByIds, { ids })
 }
 
 export function getWithdrawalFee(
@@ -32,9 +33,14 @@ export function getWithdrawalFee(
   withdrawalAmount: number,
   adminRequestId?: number,
 ): Promise<{ withdrawalFee: number; feeCurrencyCode: CurrencyCode }> {
-  const epicurus = getEpicurusInstance()
-
-  return epicurus.request(WithdrawalEndpoints.getWithdrawalFee, { currencyCode, withdrawalAmount, adminRequestId })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<{ withdrawalFee: number; feeCurrencyCode: CurrencyCode }>(
+    WithdrawalEndpoints.getWithdrawalFee,
+    {
+      currencyCode,
+      withdrawalAmount,
+      adminRequestId,
+    },
+  )
 }
 
 export function getWithdrawalFees(
@@ -45,13 +51,13 @@ export function getWithdrawalFees(
     adminRequestId?: number
   }[],
 ): Promise<{ withdrawalRequestId: number; withdrawalFee: number; feeCurrencyCode: CurrencyCode }[]> {
-  const epicurus = getEpicurusInstance()
-
-  return epicurus.request(WithdrawalEndpoints.getWithdrawalFees, { currencyCode, withdrawalParams })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<
+    { withdrawalRequestId: number; withdrawalFee: number; feeCurrencyCode: CurrencyCode }[]
+  >(WithdrawalEndpoints.getWithdrawalFees, { currencyCode, withdrawalParams })
 }
 
 export function completeFiatWithdrawal(adminRequestId: number, fee: number) {
-  const epicurus = getEpicurusInstance()
-
-  return epicurus.request(WithdrawalEndpoints.completeFiatWithdrawal, { adminRequestId, fee })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<
+    { withdrawalRequestId: number; withdrawalFee: number; feeCurrencyCode: CurrencyCode }[]
+  >(WithdrawalEndpoints.completeFiatWithdrawal, { adminRequestId, fee })
 }

@@ -16,7 +16,7 @@ export async function getTradeTransactionInvoicePreSignedUrl(userAccountId: stri
   }
   const account = await findAccountById(userAccountId)
 
-  const preSignedUrl = await generatePreSignedUrlForTradeTransactionReport(transactionId, account.hin)
+  const preSignedUrl = await generatePreSignedUrlForTradeTransactionReport(transactionId, account.hin!)
   logger.debug('Created presigned url')
   return preSignedUrl
 }

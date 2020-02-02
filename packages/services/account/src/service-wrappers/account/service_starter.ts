@@ -1,7 +1,9 @@
-import { bootstrapRestApi } from './rest-api'
+import { bootstrapRestApi, ACCOUNT_REST_API_PORT } from './rest-api'
 import { bootstrapInternalApi } from './internal-api'
 
 export async function bootstrapAccountsService() {
-  await bootstrapRestApi()
-  await bootstrapInternalApi()
+  const publicApi = await bootstrapRestApi()
+  await bootstrapInternalApi(publicApi)
+
+  return publicApi.listen(ACCOUNT_REST_API_PORT)
 }

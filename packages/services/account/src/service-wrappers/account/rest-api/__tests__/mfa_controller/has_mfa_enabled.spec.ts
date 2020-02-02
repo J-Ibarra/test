@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import * as http from 'http'
 import request from 'supertest'
 import { createAccount, updateUser } from '../../../../../core'
-import { bootstrapRestApi } from '../..'
+import { bootstrapRestApi, ACCOUNT_REST_API_PORT } from '../..'
 import { CreateAccountRequest, AccountType } from '@abx-types/account'
 import { truncateTables } from '@abx-utils/db-connection-utils'
 
@@ -20,7 +20,7 @@ describe('api:mfa query', () => {
 
   beforeEach(async () => {
     await truncateTables()
-    app = bootstrapRestApi()
+    app = bootstrapRestApi().listen(ACCOUNT_REST_API_PORT)
   })
 
   afterEach(async () => {
