@@ -1,6 +1,6 @@
 {
   "name": "@abx-service-clients/market-data",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Contains the market-data service query client",
   "license": "ISC",
   "main": "dist/index",
@@ -17,13 +17,13 @@
   },
   "gitHead": "ec814fcd38a4c115a61b581654cd521092780cd7",
   "dependencies": {
-    "@abx-service-clients/order": "^1.0.1",
-    "@abx-types/depth-cache": "^1.0.1",
-    "@abx-types/market-data": "^1.0.1",
-    "@abx-types/order": "^1.0.1",
-    "@abx-utils/in-memory-depth-cache": "^1.0.1",
-    "@abx-utils/internal-api-tools": "^1.0.1",
-    "@abx-utils/logging": "^1.0.1",
+    "@abx-service-clients/order": "^1.0.2",
+    "@abx-types/depth-cache": "^1.0.2",
+    "@abx-types/market-data": "^1.0.2",
+    "@abx-types/order": "^1.0.2",
+    "@abx-utils/in-memory-depth-cache": "^1.0.2",
+    "@abx-utils/internal-api-tools": "^1.0.2",
+    "@abx-utils/logging": "^1.0.2",
     "lodash": "4.17.5",
     "sequelize": "4.41.0"
   },

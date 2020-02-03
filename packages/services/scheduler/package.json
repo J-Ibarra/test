@@ -1,6 +1,6 @@
 {
   "name": "@abx/exchange-scheduler-service",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "> TODO: description",
   "main": "dist/index",
   "types": "src/index",
@@ -22,13 +22,13 @@
     "update-service-integration": "echo updating integration service here"
   },
   "dependencies": {
-    "@abx-service-clients/account": "^1.0.1",
-    "@abx-service-clients/market-data": "^1.0.1",
-    "@abx-service-clients/order": "^1.0.1",
-    "@abx-types/market-data": "^1.0.1",
-    "@abx-utils/db-connection-utils": "^1.0.1",
-    "@abx-utils/logging": "^1.0.1",
-    "@abx/exchange-reference-data-service": "^1.0.1",
+    "@abx-service-clients/account": "^1.0.2",
+    "@abx-service-clients/market-data": "^1.0.2",
+    "@abx-service-clients/order": "^1.0.2",
+    "@abx-types/market-data": "^1.0.2",
+    "@abx-utils/db-connection-utils": "^1.0.2",
+    "@abx-utils/logging": "^1.0.2",
+    "@abx/exchange-reference-data-service": "^1.0.2",
     "body-parser": "1.18.3",
     "cookie-parser": "1.4.3",
     "cron": "1.1.0",
@@ -43,7 +43,7 @@
     "tsoa": "2.3.81"
   },
   "devDependencies": {
-    "@abx-utils/account": "^1.0.1",
+    "@abx-utils/account": "^1.0.2",
     "@lerna/filter-options": "^3.18.4",
     "@types/body-parser": "1.17.0",
     "@types/chai": "4.0.3",

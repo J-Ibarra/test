@@ -1,6 +1,6 @@
 {
   "name": "@abx-service-clients/admin-fund-management",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Contains the admin-fund-management service query client",
   "license": "ISC",
   "main": "dist/index",
@@ -17,11 +17,11 @@
   },
   "gitHead": "ec814fcd38a4c115a61b581654cd521092780cd7",
   "dependencies": {
-    "@abx-types/account": "^1.0.1",
-    "@abx-types/balance": "^1.0.1",
-    "@abx-types/order": "^1.0.1",
-    "@abx-types/reference-data": "^1.0.1",
-    "@abx-utils/internal-api-tools": "^1.0.1",
+    "@abx-types/account": "^1.0.2",
+    "@abx-types/balance": "^1.0.2",
+    "@abx-types/order": "^1.0.2",
+    "@abx-types/reference-data": "^1.0.2",
+    "@abx-utils/internal-api-tools": "^1.0.2",
     "sequelize": "4.41.0"
   },
   "devDependencies": {

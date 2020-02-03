@@ -1,6 +1,6 @@
 {
   "name": "@abx-types/deposit",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Contains the deposit model interfaces",
   "license": "ISC",
   "main": "dist/index",
@@ -15,8 +15,8 @@
   },
   "gitHead": "ec814fcd38a4c115a61b581654cd521092780cd7",
   "dependencies": {
-    "@abx-types/account": "^1.0.1",
-    "@abx-types/reference-data": "^1.0.1"
+    "@abx-types/account": "^1.0.2",
+    "@abx-types/reference-data": "^1.0.2"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",

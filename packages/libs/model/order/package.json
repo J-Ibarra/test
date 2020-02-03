@@ -1,6 +1,6 @@
 {
   "name": "@abx-types/order",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Contains the order model interfaces",
   "license": "ISC",
   "main": "dist/index",
@@ -32,8 +32,8 @@
     "typescript": "3.7.2"
   },
   "dependencies": {
-    "@abx-types/depth-cache": "^1.0.1",
-    "@abx-types/reference-data": "^1.0.1",
+    "@abx-types/depth-cache": "^1.0.2",
+    "@abx-types/reference-data": "^1.0.2",
     "decimal.js": "10.2.0"
   },
   "gitHead": "ec814fcd38a4c115a61b581654cd521092780cd7"
