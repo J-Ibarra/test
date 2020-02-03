@@ -15,7 +15,7 @@
     "compile": "tsc -p tsconfig.build.json --skipLibCheck",
     "test": "ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts --require ../../../../_test-setup/test_globals.js src/**/*.spec.ts --exit"
   },
-  "gitHead": "8655ff968c7f5ab854515520f1e990561f8817b5",
+  "gitHead": "8a29dce4e9bfe143b1c40c7196d4b51ea0d72d8a",
   "publishConfig": {
     "access": "restricted"
   },
