@@ -13,6 +13,9 @@
     "clean": "rm -rf ./dist",
     "compile": "tsc -p tsconfig.build.json --skipLibCheck"
   },
+  "publishConfig": {
+    "access": "restricted"
+  },
   "devDependencies": {
     "@abx-types/notification": "^1.0.3",
     "@abx-types/reference-data": "^1.0.3",
@@ -37,5 +40,5 @@
     "@abx-types/depth-cache": "^1.0.3",
     "decimal.js": "10.2.0"
   },
-  "gitHead": "3b94752ec1f61455966404b5d494594b6314cf93"
+  "gitHead": "129ec1a54b4d364e27db76c0aff9472475f1ae23"
 }

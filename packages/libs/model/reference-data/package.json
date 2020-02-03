@@ -13,7 +13,10 @@
     "clean": "rm -rf ./dist",
     "compile": "tsc -p tsconfig.build.json --skipLibCheck"
   },
-  "gitHead": "3b94752ec1f61455966404b5d494594b6314cf93",
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "gitHead": "129ec1a54b4d364e27db76c0aff9472475f1ae23",
   "devDependencies": {
     "@abx-types/account": "^1.0.3",
     "@lerna/filter-options": "^3.18.4",
