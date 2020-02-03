@@ -1,6 +1,6 @@
 {
   "name": "@abx-utils/logging",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Contains common logging utilities",
   "license": "ISC",
   "main": "dist/index",

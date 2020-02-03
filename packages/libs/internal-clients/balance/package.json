@@ -1,6 +1,6 @@
 {
   "name": "@abx-service-clients/balance",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Contains the balance service query client",
   "license": "ISC",
   "main": "dist/index",
@@ -20,11 +20,11 @@
   },
   "gitHead": "8655ff968c7f5ab854515520f1e990561f8817b5",
   "dependencies": {
-    "@abx-types/balance": "^1.0.4",
-    "@abx-types/reference-data": "^1.0.4",
-    "@abx-utils/async-message-publisher": "^1.0.4",
-    "@abx-utils/internal-api-tools": "^1.0.4",
-    "@abx-utils/logging": "^1.0.4",
+    "@abx-types/balance": "^1.1.0",
+    "@abx-types/reference-data": "^1.1.0",
+    "@abx-utils/async-message-publisher": "^1.1.0",
+    "@abx-utils/internal-api-tools": "^1.1.0",
+    "@abx-utils/logging": "^1.1.0",
     "sequelize": "4.41.0"
   },
   "devDependencies": {

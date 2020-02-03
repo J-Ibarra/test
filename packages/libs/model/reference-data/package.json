@@ -1,6 +1,6 @@
 {
   "name": "@abx-types/reference-data",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Contains the note model interfaces",
   "license": "ISC",
   "main": "dist/index",
@@ -18,7 +18,7 @@
   },
   "gitHead": "8655ff968c7f5ab854515520f1e990561f8817b5",
   "devDependencies": {
-    "@abx-types/account": "^1.0.4",
+    "@abx-types/account": "^1.1.0",
     "@lerna/filter-options": "^3.18.4",
     "@types/chai": "4.0.3",
     "@types/chai-as-promised": "7.1.0",

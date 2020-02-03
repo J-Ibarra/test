@@ -1,6 +1,6 @@
 {
   "name": "@abx-types/withdrawal",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Contains the withdrawal model interfaces",
   "license": "ISC",
   "main": "dist/index",
@@ -17,8 +17,8 @@
     "access": "restricted"
   },
   "devDependencies": {
-    "@abx-types/notification": "^1.0.4",
-    "@abx-types/reference-data": "^1.0.4",
+    "@abx-types/notification": "^1.1.0",
+    "@abx-types/reference-data": "^1.1.0",
     "@lerna/filter-options": "3.18.4",
     "@types/chai": "4.0.3",
     "@types/chai-as-promised": "7.1.0",
@@ -37,7 +37,7 @@
     "typescript": "3.7.2"
   },
   "dependencies": {
-    "@abx-types/depth-cache": "^1.0.4",
+    "@abx-types/depth-cache": "^1.1.0",
     "decimal.js": "10.2.0"
   },
   "gitHead": "8655ff968c7f5ab854515520f1e990561f8817b5"
