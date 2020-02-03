@@ -13,7 +13,7 @@
     "clean": "rm -rf ./dist",
     "compile": "tsc -p tsconfig.build.json --skipLibCheck"
   },
-  "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9",
+  "gitHead": "ec814fcd38a4c115a61b581654cd521092780cd7",
   "dependencies": {
     "newrelic": "4.10.0"
   },

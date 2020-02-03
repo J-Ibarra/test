@@ -16,7 +16,7 @@
     "run-legacy-migrations-test": "npm run compile && NODE_ENV=test NODE_PATH=dist node dist/runner.js",
     "run-legacy-migrations-dev": "npm run compile && NODE_ENV=dev NODE_PATH=dist node dist/runner.js"
   },
-  "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9",
+  "gitHead": "ec814fcd38a4c115a61b581654cd521092780cd7",
   "dependencies": {
     "@abx-utils/db-connection-utils": "^1.0.1",
     "node-uuid": "1.4.7",

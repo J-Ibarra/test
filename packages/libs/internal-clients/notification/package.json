@@ -15,7 +15,7 @@
     "compile": "tsc -p tsconfig.build.json --skipLibCheck",
     "test": "ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts --require ../../../../_test-setup/test_globals.js src/**/*.spec.ts --exit"
   },
-  "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9",
+  "gitHead": "ec814fcd38a4c115a61b581654cd521092780cd7",
   "dependencies": {
     "@abx-types/notification": "^1.0.1",
     "@abx-utils/async-message-publisher": "^1.0.1",
