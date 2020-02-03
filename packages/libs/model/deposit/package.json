@@ -16,7 +16,7 @@
   "publishConfig": {
     "access": "restricted"
   },
-  "gitHead": "129ec1a54b4d364e27db76c0aff9472475f1ae23",
+  "gitHead": "8655ff968c7f5ab854515520f1e990561f8817b5",
   "dependencies": {
     "@abx-types/account": "^1.0.4",
     "@abx-types/reference-data": "^1.0.4"

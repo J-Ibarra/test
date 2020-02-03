@@ -13,7 +13,10 @@
     "clean": "rm -rf ./dist",
     "compile": "tsc -p tsconfig.build.json --skipLibCheck"
   },
-  "gitHead": "129ec1a54b4d364e27db76c0aff9472475f1ae23",
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "gitHead": "8655ff968c7f5ab854515520f1e990561f8817b5",
   "dependencies": {
     "moment": "2.22.2"
   },
