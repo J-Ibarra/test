@@ -1,6 +1,6 @@
 {
   "name": "@abx-utils/db-connection-utils",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Contains common utilities for connecting to data storage(Postrgres/Redis) and manipulating the data stored there.",
   "license": "ISC",
   "main": "dist/index",
@@ -19,8 +19,8 @@
   },
   "gitHead": "129ec1a54b4d364e27db76c0aff9472475f1ae23",
   "dependencies": {
-    "@abx-types/error": "^1.0.3",
-    "@abx-utils/logging": "^1.0.3",
+    "@abx-types/error": "^1.0.4",
+    "@abx-utils/logging": "^1.0.4",
     "bluebird": "3.3.5",
     "epicurus-node": "0.3.0",
     "jsonschema": "1.1.0",

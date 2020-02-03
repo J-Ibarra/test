@@ -1,6 +1,6 @@
 {
   "name": "@abx-utils/internal-api-tools",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Internal API tools",
   "license": "ISC",
   "main": "dist/index",
@@ -20,9 +20,9 @@
   },
   "gitHead": "129ec1a54b4d364e27db76c0aff9472475f1ae23",
   "dependencies": {
-    "@abx-types/reference-data": "^1.0.3",
-    "@abx-utils/db-connection-utils": "^1.0.3",
-    "@abx-utils/logging": "^1.0.3",
+    "@abx-types/reference-data": "^1.0.4",
+    "@abx-utils/db-connection-utils": "^1.0.4",
+    "@abx-utils/logging": "^1.0.4",
     "axios": "0.19.0",
     "express": "4.16.4"
   },

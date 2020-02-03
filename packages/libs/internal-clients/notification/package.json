@@ -1,6 +1,6 @@
 {
   "name": "@abx-service-clients/notification",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Contains the notification service query client",
   "license": "ISC",
   "main": "dist/index",
@@ -17,12 +17,12 @@
   },
   "publishConfig": {
     "access": "restricted"
-},
+  },
   "gitHead": "129ec1a54b4d364e27db76c0aff9472475f1ae23",
   "dependencies": {
-    "@abx-types/notification": "^1.0.3",
-    "@abx-utils/async-message-publisher": "^1.0.3",
-    "@abx-utils/db-connection-utils": "^1.0.3",
+    "@abx-types/notification": "^1.0.4",
+    "@abx-utils/async-message-publisher": "^1.0.4",
+    "@abx-utils/db-connection-utils": "^1.0.4",
     "moment": "2.22.2"
   },
   "devDependencies": {

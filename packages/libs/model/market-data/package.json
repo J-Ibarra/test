@@ -1,6 +1,6 @@
 {
   "name": "@abx-types/market-data",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Contains the note model interfaces",
   "license": "ISC",
   "main": "dist/index",
