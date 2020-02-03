@@ -1,6 +1,6 @@
 {
   "name": "@abx-types/withdrawal",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Contains the withdrawal model interfaces",
   "license": "ISC",
   "main": "dist/index",
@@ -14,8 +14,8 @@
     "compile": "tsc -p tsconfig.build.json --skipLibCheck"
   },
   "devDependencies": {
-    "@abx-types/notification": "1.0.0",
-    "@abx-types/reference-data": "1.0.0",
+    "@abx-types/notification": "^1.0.1",
+    "@abx-types/reference-data": "^1.0.1",
     "@lerna/filter-options": "3.18.4",
     "@types/chai": "4.0.3",
     "@types/chai-as-promised": "7.1.0",
@@ -34,7 +34,7 @@
     "typescript": "3.7.2"
   },
   "dependencies": {
-    "@abx-types/depth-cache": "1.0.0",
+    "@abx-types/depth-cache": "^1.0.1",
     "decimal.js": "10.2.0"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@abx-service-clients/fees",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Contains the account service query client",
   "license": "ISC",
   "main": "dist/index",
@@ -17,8 +17,8 @@
   },
   "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9",
   "dependencies": {
-    "@abx-types/reference-data": "1.0.0",
-    "@abx-utils/db-connection-utils": "1.0.0",
+    "@abx-types/reference-data": "^1.0.1",
+    "@abx-utils/db-connection-utils": "^1.0.1",
     "moment": "2.22.2"
   },
   "devDependencies": {
@@ -32,8 +32,8 @@
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "mocha": "5.2.0",
-    "ts-mocha": "6.0.0",
     "source-map-support": "0.5.9",
+    "ts-mocha": "6.0.0",
     "ts-node": "8.5.2",
     "ts-node-dev": "1.0.0-pre.44",
     "tslint": "5.20.1",

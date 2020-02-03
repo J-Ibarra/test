@@ -1,6 +1,6 @@
 {
   "name": "@abx-utils/in-memory-depth-cache",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Contains common depth-cache model db queries",
   "license": "ISC",
   "main": "dist/index",
@@ -17,13 +17,13 @@
   },
   "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9",
   "dependencies": {
-    "@abx-types/order": "1.0.0",
-    "@abx-types/depth-cache": "1.0.0",
-    "@abx-utils/db-connection-utils": "1.0.0",
-    "@abx-service-clients/reference-data": "1.0.0",
+    "@abx-service-clients/reference-data": "^1.0.1",
+    "@abx-types/depth-cache": "^1.0.1",
+    "@abx-types/order": "^1.0.1",
+    "@abx-utils/db-connection-utils": "^1.0.1",
     "decimal.js": "10.2.0",
-    "sequelize": "4.41.0",
-    "lodash": "4.17.5"
+    "lodash": "4.17.5",
+    "sequelize": "4.41.0"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",
@@ -36,8 +36,8 @@
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "mocha": "5.2.0",
-    "ts-mocha": "6.0.0",
     "source-map-support": "0.5.9",
+    "ts-mocha": "6.0.0",
     "ts-node": "8.5.2",
     "ts-node-dev": "1.0.0-pre.44",
     "tslint": "5.20.1",

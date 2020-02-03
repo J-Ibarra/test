@@ -1,6 +1,6 @@
 {
   "name": "@abx-types/deposit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Contains the deposit model interfaces",
   "license": "ISC",
   "main": "dist/index",
@@ -15,16 +15,16 @@
   },
   "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9",
   "dependencies": {
-    "@abx-types/reference-data": "1.0.0",
-    "@abx-types/account": "1.0.0"
+    "@abx-types/account": "^1.0.1",
+    "@abx-types/reference-data": "^1.0.1"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",
     "@types/chai": "4.0.3",
     "@types/chai-as-promised": "7.1.0",
+    "@types/express": "4.11.1",
     "@types/mocha": "2.2.41",
     "@types/node": "^12.12.11",
-    "@types/express": "4.11.1",
     "@types/sequelize": "3.30.4",
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",

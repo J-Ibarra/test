@@ -1,6 +1,6 @@
 {
   "name": "@abx-utils/logging",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Contains common logging utilities",
   "license": "ISC",
   "main": "dist/index",
@@ -31,8 +31,8 @@
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "mocha": "5.2.0",
-    "ts-mocha": "6.0.0",
     "source-map-support": "0.5.9",
+    "ts-mocha": "6.0.0",
     "ts-node": "8.5.2",
     "ts-node-dev": "1.0.0-pre.44",
     "tslint": "5.20.1",
