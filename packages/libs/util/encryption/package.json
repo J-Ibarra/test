@@ -1,6 +1,6 @@
 {
   "name": "@abx-utils/encryption",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Contains common encryption utilities",
   "license": "ISC",
   "main": "dist/index",
@@ -16,7 +16,7 @@
   },
   "gitHead": "3b94752ec1f61455966404b5d494594b6314cf93",
   "dependencies": {
-    "@abx-types/reference-data": "^1.0.2",
+    "@abx-types/reference-data": "^1.0.3",
     "aws-sdk": "latest",
     "lodash": "4.17.5",
     "moment": "2.22.2",

@@ -1,6 +1,6 @@
 {
   "name": "@abx-utils/async-message-publisher",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Contains common logic for publishing of async messages",
   "license": "ISC",
   "main": "dist/index",
@@ -17,9 +17,9 @@
   },
   "gitHead": "3b94752ec1f61455966404b5d494594b6314cf93",
   "dependencies": {
-    "@abx-types/reference-data": "^1.0.2",
-    "@abx-utils/db-connection-utils": "^1.0.2",
-    "@abx-utils/logging": "^1.0.2",
+    "@abx-types/reference-data": "^1.0.3",
+    "@abx-utils/db-connection-utils": "^1.0.3",
+    "@abx-utils/logging": "^1.0.3",
     "aws-sdk": "2.574.0"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 {
   "name": "@abx-types/notification",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Contains the notification model interfaces",
   "license": "ISC",
   "main": "dist/index",

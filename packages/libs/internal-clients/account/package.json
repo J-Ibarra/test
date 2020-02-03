@@ -1,6 +1,6 @@
 {
   "name": "@abx-service-clients/account",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Contains the account service query client",
   "license": "ISC",
   "main": "dist/index",
@@ -17,9 +17,9 @@
   },
   "gitHead": "3b94752ec1f61455966404b5d494594b6314cf93",
   "dependencies": {
-    "@abx-service-clients/reference-data": "^1.0.2",
-    "@abx-types/account": "^1.0.2",
-    "@abx-utils/internal-api-tools": "^1.0.2"
+    "@abx-service-clients/reference-data": "^1.0.3",
+    "@abx-types/account": "^1.0.3",
+    "@abx-utils/internal-api-tools": "^1.0.3"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",
