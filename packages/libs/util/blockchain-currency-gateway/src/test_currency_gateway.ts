@@ -105,7 +105,7 @@ export class TestCurrency implements OnChainCurrencyGateway {
     return Promise.resolve('publicAddress')
   }
   public validateAddress(address: string) {
-    return !!address && !address.includes('invalid')
+    return Promise.resolve(!!address && !address.includes('invalid'))
   }
 
   public async validateAddressIsNotContractAddress(_: string): Promise<boolean> {

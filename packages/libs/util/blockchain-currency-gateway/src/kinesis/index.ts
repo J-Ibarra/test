@@ -24,6 +24,7 @@ import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { CurrencyCode, KinesisCurrencies } from '@abx-types/reference-data'
 import { KINESIS_NETWORK_CONFIG } from './kinesis_network_config'
 import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse } from '../currency_gateway'
+import { CryptoAddress } from '../api-provider/model'
 
 const logger = Logger.getInstance('currencies', 'kinesis_coin')
 
@@ -167,7 +168,7 @@ export class Kinesis implements OnChainCurrencyGateway {
     }
   }
 
-  public async transferToExchangeHoldingsFrom(privateKey: string): Promise<TransactionResponse> {
+  public async transferToExchangeHoldingsFrom({ privateKey }: CryptoAddress): Promise<TransactionResponse> {
     const server = this.getServer()
     const keypair = Keypair.fromSecret(privateKey)
     const toAddress = await this.getHoldingPublicAddress()
@@ -278,7 +279,7 @@ export class Kinesis implements OnChainCurrencyGateway {
   }
 
   public validateAddress(address: string) {
-    return StrKey.isValidEd25519PublicKey(address)
+    return Promise.resolve(StrKey.isValidEd25519PublicKey(address))
   }
 
   public async validateAddressIsNotContractAddress(_: string): Promise<boolean> {

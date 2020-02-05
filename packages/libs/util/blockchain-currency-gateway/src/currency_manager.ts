@@ -5,6 +5,7 @@ import { Ethereum } from './ethereum'
 import { Kinesis } from './kinesis'
 import { KVT } from './kvt'
 import { OnChainCurrencyGateway } from './currency_gateway'
+import { BitcoinOnChainCurrencyGatewayAdapter } from './api-provider/bitcoin/BitcoinOnChainCurrencyGatewayAdapter'
 
 export class CurrencyManager {
   protected currencies: { [ticker: string]: OnChainCurrencyGateway }
@@ -32,6 +33,7 @@ export class CurrencyManager {
       [CurrencyCode.kau]: new Kinesis(env, CurrencyCode.kau),
       [CurrencyCode.kag]: new Kinesis(env, CurrencyCode.kag),
       [CurrencyCode.kvt]: new KVT(env),
+      [CurrencyCode.bitcoin]: new BitcoinOnChainCurrencyGatewayAdapter(),
     }
 
     this.currencies = Object.entries(currencies)

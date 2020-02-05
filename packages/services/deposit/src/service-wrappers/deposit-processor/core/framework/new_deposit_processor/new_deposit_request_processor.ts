@@ -153,7 +153,7 @@ async function transferDepositAmountToExchangeHoldings(currency: OnChainCurrency
   const decryptedPrivateKey = await decryptValue(confirmedRequest.depositAddress.encryptedPrivateKey)
   logger.info(`Decrypted private key for address: ${confirmedRequest.depositAddress.publicKey}`)
 
-  return currency.transferToExchangeHoldingsFrom(decryptedPrivateKey!, confirmedRequest.amount)
+  return currency.transferToExchangeHoldingsFrom({ privateKey: decryptedPrivateKey! }, confirmedRequest.amount)
 }
 
 export async function createKinesisRevenueFeeWithdrawal({ id: depositId }: DepositRequest, transactionFee: number, currencyId: number) {

@@ -12,6 +12,7 @@ import { CurrencyCode } from '@abx-types/reference-data'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 import KinesisVelocityToken from './contracts/KinesisVelocityToken.json'
 import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse } from '../currency_gateway.js'
+import { CryptoAddress } from '../api-provider/model/index.js'
 
 export const testMnemonic = 'uncle salute dust cause embody wonder clump blur paddle hotel risk aim'
 
@@ -157,7 +158,7 @@ export class KVT implements OnChainCurrencyGateway {
    * @param {string} privateKey
    * @param {number} amount
    */
-  public async transferToExchangeHoldingsFrom(privateKey: string, amount: number) {
+  public async transferToExchangeHoldingsFrom({ privateKey }: CryptoAddress, amount: number) {
     const decryptedHoldingsSecret = await this.getDecryptedHoldingsSecret(process.env.ETHEREUM_HOLDINGS_SECRET!, this.decryptedKVTHoldingsSecret)
     let potentialGasPrice: number | null = null
     try {
@@ -247,8 +248,8 @@ export class KVT implements OnChainCurrencyGateway {
    * Validate if the string is an address
    * @param {string} address
    */
-  public validateAddress(address: string): boolean {
-    return this.web3.utils.isAddress(address)
+  public validateAddress(address: string): Promise<boolean> {
+    return Promise.resolve(this.web3.utils.isAddress(address))
   }
 
   public async validateAddressIsNotContractAddress(address: string): Promise<boolean> {

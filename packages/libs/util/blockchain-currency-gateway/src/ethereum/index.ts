@@ -9,6 +9,7 @@ import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { getEthScanTransactionsForAddress } from './etherscan/etherscan'
 import { EtherscanInternalTransaction, EtherscanTransaction, EthscanTransactionType } from './etherscan/interface'
 import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse } from '../currency_gateway'
+import { CryptoAddress } from '../api-provider/model'
 
 export const testMnemonic = 'uncle salute dust cause embody wonder clump blur paddle hotel risk aim'
 
@@ -121,7 +122,7 @@ export class Ethereum implements OnChainCurrencyGateway {
     }
   }
 
-  public async transferToExchangeHoldingsFrom(privateKey: string, amount: number) {
+  public async transferToExchangeHoldingsFrom({ privateKey }: CryptoAddress, amount: number) {
     const decryptedPrivateKey = await this.getDecryptedHoldingsSecret(process.env.ETHEREUM_HOLDINGS_SECRET!, this.decryptedHoldingsSecret)
     const toAddress = this.getAddressFromPrivateKey(decryptedPrivateKey)
 
@@ -184,8 +185,8 @@ export class Ethereum implements OnChainCurrencyGateway {
     return { txHash: sent.transactionHash, transactionFee: fee }
   }
 
-  public validateAddress(address: string): boolean {
-    return this.web3.utils.isAddress(address)
+  public validateAddress(address: string): Promise<boolean> {
+    return Promise.resolve(this.web3.utils.isAddress(address))
   }
 
   public async validateAddressIsNotContractAddress(address: string): Promise<boolean> {

@@ -1,4 +1,5 @@
 import { CurrencyCode, FiatCurrency } from '@abx-types/reference-data'
+import { CryptoAddress } from './api-provider/model'
 
 export interface DepositTransaction {
   txHash: string
@@ -24,6 +25,7 @@ export interface OnChainCurrencyGateway {
   ticker?: CurrencyCode
   getId(): Promise<number>
   generatePrivateKey(): string
+
   // This returns a string due to JS floats
   balanceAt(address: string): Promise<number>
   getAddressFromPrivateKey(privateKey: string): string
@@ -38,10 +40,10 @@ export interface OnChainCurrencyGateway {
   getHoldingBalance(): Promise<number>
   getHoldingPublicAddress(): Promise<string>
   checkConfirmationOfTransaction(txHash: string): Promise<boolean>
-  transferToExchangeHoldingsFrom(privateKey: string, amount: number): Promise<TransactionResponse>
+  transferToExchangeHoldingsFrom(fromAddress: CryptoAddress | Pick<CryptoAddress, 'privateKey'>, amount: number): Promise<TransactionResponse>
   transferFromExchangeHoldingsTo(toAddress: string, amount: number): Promise<TransactionResponse>
   transferTo(parameters: { privateKey: string; amount: number; toAddress: string; signerKey?: string }): Promise<TransactionResponse>
-  validateAddress(address: string): boolean
+  validateAddress(address: string): Promise<boolean>
   validateAddressIsNotContractAddress(address: string): Promise<boolean>
   getDecryptedHoldingsSecret(privateKey: string, currencySecret: string): Promise<string>
 }

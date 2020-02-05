@@ -24,12 +24,12 @@ export const cryptoWithdrawalRequestValidators: WithdrawalRequestValidator[] = [
   }),
 ]
 
-function cryptoWithdrawalAddressValid(manager: CurrencyManager, currencyCode: CurrencyCode, address: string) {
+async function cryptoWithdrawalAddressValid(manager: CurrencyManager, currencyCode: CurrencyCode, address: string) {
   const isFiat = isFiatCurrency(currencyCode)
 
   if (!isFiat) {
     const cryptoCurrency = manager.getCurrencyFromTicker(currencyCode)
-    const isAddressValid = cryptoCurrency.validateAddress(address)
+    const isAddressValid = await cryptoCurrency.validateAddress(address)
 
     return isAddressValid
   }
