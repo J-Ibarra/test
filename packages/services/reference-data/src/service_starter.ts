@@ -1,6 +1,7 @@
-import { bootstrapRestApi, REST_API_PORT } from './rest-api'
+import { bootstrapRestApi } from './rest-api'
 import { bootstrapInternalApi } from './internal-api'
 import { runReferenceDataMigrations } from './migrations/migration-runner'
+import { REFERENCE_DATA_REST_API_PORT } from '@abx-service-clients/reference-data'
 
 import './core'
 
@@ -9,5 +10,5 @@ export async function bootstrapReferenceDataService() {
   const restApi = bootstrapRestApi()
 
   bootstrapInternalApi(restApi)
-  return restApi.listen(REST_API_PORT)
+  return restApi.listen(REFERENCE_DATA_REST_API_PORT)
 }

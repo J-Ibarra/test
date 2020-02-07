@@ -2,13 +2,14 @@ import { expect } from 'chai'
 import request from 'supertest'
 import sinon from 'sinon'
 import { CurrencyCode } from '@abx-types/reference-data'
-import { bootstrapRestApi, ADMIN_FUND_MANAGEMENT_REST_API_PORT } from '..'
+import { bootstrapRestApi } from '..'
 import { createTemporaryTestingAccount, createAccountAndSession } from '@abx-utils/account'
 import { AccountType } from '@abx-types/account'
 import * as accountServiceOperations from '@abx-service-clients/account'
 import * as balanceOperations from '@abx-service-clients/balance'
 import { ValidationError } from '@abx-types/error'
 import * as expressMiddleware from '@abx/express-middleware'
+import { ADMIN_FUND_MANAGEMENT_REST_API_PORT } from '@abx-service-clients/admin-fund-management'
 
 describe('api:account_summary', () => {
   let app

@@ -23,10 +23,9 @@ import './token_controller'
 import './user_controller'
 
 import { OverloadedRequest } from '@abx-types/account'
+import { ACCOUNT_REST_API_PORT } from '@abx-service-clients/account'
 
 const logger = Logger.getInstance('api', 'bootstrapRestApi')
-
-export const ACCOUNT_REST_API_PORT = 3103
 
 export function bootstrapRestApi() {
   const app = express()

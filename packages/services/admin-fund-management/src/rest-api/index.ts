@@ -18,10 +18,9 @@ import './account_summary_controller'
 import './admin_requests_controller'
 
 import { OverloadedRequest } from '@abx-types/account'
+import { ADMIN_FUND_MANAGEMENT_REST_API_PORT } from '@abx-service-clients/admin-fund-management'
 
 const logger = Logger.getInstance('api', 'bootstrapRestApi')
-
-export const ADMIN_FUND_MANAGEMENT_REST_API_PORT = 3109
 
 export function bootstrapRestApi() {
   const app = express()

@@ -3,10 +3,11 @@ import request from 'supertest'
 import sinon from 'sinon'
 
 import { generateResetPasswordPayload, validateUserCredentials, generateJWToken } from '../../../../core'
-import { bootstrapRestApi, ACCOUNT_REST_API_PORT } from '..'
+import { bootstrapRestApi } from '..'
 import { createTemporaryTestingAccount } from '@abx-utils/account'
 import { truncateTables } from '@abx-utils/db-connection-utils'
 import * as notificationClientOperations from '@abx-service-clients/notification'
+import { ACCOUNT_REST_API_PORT } from '@abx-service-clients/account'
 
 describe('api:reset-password', () => {
   const tokenOptions = {

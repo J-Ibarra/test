@@ -23,7 +23,8 @@
     "@abx-types/notification": "^1.1.0",
     "@abx-utils/async-message-publisher": "^1.1.0",
     "@abx-utils/db-connection-utils": "^1.1.0",
-    "moment": "2.22.2"
+    "moment": "2.22.2",
+    "@abx-utils/internal-api-tools": "1.1.0"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",

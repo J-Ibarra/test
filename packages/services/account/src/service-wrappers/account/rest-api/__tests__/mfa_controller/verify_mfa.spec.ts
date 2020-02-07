@@ -3,9 +3,10 @@ import * as http from 'http'
 import * as speakeasy from 'speakeasy'
 import request from 'supertest'
 import { activateMfa } from '../../../../../core'
-import { bootstrapRestApi, ACCOUNT_REST_API_PORT } from '../..'
+import { bootstrapRestApi } from '../..'
 import { createAccountAndSession } from '@abx-utils/account'
 import { truncateTables } from '@abx-utils/db-connection-utils'
+import { ACCOUNT_REST_API_PORT } from '@abx-service-clients/account'
 
 describe('api:mfa/verification', () => {
   let app: http.Server

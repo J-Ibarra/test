@@ -3,9 +3,10 @@ import jwt from 'jsonwebtoken'
 import { v4 } from 'node-uuid'
 import request from 'supertest'
 import { getEnvironmentConfig, truncateTables } from '@abx-utils/db-connection-utils'
-import { bootstrapRestApi, ACCOUNT_REST_API_PORT } from '..'
+import { bootstrapRestApi } from '..'
 import { createTemporaryTestingAccount, TEST_PASSWORD, createAccountAndSession } from '@abx-utils/account'
 import { TokenResponse } from '../token_controller'
+import { ACCOUNT_REST_API_PORT } from '@abx-service-clients/account'
 
 describe('api:tokens', () => {
   let app

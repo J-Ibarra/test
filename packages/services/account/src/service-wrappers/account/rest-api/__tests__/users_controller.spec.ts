@@ -1,9 +1,10 @@
 import { expect } from 'chai'
 import request from 'supertest'
-import { bootstrapRestApi, ACCOUNT_REST_API_PORT } from '..'
+import { bootstrapRestApi } from '..'
 import { findOrCreateOperatorAccount } from '../../../../core'
 import { createAccountAndSession } from '@abx-utils/account'
 import { truncateTables } from '@abx-utils/db-connection-utils'
+import { ACCOUNT_REST_API_PORT } from '@abx-service-clients/account'
 
 describe('api:users', () => {
   let app

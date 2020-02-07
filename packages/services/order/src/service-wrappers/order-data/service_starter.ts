@@ -1,7 +1,8 @@
 import { bootstrapInternalApi } from './internal-api'
-import { bootstrapRestApi, ORDER_DATA_API_PORT } from './rest-api'
+import { bootstrapRestApi } from './rest-api'
 import '../../core'
 import { runOrderDataMigrations } from '../../migrations/migration-runner'
+import { ORDER_DATA_API_PORT } from '@abx-service-clients/order'
 
 export async function bootstrapOrderDataService() {
   await runOrderDataMigrations()

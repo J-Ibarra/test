@@ -9,12 +9,11 @@ import { RegisterRoutes } from './routes'
 
 import './report_controller'
 import { OverloadedRequest } from '@abx-types/account'
+import { REPORT_REST_API_PORT } from '@abx-service-clients/report'
 
 const logger = Logger.getInstance('api', 'bootstrapRestApi')
 
-export const REPORT_REST_API_PORT = 3107
-
-export function bootstrapRestApi() {
+export function bootstrapRestApi(): express.Express {
   const app = express()
 
   app.use(requestIpMiddleware())
@@ -53,5 +52,5 @@ export function bootstrapRestApi() {
   app.on('unhandledRejection', e => logger.error(e as any))
 
   console.log(`Report API running on port ${REPORT_REST_API_PORT}`)
-  return app.listen(REPORT_REST_API_PORT)
+  return app
 }

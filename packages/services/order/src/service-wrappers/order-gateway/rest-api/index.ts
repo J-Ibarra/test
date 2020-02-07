@@ -15,10 +15,9 @@ import {
 import { RegisterRoutes } from './routes'
 
 import './order_change_controller'
+import { ORDER_GATEWAY_API_PORT } from '@abx-service-clients/order'
 
 const logger = Logger.getInstance('api', 'bootstrapRestApi')
-
-export const REST_API_PORT = 3105
 
 export function bootstrapRestApi() {
   const app = express()
@@ -37,7 +36,7 @@ export function bootstrapRestApi() {
   configureCORS(app)
 
   if (process.env.NODE_ENV !== 'test') {
-    logger.debug(`Starting order-gateway server on port ${REST_API_PORT}...`)
+    logger.debug(`Starting order-gateway server on port ${ORDER_GATEWAY_API_PORT}...`)
 
     configureApiRateLimiting = new RateLimiter().configureForApp(app).then(() => logger.debug('API rate limiting configured.'))
   }
@@ -57,6 +56,6 @@ export function bootstrapRestApi() {
 
   app.on('unhandledRejection', e => logger.error(e as any))
 
-  console.log(`Order Gateway API on port ${REST_API_PORT}`)
+  console.log(`Order Gateway API on port ${ORDER_GATEWAY_API_PORT}`)
   return app
 }

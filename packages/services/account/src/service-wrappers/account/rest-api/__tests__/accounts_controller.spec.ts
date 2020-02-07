@@ -8,8 +8,9 @@ import * as notificationClientOperations from '@abx-service-clients/notification
 
 import { findAccountById, findAccountWithUserDetails, validatePassword } from '../../../../core'
 import { getModel, truncateTables } from '@abx-utils/db-connection-utils'
-import { bootstrapRestApi, ACCOUNT_REST_API_PORT } from '../index'
+import { bootstrapRestApi } from '../index'
 import { createTemporaryTestingAccount, TEST_PASSWORD, createAccountAndSession } from '@abx-utils/account'
+import { ACCOUNT_REST_API_PORT } from '@abx-service-clients/account'
 
 describe('api:accounts', () => {
   let app

@@ -2,16 +2,15 @@ import jsreport from 'jsreport'
 
 import { Environment, localAndTestEnvironments } from '@abx-types/reference-data'
 import { Logger } from '@abx-utils/logging'
-import { getEpicurusInstance, messageFactory } from '@abx-utils/db-connection-utils'
-import { report } from './message_schema'
-import { ReportEndpoints } from '@abx-service-clients/report'
-import { createReportAndUploadToS3 } from '../core'
+import { Express } from 'express'
+import { createInternalApi } from './internal_api_endpoints_container'
+import { setupInternalApi } from '@abx-utils/internal-api-tools'
 
 const logger = Logger.getInstance('reports', 'bootstrap')
 
 let reportsServer
 
-export async function bootstrapInternalApi() {
+export async function bootstrapInternalApi(publicApiExpress: Express) {
   jsreport.renderDefaults = Object.assign(jsreport.renderDefaults, {
     dataDirectory: '',
     extensions: ['phantom-pdf', 'html', 'jsrender', 'handlebars'],
@@ -28,14 +27,6 @@ export async function bootstrapInternalApi() {
     }).init()
   }
 
-  const epicurus = getEpicurusInstance()
-  return epicurus.server(ReportEndpoints.generateReport, (request, callback) => {
-    logger.debug(`Report generation request received: ${JSON.stringify(request)}`)
-    if (localAndTestEnvironments.includes(process.env.NODE_ENV as Environment)) {
-      return callback(null, {})
-    }
-
-    logger.debug(`Generating report for: ${JSON.stringify(request)}`)
-    return messageFactory(report, createReportAndUploadToS3)(request, callback)
-  })
+  const internalApiEndpoints = createInternalApi()
+  setupInternalApi(publicApiExpress, internalApiEndpoints)
 }

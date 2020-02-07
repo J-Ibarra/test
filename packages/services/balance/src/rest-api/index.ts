@@ -16,10 +16,9 @@ import { RegisterRoutes } from './routes'
 
 import './balances_controller'
 import { OverloadedRequest } from '@abx-types/account'
+import { BALANCE_REST_API_PORT } from '@abx-service-clients/balance'
 
 const logger = Logger.getInstance('api', 'bootstrapRestApi')
-
-export const BALANCE_REST_API_PORT = 3102
 
 export function bootstrapRestApi() {
   const app = express()

@@ -2,13 +2,14 @@ import { expect } from 'chai'
 import request from 'supertest'
 import { CurrencyBoundary, CurrencyCode } from '@abx-types/reference-data'
 import { Server } from 'http'
-import { bootstrapRestApi, REST_API_PORT } from '../../rest-api'
+import { bootstrapRestApi } from '../../rest-api'
+import { REFERENCE_DATA_REST_API_PORT } from '@abx-service-clients/reference-data'
 
 describe('api:boundaries', () => {
   let app: Server
 
   beforeEach(async () => {
-    app = bootstrapRestApi().listen(REST_API_PORT)
+    app = bootstrapRestApi().listen(REFERENCE_DATA_REST_API_PORT)
   })
 
   afterEach(async () => {

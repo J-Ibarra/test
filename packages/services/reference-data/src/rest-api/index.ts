@@ -18,12 +18,11 @@ import './boundaries_controller'
 import './currencies_controller'
 import './feature_flags_controller'
 import './symbols_controller'
+import { REFERENCE_DATA_REST_API_PORT } from '@abx-service-clients/reference-data'
 
 const logger = Logger.getInstance('api', 'bootstrapRestApi')
 
-export const REST_API_PORT = 3101
-
-export function bootstrapRestApi() {
+export function bootstrapRestApi(): express.Express {
   const app = express()
 
   app.use(requestIpMiddleware())
@@ -40,7 +39,7 @@ export function bootstrapRestApi() {
   configureCORS(app)
 
   if (process.env.NODE_ENV !== 'test') {
-    logger.debug(`Starting reference-data server on port ${REST_API_PORT}...`)
+    logger.debug(`Starting reference-data server on port ${REFERENCE_DATA_REST_API_PORT}...`)
 
     configureApiRateLimiting = new RateLimiter().configureForApp(app).then(() => logger.debug('API rate limiting configured.'))
   }
@@ -60,6 +59,6 @@ export function bootstrapRestApi() {
 
   app.on('unhandledRejection', e => logger.error(e as any))
 
-  console.log(`Reference Data API on port ${REST_API_PORT}`)
+  console.log(`Reference Data API on port ${REFERENCE_DATA_REST_API_PORT}`)
   return app
 }

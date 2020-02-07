@@ -1,11 +1,13 @@
-import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { ReportEndpoints } from './endpoints'
 import { ReportRequest } from './model'
+import { InternalApiRequestDispatcher } from '@abx-utils/internal-api-tools'
+import { EmailAttachment } from '@abx-types/notification'
 
-export function generateReport(data: ReportRequest) {
-  const epicurus = getEpicurusInstance()
+export const REPORT_REST_API_PORT = 3107
+const internalApiRequestDispatcher = new InternalApiRequestDispatcher(REPORT_REST_API_PORT)
 
-  return epicurus.request(ReportEndpoints.generateReport, { data })
+export function generateReport(data: ReportRequest): Promise<EmailAttachment[]> {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<EmailAttachment[]>(ReportEndpoints.generateReport, { ...data })
 }
 
 export * from './endpoints'

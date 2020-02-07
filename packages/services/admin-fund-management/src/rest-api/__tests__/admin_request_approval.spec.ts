@@ -8,7 +8,7 @@ import { getEpicurusInstance, truncateTables } from '@abx-utils/db-connection-ut
 import { CurrencyCode } from '@abx-types/reference-data'
 import { TransactionDirection } from '@abx-types/order'
 import * as withdrawalOperations from '@abx-service-clients/withdrawal'
-import { bootstrapRestApi, ADMIN_FUND_MANAGEMENT_REST_API_PORT } from '..'
+import { bootstrapRestApi } from '..'
 import { WithdrawalPubSubChannels } from '@abx-service-clients/withdrawal'
 import { createTemporaryTestingAccount, createAccountAndSession } from '@abx-utils/account'
 import { AccountType } from '@abx-types/account'
@@ -18,6 +18,7 @@ import * as blockGatewayOperations from '@abx-utils/blockchain-currency-gateway'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import * as orderOperations from '@abx-service-clients/order'
 import * as expressMiddleware from '@abx/express-middleware'
+import { ADMIN_FUND_MANAGEMENT_REST_API_PORT } from '@abx-service-clients/admin-fund-management'
 
 import Decimal from 'decimal.js'
 

@@ -2,9 +2,10 @@ import { expect } from 'chai'
 import * as http from 'http'
 import request from 'supertest'
 import { updateUser } from '../../../../../core'
-import { bootstrapRestApi, ACCOUNT_REST_API_PORT } from '../..'
+import { bootstrapRestApi } from '../..'
 import { createAccountAndSession } from '@abx-utils/account'
 import { truncateTables } from '@abx-utils/db-connection-utils'
+import { ACCOUNT_REST_API_PORT } from '@abx-service-clients/account'
 
 describe('api:mfa/activation', () => {
   let app: http.Server

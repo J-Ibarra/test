@@ -1,5 +1,6 @@
-import { bootstrapRestApi, ADMIN_FUND_MANAGEMENT_REST_API_PORT } from './rest-api'
+import { bootstrapRestApi } from './rest-api'
 import { bootstrapInternalApi } from './internal-api'
+import { ADMIN_FUND_MANAGEMENT_REST_API_PORT } from '@abx-service-clients/admin-fund-management'
 
 export function bootstrapFundManagementService() {
   const publicApi = bootstrapRestApi()

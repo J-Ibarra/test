@@ -10,4 +10,4 @@ for f in /run/secrets/*;do
   declare -x "$environment_key=$environment_val"
 done
 
-ts-node-dev --transpileOnly bootstrap.ts
+ts-node-dev --transpileOnly src/bootstrap.ts

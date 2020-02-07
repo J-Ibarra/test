@@ -4,7 +4,8 @@ import { getExchangeDepositPollingFrequency } from '@abx-service-clients/referen
 import { runDepositDataMigrations } from '../../migrations/migration-runner'
 import { bootstrapQueueDrivenApi } from './internal-api/queue_request_consumer'
 import { bootstrapInternalApi } from './internal-api'
-import { bootstrapRestApi, DEPOSIT_API_PORT } from './rest-api'
+import { bootstrapRestApi } from './rest-api'
+import { DEPOSIT_API_PORT } from '@abx-service-clients/deposit'
 
 export async function bootstrapDepositProcessor() {
   const pollingFrequency = await getExchangeDepositPollingFrequency()

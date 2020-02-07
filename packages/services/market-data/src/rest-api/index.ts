@@ -13,6 +13,7 @@ import {
   healthcheckMiddleware,
 } from '@abx/express-middleware'
 import { RegisterRoutes } from './routes'
+import { MARKET_DATA_REST_API_PORT } from '@abx-service-clients/market-data'
 
 import './market_data_controller'
 import './mid_price_controller'
@@ -20,8 +21,6 @@ import './mid_price_controller'
 import { OverloadedRequest } from '@abx-types/account'
 
 const logger = Logger.getInstance('api', 'bootstrapRestApi')
-
-export const MARKET_DATA_REST_API_PORT = 3110
 
 export function bootstrapRestApi() {
   const app = express()

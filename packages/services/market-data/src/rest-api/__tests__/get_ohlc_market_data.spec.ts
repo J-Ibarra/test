@@ -5,8 +5,9 @@ import request from 'supertest'
 import { getModel } from '@abx/db-connection-utils'
 import { MarketDataTimeFrame, OHLCMarketData } from '@abx-types/market-data'
 import * as realTimeMidPriceCalculator from '@abx-service-clients/market-data'
-import { bootstrapRestApi as bootstrapApi, MARKET_DATA_REST_API_PORT } from '..'
+import { bootstrapRestApi as bootstrapApi } from '..'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
+import { MARKET_DATA_REST_API_PORT } from '@abx-service-clients/market-data'
 
 describe('api:market-data', () => {
   let app

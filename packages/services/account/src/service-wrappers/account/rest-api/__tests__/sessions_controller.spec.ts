@@ -3,12 +3,13 @@ import * as speakeasy from 'speakeasy'
 import request from 'supertest'
 import sinon from 'sinon'
 import { Account, AccountType, User } from '@abx-types/account'
-import { bootstrapRestApi, ACCOUNT_REST_API_PORT } from '..'
+import { bootstrapRestApi } from '..'
 import { createAccountAndSession, TEST_PASSWORD, createTemporaryTestingAccount } from '@abx-utils/account'
 import { updateUser } from '../../../../core'
 import { truncateTables } from '@abx-utils/db-connection-utils'
 import * as notificationClientOperations from '@abx-service-clients/notification'
 import * as orderClientOperations from '@abx-service-clients/order'
+import { ACCOUNT_REST_API_PORT } from '@abx-service-clients/account'
 
 describe('api:sessions', () => {
   let app

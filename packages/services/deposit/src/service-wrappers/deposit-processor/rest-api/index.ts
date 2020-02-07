@@ -16,10 +16,9 @@ import { RegisterRoutes } from './routes'
 
 import './vault_controller'
 import './wallet_controller'
+import { DEPOSIT_API_PORT } from '@abx-service-clients/deposit'
 
 const logger = Logger.getInstance('api', 'bootstrapRestApi')
-
-export const DEPOSIT_API_PORT = 3112
 
 export function bootstrapRestApi(): express.Express {
   const app = express()
