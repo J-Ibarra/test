@@ -35,13 +35,22 @@ There is a example `note` service which contains the structure defined above.
 
 Scripts required for the setup are placed in `/_scripts`
 
-Steps to set the project up locally:
+## Steps to set the project up locally:
+
+1. Run `npm install`
+2. Run `lerna link`
+3. Run `lerna bootstrap`
+4. Run `lerna run build`
+
+## Before running tests
+
+1. Run `./_scripts/start_test_dbs_run_migrations.sh`
+
+## API Local execution
 
 1. Run `docker-compose up -d`
-2. Run `npm install`
-3. Run `lerna link`
-4. Run `lerna bootstrap`
-5. Run `lerna run build`
+2. Run `lerna run run-legacy-migrations-dev`
+3. Run `lerna run start-api-debug`
 
 ### Conventions
 
