@@ -3,7 +3,7 @@ import { createTemporaryTestingAccount } from '@abx-utils/account'
 import { CurrencyCode, FiatCurrency } from '@abx-types/reference-data'
 import { WithdrawalRequest, WithdrawalRequestType, WithdrawalState } from '@abx-types/withdrawal'
 import { createWithdrawalRequest, createWithdrawalEmission, findWithdrawalEmission, getLatestWithdrawalEmissionSequenceNumber } from '../..'
-import { truncateTables } from '@abx/db-connection-utils'
+import { truncateTables } from '@abx-utils/db-connection-utils'
 
 describe('Withdrawal Emissions', () => {
   let account

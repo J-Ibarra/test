@@ -3,7 +3,7 @@ import moment from 'moment'
 import { expect } from 'chai'
 import { findAllMidPricesForSymbols, findLatestMidPriceForSymbol } from '../../../../repository'
 import { initialiseRedis } from '../test-helper'
-import { truncateTables } from '@abx/db-connection-utils'
+import { truncateTables } from '@abx-utils/db-connection-utils'
 import { createTemporaryTestingAccount } from '@abx-utils/account'
 import sinon from 'sinon'
 

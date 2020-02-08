@@ -1,7 +1,7 @@
 import Decimal from 'decimal.js'
 import { Transaction, WhereOptions } from 'sequelize'
 import { getSymbolBoundaries } from '@abx-service-clients/reference-data'
-import { DBOrder, getModel, wrapInTransaction, sequelize } from '@abx/db-connection-utils'
+import { DBOrder, getModel, wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 import { DepthItem } from '@abx-types/depth-cache'
 import { DepthMidPrice, MidPricesForSymbolRequest, MidPricesForSymbolsRequest } from '@abx-types/market-data'
 import { reduceSymbolsToMappedObject } from '../utils/helpers'

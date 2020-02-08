@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import moment from 'moment'
-import { getModel, truncateTables, MemoryCache } from '@abx/db-connection-utils'
+import { getModel, truncateTables, MemoryCache } from '@abx-utils/db-connection-utils'
 import { getDailyChange, getLatestMidPrice, getOldestMidPrice } from '../../../../repository/daily-statistics'
 import { setupMemoryCache } from '../test-helper'
 import { DepthMidPrice } from '@abx-types/market-data'

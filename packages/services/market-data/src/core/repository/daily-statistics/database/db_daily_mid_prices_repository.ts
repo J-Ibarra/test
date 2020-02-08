@@ -1,4 +1,4 @@
-import { DBOrder, getModel } from '@abx/db-connection-utils'
+import { DBOrder, getModel } from '@abx-utils/db-connection-utils'
 import { DepthMidPrice, MidPricesForSymbolsRequest } from '@abx-types/market-data'
 import { DatabaseMidPriceRepository } from '../../mid-price/db_mid_price_repository'
 

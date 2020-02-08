@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { truncateTables } from '@abx/db-connection-utils'
+import { truncateTables } from '@abx-utils/db-connection-utils'
 import { findAskAndBidPricesForSymbols } from '../../../../repository/daily-statistics'
 import { initialiseRedis } from '../test-helper'
 import { createTemporaryTestingAccount } from '@abx-utils/account'

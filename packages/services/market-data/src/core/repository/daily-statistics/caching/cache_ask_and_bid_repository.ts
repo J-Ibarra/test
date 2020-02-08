@@ -1,5 +1,5 @@
 import { ASK_PRICE_KEY, BID_PRICE_KEY, findAskAndBidPricesForSymbols } from '..'
-import { MemoryCache } from '@abx/db-connection-utils'
+import { MemoryCache } from '@abx-utils/db-connection-utils'
 
 export const findAndStoreAskAndBidPrices = async (symbolIds: string[]) => {
   const orderDepth = await findAskAndBidPricesForSymbols(symbolIds)

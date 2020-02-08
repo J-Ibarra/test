@@ -1,6 +1,5 @@
 import { expect } from 'chai'
-import { MemoryCache } from '@abx/db-connection-utils'
-import { truncateTables } from '@abx/db-connection-utils'
+import { MemoryCache, truncateTables } from '@abx-utils/db-connection-utils'
 import { findAndStoreAskAndBidPrices, storeAskPrice, storeBidPrice } from '../../../../repository'
 import { initialiseRedis } from '../test-helper'
 import { createTemporaryTestingAccount } from '@abx-utils/account'

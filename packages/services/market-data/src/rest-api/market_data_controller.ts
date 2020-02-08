@@ -1,12 +1,12 @@
 import { Controller, Get, Query, Route, Security } from 'tsoa'
-import { Logger } from '@abx/logging'
-import { getApiCacheClient } from '@abx/db-connection-utils'
+import { Logger } from '@abx-utils/logging'
+import { getApiCacheClient } from '@abx-utils/db-connection-utils'
 import { MarketDataTimeFrame, OHLCMarketData, SymbolMarketDataSnapshot } from '@abx-types/market-data'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { MARKET_DATA_SNAPSHOT_CACHE_KEY, MarketDataFacade, CURRENCY_MARKET_DATA_SNAPSHOT_CACHE_KEY } from '../core'
 import { ApiErrorPayload } from '@abx-types/error'
 import { getOHLCMarketData } from '../core'
-import { wrapWithErrorHandling } from '@abx/express-middleware'
+import { wrapWithErrorHandling } from '@abx-utils/express-middleware'
 
 @Route('market-data')
 export class MarketDataController extends Controller {

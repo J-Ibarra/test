@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import moment from 'moment'
 import sinon from 'sinon'
 
-import { getModel, truncateTables } from '@abx/db-connection-utils'
+import { getModel, truncateTables } from '@abx-utils/db-connection-utils'
 import { DepthMidPrice, MidPricesForSymbolRequest, MidPricesForSymbolsRequest } from '@abx-types/market-data'
 import { DatabaseMidPriceRepository } from '../../../repository/mid-price/db_mid_price_repository'
 import * as symbols from '@abx-service-clients/reference-data'

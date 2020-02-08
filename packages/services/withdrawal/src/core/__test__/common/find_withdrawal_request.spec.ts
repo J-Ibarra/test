@@ -7,7 +7,7 @@ import { WithdrawalRequest, WithdrawalRequestType, WithdrawalState } from '@abx-
 import * as helper from '../../lib'
 import { createWithdrawalRequest } from '../../lib'
 import { createAccountsAndWithdrawalFunctions, sortById } from '../initialisation_helper'
-import { truncateTables } from '@abx/db-connection-utils'
+import { truncateTables } from '@abx-utils/db-connection-utils'
 
 const timeToFilterBy = 1000 * 60 * 60 * 24
 const outsideTimeFrameDate = new Date(Date.now() - timeToFilterBy * 2)

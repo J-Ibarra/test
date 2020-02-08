@@ -17,7 +17,7 @@ import * as balanceOperations from '@abx-service-clients/balance'
 import * as blockGatewayOperations from '@abx-utils/blockchain-currency-gateway'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import * as orderOperations from '@abx-service-clients/order'
-import * as expressMiddleware from '@abx/express-middleware'
+import * as expressMiddleware from '@abx-utils/express-middleware'
 import { ADMIN_FUND_MANAGEMENT_REST_API_PORT } from '@abx-service-clients/admin-fund-management'
 
 import Decimal from 'decimal.js'

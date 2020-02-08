@@ -1,4 +1,4 @@
-import { getEpicurusInstance } from '@abx/db-connection-utils'
+import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { accountCreatedRecorder } from './core/exchange_to_salesforce_change_recorders/account_creation_recorder'
 import { accountVerifiedRecorder } from './core/exchange_to_salesforce_change_recorders/account_verified_recorder'
 import { depositRequestRecorder } from './core/exchange_to_salesforce_change_recorders/deposit_request_recorder'

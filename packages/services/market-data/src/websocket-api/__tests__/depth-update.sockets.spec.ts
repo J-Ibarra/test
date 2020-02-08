@@ -3,12 +3,12 @@ import sinon from 'sinon'
 
 import socketClient from 'socket.io-client'
 import { AccountType } from '@abx-types/account'
-import { getEpicurusInstance } from '@abx/db-connection-utils'
+import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { closeSocket, openSocket } from '../depth-update.sockets'
 import { clientsConnectedToSocket, DEPTH_UPDATE_EVENT_PREFIX } from '../depth_update_notification_dispatcher'
 import { createTemporaryTestingAccount } from '@abx-utils/account'
 import { OrderPubSubChannels } from '@abx-service-clients/order'
-import * as middlewareOperations from '@abx/express-middleware'
+import * as middlewareOperations from '@abx-utils/express-middleware'
 
 describe.skip('depth-update-sockets', () => {
   const testDepth = [

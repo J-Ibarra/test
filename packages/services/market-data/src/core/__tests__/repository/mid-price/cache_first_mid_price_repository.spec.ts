@@ -4,7 +4,7 @@ import moment from 'moment'
 import sinon from 'sinon'
 
 import { DepthMidPrice, MidPricesForSymbolRequest, MidPricesForSymbolsRequest } from '@abx-types/market-data'
-import { sequelize, CacheGateway, wrapInTransaction, getCacheClient, truncateTables } from '@abx/db-connection-utils'
+import { sequelize, CacheGateway, wrapInTransaction, getCacheClient, truncateTables } from '@abx-utils/db-connection-utils'
 import * as symbols from '@abx-service-clients/reference-data'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { DatabaseMidPriceRepository, CacheFirstMidPriceRepository } from '../../../repository/mid-price'

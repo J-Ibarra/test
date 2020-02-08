@@ -1,6 +1,6 @@
 import moment from 'moment'
 import sinon from 'sinon'
-import { getModel, MemoryCache } from '@abx/db-connection-utils'
+import { getModel, MemoryCache } from '@abx-utils/db-connection-utils'
 import { OrderDirection, OrderMatchStatus } from '@abx-types/order'
 import { DepthMidPrice } from '@abx-types/market-data'
 import { initialisePriceChangeStatistics } from '../../../repository'

@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { findAllMidPricesForSymbols, PRICE_CHANGE_KEY } from '..'
-import { MemoryCache } from '@abx/db-connection-utils'
+import { MemoryCache } from '@abx-utils/db-connection-utils'
 import { DepthMidPrice } from '@abx-types/market-data'
 
 export const findAndStoreMidPrices = async (symbolIds: string[], timeFilter: Date) => {

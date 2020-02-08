@@ -1,5 +1,5 @@
 import LruCache from 'lru-cache'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 
 export interface CachingObject<T> {
   key: string

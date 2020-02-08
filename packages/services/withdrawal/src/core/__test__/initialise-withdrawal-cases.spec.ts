@@ -5,7 +5,7 @@ import { initialiseWithdrawal, CryptoWithdrawalGatekeeper } from '..'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
 // tslint:disable-next-line: ordered-imports
 import * as blockChainOperations from '@abx-utils/blockchain-currency-gateway'
-import { truncateTables } from '@abx/db-connection-utils'
+import { truncateTables } from '@abx-utils/db-connection-utils'
 import * as realTimeMidPriceCalculationOperations from '@abx-service-clients/market-data'
 import * as fxRateProvider from '@abx-utils/fx-rate'
 import { InitialiseWithdrawalParams, WithdrawalState } from '@abx-types/withdrawal'

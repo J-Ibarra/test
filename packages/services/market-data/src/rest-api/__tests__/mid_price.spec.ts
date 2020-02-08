@@ -8,7 +8,7 @@ import { createAccountAndSession } from '@abx-utils/account'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import * as depthCacheUtils from '@abx-utils/in-memory-depth-cache'
 import * as midPriceOperations from '../../core'
-import { truncateTables, getCacheClient } from '@abx/db-connection-utils'
+import { truncateTables, getCacheClient } from '@abx-utils/db-connection-utils'
 import { MARKET_DATA_REST_API_PORT } from '@abx-service-clients/market-data'
 
 describe('api:mid-price', () => {

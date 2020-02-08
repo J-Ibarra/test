@@ -1,13 +1,13 @@
 import http from 'http'
 
-import { REFERENCE_DATA_REST_API_PORT } from '@abx/exchange-reference-data-service'
-import { ACCOUNT_REST_API_PORT } from '@abx/exchange-account-data-service'
-import { BALANCE_REST_API_PORT } from '@abx/exchange-balance-service'
-import { ADMIN_FUND_MANAGEMENT_REST_API_PORT } from '@abx/admin-fund-management-service'
-import { MARKET_DATA_REST_API_PORT } from '@abx/exchange-market-data-service'
-import { ORDER_DATA_API_PORT, ORDER_GATEWAY_API_PORT, SETTLEMENT_API_ROOT } from '@abx/order-service'
-import { WITHDRAWAL_REST_API_PORT } from '@abx/exchange-withdrawal-service'
-import { DEPOSIT_API_PORT } from '@abx/exchange-deposit-service'
+import { REFERENCE_DATA_REST_API_PORT } from '@abx-service-clients/reference-data'
+import { ACCOUNT_REST_API_PORT } from '@abx-service-clients/account'
+import { BALANCE_REST_API_PORT } from '@abx-service-clients/balance'
+import { ADMIN_FUND_MANAGEMENT_REST_API_PORT } from '@abx-service-clients/admin-fund-management'
+import { MARKET_DATA_REST_API_PORT } from '@abx-service-clients/market-data'
+import { ORDER_DATA_API_PORT, ORDER_GATEWAY_API_PORT, SETTLEMENT_API_ROOT } from '@abx-service-clients/order'
+import { WITHDRAWAL_REST_API_PORT } from '@abx-service-clients/withdrawal'
+import { DEPOSIT_API_PORT } from '@abx-service-clients/deposit'
 
 const accountRoutes = [
   'internal-api/accounts',

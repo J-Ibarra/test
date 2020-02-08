@@ -1,7 +1,7 @@
 import { Decimal } from 'decimal.js'
 import sinon from 'sinon'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
-import { truncateTables } from '@abx/db-connection-utils'
+import { truncateTables } from '@abx-utils/db-connection-utils'
 import * as realTimeMidPriceCalculationOperations from '@abx-service-clients/market-data'
 import * as fxRateProvider from '@abx-utils/fx-rate'
 import { WithdrawalState, WithdrawalRequestType, WithdrawalCancelParams, WithdrawalConfirmParams } from '@abx-types/withdrawal'

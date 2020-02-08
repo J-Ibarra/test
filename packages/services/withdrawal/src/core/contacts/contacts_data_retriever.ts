@@ -1,5 +1,5 @@
 import { WhereOptions } from 'sequelize'
-import { getModel } from '@abx/db-connection-utils'
+import { getModel } from '@abx-utils/db-connection-utils'
 import { Contact } from '@abx-types/withdrawal'
 
 export async function findContactsForAccountByCurrency({ accountId, currencyCode }) {

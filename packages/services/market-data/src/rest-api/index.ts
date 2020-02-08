@@ -11,7 +11,7 @@ import {
   maintenanceMiddleware,
   overloadRequestWithSessionInfo,
   healthcheckMiddleware,
-} from '@abx/express-middleware'
+} from '@abx-utils/express-middleware'
 import { RegisterRoutes } from './routes'
 import { MARKET_DATA_REST_API_PORT } from '@abx-service-clients/market-data'
 

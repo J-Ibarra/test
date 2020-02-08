@@ -1,7 +1,7 @@
 import moment from 'moment'
 
 import { expect } from 'chai'
-import { MemoryCache, truncateTables } from '@abx/db-connection-utils'
+import { MemoryCache, truncateTables } from '@abx-utils/db-connection-utils'
 import { OrderMatchStatus } from '@abx-types/order'
 import { findAndStoreOrderMatchPrices, storeOrderMatchPrice } from '../../../../repository/daily-statistics'
 import { initialiseRedis } from '../test-helper'

@@ -1,7 +1,7 @@
 import { Controller, Get, Query, Response, Route, Security, SuccessResponse } from 'tsoa'
 
 import moment from 'moment'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { MarketDataTimeFrame, MidPricesForSymbolRequest } from '@abx-types/market-data'
 import { CacheFirstMidPriceRepository, convertRealTimeMidPriceForSymbolsToObject } from '../core'
 import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-data'

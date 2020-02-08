@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import moment from 'moment'
-import { truncateTables, MemoryCache } from '@abx/db-connection-utils'
+import { truncateTables, MemoryCache } from '@abx-utils/db-connection-utils'
 import { findAndStoreMidPrices, storeMidPrice } from '../../../../repository'
 import { initialiseRedis } from '../test-helper'
 import { createTemporaryTestingAccount } from '@abx-utils/account'

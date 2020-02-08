@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import request from 'supertest'
-import { MemoryCache, truncateTables, getCacheClient } from '@abx/db-connection-utils'
+import { MemoryCache, truncateTables, getCacheClient } from '@abx-utils/db-connection-utils'
 import { CacheFirstMidPriceRepository, MidPriceRepository, initialisePriceChangeStatistics } from '../../core'
 import { Order, OrderDirection, OrderMatchStatus, OrderStatus, OrderType, OrderValidity, SymbolDepth } from '@abx-types/order'
 import { CurrencyCode } from '@abx-types/reference-data'

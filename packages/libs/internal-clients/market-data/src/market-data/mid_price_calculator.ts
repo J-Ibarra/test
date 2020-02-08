@@ -1,6 +1,6 @@
 import { AggregateDepth } from '@abx-types/depth-cache'
 import { get, head } from 'lodash'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 
 const logger = Logger.getInstance('abx-service-clients/market-data', 'mid_price_calculator')
 

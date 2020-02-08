@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { MemoryCache, truncateTables } from '@abx/db-connection-utils'
+import { MemoryCache, truncateTables } from '@abx-utils/db-connection-utils'
 import {
   getAskPriceForAllSymbols,
   getAskPriceForSymbol,

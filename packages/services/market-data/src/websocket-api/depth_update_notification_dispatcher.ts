@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js'
 import socketIo from 'socket.io'
-import { Logger } from '@abx/logging'
+import { Logger } from '@abx-utils/logging'
 import { Order, OrderDirection } from '@abx-types/order'
 import { DepthItem } from '@abx-types/depth-cache'
 import { DepthItemWithOwnMarker } from '@abx-utils/in-memory-depth-cache'

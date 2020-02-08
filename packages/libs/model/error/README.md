@@ -1,3 +1,3 @@
-# `@abx/error`
+# `@abx-types/error`
 
-> TODO: description
+### Contains all generic error types

@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import moment from 'moment'
 import sinon from 'sinon'
-import { getModel, wrapInTransaction, sequelize, truncateTables } from '@abx/db-connection-utils'
+import { getModel, wrapInTransaction, sequelize, truncateTables } from '@abx-utils/db-connection-utils'
 import * as symbols from '@abx-service-clients/reference-data'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { DepthMidPrice, MarketDataTimeFrame, OHLCMarketData } from '@abx-types/market-data'

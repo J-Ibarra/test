@@ -8,7 +8,7 @@ import { AccountType } from '@abx-types/account'
 import * as accountServiceOperations from '@abx-service-clients/account'
 import * as balanceOperations from '@abx-service-clients/balance'
 import { ValidationError } from '@abx-types/error'
-import * as expressMiddleware from '@abx/express-middleware'
+import * as expressMiddleware from '@abx-utils/express-middleware'
 import { ADMIN_FUND_MANAGEMENT_REST_API_PORT } from '@abx-service-clients/admin-fund-management'
 
 describe('api:account_summary', () => {

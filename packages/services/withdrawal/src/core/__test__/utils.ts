@@ -1,6 +1,6 @@
 import { WithdrawalRequest } from '@abx-types/withdrawal'
 import { updateWithdrawalRequest } from '../lib'
-import { wrapInTransaction, sequelize } from '@abx/db-connection-utils'
+import { wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 import { expect } from 'chai'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import * as balanceOperations from '@abx-service-clients/balance'

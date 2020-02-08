@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import moment from 'moment'
-import { getEpicurusInstance, truncateTables, getCacheClient } from '@abx/db-connection-utils'
+import { getEpicurusInstance, truncateTables, getCacheClient } from '@abx-utils/db-connection-utils'
 import { MidPricesForSymbolRequest } from '@abx-types/market-data'
 import { CacheFirstMidPriceRepository } from '../../core'
 import { OrderPubSubChannels } from '@abx-service-clients/order'

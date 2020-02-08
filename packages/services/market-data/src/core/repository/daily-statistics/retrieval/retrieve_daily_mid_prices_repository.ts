@@ -1,6 +1,6 @@
 import { head, isEmpty, last } from 'lodash'
 import { findLatestMidPriceForSymbol, PRICE_CHANGE_KEY } from '..'
-import { MemoryCache } from '@abx/db-connection-utils'
+import { MemoryCache } from '@abx-utils/db-connection-utils'
 
 export const getDailyChange = async (symbolIds: string[]): Promise<Map<string, number>> => {
   const symbolDailyChange = await Promise.all(symbolIds.map(calculateDailyChangeForSymbol))

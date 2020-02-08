@@ -1,7 +1,7 @@
 import moment from 'moment'
 
 import { findOrderMatchTransactionsForSymbols, ORDER_MATCH_KEY } from '..'
-import { MemoryCache, CachingObject } from '@abx/db-connection-utils'
+import { MemoryCache, CachingObject } from '@abx-utils/db-connection-utils'
 import { OrderMatch } from '@abx-types/order'
 
 export const findAndStoreOrderMatchPrices = async (symbolIds: string[], timeFilter: Date) => {

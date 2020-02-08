@@ -1,6 +1,6 @@
 import { sum } from 'lodash'
 import { getLatestMidPrice, ORDER_MATCH_KEY } from '..'
-import { MemoryCache } from '@abx/db-connection-utils'
+import { MemoryCache } from '@abx-utils/db-connection-utils'
 
 export const getDailyVolume = (symbolIds: string[]): Map<string, number> => {
   const mapVolumesToSymbols = new Map<string, number>()

@@ -1,4 +1,4 @@
-import { sequelize, getModel } from '@abx/db-connection-utils'
+import { sequelize, getModel } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { WithdrawalKinesisCoinEmission } from '@abx-types/withdrawal'
 
