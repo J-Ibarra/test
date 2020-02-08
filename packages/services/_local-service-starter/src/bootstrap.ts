@@ -1,5 +1,3 @@
-// import { bootstrapWithdrawalService, WITHDRAWAL_REST_API_PORT } from '@abx/exchange-withdrawal-service'
-
 import httpProxy from 'http-proxy'
 import http from 'http'
 import sourceMapSupport from 'source-map-support'

@@ -5,13 +5,13 @@ export enum EmailEndpoints {
   sendNotificationToOps = 'exchange:notification:sendNotificationToOps',
 }
 
-export interface SendEmailToOpsPayload {
+export interface OpsEmailPayload {
   subject
   text
   html
 }
 
-export type EmailAsyncRequestPayload = Email | SendEmailToOpsPayload
+export type EmailAsyncRequestPayload = Email | OpsEmailPayload
 
 export interface EmailAsyncRequest {
   type: EmailEndpoints

@@ -26,6 +26,6 @@ COPY packages/services/withdrawal ./packages/services/withdrawal
 RUN lerna bootstrap
 WORKDIR /sync/packages/services/withdrawal
 
-EXPOSE 3101
+EXPOSE 3108
 
 CMD  "./docker-start.sh"

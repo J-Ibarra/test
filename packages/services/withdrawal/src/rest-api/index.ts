@@ -19,10 +19,9 @@ import './address_validation_controller'
 import './contacts_controller'
 
 import { OverloadedRequest } from '@abx-types/account'
+import { WITHDRAWAL_REST_API_PORT } from '@abx-service-clients/withdrawal'
 
 const logger = Logger.getInstance('api', 'bootstrapRestApi')
-
-export const WITHDRAWAL_REST_API_PORT = 3105
 
 export function bootstrapRestApi() {
   const app = express()

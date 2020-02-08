@@ -1,6 +1,7 @@
 import { bootstrapInternalApi } from './internal-api'
-import { bootstrapRestApi, WITHDRAWAL_REST_API_PORT } from './rest-api'
+import { bootstrapRestApi } from './rest-api'
 import { configureWithdrawalHandler } from './service_configurator'
+import { WITHDRAWAL_REST_API_PORT } from '@abx-service-clients/withdrawal'
 
 export async function bootstrapWithdrawalService() {
   await configureWithdrawalHandler()

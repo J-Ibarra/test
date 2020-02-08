@@ -10,7 +10,7 @@ import { findLastOrderMatchForSymbol, findLastOrderMatchForSymbols } from '@abx-
 import { DepthCacheSymbol } from '@abx-types/depth-cache'
 import { InternalApiRequestDispatcher } from '@abx-utils/internal-api-tools'
 
-export const MARKET_DATA_REST_API_PORT = 3110
+export const MARKET_DATA_REST_API_PORT = 3104
 
 const internalApiRequestDispatcher = new InternalApiRequestDispatcher(MARKET_DATA_REST_API_PORT)
 

@@ -26,4 +26,6 @@ COPY packages/services/order ./packages/services/order
 RUN lerna bootstrap
 WORKDIR /sync/packages/services/order/src/service-wrappers/settlement
 
+EXPOSE 3113
+
 CMD  "./docker-start.sh"

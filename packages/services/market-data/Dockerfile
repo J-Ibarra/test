@@ -26,6 +26,6 @@ COPY packages/services/market-data ./packages/services/market-data
 RUN lerna bootstrap
 WORKDIR /sync/packages/services/market-data
 
-EXPOSE 3110
+EXPOSE 3104
 
 CMD  "./docker-start.sh"

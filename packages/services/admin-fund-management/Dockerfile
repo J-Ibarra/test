@@ -26,6 +26,6 @@ COPY packages/services/admin-fund-management ./packages/services/admin-fund-mana
 RUN lerna bootstrap
 WORKDIR /sync/packages/services/admin-fund-management
 
-EXPOSE 3102
+EXPOSE 3109
 
 CMD  "./docker-start.sh"

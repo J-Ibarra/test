@@ -3,7 +3,7 @@ import { WithdrawalRequest } from '@abx-types/withdrawal'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { InternalApiRequestDispatcher } from '@abx-utils/internal-api-tools'
 
-export const WITHDRAWAL_REST_API_PORT = 3105
+export const WITHDRAWAL_REST_API_PORT = 3108
 
 const internalApiRequestDispatcher = new InternalApiRequestDispatcher(WITHDRAWAL_REST_API_PORT)
 

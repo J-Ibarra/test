@@ -26,4 +26,6 @@ COPY packages/services/deposit ./packages/services/deposit
 RUN lerna bootstrap
 WORKDIR /sync/packages/services/deposit/service-wrappers/deposit-processor
 
+EXPOSE 3112
+
 CMD  "./docker-start.sh"
