@@ -21,6 +21,7 @@
   "gitHead": "8a29dce4e9bfe143b1c40c7196d4b51ea0d72d8a",
   "dependencies": {
     "@abx-service-clients/reference-data": "^1.1.0",
+    "@abx-utils/db-connection-utils": "^1.1.0",
     "@abx-types/account": "^1.1.0",
     "@abx-utils/internal-api-tools": "^1.1.0"
   },
