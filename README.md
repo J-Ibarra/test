@@ -8,8 +8,10 @@ This repository utilizes Lerna to manage inter-service dependencies and the foll
 
 1. Model (`/packages/libs/model`) stores all the types/models for each service/bounded-context (e.g account, balance, order).
 2. Query (`/packages/libs/query`) houses packages that allow clients to run common queries for a given model. At present `account` is the only functional area which this is required for(mainly due to authentication and access control in the REST API for each service). For other functional areas `internal-clients` should be created
-3 Internal Clients (`packages/libs/internal-clients`) contains all the internal api packages to be used for cross-service dependencies. Example:
+   3 Internal Clients (`packages/libs/internal-clients`) contains all the internal api packages to be used for cross-service dependencies. Example:
+
 - The `order` service requires `reference-data` (e.g. symbol,currency, currency boundary data) so it needs to use `@abx-service-clients/reference-data` (`libs/internal-clients/reference-data`
+
 4. Util (`/packages/libs/util`) stores all the packages which contain non-functional(non-business logic related) logic which is reused across services (e.g. `db-connector` store all db (Postgress/redis) connector logic , `logging`)
 
 All of these packages are versioned and release to the org npm account and could be used by repos/projects outside of this monorepo (e.g. Yield engine/Front-end)
@@ -37,7 +39,9 @@ Steps to set the project up locally:
 
 1. Run `docker-compose up -d`
 2. Run `npm install`
-3. Run `lerna bootstrap`
+3. Run `lerna link`
+4. Run `lerna bootstrap`
+5. Run `lerna run build`
 
 ### Conventions
 
@@ -46,7 +50,7 @@ Steps to set the project up locally:
 Branch naming should follow the git-flow branching model. A good overview on this can be found [here](https://danielkummer.github.io/git-flow-cheatsheet/). Our branch names are as follows:
 
 | Branch type | Format                         | Notes                                                                                                                                                             |
-|-------------|--------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----------- | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | master      | -                              | Production branch                                                                                                                                                 |
 | develop     | -                              | Base development branch                                                                                                                                           |
 | feature     | /feature/[JIRA ID]-branch-name | Used for developing new features. Almost all new code will reside within a feature branch. When completed, feature branches are merged back into develop          |
@@ -61,7 +65,7 @@ Please always remember to use the JIRA ID in your branches so that other develop
 Object and file names should be descriptive as to the purpose of the code within it.
 
 | Object type | File naming pattern         | Object naming pattern   |
-|-------------|-----------------------------|-------------------------|
+| ----------- | --------------------------- | ----------------------- |
 | Enum        | [Object Name].enum.ts       | [Object Name]Enum       |
 | Service     | [Object Name].service.ts    | [Object Name]Service    |
 | Controller  | [Object Name].controller.ts | [Object Name]Controller |
