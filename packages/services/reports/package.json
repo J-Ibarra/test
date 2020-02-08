@@ -35,6 +35,7 @@
     "@abx-utils/express-middleware": "^1.1.0",
     "@abx-utils/kbe-legacy-migrations": "^1.1.0",
     "@abx-utils/logging": "^1.1.0",
+    "@abx-utils/internal-api-tools": "^1.1.0",
     "aws-sdk": "2.574.0",
     "body-parser": "1.18.3",
     "cookie-parser": "1.4.3",
