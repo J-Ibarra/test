@@ -4,7 +4,7 @@ import Web3 from 'web3'
 import { Environment } from '@abx-types/reference-data'
 import { Logger } from '@abx-utils/logging'
 
-export const CONFIG = {
+export const KVT_CONFIG = {
   [Environment.development]: {
     url: 'http://localhost:8545/',
     networkId: 5777,
@@ -18,7 +18,7 @@ const logger = Logger.getInstance('network_traffic', 'eth')
 setInterval(startNetworkTraffic, 1000)
 
 export async function startNetworkTraffic() {
-  const selectedHost = CONFIG[Environment.development].url
+  const selectedHost = KVT_CONFIG[Environment.development].url
   web3 = new Web3(new Web3.providers.HttpProvider(selectedHost))
 
   const account1 = getAccount(10)
@@ -44,8 +44,8 @@ export async function startNetworkTraffic() {
 }
 
 export function getAccount(accountIndex: number) {
-  return Wallet.fromMnemonic(CONFIG[Environment.development].mnemonic, getAccountPath(accountIndex)).connect(
-    new JsonRpcProvider({ url: CONFIG[Environment.development].url, allowInsecure: true }),
+  return Wallet.fromMnemonic(KVT_CONFIG[Environment.development].mnemonic, getAccountPath(accountIndex)).connect(
+    new JsonRpcProvider({ url: KVT_CONFIG[Environment.development].url, allowInsecure: true }),
   )
 }
 

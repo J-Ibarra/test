@@ -1,11 +1,11 @@
 import { Wallet } from 'ethers'
 import { JsonRpcProvider } from 'ethers/providers'
-import { CONFIG } from '.'
+import { ETH_CONFIG } from '.'
 import { Environment } from '@abx-types/reference-data'
 
 export function getAccount(accountIndex: number) {
-  return Wallet.fromMnemonic(CONFIG[Environment.test].mnemonic, getAccountPath(accountIndex)).connect(
-    new JsonRpcProvider({ url: CONFIG[Environment.test].url, allowInsecure: true }),
+  return Wallet.fromMnemonic(ETH_CONFIG[Environment.test].mnemonic, getAccountPath(accountIndex)).connect(
+    new JsonRpcProvider({ url: ETH_CONFIG[Environment.test].url, allowInsecure: true }),
   )
 }
 

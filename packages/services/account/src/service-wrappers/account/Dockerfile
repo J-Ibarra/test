@@ -24,7 +24,7 @@ COPY packages/libs ./packages/libs
 COPY packages/services/account ./packages/services/account
 
 RUN lerna bootstrap
-WORKDIR /sync/packages/services/account/service-wrappers/account
+WORKDIR /sync/packages/services/account/src/service-wrappers/account
 
 EXPOSE 3103
 

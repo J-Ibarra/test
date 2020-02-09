@@ -62,6 +62,6 @@ export function bootstrapRestApi() {
 
   app.on('unhandledRejection', e => logger.error(e as any))
 
-  console.log(`Balance API running on port ${WITHDRAWAL_REST_API_PORT}`)
+  logger.info(`Withdrawal API running on port ${WITHDRAWAL_REST_API_PORT}`)
   return app
 }

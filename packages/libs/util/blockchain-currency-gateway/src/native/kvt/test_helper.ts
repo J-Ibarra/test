@@ -1,7 +1,7 @@
 import { Wallet } from 'ethers'
 import Web3 from 'web3'
 import Contract from 'web3/eth/contract'
-import { CONFIG } from '.'
+import { KVT_CONFIG } from '.'
 import { Environment } from '@abx-types/reference-data'
 import { getAccount } from '../ethereum/test_helpers'
 
@@ -11,7 +11,7 @@ import { getAccount } from '../ethereum/test_helpers'
  * @param byteCode
  */
 export async function deployContract(abi, byteCode) {
-  const selectedHost = CONFIG[Environment.test].url
+  const selectedHost = KVT_CONFIG[Environment.test].url
   const selectedAccountIndex = 0
   const account = getAccount(selectedAccountIndex)
   const web3 = new Web3(new Web3.providers.HttpProvider(selectedHost))

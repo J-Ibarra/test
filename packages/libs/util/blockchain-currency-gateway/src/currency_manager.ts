@@ -1,9 +1,7 @@
 import { Environment } from '@abx-types/reference-data'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { getCurrencyCode } from '@abx-service-clients/reference-data'
-import { Ethereum } from './ethereum'
-import { Kinesis } from './kinesis'
-import { KVT } from './kvt'
+import { Ethereum, Kinesis, KVT } from './native'
 import { OnChainCurrencyGateway } from './currency_gateway'
 import { BitcoinOnChainCurrencyGatewayAdapter } from './api-provider/bitcoin/BitcoinOnChainCurrencyGatewayAdapter'
 

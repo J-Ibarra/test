@@ -23,7 +23,7 @@ COPY packages/libs ./packages/libs
 COPY packages/services/account ./packages/services/account
 
 RUN lerna bootstrap
-WORKDIR /sync/packages/services/account/service-wrappers/salesforce
+WORKDIR /sync/packages/services/account/src/service-wrappers/salesforce
 
 EXPOSE 3103
 

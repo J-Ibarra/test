@@ -23,8 +23,8 @@ import { decryptValue } from '@abx-utils/encryption'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { CurrencyCode, KinesisCurrencies } from '@abx-types/reference-data'
 import { KINESIS_NETWORK_CONFIG } from './kinesis_network_config'
-import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse } from '../currency_gateway'
-import { CryptoAddress } from '../api-provider/model'
+import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse } from '../../currency_gateway'
+import { CryptoAddress } from '../../api-provider/model'
 
 const logger = Logger.getInstance('currencies', 'kinesis_coin')
 

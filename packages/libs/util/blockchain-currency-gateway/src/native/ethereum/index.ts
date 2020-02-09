@@ -8,12 +8,12 @@ import { CurrencyCode, Environment } from '@abx-types/reference-data'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { getEthScanTransactionsForAddress } from './etherscan/etherscan'
 import { EtherscanInternalTransaction, EtherscanTransaction, EthscanTransactionType } from './etherscan/interface'
-import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse } from '../currency_gateway'
-import { CryptoAddress } from '../api-provider/model'
+import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse } from '../../currency_gateway'
+import { CryptoAddress } from '../../api-provider/model'
 
-export const testMnemonic = 'uncle salute dust cause embody wonder clump blur paddle hotel risk aim'
+const testMnemonic = 'uncle salute dust cause embody wonder clump blur paddle hotel risk aim'
 
-export const CONFIG = {
+export const ETH_CONFIG = {
   [Environment.development]: {
     url: 'http://dev-ethereum:8545',
     networkId: 5777,
@@ -50,7 +50,7 @@ export class Ethereum implements OnChainCurrencyGateway {
   private static readonly BLOCKS_TO_GO_BACK_FOR_CONFIRMATION = 10
 
   constructor(env: Environment) {
-    this.web3 = new Web3(CONFIG[env].url)
+    this.web3 = new Web3(ETH_CONFIG[env].url)
   }
 
   public generatePrivateKey() {

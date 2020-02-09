@@ -11,12 +11,12 @@ import { decryptValue } from '@abx-utils/encryption'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 import KinesisVelocityToken from './contracts/KinesisVelocityToken.json'
-import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse } from '../currency_gateway.js'
-import { CryptoAddress } from '../api-provider/model/index.js'
+import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse } from '../../currency_gateway.js'
+import { CryptoAddress } from '../../api-provider/model/index.js'
 
-export const testMnemonic = 'uncle salute dust cause embody wonder clump blur paddle hotel risk aim'
+const testMnemonic = 'uncle salute dust cause embody wonder clump blur paddle hotel risk aim'
 
-export const CONFIG = {
+export const KVT_CONFIG = {
   [Environment.development]: {
     url: 'http://dev-ethereum:8545/',
     networkId: 5777,
@@ -54,7 +54,7 @@ export class KVT implements OnChainCurrencyGateway {
   private KVT_GAS_LIMIT: number = 80000
 
   constructor(env: Environment) {
-    this.web3 = new Web3(CONFIG[env].url)
+    this.web3 = new Web3(KVT_CONFIG[env].url)
     const abi = KinesisVelocityToken.abi
     this.ticker = CurrencyCode.kvt
 

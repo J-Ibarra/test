@@ -4,7 +4,7 @@ import { dbConfig as testConfig } from './test'
 
 import { EnvironmentConfig } from '../model'
 
-const cloudEnvironments = ['production', 'uat', 'integration', 'test-automation']
+const cloudEnvironments = ['production', 'uat', 'integration', 'e2e-aws', 'stg']
 
 export function getEnvironmentConfig(): EnvironmentConfig {
   let environmentConfig
