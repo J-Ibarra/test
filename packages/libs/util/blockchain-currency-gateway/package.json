@@ -29,6 +29,7 @@
     "@abx-utils/logging": "^1.1.0",
     "axios": "0.18.0",
     "bcryptjs": "2.4.3",
+    "cryptoapis.io": "^4.2.2",
     "decimal.js": "10.2.0",
     "express": "4.16.4",
     "js-kinesis-sdk": "0.9.9",
