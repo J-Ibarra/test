@@ -1,5 +1,6 @@
 import { Transaction } from './model/Transaction'
 import { CryptoAddress } from './model/CryptoAddress'
+import { TransactionResponse } from '../currency_gateway'
 
 /** The main mechanism for conducting blockchain operations. */
 export interface BlockchainFacade {
@@ -10,7 +11,7 @@ export interface BlockchainFacade {
    * @param receiverPublicAddress the receiver public address details
    * @param amount the amount to send
    */
-  createTransaction(senderAddress: CryptoAddress, receiverPublicAddress: string, amount: number): Promise<Transaction>
+  createTransaction(senderAddress: CryptoAddress, receiverPublicAddress: string, amount: number): Promise<TransactionResponse>
 
   /**
    * Retrieves the transaction details for a given hash
@@ -22,14 +23,14 @@ export interface BlockchainFacade {
   generateAddress(): Promise<CryptoAddress>
 
   /**
-   * 
-   * @param address 
+   *
+   * @param address
    */
   validateAddress(address: string): Promise<boolean>
 
   /**
-   * 
-   * @param address 
+   *
+   * @param address
    */
   validateAddressIsNotContractAddress(address: string): Promise<boolean>
 }

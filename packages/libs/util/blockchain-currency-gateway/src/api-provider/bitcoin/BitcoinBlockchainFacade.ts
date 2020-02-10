@@ -1,33 +1,33 @@
 import { BlockchainFacade } from '../BlockchainFacade'
 import { TransactionResponse } from '../../currency_gateway'
-import { CryptoApis, ENetworkTypes, ITransactionDetails, IGenerateAddress } from '../providers/cryptoApis'
+import { CryptoApis, ENetworkTypes } from '../providers/cryptoApis'
 import { CurrencyCode, Environment } from '@abx-types/reference-data'
 import { CryptoAddress } from '../model'
 import { Transaction } from '../model/Transaction'
 
 const BITCOIN_CONFIG = {
   [Environment.development]: {
-    network: ENetworkTypes.ROPSTEN,
+    network: ENetworkTypes.TESTNET,
     token: process.env.CRYPTO_APIS_TOKEN,
   },
   [Environment.test]: {
-    network: ENetworkTypes.ROPSTEN,
+    network: ENetworkTypes.TESTNET,
     token: process.env.CRYPTO_APIS_TOKEN,
   },
   [Environment.e2eLocal]: {
-    network: ENetworkTypes.ROPSTEN,
+    network: ENetworkTypes.TESTNET,
     token: process.env.CRYPTO_APIS_TOKEN,
   },
   [Environment.e2eAws]: {
-    network: ENetworkTypes.ROPSTEN,
+    network: ENetworkTypes.TESTNET,
     token: process.env.CRYPTO_APIS_TOKEN,
   },
   [Environment.integration]: {
-    network: ENetworkTypes.ROPSTEN,
+    network: ENetworkTypes.TESTNET,
     token: process.env.CRYPTO_APIS_TOKEN,
   },
   [Environment.uat]: {
-    network: ENetworkTypes.ROPSTEN,
+    network: ENetworkTypes.TESTNET,
     token: process.env.CRYPTO_APIS_TOKEN,
   },
   [Environment.production]: {

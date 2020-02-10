@@ -1,13 +1,18 @@
 import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse } from '../../currency_gateway'
-import { CurrencyCode } from '@abx-types/reference-data'
+import { CurrencyCode, Environment } from '@abx-types/reference-data'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { RuntimeError } from '@abx-types/error'
+import { CryptoAddress } from '../model/CryptoAddress'
 import { BitcoinBlockchainFacade } from './BitcoinBlockchainFacade'
 
 /** Adapting the {@link BitcoinBlockchainFacade} to {@link OnChainCurrencyGateway} for backwards-compatibility. */
 export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGateway {
   ticker: CurrencyCode.bitcoin
-  private readonly bitcoinBlockchainFacade = new BitcoinBlockchainFacade()
+  private bitcoinBlockchainFacade: BitcoinBlockchainFacade
+
+  constructor(env: Environment) {
+    this.bitcoinBlockchainFacade = new BitcoinBlockchainFacade(env)
+  }
 
   getId(): Promise<number> {
     return getCurrencyId(this.ticker)

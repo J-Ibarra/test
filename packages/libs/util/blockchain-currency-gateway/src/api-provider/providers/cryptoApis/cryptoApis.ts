@@ -34,10 +34,11 @@ export class CryptoApis {
   private ticker: CurrencyCode
   constructor(ticker: CurrencyCode, network: ENetworkTypes, token: string) {
     this.ticker = ticker
-    this.caClientInteraction = new caClient(token)(this.caClientInteraction.BC[this.ticker] as ICoin).switchNetwork(
-      this.caClientInteraction.BC[this.ticker].NETWORKS[network],
-    )
+    this.caClientInteraction = new caClient(token)
+
     this.logger = Logger.getInstance('CryptoApis', this.ticker)
+
+    this.caClientInteraction.BC[this.ticker].switchNetwork(network)
   }
 
   /**
