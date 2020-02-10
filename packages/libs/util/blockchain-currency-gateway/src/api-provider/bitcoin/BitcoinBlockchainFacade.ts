@@ -1,9 +1,47 @@
 import { BlockchainFacade } from '../BlockchainFacade'
-import { CryptoAddress, Transaction } from '../model'
 import { TransactionResponse } from '../../currency_gateway'
+import { CryptoApis, ENetworkTypes, ITransactionDetails, IGenerateAddress } from '../providers/cryptoApis'
+import { CurrencyCode, Environment } from '@abx-types/reference-data'
+import { CryptoAddress } from '../model'
+
+const BITCOIN_CONFIG = {
+  [Environment.development]: {
+    network: ENetworkTypes.ROPSTEN,
+    token: process.env.CRYPTO_APIS_TOKEN,
+  },
+  [Environment.test]: {
+    network: ENetworkTypes.ROPSTEN,
+    token: process.env.CRYPTO_APIS_TOKEN,
+  },
+  [Environment.e2eLocal]: {
+    network: ENetworkTypes.ROPSTEN,
+    token: process.env.CRYPTO_APIS_TOKEN,
+  },
+  [Environment.e2eAws]: {
+    network: ENetworkTypes.ROPSTEN,
+    token: process.env.CRYPTO_APIS_TOKEN,
+  },
+  [Environment.integration]: {
+    network: ENetworkTypes.ROPSTEN,
+    token: process.env.CRYPTO_APIS_TOKEN,
+  },
+  [Environment.uat]: {
+    network: ENetworkTypes.ROPSTEN,
+    token: process.env.CRYPTO_APIS_TOKEN,
+  },
+  [Environment.production]: {
+    network: ENetworkTypes.MAINNET,
+    token: process.env.CRYPTO_APIS_TOKEN,
+  },
+}
 
 export class BitcoinBlockchainFacade implements BlockchainFacade {
-  
+  private ticker = CurrencyCode.bitcoin
+  private cryptoApis: CryptoApis
+  constructor(env: Environment) {
+    this.cryptoApis = new CryptoApis(this.ticker, BITCOIN_CONFIG[env].network, BITCOIN_CONFIG[env].token)
+  }
+
   // TODO
   createTransaction(
     senderAddress: Pick<CryptoAddress, 'privateKey' | 'address' | 'wif'>,
@@ -15,30 +53,36 @@ export class BitcoinBlockchainFacade implements BlockchainFacade {
   }
 
   // TODO
-  getTransaction(transactionHash: string): Promise<Transaction> {
-    console.log(transactionHash)
-    return null as any
+  getTransaction(transactionHash: string): Promise<ITransactionDetails> {
+    return this.cryptoApis.getTransactionDetails({ txID: transactionHash })
   }
 
-  // TODO
-  generateAddress(): Promise<CryptoAddress> {
-    return null as any
+  async generateAddress(): Promise<CryptoAddress> {
+    const generatedAddress = await this.cryptoApis.generateAddress()
+
+    this.cryptoApis.addressEventSubscription({
+      address: generatedAddress.publicKey,
+      callbackURL: `${process.env.API_URL}/webhooks/crypto/address-transactions`,
+      confirmations: 2,
+    })
+
+    return generatedAddress
   }
 
-  // TODO
-  balanceAt(address: string): Promise<number> {
-    console.log(address)
-    return null as any
+  async balanceAt(address: string): Promise<number> {
+    return Number((await this.cryptoApis.getAddressDetails({ publicKey: address })).balance)
   }
 
-  // TODO
-  validateAddress(address: string): Promise<boolean> {
-    console.log(address)
-    return null as any
+  async validateAddress(address: string): Promise<boolean> {
+    try {
+      const addressDetails = await this.cryptoApis.getAddressDetails({ publicKey: address })
+      return addressDetails.address === address
+    } catch (e) {
+      return false
+    }
   }
 
-  validateAddressIsNotContractAddress(address: string): Promise<boolean> {
-    console.log(address)
-    return Promise.resolve(false)
+  async validateAddressIsNotContractAddress(address: string): Promise<boolean> {
+    return address !== process.env.BTC_CONTRACT_ADDRESS
   }
 }
