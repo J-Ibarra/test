@@ -3,6 +3,7 @@ import { TransactionResponse } from '../../currency_gateway'
 import { CryptoApis, ENetworkTypes, ITransactionDetails, IGenerateAddress } from '../providers/cryptoApis'
 import { CurrencyCode, Environment } from '@abx-types/reference-data'
 import { CryptoAddress } from '../model'
+import { Transaction } from '../model/Transaction'
 
 const BITCOIN_CONFIG = {
   [Environment.development]: {
@@ -52,8 +53,7 @@ export class BitcoinBlockchainFacade implements BlockchainFacade {
     return null as any
   }
 
-  // TODO
-  getTransaction(transactionHash: string): Promise<ITransactionDetails> {
+  async getTransaction(transactionHash: string): Promise<Transaction> {
     return this.cryptoApis.getTransactionDetails({ txID: transactionHash })
   }
 
