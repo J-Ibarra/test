@@ -5,4 +5,5 @@ export enum CryptoCurrency {
   kau = CurrencyCode.kau,
   kag = CurrencyCode.kag,
   kvt = CurrencyCode.kvt,
+  bitcoin = CurrencyCode.bitcoin,
 }
