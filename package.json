@@ -2,6 +2,8 @@
   "name": "root",
   "private": true,
   "scripts": {
+    "bootstrap": "lerna bootstrap",
+    "bootstrap:production": "lerna bootstrap -- --production --no-optional",
     "start-api-debug": "lerna run start-api-debug --stream",
     "build:services": "lerna run build --scope @abx/*"
   },

@@ -1,4 +1,8 @@
-FROM node:10
+FROM node:13.6.0-alpine3.10
+
+# Required by lerna bootstrap (some 3rd party dependencies are fetched from git)
+RUN apk add --update git openssh
+RUN apk add --update alpine-sdk
 
 ARG NPM_TOKEN
 ENV NPM_TOKEN=$NPM_TOKEN
@@ -15,7 +19,6 @@ COPY tsconfig.json .
 COPY tsconfig.build.json .
 
 RUN npm install --loglevel notice
-RUN npm i lerna -g --loglevel notice
 RUN npm i -g typescript
 RUN npm i -g ts-node-dev
 
@@ -23,7 +26,7 @@ RUN npm i -g ts-node-dev
 COPY packages/libs ./packages/libs
 COPY packages/services/scheduler ./packages/services/scheduler
 
-RUN lerna bootstrap
+RUN npm run bootstrap:production
 WORKDIR /sync/packages/services/scheduler
 
 CMD  "./docker-start.sh"

@@ -1,4 +1,8 @@
-FROM node:10
+FROM node:13.6.0-alpine3.10
+
+# Required by lerna bootstrap (some 3rd party dependencies are fetched from git)
+RUN apk add --update git openssh
+RUN apk add --update alpine-sdk
 
 ARG NPM_TOKEN
 ENV NPM_TOKEN=$NPM_TOKEN
