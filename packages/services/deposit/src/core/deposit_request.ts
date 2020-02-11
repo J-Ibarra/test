@@ -51,9 +51,10 @@ export async function loadAllPendingDepositRequestsAboveMinimumAmount(): Promise
     cachedCryptoCurrencies = await findCurrencyForCodes(Object.values(CryptoCurrency) as any)
   }
 
-  const depositRequestsForAllCurrenciesPromise = cachedCryptoCurrencies.map(cryptoCurrency =>
-    getAllPendingDepositRequestsForCurrencyAboveMinimumAmount(cryptoCurrency),
-  )
+  // In case the CryptoCurrency is not enabled yet it would show as undefined here
+  const depositRequestsForAllCurrenciesPromise = cachedCryptoCurrencies
+    .filter(Boolean)
+    .map(cryptoCurrency => getAllPendingDepositRequestsForCurrencyAboveMinimumAmount(cryptoCurrency))
 
   const depositRequestsForAllCurrencies = await Promise.all(depositRequestsForAllCurrenciesPromise)
 

@@ -38,9 +38,9 @@ Scripts required for the setup are placed in `/_scripts`
 ## Steps to set the project up locally:
 
 1. Run `npm install`
-2. Run `lerna link`
-3. Run `lerna bootstrap`
-4. Run `lerna run build`
+2. Run `npm run link`
+3. Run `npm run bootstrap`
+4. Run `npm run build`
 
 ## Before running tests
 
@@ -49,8 +49,8 @@ Scripts required for the setup are placed in `/_scripts`
 ## API Local execution
 
 1. Run `docker-compose up -d`
-2. Run `lerna run run-legacy-migrations-dev`
-3. Run `lerna run start-api-debug`
+2. Run `npm run run-legacy-migrations:dev`
+3. Run `npm run start-api-debug`
 
 ### Conventions
 

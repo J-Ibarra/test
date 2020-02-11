@@ -25,6 +25,7 @@ const referenceDataRoutes = [
   '/api/boundaries',
   '/api/currencies',
   '/api/feature-flags',
+  '/api/config',
   '/api/symbols',
   '/api/symbols/apply-threshold',
 ]

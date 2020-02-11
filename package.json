@@ -4,9 +4,11 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "bootstrap:production": "lerna bootstrap -- --production --no-optional",
-    "run-legacy-db-migration:dev": "lerna run run-legacy-migrations-dev",
+    "link": "lerna link",
     "build": "lerna run build",
     "build:services": "lerna run build --scope @abx/*",
+    "run-legacy-migrations:test": "lerna run run-legacy-migrations-test",
+    "run-legacy-migrations:dev": "lerna run run-legacy-migrations-dev",
     "start-api-debug": "lerna run start-api-debug --stream"
   },
   "devDependencies": {

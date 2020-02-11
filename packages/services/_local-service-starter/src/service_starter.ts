@@ -5,7 +5,7 @@ import { bootstrapFundManagementService } from '@abx/admin-fund-management-servi
 import { bootstrapMarketDataService } from '@abx/exchange-market-data-service'
 import { bootstrapReportsService } from '@abx/exchange-report-service'
 import { bootstrapNotificationService } from '@abx/exchange-notification-service'
-import { bootstrapSchedulerService } from '@abx/exchange-scheduler-service'
+// import { bootstrapSchedulerService } from '@abx/exchange-scheduler-service'
 import { bootstrapDepositProcessor } from '@abx/exchange-deposit-service'
 
 import { bootstrapOrderDataService, bootstrapOrderGatewayService, bootstrapWorkerService, bootstrapSettlementService } from '@abx/order-service'
@@ -22,6 +22,6 @@ export async function startAllServices() {
   await bootstrapSettlementService()
   await bootstrapReportsService()
   await bootstrapNotificationService()
-  await bootstrapSchedulerService()
+  // await bootstrapSchedulerService()
   await bootstrapDepositProcessor()
 }
