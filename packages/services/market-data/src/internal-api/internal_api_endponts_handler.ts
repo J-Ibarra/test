@@ -12,11 +12,11 @@ export function createQueryEndpointHandlers(): InternalRoute<any, any>[] {
       handler: request => marketDataServiceInstance.getMidPricesForSymbol(request),
     },
     {
-      path: MarketDataEndpoints.getMidPricesForSymbol,
+      path: MarketDataEndpoints.cleanOldMidPrices,
       handler: () => CacheFirstMidPriceRepository.getInstance().cleanOldMidPrices(),
     },
     {
-      path: MarketDataEndpoints.getMidPricesForSymbol,
+      path: MarketDataEndpoints.reconcileOHCLMarketData,
       handler: ({ timeFrame }) => reconcileOHCLMarketData(timeFrame),
     },
   ]
