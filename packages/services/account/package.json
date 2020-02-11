@@ -17,11 +17,12 @@
     "compile": "npm run clean && npm run api-build && tsc -p tsconfig.build.json --skipLibCheck",
     "migrate-db": "npm run build && NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test NODE_PATH=dist node dist/migrations/index.js",
     "test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_PATH=dist ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts --require ../../../_test-setup/test_globals.js src/**/*.spec.ts --exit",
-    "build-image-latest": "echo build image here",
-    "build-image-from-tag": "echo build image here using $VERSION env variable, set by travis",
-    "release-image-integration": "echo push image to ECR here",
-    "release-image-uat": "echo push image to ECR here",
-    "update-service-integration": "echo updating integration service here"
+    "build-image-account": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t kbe-services-account:$TRAVIS_COMMIT -t kbe-services-account:latest packages/services/account/src/service-wrappers/account/Dockerfile .",
+    "build-image-salesforce": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t kbe-services-salesforce:$TRAVIS_COMMIT -t kbe-services-salesforce:latest packages/services/account/src/service-wrappers/salesforce/Dockerfile .",
+    "build-image-latest": "npm run build-image-account && npm run build-image-salesforce",
+    "push-image-account": "docker push $KINESIS_ECR_URL/kbe-services-account",
+    "push-image-salesforce": "docker push $KINESIS_ECR_URL/kbe-services-salesforce",
+    "push-image": "npm run push-image-account-service && npm run push-image-salesforce"
   },
   "dependencies": {
     "@abx-service-clients/account": "^1.1.0",

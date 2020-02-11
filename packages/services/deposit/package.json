@@ -17,11 +17,12 @@
     "build": "npm run clean && npm run build-deposit-processor && tsc -p tsconfig.build.json --skipLibCheck",
     "start": "ts-node-dev src/index.ts",
     "test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_PATH=dist ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts --require ../../../_test-setup/test_globals.js src/**/*.spec.ts --exit",
-    "build-image-latest": "echo build image here",
-    "build-image-from-tag": "echo build image here using $VERSION env variable, set by travis",
-    "release-image-integration": "echo push image to ECR here",
-    "release-image-uat": "echo push image to ECR here",
-    "update-service-integration": "echo updating integration service here"
+    "build-image-deposit-processor": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t kbe-services-deposit-processor:$TRAVIS_COMMIT -t kbe-services-deposit-processor:latest packages/services/deposit/src/service-wrappers/deposit-processor/Dockerfile . && cd packages/services/deposit ",
+    "build-image-eth-deposit-poller": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t kbe-services-eth-deposit-poller:$TRAVIS_COMMIT -t kbe-services-eth-deposit-poller:latest packages/services/deposit/src/service-wrappers/eth-deposit-poller/Dockerfile . && cd packages/services/deposit ",
+    "build-image-latest": "npm run build-image-deposit-processor && npm run build-image-eth-deposit-poller",
+    "push-deposit-processor-image": "docker push $KINESIS_ECR_URL/kbe-services-balance",
+    "push-eth-deposit-poller-image": "docker push $KINESIS_ECR_URL/kbe-services-eth-deposit-poller",
+    "push-image": "npm run push-deposit-processor-image && npm run push-eth-deposit-poller-image"
   },
   "dependencies": {
     "@abx-service-clients/account": "^1.1.0",

@@ -24,8 +24,16 @@
     "test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_PATH=dist ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts --require ../../../_test-setup/test_globals.js src/**/*.spec.ts --exit",
     "build-image-from-tag": "echo build image here using $VERSION env variable, set by travis",
     "release-image-integration": "echo push image to ECR here",
-    "release-image-uat": "echo push image to ECR here",
-    "update-service-integration": "echo updating integration service here"
+    "build-image-order-data": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t kbe-services-order-data:$TRAVIS_COMMIT -t kbe-services-order-data:latest packages/services/order/src/service-wrappers/order-data/Dockerfile . && cd packages/services/order",
+    "build-image-order-gateway": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t kbe-services-order-gateway:$TRAVIS_COMMIT -t kbe-services-order-gateway:latest packages/services/order/src/service-wrappers/order-gateway/Dockerfile . && cd packages/services/order",
+    "build-image-settlement": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t kbe-services-settlement:$TRAVIS_COMMIT -t kbe-services-settlement:latest packages/services/order/src/service-wrappers/settlement/Dockerfile . && cd packages/services/order",
+    "build-image-worker": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t kbe-services-worker:$TRAVIS_COMMIT -t kbe-services-worker:latest packages/services/order/src/service-wrappers/worker/Dockerfile . && cd packages/services/order",
+    "build-image-latest": "npm run build-image-order-data && npm run build-image-order-gateway && npm run build-image-settlement && npm run build-image-worker",
+    "push-image-order-data": "docker push $KINESIS_ECR_URL/kbe-services-order-data",
+    "push-image-order-gateway": "docker push $KINESIS_ECR_URL/kbe-services-order-gateway",
+    "push-image-settlement": "docker push $KINESIS_ECR_URL/kbe-services-settlement",
+    "push-image-worker": "docker push $KINESIS_ECR_URL/kbe-services-order-worker",
+    "push-image": "npm run push-image-order-data && npm run push-image-order-gateway && npm run push-image-settlement && npm run push-image-worker"
   },
   "dependencies": {
     "@abx-service-clients/account": "^1.1.0",

@@ -33,27 +33,12 @@ jobs:
       script:
         - lerna link
         - lerna bootstrap
-        - lerna run build --include-dependencies
-        - lerna run run-legacy-migrations
-        - lerna run test
+        - lerna run build --include-dependencies --since develop
+        - lerna run run-legacy-migrations:test
+        - lerna run test --since develop
     - stage: 'Build and deploy Integration'
-      if: branch = integration and type = push
-      env:
-        - ENVIRONMENT=int
+      if: branch = develop and type = push
       script:
-        - lerna run build-image-latest --since master
         - eval $(aws ecr get-login --region ap-southeast-2 --no-include-email)
-        - lerna run release-image-integration --since master
-        - lerna run update-service-integration --since master
-    - stage: 'Update version and tag changed services'
-      if: branch = master and type = push
-      script:
-        - lerna publish --since master
-    - stage: 'Publish new docker image for tagged service'
-      if: tag IS present
-      script:
-        - eval "$(./tag-service-variable-setter.sh)"
-        - cd services/$SERVICE
-        - lerna run build-image-from-tag --since -- ls -la
-        - eval $(aws ecr get-login --region ap-southeast-2 --no-include-email)
-        - lerna run release-image-uat-repo --since -- ls -la
+        - lerna run build-image-latest --since develop
+        - lerna run push-image --since develop
