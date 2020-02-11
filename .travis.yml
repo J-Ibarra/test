@@ -23,15 +23,16 @@ before_install:
   - aws configure set profile.kinesis.aws_secret_access_key $AWS_SECRET_ACCESS_KEY
   - aws configure set profile.kinesis.aws_access_key_id $AWS_ACCESS_KEY_ID
   - aws configure set profile.kinesis.region ap-southeast-2
+  - git fetch
 before_script:
   - psql -c 'create database kinesis_exchange;' -U postgres
 
 jobs:
   include:
     - stage: test
-
       if: tag IS blank #if it is a tag we don't want to run the tests, they would have run already
       script:
+        - ./_scripts/travis-build-branch-checkout.sh
         - lerna link
         - lerna bootstrap
         - lerna run build --include-dependencies --since refs/remotes/origin/master
