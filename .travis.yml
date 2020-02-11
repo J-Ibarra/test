@@ -34,9 +34,9 @@ jobs:
       script:
         - lerna link
         - lerna bootstrap
-        - lerna run build --include-dependencies --since origin/develop
+        - lerna run build --include-dependencies --since refs/remotes/origin/master
         - lerna run run-legacy-migrations:test
-        - lerna run test --since origin/develop
+        - lerna run test --since refs/remotes/origin/master
     - stage: 'Build and deploy Integration'
       if: branch = develop and type = push
       script:
