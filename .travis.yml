@@ -35,7 +35,7 @@ jobs:
         - ./_scripts/travis-build-branch-checkout.sh
         - npm link
         - npm bootstrap
-        - lerna run build  --since develop --include-dependencies --exclude-dependent
+        - lerna run build  --since develop --include-dependencies --exclude-dependents
         - npm run run-legacy-migrations:test
         - lerna run test --since develop
     - stage: 'Build and deploy Integration'
