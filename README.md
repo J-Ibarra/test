@@ -52,6 +52,26 @@ Scripts required for the setup are placed in `/_scripts`
 2. Run `npm run run-legacy-migrations:dev`
 3. Run `npm run start-api-debug`
 
+## Local debug VS Code launch.json config
+
+{
+// Use IntelliSense to learn about possible attributes.
+// Hover to view descriptions of existing attributes.
+// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+"version": "0.2.0",
+"configurations": [{
+"name": "Launch via npm",
+"type": "node",
+"request": "launch",
+"cwd": "\${workspaceFolder}",
+"runtimeExecutable": "npm",
+"runtimeArgs": ["run-script", "start-api-debug"],
+"port": 9229,
+"stopOnEntry": true,
+"sourceMaps": true,
+}]
+}
+
 ### Conventions
 
 #### Branches
