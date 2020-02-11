@@ -15,7 +15,7 @@
     "migrate-db": "npm run build && NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test NODE_PATH=dist node dist/migrations/index.js",
     "start": "ts-node-dev src/index.ts",
     "test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_PATH=dist ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts --require ../../../_test-setup/test_globals.js src/**/*.spec.ts --exit",
-    "build-image-latest": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t kbe-services-notification:$TRAVIS_COMMIT -t kbe-services-notification:latest packages/services/notification/Dockerfile . && cd packages/services/notification ",
+    "build-image-latest": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t kbe-services-notification:$TRAVIS_COMMIT -t kbe-services-notification:latest -f packages/services/notification/Dockerfile . && cd packages/services/notification ",
     "push-image": "docker push $KINESIS_ECR_URL/kbe-services-notification"
   },
   "dependencies": {
