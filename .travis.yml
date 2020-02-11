@@ -29,16 +29,17 @@ before_script:
 jobs:
   include:
     - stage: test
+
       if: tag IS blank #if it is a tag we don't want to run the tests, they would have run already
       script:
         - lerna link
         - lerna bootstrap
-        - lerna run build --include-dependencies --since develop
+        - lerna run build --include-dependencies --since origin/develop
         - lerna run run-legacy-migrations:test
-        - lerna run test --since develop
+        - lerna run test --since origin/develop
     - stage: 'Build and deploy Integration'
       if: branch = develop and type = push
       script:
         - eval $(aws ecr get-login --region ap-southeast-2 --no-include-email)
-        - lerna run build-image-latest --since develop
-        - lerna run push-image --since develop
+        - lerna run build-image-latest --since origin/develop
+        - lerna run push-image --since origin/develop
