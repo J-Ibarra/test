@@ -2,14 +2,10 @@ import * as _ from 'lodash'
 const validate = require('jsonschema').validate
 const nr = require('newrelic')
 
-import { Logger } from '@abx-utils/logging'
-import { handleUnexpectedError, ValidationError } from '@abx-types/error'
 import { createExchangeEvent } from './exchange_event_operations'
 import { ExchangeEvents } from './exchange_event.model'
 
 type HandlerFn = (pickedMessage: any, t?: any) => Promise<any>
-
-const logger = Logger.getInstance('message_schema', 'messageFactory')
 
 export function messageFactory(schemaLogic: any, handlerFn: HandlerFn) {
   return (msg: any, respond?: (err: any, response?: any) => void) => {
@@ -39,15 +35,16 @@ export function messageFactory(schemaLogic: any, handlerFn: HandlerFn) {
             }
           })
           .catch(error => {
-            handleUnexpectedError(error)
             handleLoggingOfMessages(error, msg)
             nr.endTransaction()
             if (respond) {
               respond(error) // callback style
             } else {
-              logger.error(error)
+              console.error(error)
               rej(error) // promise style
             }
+
+            return Promise.reject(error)
           })
       })
       transaction()
@@ -78,11 +75,7 @@ export function customJsonSchemaErrors(errors: any[]) {
     })
     .join('. ')
   generateErrorMessages += '.'
-  throw new ValidationError(generateErrorMessages, {
-    context: {
-      errors,
-    },
-  })
+  throw new Error(generateErrorMessages)
 }
 
 export async function writeExchangeEvents(msg: any, schema: any, eventFn: (event: ExchangeEvents) => Promise<any>) {
