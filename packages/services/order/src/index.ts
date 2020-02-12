@@ -1,4 +1,4 @@
 export * from './service-wrappers/order-data'
 export * from './service-wrappers/order-gateway'
-export * from './service-wrappers/worker'
-export * from './service-wrappers/settlement'
+export * from './service-wrappers/order-matcher'
+export * from './service-wrappers/order-settlement'

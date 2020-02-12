@@ -26,14 +26,14 @@
     "release-image-integration": "echo push image to ECR here",
     "build-image-order-data": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-order-data:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-order-data:latest -f packages/services/order/src/service-wrappers/order-data/Dockerfile . && cd packages/services/order",
     "build-image-order-gateway": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-order-gateway:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-order-gateway:latest -f packages/services/order/src/service-wrappers/order-gateway/Dockerfile . && cd packages/services/order",
-    "build-image-settlement": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-settlement:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-settlement:latest -f packages/services/order/src/service-wrappers/settlement/Dockerfile . && cd packages/services/order",
-    "build-image-worker": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-worker:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-worker:latest -f packages/services/order/src/service-wrappers/worker/Dockerfile . && cd packages/services/order",
+    "build-image-order-settlement": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-order-settlement:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-order-settlement:latest -f packages/services/order/src/service-wrappers/order-settlement/Dockerfile . && cd packages/services/order",
+    "build-image-order-matcher": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-order-matcher:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-order-matcher:latest -f packages/services/order/src/service-wrappers/order-matcher/Dockerfile . && cd packages/services/order",
     "build-image-latest": "npm run build-image-order-data && npm run build-image-order-gateway && npm run build-image-settlement && npm run build-image-worker",
     "push-image-order-data": "docker push $KINESIS_ECR_URL/kbe-services-order-data",
     "push-image-order-gateway": "docker push $KINESIS_ECR_URL/kbe-services-order-gateway",
-    "push-image-settlement": "docker push $KINESIS_ECR_URL/kbe-services-settlement",
-    "push-image-worker": "docker push $KINESIS_ECR_URL/kbe-services-order-worker",
-    "push-image": "npm run push-image-order-data && npm run push-image-order-gateway && npm run push-image-settlement && npm run push-image-worker"
+    "push-image-order-settlement": "docker push $KINESIS_ECR_URL/kbe-services-order-settlement",
+    "push-image-order-matcher": "docker push $KINESIS_ECR_URL/kbe-services-order-matcher",
+    "push-image": "npm run push-image-order-data && npm run push-image-order-gateway && npm run push-image-order-settlement && npm run push-image-order-matcher"
   },
   "dependencies": {
     "@abx-service-clients/account": "^1.1.0",

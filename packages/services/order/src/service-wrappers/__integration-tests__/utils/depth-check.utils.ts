@@ -1,8 +1,8 @@
 import { expect } from 'chai'
 import { OrderDirection } from '@abx-types/order'
-import { getDepthForSymbol } from '../../worker/core/order-match-handling/depth'
+import { getDepthForSymbol } from '../../order-matcher/core/order-match-handling/depth'
 import { SymbolPair } from '@abx-types/reference-data'
-import { getDepthFromCache } from '../../worker/core/order-match-handling/depth/redis'
+import { getDepthFromCache } from '../../order-matcher/core/order-match-handling/depth/redis'
 
 export async function verifySellOrderAtDepthLevel({ orderId, pair, expectedRemaining = 0, level }): Promise<void> {
   const depthForSymbol = await getDepthForSymbol(pair.id)
