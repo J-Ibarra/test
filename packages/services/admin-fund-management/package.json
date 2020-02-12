@@ -18,7 +18,7 @@
     "migrate-db": "npm run build && NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test NODE_PATH=dist node dist/migrations/index.js",
     "start": "ts-node-dev src/index.ts",
     "test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_PATH=dist ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts --require ../../../_test-setup/test_globals.js src/**/*.spec.ts --exit",
-    "build-image-latest": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t kbe-services-admin-fund-management:$TRAVIS_COMMIT -t kbe-services-admin-fund-management:latest -f packages/services/admin-fund-management/Dockerfile .",
+    "build-image-latest": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-admin-fund-management:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-admin-fund-management:latest -f packages/services/admin-fund-management/Dockerfile .",
     "push-image": "docker push $KINESIS_ECR_URL/kbe-services-admin-fund-management"
   },
   "dependencies": {
