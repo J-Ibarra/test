@@ -30,15 +30,15 @@ before_script:
 jobs:
   include:
     - stage: test
-      if: tag IS blank #if it is a tag we don't want to run the tests, they would have run already
+      if: tag IS blank and branch != develop #if it is a tag we don't want to run the tests, they would have run already
       script:
         - ./_scripts/travis-build-branch-checkout.sh
         - npm link
         - npm run bootstrap
         - lerna run build --since develop --include-dependencies --exclude-dependents
         - npm run run-legacy-migrations:test
-        - lerna run test --since develop
-    - stage: 'Build and deploy Integration'
+        - lerna run test --since develop --include-dependencies --exclude-dependents
+    - stage: 'Build image and push to ECR'
       if: branch = develop and type = push
       script:
         - eval $(aws ecr get-login --region ap-southeast-2 --no-include-email)
