@@ -43,5 +43,5 @@ jobs:
       script:
         - eval $(aws ecr get-login --region ap-southeast-2 --no-include-email)
         - PREVIOUS_COMMIT_HASH=eval $(git rev-parse @~)
-        - lerna run build-image-latest --since PREVIOUS_COMMIT_HASH
-        - lerna run push-image --since PREVIOUS_COMMIT_HASH
+        - lerna run build-image-latest --since $PREVIOUS_COMMIT_HASH
+        - lerna run push-image --since $PREVIOUS_COMMIT_HASH
