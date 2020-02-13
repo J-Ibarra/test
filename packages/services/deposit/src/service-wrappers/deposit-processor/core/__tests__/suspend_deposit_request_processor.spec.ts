@@ -74,7 +74,7 @@ describe('suspended_deposit_request_processor', () => {
       }
 
       expect(spyUpdateDepositRequest.getCalls().length).to.eql(1)
-      expect(spyUpdateDepositRequest.calledWith(depositRequest.id, { status: DepositRequestStatus.suspended })).to.eql(true)
+      expect(spyUpdateDepositRequest.calledWith(depositRequest.id!, { status: DepositRequestStatus.suspended })).to.eql(true)
       expect(stubCreateEmailRequest.calledWith(emailRequest))
       expect(pendingSuspendedDepositGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau)!.length).to.eql(0)
       expect(checkingSuspendedDepositGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau)![0].request).to.eql(depositRequest)
@@ -95,7 +95,7 @@ describe('suspended_deposit_request_processor', () => {
       )
 
       expect(spyUpdateDepositRequest.getCalls().length).to.eql(1)
-      expect(spyUpdateDepositRequest.calledWith(depositRequest.id, { status: DepositRequestStatus.pendingHoldingsTransaction }))
+      expect(spyUpdateDepositRequest.calledWith(depositRequest.id!, { status: DepositRequestStatus.pendingHoldingsTransaction }))
       expect(checkingSuspendedDepositGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau)!.length).to.eql(0)
       expect(pendingHoldingsTransferGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau)![0].request).to.eql(depositRequest)
     })

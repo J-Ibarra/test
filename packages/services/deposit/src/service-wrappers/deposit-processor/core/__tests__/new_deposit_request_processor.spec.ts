@@ -98,7 +98,7 @@ describe('new_deposit_request_processor', () => {
         accountId: depositAddress.accountId,
         amount: depositRequest.amount,
         currencyId: depositRequest.depositAddress.currencyId,
-        sourceEventId: depositRequest.id,
+        sourceEventId: depositRequest.id!,
         sourceEventType: SourceEventType.currencyDepositRequest,
       }),
     ).to.eql(true)
@@ -139,7 +139,7 @@ describe('new_deposit_request_processor', () => {
         accountId: depositAddress.accountId,
         amount: depositRequest.amount,
         currencyId: depositRequest.depositAddress.currencyId,
-        sourceEventId: depositRequest.id,
+        sourceEventId: depositRequest.id!,
         sourceEventType: SourceEventType.currencyDepositRequest,
       }),
     ).to.eql(true)
@@ -173,7 +173,7 @@ describe('new_deposit_request_processor', () => {
     )
 
     expect(
-      updateStub.calledWith(depositRequest.id, {
+      updateStub.calledWith(depositRequest.id!, {
         status: DepositRequestStatus.failedHoldingsTransaction,
       }),
     ).to.eql(true)
@@ -202,7 +202,7 @@ describe('new_deposit_request_processor', () => {
         accountId: depositAddress.accountId,
         amount: depositRequest.amount,
         currencyId: depositRequest.depositAddress.currencyId,
-        sourceEventId: depositRequest.id,
+        sourceEventId: depositRequest.id!,
         sourceEventType: SourceEventType.currencyDepositRequest,
       }),
     ).to.eql(true)
@@ -242,7 +242,7 @@ describe('new_deposit_request_processor', () => {
         accountId: depositAddress.accountId,
         amount: depositRequest.amount,
         currencyId: depositRequest.depositAddress.currencyId,
-        sourceEventId: depositRequest.id,
+        sourceEventId: depositRequest.id!,
         sourceEventType: SourceEventType.currencyDepositRequest,
       }),
     ).to.eql(true)
