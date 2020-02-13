@@ -1,1 +1,1 @@
-# This is an example `note` service
+# Houses the order functional area services
