@@ -1,5 +1,4 @@
-import { Transaction } from './model/Transaction'
-import { CryptoAddress } from './model/CryptoAddress'
+import { CreateTransactionPayload, CryptoAddress, Transaction } from './model'
 import { TransactionResponse } from '../currency_gateway'
 
 /** The main mechanism for conducting blockchain operations. */
@@ -11,7 +10,7 @@ export interface BlockchainFacade {
    * @param receiverPublicAddress the receiver public address details
    * @param amount the amount to send
    */
-  createTransaction(senderAddress: CryptoAddress, receiverPublicAddress: string, amount: number): Promise<TransactionResponse>
+  createTransaction(payload: CreateTransactionPayload): Promise<TransactionResponse>
 
   /**
    * Retrieves the transaction details for a given hash

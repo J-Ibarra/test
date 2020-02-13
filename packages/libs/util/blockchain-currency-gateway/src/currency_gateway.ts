@@ -16,6 +16,7 @@ export interface DepositTransactionWithFiatConversion {
   fiatCurrencyCode: FiatCurrency
 }
 
+// TODO Rename to CreateTransactionResponse
 export interface TransactionResponse {
   txHash: string
   transactionFee?: string
@@ -41,7 +42,7 @@ export interface OnChainCurrencyGateway {
   getHoldingPublicAddress(): Promise<string>
   checkConfirmationOfTransaction(txHash: string): Promise<boolean>
   transferToExchangeHoldingsFrom(fromAddress: CryptoAddress | Pick<CryptoAddress, 'privateKey'>, amount: number): Promise<TransactionResponse>
-  transferFromExchangeHoldingsTo(toAddress: string, amount: number): Promise<TransactionResponse>
+  transferFromExchangeHoldingsTo(toAddress: string, amount: number, transactionConfirmationWebhookUrl?: string): Promise<TransactionResponse>
   transferTo(parameters: { privateKey: string; amount: number; toAddress: string; signerKey?: string }): Promise<TransactionResponse>
   validateAddress(address: string): Promise<boolean>
   validateAddressIsNotContractAddress(address: string): Promise<boolean>

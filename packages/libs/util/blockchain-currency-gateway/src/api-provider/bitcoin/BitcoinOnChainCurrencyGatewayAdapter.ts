@@ -1,8 +1,7 @@
 import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse } from '../../currency_gateway'
-import { CurrencyCode, Environment } from '@abx-types/reference-data'
+import { CurrencyCode } from '@abx-types/reference-data'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { RuntimeError } from '@abx-types/error'
-import { CryptoAddress } from '../model/CryptoAddress'
 import { BitcoinBlockchainFacade } from './BitcoinBlockchainFacade'
 
 /** Adapting the {@link BitcoinBlockchainFacade} to {@link OnChainCurrencyGateway} for backwards-compatibility. */
@@ -10,8 +9,8 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
   ticker: CurrencyCode.bitcoin
   private bitcoinBlockchainFacade: BitcoinBlockchainFacade
 
-  constructor(env: Environment) {
-    this.bitcoinBlockchainFacade = new BitcoinBlockchainFacade(env)
+  constructor() {
+    this.bitcoinBlockchainFacade = new BitcoinBlockchainFacade()
   }
 
   getId(): Promise<number> {
@@ -51,20 +50,21 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
     throw new RuntimeError('Unsupported operation checkConfirmationOfTransaction')
   }
 
-  transferToExchangeHoldingsFrom(fromAddress: CryptoAddress, amount: number): Promise<TransactionResponse> {
-    return this.bitcoinBlockchainFacade.createTransaction(fromAddress, process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS!, amount)
+  transferToExchangeHoldingsFrom(): Promise<TransactionResponse> {
+    throw new RuntimeError('Unsupported operation transferToExchangeHoldingsFrom')
   }
 
-  transferFromExchangeHoldingsTo(toAddress: string, amount: number): Promise<TransactionResponse> {
-    return this.bitcoinBlockchainFacade.createTransaction(
-      {
+  transferFromExchangeHoldingsTo(toAddress: string, amount: number, transactionConfirmationWebhookUrl: string): Promise<TransactionResponse> {
+    return this.bitcoinBlockchainFacade.createTransaction({
+      senderAddress: {
         privateKey: process.env.KINESIS_BITCOIN_HOLDINGS_SECRET!,
         address: process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS!,
         wif: process.env.KINESIS_BITCOIN_HOLDINGS_WIF!,
       },
-      toAddress,
+      receiverAddress: toAddress,
       amount,
-    )
+      webhookCallbackUrl: transactionConfirmationWebhookUrl,
+    })
   }
 
   transferTo(): Promise<TransactionResponse> {

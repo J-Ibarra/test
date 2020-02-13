@@ -1,3 +1,6 @@
-import { IGenerateAddress } from '../providers/cryptoApis'
-
-export interface CryptoAddress extends IGenerateAddress {}
+export interface CryptoAddress {
+  privateKey: string
+  publicKey: string
+  wif: string
+  address: string
+}
