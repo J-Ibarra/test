@@ -3,6 +3,7 @@ import { Environment } from '@abx-types/reference-data'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { DepositTransaction, OnChainCurrencyGateway } from './currency_gateway'
+import { CryptoAddress } from './api-provider/model'
 
 export const TEST_CURRENCY_TICKER = 'TST' as CurrencyCode
 export const TEST_CURRENCY_ID = 1
@@ -85,7 +86,16 @@ export class TestCurrency implements OnChainCurrencyGateway {
     return { txHash: 'test-transaction-hash' }
   }
 
-  public generatePrivateKey() {
+  public async generateAddress(): Promise<CryptoAddress> {
+    const privateKey = this.generatePrivateKey()
+    const publicKey = this.getAddressFromPrivateKey(privateKey)
+    return {
+      privateKey,
+      publicKey,
+    }
+  }
+
+  private generatePrivateKey() {
     const newPrivate = `private${this.addressCounter}`
     const newAddress = `address${this.addressCounter}`
     this.addresses[newPrivate] = newAddress
@@ -93,7 +103,7 @@ export class TestCurrency implements OnChainCurrencyGateway {
     return newPrivate
   }
 
-  public getAddressFromPrivateKey(privateKey: string) {
+  private getAddressFromPrivateKey(privateKey: string) {
     return this.addresses[privateKey]
   }
 

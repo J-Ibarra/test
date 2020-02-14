@@ -1,8 +1,10 @@
-import { Controller, Get, Request, Route, Security } from 'tsoa'
+import { Controller, Get, Request, Route, Security, Post } from 'tsoa'
 
 import { Logger } from '@abx-utils/logging'
 import { OverloadedRequest } from '@abx-types/account'
-import { findDepositAddressesForAccount } from '../../../core'
+import { findDepositAddressesForAccount, generateDepositAddressForAccount } from '../../../core'
+import { CurrencyCode } from '@abx-types/reference-data'
+import { ValidationError } from '@abx-types/error'
 
 @Route('/wallets')
 export class WalletsController extends Controller {
@@ -48,6 +50,35 @@ export class WalletsController extends Controller {
 
       return {
         message: 'Error retrieving kinesis bank details',
+      }
+    }
+  }
+
+  @Security('cookieAuth')
+  @Security('tokenAuth')
+  @Post('/address/{currency}')
+  public async generateWalletAddressForAccount(currency: CurrencyCode, @Request() request: OverloadedRequest) {
+    try {
+      const { account } = request
+
+      if (!account) {
+        throw new ValidationError('Account not supplied')
+      }
+
+      this.logger.debug(`Generating wallet address of currency: ${currency} for ${account!.id}`)
+
+      const { publicKey } = await generateDepositAddressForAccount(account.id, currency)
+
+      this.logger.debug(`Successfully created wallet address of currency: ${currency} for ${account.id}`)
+
+      return publicKey
+    } catch (error) {
+      this.logger.error(`Error creating wallet address of currency ${currency}: ${error.message}`)
+
+      this.setStatus(error.status || 400)
+
+      return {
+        message: error.message as string,
       }
     }
   }

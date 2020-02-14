@@ -53,7 +53,16 @@ export class Ethereum implements OnChainCurrencyGateway {
     this.web3 = new Web3(ETH_CONFIG[env].url)
   }
 
-  public generatePrivateKey() {
+  public async generateAddress(): Promise<CryptoAddress> {
+    const privateKey = this.generatePrivateKey()
+    const publicKey = this.getAddressFromPrivateKey(privateKey)
+    return {
+      privateKey,
+      publicKey,
+    }
+  }
+
+  private generatePrivateKey() {
     const { privateKey } = this.web3.eth.accounts.create()
     return privateKey
   }
@@ -63,7 +72,7 @@ export class Ethereum implements OnChainCurrencyGateway {
     return Number(this.web3.utils.fromWei(bigBalance))
   }
 
-  public getAddressFromPrivateKey(privateKey: string) {
+  private getAddressFromPrivateKey(privateKey: string) {
     if (privateKey.slice(0, 2) !== '0x' && privateKey.length !== 66) {
       throw new Error('Invalid private key')
     }

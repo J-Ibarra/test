@@ -96,10 +96,10 @@ export class BitcoinTransactionDispatcher {
     }
 
     const { tx_size_bytes } = await this.cryptoApisProviderProxy.getTransactionSize({
-      inputs: this.createTransactionAddressArray(senderAddress.address, amount),
+      inputs: this.createTransactionAddressArray(senderAddress.address!, amount),
       outputs: this.createTransactionAddressArray(receiverAddress, amount),
       fee: {
-        address: senderAddress.address,
+        address: senderAddress.address!,
         value: new Decimal(averageFeePerTransaction!).toDP(this.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN).toNumber(),
       },
     })
@@ -117,15 +117,15 @@ export class BitcoinTransactionDispatcher {
     fee: number,
   ): Promise<string> {
     const { hex: transactionHex } = await this.cryptoApisProviderProxy.createTransaction({
-      inputs: this.createTransactionAddressArray(senderAddress.address, amount),
+      inputs: this.createTransactionAddressArray(senderAddress.address!, amount),
       outputs: this.createTransactionAddressArray(receiverAddress, amount),
       fee: {
-        address: senderAddress.address,
+        address: senderAddress.address!,
         value: fee,
       },
     })
 
-    const signedTransactionHex = this.signTransaction(transactionHex, senderAddress.wif)
+    const signedTransactionHex = this.signTransaction(transactionHex, senderAddress.wif!)
 
     const { txid } = await this.cryptoApisProviderProxy.broadcastTransaction(signedTransactionHex)
     return txid

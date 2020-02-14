@@ -70,11 +70,20 @@ export class KVT implements OnChainCurrencyGateway {
     return this.contract.options.address
   }
 
+  public async generateAddress(): Promise<CryptoAddress> {
+    const privateKey = this.generatePrivateKey()
+    const publicKey = this.getAddressFromPrivateKey(privateKey)
+    return {
+      privateKey,
+      publicKey,
+    }
+  }
+
   /**
    * Generate a private key
    * @return {string} - private key
    */
-  public generatePrivateKey(): string {
+  private generatePrivateKey(): string {
     const { privateKey } = this.web3.eth.accounts.create()
     return privateKey
   }
@@ -94,7 +103,7 @@ export class KVT implements OnChainCurrencyGateway {
    * @param {string} privateKey - Should start with '0x' and followed by 64bit
    * @return {string} - Account address
    */
-  public getAddressFromPrivateKey(privateKey: string): string {
+  private getAddressFromPrivateKey(privateKey: string): string {
     if (privateKey.slice(0, 2) !== '0x' && privateKey.length !== 66) {
       throw new Error('Invalid private key')
     }

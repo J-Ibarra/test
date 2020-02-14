@@ -3,6 +3,7 @@ import { CurrencyCode } from '@abx-types/reference-data'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { RuntimeError } from '@abx-types/error'
 import { BitcoinBlockchainFacade } from './BitcoinBlockchainFacade'
+import { CryptoAddress } from '../model'
 
 /** Adapting the {@link BitcoinBlockchainFacade} to {@link OnChainCurrencyGateway} for backwards-compatibility. */
 export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGateway {
@@ -17,17 +18,13 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
     return getCurrencyId(this.ticker)
   }
 
-  generatePrivateKey(): string {
-    throw new RuntimeError(`Unsupported operation generatePrivateKey`)
+  async generateAddress(): Promise<CryptoAddress> {
+    return this.bitcoinBlockchainFacade.generateAddress()
   }
 
   // This returns a string due to JS floats
   balanceAt(address: string): Promise<number> {
     return this.bitcoinBlockchainFacade.balanceAt(address)
-  }
-
-  getAddressFromPrivateKey(): string {
-    throw new RuntimeError('Unsupported operation getAddressFromPrivateKey')
   }
 
   getDepositTransactions(): Promise<DepositTransaction[]> {

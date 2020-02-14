@@ -25,11 +25,10 @@ export interface TransactionResponse {
 export interface OnChainCurrencyGateway {
   ticker?: CurrencyCode
   getId(): Promise<number>
-  generatePrivateKey(): string
 
   // This returns a string due to JS floats
   balanceAt(address: string): Promise<number>
-  getAddressFromPrivateKey(privateKey: string): string
+  generateAddress(): Promise<CryptoAddress>
 
   /**
    * Retrieves n block(different for each implementation) retrieving all transactions to a given account

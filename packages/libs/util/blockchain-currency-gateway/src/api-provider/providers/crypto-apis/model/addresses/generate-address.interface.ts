@@ -5,6 +5,6 @@ export interface IGenerateAddressResponse extends PayloadWrapper<IGenerateAddres
 export interface IGenerateAddress {
   privateKey: string
   publicKey: string
-  wif: string
-  address: string
+  wif?: string
+  address?: string
 }

@@ -15,15 +15,22 @@ const KYC_ACCOUNTS_CACHE_EXPIRY_10_MINUTES = 10 * 60 * 1000
 let cryptoCurrencies: Currency[] = []
 
 export async function generateNewDepositAddress(accountId: string, currency: OnChainCurrencyGateway) {
-  const privateKey = currency.generatePrivateKey()
-  const publicKey = currency.getAddressFromPrivateKey(privateKey)
-  const encryptedPrivateKey = await encryptValue(privateKey)
+  const cryptoAddress = await currency.generateAddress()
+  // const publicKey = currency.getAddressFromPrivateKey(privateKey)
+  const encryptedPrivateKey = await encryptValue(cryptoAddress.privateKey)
+  let encryptedWif
+  if (cryptoAddress.wif) {
+    encryptedWif = await encryptValue(cryptoAddress.wif)
+  }
+
   const currencyId = await currency.getId()
   return {
     accountId,
-    encryptedPrivateKey,
     currencyId,
-    publicKey,
+    publicKey: cryptoAddress.publicKey,
+    address: cryptoAddress.address,
+    encryptedPrivateKey,
+    encryptedWif,
   } as DepositAddress
 }
 
@@ -130,4 +137,20 @@ export async function createNewDepositAddress(manager: CurrencyManager, accountI
 
   const address = await generateNewDepositAddress(accountId, manager.getCurrencyFromTicker(currencyTicker))
   return storeDepositAddress(address)
+}
+
+export async function generateDepositAddressForAccount(accountId: string, currencyTicker: CurrencyCode): Promise<DepositAddress> {
+  const currencyAddressExists = (await findDepositAddressesForAccount(accountId, true)).find(
+    addressDetails => addressDetails.currency?.code === currencyTicker,
+  )
+
+  if (currencyAddressExists) {
+    return currencyAddressExists
+  }
+
+  logger.debug(`Generating crypto address for ${currencyTicker}`)
+
+  const manager = new CurrencyManager(getEnvironment(), [currencyTicker])
+
+  return generateNewDepositAddress(accountId, manager.getCurrencyFromTicker(currencyTicker))
 }

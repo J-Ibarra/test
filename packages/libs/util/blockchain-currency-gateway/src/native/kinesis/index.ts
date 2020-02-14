@@ -43,7 +43,16 @@ export class Kinesis implements OnChainCurrencyGateway {
     this.config = KINESIS_NETWORK_CONFIG[env][metal]
   }
 
-  public generatePrivateKey() {
+  public async generateAddress(): Promise<CryptoAddress> {
+    const privateKey = this.generatePrivateKey()
+    const publicKey = this.getAddressFromPrivateKey(privateKey)
+    return {
+      privateKey,
+      publicKey,
+    }
+  }
+
+  private generatePrivateKey() {
     return Keypair.random().secret()
   }
 
@@ -58,7 +67,7 @@ export class Kinesis implements OnChainCurrencyGateway {
     }
   }
 
-  public getAddressFromPrivateKey(key: string) {
+  private getAddressFromPrivateKey(key: string) {
     return Keypair.fromSecret(key).publicKey()
   }
 

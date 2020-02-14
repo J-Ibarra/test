@@ -9,8 +9,6 @@ export interface DepositAddress {
   currencyId: number
   encryptedPrivateKey: string
   publicKey: string
-  // TODO make mandatory
   address?: string
-  // TODO make mandatory
-  wif?: string
+  encryptedWif?: string
 }
