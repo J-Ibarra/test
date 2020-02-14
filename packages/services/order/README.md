@@ -1,1 +1,1 @@
-# Houses the order functional area services
+# Hosts the order functional area services
