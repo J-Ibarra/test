@@ -1,1 +1,1 @@
-# This is an example `balance` service
+# This is the `balance` service
