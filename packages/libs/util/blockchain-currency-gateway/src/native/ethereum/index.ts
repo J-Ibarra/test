@@ -10,6 +10,8 @@ import { getEthScanTransactionsForAddress } from './etherscan/etherscan'
 import { EtherscanInternalTransaction, EtherscanTransaction, EthscanTransactionType } from './etherscan/interface'
 import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse } from '../../currency_gateway'
 import { CryptoAddress } from '../../api-provider/model'
+import { IAddressTransaction } from '../../api-provider/providers/crypto-apis'
+import { RuntimeError } from '@abx-types/error'
 
 const testMnemonic = 'uncle salute dust cause embody wonder clump blur paddle hotel risk aim'
 
@@ -60,6 +62,10 @@ export class Ethereum implements OnChainCurrencyGateway {
       privateKey,
       publicKey,
     }
+  }
+
+  addressEventListener(): Promise<IAddressTransaction> {
+    throw new RuntimeError('Unsupported operation addressEventListener')
   }
 
   private generatePrivateKey() {

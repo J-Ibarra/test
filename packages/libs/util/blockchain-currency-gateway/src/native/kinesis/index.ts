@@ -25,6 +25,8 @@ import { CurrencyCode, KinesisCurrencies } from '@abx-types/reference-data'
 import { KINESIS_NETWORK_CONFIG } from './kinesis_network_config'
 import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse } from '../../currency_gateway'
 import { CryptoAddress } from '../../api-provider/model'
+import { RuntimeError } from '@abx-types/error'
+import { IAddressTransaction } from '../../api-provider/providers/crypto-apis'
 
 const logger = Logger.getInstance('currencies', 'kinesis_coin')
 
@@ -50,6 +52,10 @@ export class Kinesis implements OnChainCurrencyGateway {
       privateKey,
       publicKey,
     }
+  }
+
+  addressEventListener(): Promise<IAddressTransaction> {
+    throw new RuntimeError('Unsupported operation addressEventListener')
   }
 
   private generatePrivateKey() {

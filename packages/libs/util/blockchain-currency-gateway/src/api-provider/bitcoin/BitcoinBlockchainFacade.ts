@@ -5,7 +5,7 @@ import { Logger } from '@abx-utils/logging'
 
 import { CreateTransactionPayload } from '../model/CreateTransactionPayload'
 import { BitcoinTransactionDispatcher } from './BitcoinTransactionDispatcher'
-import { CryptoApisProviderProxy, ENetworkTypes } from '../providers/crypto-apis'
+import { CryptoApisProviderProxy, ENetworkTypes, IAddressTransaction } from '../providers/crypto-apis'
 import { Transaction, CryptoAddress } from '../model'
 
 export const mainnetEnvironments = [Environment.production]
@@ -50,6 +50,14 @@ export class BitcoinBlockchainFacade implements BlockchainFacade {
     })
 
     return generatedAddress
+  }
+
+  async addressEventListener(publicKey: string): Promise<IAddressTransaction> {
+    return this.cryptoApiProviderProxy.createAddressTransactiontEventSubscription({
+      address: publicKey,
+      callbackURL: `${process.env.API_URL}/webhooks/crypto/address-transactions`,
+      confirmations: 0,
+    })
   }
 
   async balanceAt(address: string): Promise<number> {

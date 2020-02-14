@@ -1,5 +1,6 @@
 import { CreateTransactionPayload, CryptoAddress, Transaction } from './model'
 import { TransactionResponse } from '../currency_gateway'
+import { IAddressTransaction } from './providers/crypto-apis'
 
 /** The main mechanism for conducting blockchain operations. */
 export interface BlockchainFacade {
@@ -20,6 +21,9 @@ export interface BlockchainFacade {
 
   /** Generates a new address. */
   generateAddress(): Promise<CryptoAddress>
+
+  /** A call made to listen on the specified address */
+  addressEventListener(publicKey: string): Promise<IAddressTransaction>
 
   /**
    *

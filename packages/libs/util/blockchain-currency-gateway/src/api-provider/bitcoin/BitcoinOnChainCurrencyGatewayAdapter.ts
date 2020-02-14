@@ -4,6 +4,7 @@ import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { RuntimeError } from '@abx-types/error'
 import { BitcoinBlockchainFacade } from './BitcoinBlockchainFacade'
 import { CryptoAddress } from '../model'
+import { IAddressTransaction } from '../providers/crypto-apis'
 
 /** Adapting the {@link BitcoinBlockchainFacade} to {@link OnChainCurrencyGateway} for backwards-compatibility. */
 export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGateway {
@@ -20,6 +21,10 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
 
   async generateAddress(): Promise<CryptoAddress> {
     return this.bitcoinBlockchainFacade.generateAddress()
+  }
+
+  async addressEventListener(publicKey: string): Promise<IAddressTransaction> {
+    return this.bitcoinBlockchainFacade.addressEventListener(publicKey)
   }
 
   // This returns a string due to JS floats

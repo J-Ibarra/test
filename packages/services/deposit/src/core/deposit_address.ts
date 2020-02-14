@@ -9,6 +9,7 @@ import { DepositAddress } from '@abx-types/deposit'
 import { encryptValue } from '@abx-utils/encryption'
 import { groupBy } from 'lodash'
 import { getAllKycVerifiedAccountIds } from '@abx-service-clients/account'
+import { IAddressTransaction } from '@abx-utils/blockchain-currency-gateway/src/api-provider/providers/crypto-apis'
 
 const logger = Logger.getInstance('lib', 'deposit_address')
 const KYC_ACCOUNTS_CACHE_EXPIRY_10_MINUTES = 10 * 60 * 1000
@@ -153,4 +154,27 @@ export async function generateDepositAddressForAccount(accountId: string, curren
   const manager = new CurrencyManager(getEnvironment(), [currencyTicker])
 
   return generateNewDepositAddress(accountId, manager.getCurrencyFromTicker(currencyTicker))
+}
+
+export async function addAddressEventListenerForAccount(accountId: string, currencyTicker: CurrencyCode): Promise<IAddressTransaction> {
+  const allCryptoCurrencies = await findCryptoCurrencies()
+
+  const cryptoAddressOfInterest = allCryptoCurrencies.find(currency => currency.code === currencyTicker)
+
+  if (!cryptoAddressOfInterest) {
+    throw new ValidationError(`Crypto currency not valid: ${currencyTicker}`)
+  }
+
+  const [addressDetails] = await findDepositAddresses({ currencyId: cryptoAddressOfInterest.id, accountId })
+
+  if (!addressDetails) {
+    throw new ValidationError(`Currency address not not found: ${currencyTicker}`)
+  }
+
+  logger.debug(`Found address id to listen on : ${addressDetails.id}`)
+
+  const manager = new CurrencyManager(getEnvironment(), [currencyTicker])
+
+  const currencyToInteractWith = manager.getCurrencyFromTicker(currencyTicker)
+  return currencyToInteractWith.addressEventListener(addressDetails.publicKey)
 }

@@ -13,6 +13,8 @@ import { getCurrencyId } from '@abx-service-clients/reference-data'
 import KinesisVelocityToken from './contracts/KinesisVelocityToken.json'
 import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse } from '../../currency_gateway.js'
 import { CryptoAddress } from '../../api-provider/model/index.js'
+import { RuntimeError } from '@abx-types/error'
+import { IAddressTransaction } from '../../api-provider/providers/crypto-apis/index.js'
 
 const testMnemonic = 'uncle salute dust cause embody wonder clump blur paddle hotel risk aim'
 
@@ -77,6 +79,10 @@ export class KVT implements OnChainCurrencyGateway {
       privateKey,
       publicKey,
     }
+  }
+
+  addressEventListener(): Promise<IAddressTransaction> {
+    throw new RuntimeError('Unsupported operation addressEventListener')
   }
 
   /**
