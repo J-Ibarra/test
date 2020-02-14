@@ -1,1 +1,1 @@
-# This is an example `withdrawal` service
+# This is the `withdrawal` service
