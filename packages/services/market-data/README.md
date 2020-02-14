@@ -1,1 +1,1 @@
-# This is an example `market-data` service
+# This is the `market-data` service
