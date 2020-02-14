@@ -38,7 +38,7 @@ const models: TsoaRoute.Models = {
         "enums": ["buy", "sell"],
     },
     "FiatCurrency": {
-        "enums": ["EUR", "USD", "GBP"],
+        "enums": ["CurrencyCode", "CurrencyCode", "CurrencyCode"],
     },
     "OrderWithTradeTransactions": {
         "properties": {

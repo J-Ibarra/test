@@ -95,6 +95,48 @@ export function RegisterRoutes(app: express.Express) {
             const promise = controller.retrieveKinesisBankDetails.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
+    app.post('/api/wallets/address/:currency',
+        authenticateMiddleware([{ "cookieAuth": [] }, { "tokenAuth": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                currency: { "in": "path", "name": "currency", "required": true, "dataType": "enum", "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USD", "EUR", "GBP"] },
+                request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new WalletsController();
+
+
+            const promise = controller.generateWalletAddressForAccount.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.post('/api/wallets/address/events/:currency',
+        authenticateMiddleware([{ "cookieAuth": [] }, { "tokenAuth": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                currency: { "in": "path", "name": "currency", "required": true, "dataType": "enum", "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USD", "EUR", "GBP"] },
+                request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new WalletsController();
+
+
+            const promise = controller.listenToAddressEventsForAccount.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
 
     function authenticateMiddleware(security: TsoaRoute.Security[] = []) {
         return (request: any, _response: any, next: any) => {
