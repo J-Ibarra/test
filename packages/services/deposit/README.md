@@ -1,1 +1,1 @@
-# This is an example `note` service
+# This is an example deposit service
