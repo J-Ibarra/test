@@ -4,6 +4,7 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "bootstrap:production": "lerna bootstrap -- --production --no-optional",
+    "build:balance": "lerna run build --scope @abx/exchange-balance-service --include-dependencies",
     "link": "lerna link",
     "build": "lerna run build",
     "build:services": "lerna run build --scope @abx/*",

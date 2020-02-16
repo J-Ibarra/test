@@ -27,6 +27,7 @@ COPY packages/libs ./packages/libs
 COPY packages/services/balance ./packages/services/balance
 
 RUN npm run bootstrap:production
+RUN npm run build:balance
 WORKDIR /sync/packages/services/balance
 
 EXPOSE 3102
