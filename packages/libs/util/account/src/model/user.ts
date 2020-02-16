@@ -78,7 +78,7 @@ export default function(sequelize: Sequelize.Sequelize) {
     },
     {
       getterMethods: {
-        publicView(this: UserInstance): Partial<User> {
+        publicView(this: any): Partial<User> {
           return {
             id: this.getDataValue('id'),
             accountId: this.getDataValue('accountId'),

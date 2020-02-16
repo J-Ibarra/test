@@ -18,8 +18,10 @@
     "access": "restricted"
   },
   "gitHead": "8a29dce4e9bfe143b1c40c7196d4b51ea0d72d8a",
+  "dependencies": {
+    "@abx-types/account": "^1.1.0"
+  },
   "devDependencies": {
-    "@abx-types/account": "^1.1.0",
     "@lerna/filter-options": "^3.18.4",
     "@types/chai": "4.0.3",
     "@types/chai-as-promised": "7.1.0",

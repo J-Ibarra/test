@@ -7,48 +7,52 @@ export interface BalanceAdjustmentInstance extends Sequelize.Instance<BalanceAdj
   getBalance: Sequelize.BelongsToGetAssociationMixin<RawBalanceInstance>
 }
 
-export default function (sequelize: Sequelize.Sequelize) {
+export default function(sequelize: Sequelize.Sequelize) {
   const options = {
     tableName: 'balance_adjustment',
   }
 
-  return sequelize.define<BalanceAdjustmentInstance, BalanceAdjustment>('balanceAdjustment', {
-    id: {
-      type: Sequelize.INTEGER,
-      primaryKey: true,
-      autoIncrement: true
-    },
-    balanceId: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'balance',
-        key: 'id'
-      }
-    },
-    sourceEventType: {
-      type: Sequelize.STRING,
-      allowNull: false,
-    },
-    sourceEventId: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-    },
-    delta: {
-      type: Sequelize.DECIMAL,
-      allowNull: false,
-      defaultValue: 0,
-      get(this: BalanceAdjustmentInstance) {
-        return parseFloat(this.getDataValue('delta')) || 0
+  return sequelize.define<BalanceAdjustmentInstance, BalanceAdjustment>(
+    'balanceAdjustment',
+    {
+      id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      balanceId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'balance',
+          key: 'id',
+        },
+      },
+      sourceEventType: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      sourceEventId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      delta: {
+        type: Sequelize.DECIMAL,
+        allowNull: false,
+        defaultValue: 0,
+        get(this: any) {
+          return parseFloat(this.getDataValue('delta')) || 0
+        },
+      },
+      value: {
+        type: Sequelize.DECIMAL,
+        allowNull: false,
+        defaultValue: 0,
+        get(this: any) {
+          return parseFloat(this.getDataValue('value')) || 0
+        },
       },
     },
-    value: {
-      type: Sequelize.DECIMAL,
-      allowNull: false,
-      defaultValue: 0,
-      get(this: BalanceAdjustmentInstance) {
-        return parseFloat(this.getDataValue('value')) || 0
-      },
-    }
-  }, options)
+    options,
+  )
 }

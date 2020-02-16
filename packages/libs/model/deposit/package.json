@@ -20,7 +20,8 @@
   "gitHead": "8a29dce4e9bfe143b1c40c7196d4b51ea0d72d8a",
   "dependencies": {
     "@abx-types/account": "^1.1.0",
-    "@abx-types/reference-data": "^1.1.0"
+    "@abx-types/reference-data": "^1.1.0",
+    "sequelize": "4.41.0"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",
@@ -29,7 +30,6 @@
     "@types/express": "4.11.1",
     "@types/mocha": "2.2.41",
     "@types/node": "^12.12.11",
-    "@types/sequelize": "3.30.4",
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "mocha": "5.2.0",

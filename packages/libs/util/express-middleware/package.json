@@ -30,7 +30,9 @@
     "jsonwebtoken": "8.5.1",
     "newrelic": "4.10.0",
     "rate-limit-redis": "1.6.0",
-    "tsoa": "2.3.81"
+    "tsoa": "2.3.81",
+    "sequelize": "4.41.0",
+    "express": "4.16.4"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",

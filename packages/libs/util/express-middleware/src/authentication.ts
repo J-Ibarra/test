@@ -4,7 +4,7 @@ import { Logger } from '@abx-utils/logging'
 
 const logger = Logger.getInstance('express-middleware', 'authentication-middleware')
 
-export async function expressAuthentication(request: OverloadedRequest, securityName: string, _: string[]) {
+export async function expressAuthentication(request: OverloadedRequest | any, securityName: string, _: string[]) {
   const { user } = request
 
   if (securityName === 'cookieAuth') {
@@ -38,7 +38,7 @@ export async function expressAuthentication(request: OverloadedRequest, security
   }
 }
 
-const runTokenValidation = (request: OverloadedRequest): Promise<void> => {
+const runTokenValidation = (request: OverloadedRequest | any): Promise<void> => {
   const authorizationHeader = request.header('Authorization')
 
   if (!authorizationHeader) {

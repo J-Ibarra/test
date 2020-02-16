@@ -7,7 +7,6 @@ import { sequelize, getModel, wrapInTransaction } from '@abx-utils/db-connection
 import { ValidationError } from '@abx-types/error'
 import { User, AccountType, CreateAccountRequest, AccountStatus, Account, EmailValidationError, CreateUserRequest, Session } from '@abx-types/account'
 
-import { UserInstance } from '../model/user'
 import { findUserByEmail } from '../user_query_repository'
 import moment from 'moment'
 import { apiCookieSecret, apiCookieIv } from '../cookie_secrets'
@@ -77,7 +76,7 @@ async function createUser({ accountId, firstName, lastName, email, password }: C
         transaction,
       },
     )
-    .then((u: UserInstance) => u.get('publicView'))
+    .then(u => u.get('publicView'))
 }
 
 export async function createAccountAndSession(accountType: AccountType = AccountType.individual) {

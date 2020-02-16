@@ -11,7 +11,7 @@ const logger = Logger.getInstance('express-middleware', 'Request Overloads')
 const algo = 'aes-256-ctr'
 
 export async function overloadRequestWithSessionInfo(
-  request: OverloadedRequest,
+  request: OverloadedRequest | any,
   _: express.Response = {} as any,
   next: () => void = () => ({}),
 ): Promise<any> {
@@ -29,7 +29,7 @@ export async function overloadRequestWithSessionInfo(
   next()
 }
 
-const encrichRequestQueryParameters = async (request: OverloadedRequest): Promise<void> => {
+const encrichRequestQueryParameters = async (request: OverloadedRequest | any): Promise<void> => {
   const { query } = request
   request.where = {}
 
@@ -61,7 +61,7 @@ const encrichRequestQueryParameters = async (request: OverloadedRequest): Promis
   })
 }
 
-const enrichRequestWithSessionDetails = async (encryptedSession: string, request: OverloadedRequest): Promise<void> => {
+const enrichRequestWithSessionDetails = async (encryptedSession: string, request: OverloadedRequest | any): Promise<void> => {
   const decipher = crypto.createDecipheriv(algo, apiCookieSecret, apiCookieIv)
   let sessionId = decipher.update(encryptedSession, 'hex', 'utf8')
   sessionId += decipher.final('utf8')
@@ -88,7 +88,7 @@ const enrichRequestWithSessionDetails = async (encryptedSession: string, request
   }
 }
 
-const enrichRequestWithApiTokenAccountDetails = async (request: OverloadedRequest): Promise<void> => {
+const enrichRequestWithApiTokenAccountDetails = async (request: OverloadedRequest | any): Promise<void> => {
   const token = request.header('Authorization')
 
   const result = new JwtTokenHandler().verifyToken(token!)

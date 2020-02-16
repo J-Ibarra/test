@@ -15,7 +15,8 @@
     "compile": "tsc -p tsconfig.build.json --skipLibCheck"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "restricted",
+    "sequelize": "4.41.0"
   },
   "gitHead": "8a29dce4e9bfe143b1c40c7196d4b51ea0d72d8a",
   "devDependencies": {
@@ -24,7 +25,6 @@
     "@types/chai-as-promised": "7.1.0",
     "@types/mocha": "2.2.41",
     "@types/node": "12.12.11",
-    "@types/sequelize": "3.30.4",
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "mocha": "5.2.0",

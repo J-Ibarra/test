@@ -16,7 +16,7 @@ export default function(sequelize: Sequelize.Sequelize) {
     value: {
       type: Sequelize.DECIMAL,
       defaultValue: 0,
-      get(this: RawBalanceInstance) {
+      get(this: any) {
         return parseFloat(this.getDataValue('value')) || 0
       },
     },

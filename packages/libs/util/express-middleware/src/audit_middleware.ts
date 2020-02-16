@@ -12,7 +12,7 @@ interface IApiAccessAttributes {
   access_time: Date
 }
 
-export function auditMiddleware(req: OverloadedRequest, _res: Response, next: NextFunction) {
+export function auditMiddleware(req: OverloadedRequest | any, _res: Response, next: NextFunction) {
   const ip = req['clientIp']
   const user = req.user
   const session = req.session
