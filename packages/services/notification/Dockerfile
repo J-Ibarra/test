@@ -29,4 +29,4 @@ COPY packages/services/notification ./packages/services/notification
 RUN npm run bootstrap:production
 WORKDIR /sync/packages/services/notification
 
-CMD  "./docker-start.sh"
+CMD ["ts-node-dev","--transpileOnly", "src/bootstrap.ts"]
