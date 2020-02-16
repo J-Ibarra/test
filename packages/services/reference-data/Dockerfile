@@ -32,4 +32,4 @@ WORKDIR /sync/packages/services/reference-data
 
 EXPOSE 3101
 
-CMD  "./docker-start.sh"
+CMD ["ts-node-dev","--transpileOnly", "bootstrap.ts"]
