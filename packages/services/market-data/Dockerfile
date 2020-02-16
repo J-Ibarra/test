@@ -31,4 +31,4 @@ WORKDIR /sync/packages/services/market-data
 
 EXPOSE 3104
 
-CMD  "./docker-start.sh"
+CMD ["ts-node-dev","--transpileOnly", "src/bootstrap.ts"]
