@@ -29,4 +29,4 @@ COPY packages/services/order ./packages/services/order
 RUN npm run bootstrap:production
 WORKDIR /sync/packages/services/order/src/service-wrappers/worker
 
-CMD  "./docker-start.sh"
+CMD ["ts-node-dev","--transpileOnly", "bootstrap.ts"]

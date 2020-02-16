@@ -31,4 +31,4 @@ WORKDIR /sync/packages/services/order/src/service-wrappers/settlement
 
 EXPOSE 3113
 
-CMD  "./docker-start.sh"
+CMD ["ts-node-dev","--transpileOnly", "bootstrap.ts"]

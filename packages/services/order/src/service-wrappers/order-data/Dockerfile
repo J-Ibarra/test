@@ -32,4 +32,4 @@ WORKDIR /sync/packages/services/order/src/service-wrappers/order-data
 
 EXPOSE 3106
 
-CMD  "./docker-start.sh"
+CMD ["ts-node-dev","--transpileOnly", "bootstrap.ts"]
