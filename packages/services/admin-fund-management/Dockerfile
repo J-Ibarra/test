@@ -31,4 +31,4 @@ WORKDIR /sync/packages/services/admin-fund-management
 
 EXPOSE 3109
 
-CMD  "./docker-start.sh"
+CMD ["ts-node-dev","--transpileOnly", "bootstrap.ts"]
