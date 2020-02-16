@@ -31,4 +31,4 @@ WORKDIR /sync/packages/services/balance
 
 EXPOSE 3102
 
-CMD  "./docker-start.sh"
+CMD ["ts-node-dev","--transpileOnly", "src/bootstrap.ts"]
