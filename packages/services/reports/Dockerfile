@@ -31,4 +31,4 @@ WORKDIR /sync/packages/services/reports
 
 EXPOSE 3107
 
-CMD  "./docker-start.sh"
+CMD ["ts-node-dev","--transpileOnly", "bootstrap.ts"]
