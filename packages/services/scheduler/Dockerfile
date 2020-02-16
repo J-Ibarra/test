@@ -29,4 +29,4 @@ COPY packages/services/scheduler ./packages/services/scheduler
 RUN npm run bootstrap:production
 WORKDIR /sync/packages/services/scheduler
 
-CMD  "./docker-start.sh"
+CMD ["ts-node-dev","--transpileOnly", "bootstrap.ts"]
