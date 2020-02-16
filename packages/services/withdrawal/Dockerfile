@@ -31,4 +31,4 @@ WORKDIR /sync/packages/services/withdrawal
 
 EXPOSE 3108
 
-CMD  "./docker-start.sh"
+CMD ["ts-node-dev","--transpileOnly", "bootstrap.ts"]
