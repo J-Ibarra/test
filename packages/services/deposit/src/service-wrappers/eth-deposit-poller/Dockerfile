@@ -30,4 +30,4 @@ COPY packages/services/deposit ./packages/services/deposit
 RUN lerna bootstrap
 WORKDIR /sync/packages/services/deposit/src/service-wrappers/deposit-processor
 
-CMD  "./docker-start.sh"
+CMD ["ts-node-dev","--transpileOnly", "src/bootstrap.ts"]

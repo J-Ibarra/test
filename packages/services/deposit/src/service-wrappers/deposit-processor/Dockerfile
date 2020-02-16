@@ -31,4 +31,4 @@ WORKDIR /sync/packages/services/deposit/src/service-wrappers/deposit-processor
 
 EXPOSE 3112
 
-CMD  "./docker-start.sh"
+CMD ["ts-node-dev","--transpileOnly", "src/bootstrap.ts"]
