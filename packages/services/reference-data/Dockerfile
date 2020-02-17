@@ -33,4 +33,4 @@ WORKDIR /sync/packages/services/reference-data
 
 EXPOSE 3101
 
-CMD ["ts-node-dev","--transpileOnly", "bootstrap.ts"]
+CMD ["ts-node-dev","--transpileOnly", "src/bootstrap.ts"]
