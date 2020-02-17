@@ -64,7 +64,7 @@ export default function depositRequestModel(sequelize: Sequelize.Sequelize) {
       fiatCurrencyCode: {
         type: Sequelize.ENUM({
           values: Object.values(FiatCurrency),
-        }),
+        } as any),
         allowNull: false,
       },
     },
