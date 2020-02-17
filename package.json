@@ -11,6 +11,9 @@
     "build:reports": "lerna run build --scope @abx/exchange-report-service --include-dependencies",
     "build:scheduler": "lerna run build --scope @abx/exchange-scheduler-service --include-dependencies",
     "build:withdrawal": "lerna run build --scope @abx/exchange-withdrawal-service --include-dependencies",
+    "build:notification": "lerna run build --scope @abx/exchange-notification-service --include-dependencies",
+    "build:order": "lerna run build --scope @abx/order-service --include-dependencies",
+
     "build:services": "lerna run build --scope @abx/*",
     "run-legacy-migrations:test": "lerna run run-legacy-migrations-test",
     "run-legacy-migrations:dev": "lerna run run-legacy-migrations-dev",

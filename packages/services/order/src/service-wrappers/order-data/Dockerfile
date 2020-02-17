@@ -28,6 +28,7 @@ COPY packages/libs ./packages/libs
 COPY packages/services/order ./packages/services/order
 
 RUN npm run bootstrap:production
+RUN npm run build:order
 WORKDIR /sync/packages/services/order/src/service-wrappers/order-data
 
 EXPOSE 3106
