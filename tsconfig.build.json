@@ -27,6 +27,8 @@
     "**/__integration-tests__/**/*.ts",
     "**/__tests__/**/*.ts",
     "**/__tests__/*.ts",
+    "**/__test__/**/*.ts",
+    "**/__test__/*.ts",
     "**/tests/*.ts",
     "**/test/*.ts"
   ]

@@ -1,1 +1,1 @@
-# This is the `withdrawal` service
+# The `withdrawal` service
