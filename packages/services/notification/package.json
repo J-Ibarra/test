@@ -1,7 +1,7 @@
 {
   "name": "@abx/exchange-notification-service",
   "version": "1.1.0",
-  "description": "> TODO: description",
+  "description": "Responsible for email dispatching",
   "main": "dist/index",
   "types": "src/index",
   "files": [
