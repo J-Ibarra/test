@@ -27,6 +27,7 @@ COPY packages/libs ./packages/libs
 COPY packages/services/scheduler ./packages/services/scheduler
 
 RUN npm run bootstrap:production
+RUN npm run build:scheduler
 WORKDIR /sync/packages/services/scheduler
 
 CMD ["ts-node-dev","--transpileOnly", "bootstrap.ts"]
