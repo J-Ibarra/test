@@ -14,6 +14,7 @@
     "build:notification": "lerna run build --scope @abx/exchange-notification-service --include-dependencies",
     "build:order": "lerna run build --scope @abx/order-service --include-dependencies",
     "build:market-data": "lerna run build --scope @abx/exchange-market-data-service --include-dependencies",
+    "build:deposit": "lerna run build --scope @abx/exchange-deposit-service --include-dependencies",
     "build:services": "lerna run build --scope @abx/*",
     "run-legacy-migrations:test": "lerna run run-legacy-migrations-test",
     "run-legacy-migrations:dev": "lerna run run-legacy-migrations-dev",

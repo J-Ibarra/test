@@ -27,6 +27,7 @@ COPY packages/libs ./packages/libs
 COPY packages/services/deposit ./packages/services/deposit
 
 RUN npm run bootstrap:production
+RUN npm run build:deposit
 WORKDIR /sync/packages/services/deposit/src/service-wrappers/deposit-processor
 
 EXPOSE 3112
