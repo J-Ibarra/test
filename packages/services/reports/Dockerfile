@@ -32,4 +32,4 @@ WORKDIR /sync/packages/services/reports
 
 EXPOSE 3107
 
-CMD ["ts-node-dev","--transpileOnly", "bootstrap.ts"]
+CMD ["ts-node-dev","--transpileOnly", "src/bootstrap.ts"]
