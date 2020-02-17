@@ -42,7 +42,7 @@ export async function findOrCreateAccount(forceRefresh, type: AccountType, t?: T
 
   platformAccounts[type] = platformAccount
 
-  return platformAccount
+  return platformAccount!
 }
 
 async function createAccount(type: AccountType, t: Transaction) {
