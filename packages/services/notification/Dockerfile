@@ -27,6 +27,7 @@ COPY packages/libs ./packages/libs
 COPY packages/services/notification ./packages/services/notification
 
 RUN npm run bootstrap:production
+RUN npm run build:notification
 WORKDIR /sync/packages/services/notification
 
 CMD ["ts-node-dev","--transpileOnly", "src/bootstrap.ts"]
