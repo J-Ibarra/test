@@ -30,4 +30,4 @@ RUN npm run bootstrap:production
 RUN npm run build:scheduler
 WORKDIR /sync/packages/services/scheduler
 
-CMD ["ts-node-dev","--transpileOnly", "bootstrap.ts"]
+CMD ["ts-node-dev","--transpileOnly", "src/bootstrap.ts"]
