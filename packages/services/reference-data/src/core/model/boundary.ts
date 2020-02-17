@@ -26,7 +26,7 @@ export default function(sequelize: Sequelize.Sequelize) {
     minAmount: {
       type: Sequelize.DECIMAL(currencyPrecision, currencyScale),
       allowNull: false,
-      get(this: CurrencyBoundaryInstance) {
+      get(this: any) {
         return parseFloat(this.getDataValue('minAmount')) || 0
       },
     },
