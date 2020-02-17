@@ -55,21 +55,21 @@ export default function(sequelize: Sequelize.Sequelize) {
       amount: {
         type: Sequelize.DECIMAL(currencyPrecision, currencyScale),
         allowNull: false,
-        get(this: any) {
+        get(this: TradeTransactionInstance) {
           return parseFloat(this.getDataValue('amount')) || 0
         },
       },
       matchPrice: {
         type: Sequelize.DECIMAL(currencyPrecision, currencyScale),
         allowNull: false,
-        get(this: any) {
+        get(this: TradeTransactionInstance) {
           return parseFloat(this.getDataValue('matchPrice')) || 0
         },
       },
       quoteFiatConversion: {
         type: Sequelize.DECIMAL(currencyPrecision, currencyScale),
         allowNull: false,
-        get(this: any) {
+        get(this: TradeTransactionInstance) {
           return parseFloat(this.getDataValue('quoteFiatConversion')) || 0
         },
       },

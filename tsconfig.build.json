@@ -19,5 +19,15 @@
     "resolveJsonModule": true,
     "outDir": "./dist"
   },
-  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/__tests__/**/*.ts", "**/__tests__/*.ts", "**/tests/*.ts", "**/test/*.ts"]
+  "express": "4.16.4",
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.ts",
+    "**/__integration-tests__/**/*.ts",
+    "**/__tests__/**/*.ts",
+    "**/__tests__/*.ts",
+    "**/tests/*.ts",
+    "**/test/*.ts"
+  ]
 }
