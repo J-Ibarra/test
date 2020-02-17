@@ -32,14 +32,14 @@ export default function(sequelize: Sequelize.Sequelize) {
       threshold: {
         type: Sequelize.DECIMAL(constants.currencyPrecision, constants.currencyScale),
         allowNull: false,
-        get(this: DefaultFeeTierInstance) {
+        get(this: any) {
           return parseFloat(this.getDataValue('threshold')) || 0
         },
       },
       rate: {
         type: Sequelize.DECIMAL(constants.currencyPrecision, constants.currencyScale),
         allowNull: false,
-        get(this: DefaultFeeTierInstance) {
+        get(this: any) {
           return parseFloat(this.getDataValue('rate')) || 0
         },
       },

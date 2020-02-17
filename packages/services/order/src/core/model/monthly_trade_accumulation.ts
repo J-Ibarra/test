@@ -36,7 +36,7 @@ export default function(sequelize: Sequelize.Sequelize) {
       total: {
         type: Sequelize.DECIMAL(constants.currencyPrecision, constants.currencyScale),
         allowNull: false,
-        get(this: MonthlyTradeAccumulationInstance) {
+        get(this: any) {
           return parseFloat(this.getDataValue('total')) || 0
         },
       },

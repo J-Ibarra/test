@@ -72,21 +72,21 @@ export default function(sequelize: Sequelize.Sequelize) {
       amount: {
         type: Sequelize.DECIMAL(currencyPrecision, currencyScale),
         allowNull: false,
-        get(this: OrderMatchInstance) {
+        get(this: any) {
           return parseFloat(this.getDataValue('amount')) || 0
         },
       },
       matchPrice: {
         type: Sequelize.DECIMAL(currencyPrecision, currencyScale),
         allowNull: false,
-        get(this: OrderMatchInstance) {
+        get(this: any) {
           return parseFloat(this.getDataValue('matchPrice')) || 0
         },
       },
       consideration: {
         type: Sequelize.DECIMAL(currencyPrecision, currencyScale),
         allowNull: false,
-        get(this: OrderMatchInstance) {
+        get(this: any) {
           return parseFloat(this.getDataValue('consideration')) || 0
         },
       },

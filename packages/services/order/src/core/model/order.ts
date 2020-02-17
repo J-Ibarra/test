@@ -43,14 +43,14 @@ export default function(sequelize: Sequelize.Sequelize) {
       amount: {
         type: Sequelize.DECIMAL(currencyPrecision, currencyScale),
         allowNull: false,
-        get(this: OrderInstance) {
+        get(this: any) {
           return parseFloat(this.getDataValue('amount')) || 0
         },
       },
       remaining: {
         type: Sequelize.DECIMAL(currencyPrecision, currencyScale),
         allowNull: true,
-        get(this: OrderInstance) {
+        get(this: any) {
           return parseFloat(this.getDataValue('remaining')) || 0
         },
       },
@@ -73,7 +73,7 @@ export default function(sequelize: Sequelize.Sequelize) {
       limitPrice: {
         type: Sequelize.DECIMAL(currencyPrecision, currencyScale),
         allowNull: true,
-        get(this: OrderInstance) {
+        get(this: any) {
           return parseFloat(this.getDataValue('limitPrice')) || 0
         },
       },
