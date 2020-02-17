@@ -39,7 +39,8 @@
     "moment": "2.22.2",
     "node-uuid": "1.4.7",
     "sequelize": "4.41.0",
-    "web3": "1.2.1"
+    "web3": "1.2.1",
+    "@types/web3": "1.0.14"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",
@@ -51,7 +52,6 @@
     "@types/sequelize": "3.30.4",
     "@types/sinon": "5.0.7",
     "@types/validator": "6.3.0",
-    "@types/web3": "1.0.14",
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "mocha": "5.2.0",
