@@ -23,7 +23,7 @@ export default function(sequelize: Sequelize.Sequelize) {
     price: {
       type: Sequelize.DECIMAL(constants.currencyPrecision, constants.currencyScale),
       allowNull: true,
-      get(this: DepthMidPriceInstance) {
+      get(this: any) {
         return parseFloat(this.getDataValue('price')) || 0
       },
     },

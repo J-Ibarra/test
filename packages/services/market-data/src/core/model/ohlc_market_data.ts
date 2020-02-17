@@ -23,28 +23,28 @@ export default function(sequelize: Sequelize.Sequelize) {
     open: {
       type: Sequelize.DECIMAL(constants.currencyPrecision, constants.currencyScale),
       allowNull: false,
-      get(this: OHLCMarketDataInstance) {
+      get(this: any) {
         return parseFloat(this.getDataValue('open')) || 0
       },
     },
     high: {
       type: Sequelize.DECIMAL(constants.currencyPrecision, constants.currencyScale),
       allowNull: false,
-      get(this: OHLCMarketDataInstance) {
+      get(this: any) {
         return parseFloat(this.getDataValue('high')) || 0
       },
     },
     low: {
       type: Sequelize.DECIMAL(constants.currencyPrecision, constants.currencyScale),
       allowNull: false,
-      get(this: OHLCMarketDataInstance) {
+      get(this: any) {
         return parseFloat(this.getDataValue('low')) || 0
       },
     },
     close: {
       type: Sequelize.DECIMAL(constants.currencyPrecision, constants.currencyScale),
       allowNull: false,
-      get(this: OHLCMarketDataInstance) {
+      get(this: any) {
         return parseFloat(this.getDataValue('close')) || 0
       },
     },
