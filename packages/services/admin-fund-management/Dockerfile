@@ -27,6 +27,7 @@ COPY packages/libs ./packages/libs
 COPY packages/services/admin-fund-management ./packages/services/admin-fund-management
 
 RUN npm run bootstrap:production
+RUN npm run build:admin-fund-management
 WORKDIR /sync/packages/services/admin-fund-management
 
 EXPOSE 3109
