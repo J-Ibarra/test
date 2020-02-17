@@ -1,4 +1,4 @@
-# This is an example `admin-fund-managment` service
+# This is an example `admin-fund-management` service
 
 Handles the logic related to:
 
