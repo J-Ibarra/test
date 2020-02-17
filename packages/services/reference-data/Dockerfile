@@ -28,6 +28,7 @@ COPY packages/libs ./packages/libs
 COPY packages/services/reference-data ./packages/services/reference-data
 
 RUN npm run bootstrap:production
+RUN npm run build:reference-data
 WORKDIR /sync/packages/services/reference-data
 
 EXPOSE 3101

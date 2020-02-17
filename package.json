@@ -4,9 +4,10 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "bootstrap:production": "lerna bootstrap -- --production --no-optional",
-    "build:balance": "lerna run build --scope @abx/exchange-balance-service --include-dependencies",
     "link": "lerna link",
     "build": "lerna run build",
+    "build:balance": "lerna run build --scope @abx/exchange-balance-service --include-dependencies",
+    "build:reference-data": "lerna run build --scope @abx/exchange-reference-data-service --include-dependencies",
     "build:services": "lerna run build --scope @abx/*",
     "run-legacy-migrations:test": "lerna run run-legacy-migrations-test",
     "run-legacy-migrations:dev": "lerna run run-legacy-migrations-dev",
