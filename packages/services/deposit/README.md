@@ -1,1 +1,1 @@
-# This is an example deposit service
+# The deposit flow services

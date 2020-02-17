@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js'
-import Web3,  from 'web3'
+import Web3 from 'web3'
 import { Transaction } from 'web3/eth/types'
 import { getEthereumDepositMaxBlockCheck } from '@abx-service-clients/reference-data'
 import { Logger } from '@abx-utils/logging'
