@@ -27,6 +27,7 @@ COPY packages/libs ./packages/libs
 COPY packages/services/account ./packages/services/account
 
 RUN npm run bootstrap:production
+RUN npm run build:account
 WORKDIR /sync/packages/services/account/src/service-wrappers/account
 
 EXPOSE 3103
