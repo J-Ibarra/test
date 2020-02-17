@@ -28,6 +28,6 @@ COPY packages/services/order ./packages/services/order
 
 RUN npm run bootstrap:production
 RUN npm run build:order
-WORKDIR /sync/packages/services/order/src/service-wrappers/worker
+WORKDIR /sync/packages/services/order/src/service-wrappers/order-matcher
 
 CMD ["ts-node-dev","--transpileOnly", "bootstrap.ts"]
