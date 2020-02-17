@@ -27,6 +27,7 @@ COPY packages/libs ./packages/libs
 COPY packages/services/market-data ./packages/services/market-data
 
 RUN npm run bootstrap:production
+RUN npm run build:market-data
 WORKDIR /sync/packages/services/market-data
 
 EXPOSE 3104
