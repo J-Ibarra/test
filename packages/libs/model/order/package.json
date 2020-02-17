@@ -24,7 +24,6 @@
     "@types/decimal.js": "^7.4.0",
     "@types/mocha": "2.2.41",
     "@types/node": "12.12.11",
-    "@types/sequelize": "^4.28.8",
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "mocha": "5.2.0",

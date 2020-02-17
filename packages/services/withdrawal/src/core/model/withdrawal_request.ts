@@ -21,7 +21,7 @@ export default function withdrawalRequestModel(sequelize: Sequelize.Sequelize) {
       amount: {
         type: Sequelize.DECIMAL(constants.currencyPrecision, constants.currencyScale),
         allowNull: false,
-        get(this: WithdrawalRequestInstance) {
+        get(this: any) {
           return parseFloat(this.getDataValue('amount')) || 0
         },
       },
@@ -53,7 +53,7 @@ export default function withdrawalRequestModel(sequelize: Sequelize.Sequelize) {
       fiatConversion: {
         type: Sequelize.DECIMAL(constants.currencyPrecision, constants.currencyScale),
         allowNull: false,
-        get(this: WithdrawalRequestInstance) {
+        get(this: any) {
           return parseFloat(this.getDataValue('fiatConversion')) || 0
         },
       },
@@ -64,14 +64,14 @@ export default function withdrawalRequestModel(sequelize: Sequelize.Sequelize) {
       kauConversion: {
         type: Sequelize.DECIMAL(constants.currencyPrecision, constants.currencyScale),
         allowNull: false,
-        get(this: WithdrawalRequestInstance) {
+        get(this: any) {
           return parseFloat(this.getDataValue('kauConversion')) || 0
         },
       },
       kinesisCoveredOnChainFee: {
         type: Sequelize.DECIMAL(constants.currencyPrecision, constants.currencyScale),
         defaultValue: 0,
-        get(this: WithdrawalRequestInstance) {
+        get(this: any) {
           return parseFloat(this.getDataValue('kinesisCoveredOnChainFee')) || 0
         },
       },
