@@ -27,6 +27,7 @@ COPY packages/libs ./packages/libs
 COPY packages/services/reports ./packages/services/reports
 
 RUN npm run bootstrap:production
+RUN npm run build:reports
 WORKDIR /sync/packages/services/reports
 
 EXPOSE 3107
