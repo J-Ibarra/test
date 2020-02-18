@@ -1,6 +1,6 @@
 import { CronJob } from 'cron'
 import { noticeError } from 'newrelic'
-import { Logger } from '@abx-utils/logging'
+import { Logger, LogLevel } from '@abx-utils/logging'
 import {
   findCronSchedule,
   generateCronList,
@@ -13,6 +13,8 @@ import {
 const logger = Logger.getInstance('schedular', 'settle_order_match')
 
 export async function bootstrapSchedulerService() {
+  Logger.configure((process.env.LOG_LEVEL as LogLevel) || LogLevel.debug)
+
   const tasks = [
     {
       name: 'orderExpiry',
