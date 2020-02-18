@@ -17,6 +17,7 @@ export class Logger {
 
   public static configure(logLevel: LogLevel) {
     this.logLevel = logLevel
+    console.log(this.logLevel)
   }
 
   /** Configures Winston to send logs to the console. Other transports can be plugged in if necessary. */
@@ -29,7 +30,7 @@ export class Logger {
           ),
           winston.format.colorize({ all: true, colors: { info: 'cyan', debug: 'blue', warn: 'yellow', error: 'red' } }),
         ),
-        level: LogLevel[Logger.logLevel],
+        level: LogLevel.debug,
         transports: [new winston.transports.Console()],
       }),
       false,
