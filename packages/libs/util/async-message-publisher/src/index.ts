@@ -1,7 +1,7 @@
 import * as AWS from 'aws-sdk'
 import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { Logger } from '@abx-utils/logging'
-import { Environment } from '@abx-types/reference-data'
+import { Environment, getAwsRegionForEnvironment } from '@abx-types/reference-data'
 
 export interface AsyncMessage<T> {
   /** A descriptor of the message. */
@@ -20,7 +20,7 @@ export interface AsyncMessage<T> {
 const logger = Logger.getInstance('balance-internal-client', 'async_endpoints_handler')
 
 export const environmentsWithLocalRedisQueue = [Environment.development, Environment.e2eLocal, Environment.test]
-const sqs = new AWS.SQS()
+const sqs = new AWS.SQS({ region: getAwsRegionForEnvironment(process.env.NODE_ENV as Environment) })
 
 /**
  * Publishes a message to a target medium. Based on the environment that it is executed in
