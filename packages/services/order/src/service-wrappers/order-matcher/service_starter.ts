@@ -1,4 +1,4 @@
-import { Logger } from '@abx-utils/logging'
+import { Logger, LogLevel } from '@abx-utils/logging'
 import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { disableProcessing, initializeGatekeeper } from './core/gatekeeper'
 import { OrderModuleConfig, UsdMidPriceEnrichedOrderMatch } from '@abx-types/order'
@@ -15,6 +15,7 @@ export const noBody = {
 }
 
 export async function bootstrapWorkerService() {
+  Logger.configure((process.env.LOG_LEVEL as LogLevel) || LogLevel.debug)
   await runOrderDataMigrations()
 
   // Start the required Gatekeeper listeners

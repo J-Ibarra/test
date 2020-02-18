@@ -6,6 +6,7 @@ import { getAllCompleteSymbolDetails, getAllSymbolPairSummaries } from '@abx-ser
 import { addOrderToSettleQueue, settleOrderMatchForPair } from './core'
 import { runOrderDataMigrations } from '../../migrations/migration-runner'
 import { bootstrapInternalApi } from './internal_api_handler'
+import { Logger, LogLevel } from '@abx-utils/logging'
 
 export const settleOrderMatch = {
   type: 'object',
@@ -28,6 +29,7 @@ interface OrderMatchFeeCurrencyMidPriceDetails {
 }
 
 export async function bootstrapSettlementService() {
+  Logger.configure((process.env.LOG_LEVEL as LogLevel) || LogLevel.debug)
   await runOrderDataMigrations()
   await bootstrapInternalApi()
 
