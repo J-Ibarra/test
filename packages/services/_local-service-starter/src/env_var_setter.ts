@@ -14,4 +14,5 @@ export function setEnvironmentVariables() {
   process.env.SALESFORCE_API_ADMIN_USERNAME = 'boris.shekerov@abx.com.testing'
   process.env.SALESFORCE_API_ADMIN_PASSWORD = 'Abcd12341234e5Zw811eM8IB3HKBzV21AwCi'
   process.env.KMS_DOMAIN = 'http://localhost:1234'
+  process.env.NODE_ENV = 'development'
 }

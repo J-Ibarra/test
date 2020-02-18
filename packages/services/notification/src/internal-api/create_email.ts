@@ -17,8 +17,8 @@ async function consumeQueueMessage({ payload, type }: EmailAsyncRequest) {
     if (type === EmailEndpoints.sendNotificationToOps) {
       const opsEmailContent = payload as OpsEmailPayload
       await sendNotificationToOps(opsEmailContent.subject, opsEmailContent.text, opsEmailContent.html)
+    } else {
+      await sendEmail(payload as Email)
     }
-
-    await sendEmail(payload as Email)
   }
 }
