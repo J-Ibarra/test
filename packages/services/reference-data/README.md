@@ -1,1 +1,1 @@
-# This is the reference-data service
+# The reference-data service
