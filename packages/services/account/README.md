@@ -1,3 +1,3 @@
-# This is an example `market-data` service
+# The account service
 
 Testing changes #2
