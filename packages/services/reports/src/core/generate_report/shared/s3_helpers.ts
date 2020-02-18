@@ -1,12 +1,11 @@
 import * as AWS from 'aws-sdk'
 
-import { getAwsRegionForEnvironment, Environment } from '@abx-types/reference-data'
 import { ReportType, S3SignedUrlParams, UploadFileToS3Success } from '@abx-service-clients/report'
 import { storeReport } from '../../stored_reports/store_reports'
 
 const s3 = new AWS.S3({
   signatureVersion: 'v4',
-  region: getAwsRegionForEnvironment(process.env.NODE_ENV as Environment),
+  region: 'ap-southeast-2',
 })
 
 export interface UploadFileToS3Request {
