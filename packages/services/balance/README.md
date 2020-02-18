@@ -1,1 +1,1 @@
-# The `balance` service
+# The balance service
