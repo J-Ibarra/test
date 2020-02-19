@@ -18,6 +18,7 @@ const accountRoutes = [
   '/api/sessions',
   '/api/tokens',
   '/api/users',
+  '/api/test-automation/accounts',
 ]
 const referenceDataRoutes = [
   '/internal-api/reference-data',
@@ -29,17 +30,18 @@ const referenceDataRoutes = [
   '/api/symbols',
   '/api/symbols/apply-threshold',
 ]
-const balanceRoutes = ['/internal-api/balances', '/api/balances']
+const balanceRoutes = ['/internal-api/balances', '/api/balances', '/api/test-automation/balances']
 const adminFundManagementRoutes = ['/internal-api/admin-fund-management', '/api/admin/fund-management']
 const marketDataRoutes = ['/internal-api/market-data', '/api/market-data', '/api/mid-price', '/notifications/market-data-v2']
 const orderDataRoutes = [
   '/internal-api/orders',
   '/api/fees',
-  'api/admin/fees',
+  '/api/admin/fees',
   '/api/depth',
   '/api/order-matches',
   '/api/admin/orders',
   '/api/transaction-history',
+  '/api/test-automation/balances',
 ]
 const orderGatewayRoutes = ['/internal-api/order-gateway']
 const orderSettlementRoutes = ['/internal-api/order-settlement']

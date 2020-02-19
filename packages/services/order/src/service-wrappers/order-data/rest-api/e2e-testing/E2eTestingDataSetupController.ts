@@ -48,7 +48,7 @@ export class E2eTestingDataSetupController {
     }
   }
 
-  @Post('orders/account-setup-scripts')
+  @Post('/orders/account-setup-scripts')
   public async runAccountSetupScript(@Body() { email, balances, orders }): Promise<void> {
     if (e2eTestingEnvironments.includes(getEnvironment())) {
       this.logger.info(`Setting up account for ${email}`)
