@@ -142,6 +142,6 @@ export class BalanceRetrievalFacade {
       return getQuoteFor(SupportedFxPair.EUR_USD)
     }
 
-    return new Decimal(symbolIdToMidPrices.get(`${balanceCurrency}_USD`)!)
+    return new Decimal(symbolIdToMidPrices.get(`${balanceCurrency}_USD`) || 0)
   }
 }
