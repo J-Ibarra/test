@@ -1,9 +1,11 @@
 import { CreateTransactionPayload, CryptoAddress, Transaction } from './model'
 import { TransactionResponse } from '../currency_gateway'
+import { CurrencyCode } from '@abx-types/reference-data'
+import { BitcoinBlockchainFacade } from './bitcoin/BitcoinBlockchainFacade'
 import { IAddressTransaction } from './providers/crypto-apis'
 
 /** The main mechanism for conducting blockchain operations. */
-export interface BlockchainFacade {
+export abstract class BlockchainFacade {
   /**
    * Creates a new transaction and broadcasts it to the chain.
    *
@@ -11,29 +13,55 @@ export interface BlockchainFacade {
    * @param receiverPublicAddress the receiver public address details
    * @param amount the amount to send
    */
-  createTransaction(payload: CreateTransactionPayload): Promise<TransactionResponse>
+  abstract createTransaction(payload: CreateTransactionPayload): Promise<TransactionResponse>
 
   /**
    * Retrieves the transaction details for a given hash
    * @param transactionHash transaction identifier
    */
-  getTransaction(transactionHash: string): Promise<Transaction>
+  abstract getTransaction(transactionHash: string): Promise<Transaction>
 
   /** Generates a new address. */
-  generateAddress(): Promise<CryptoAddress>
+  abstract generateAddress(): Promise<CryptoAddress>
 
   /** A call made to listen on the specified address */
-  addressEventListener(publicKey: string): Promise<IAddressTransaction>
+  abstract subscribeToAddressTransactionEvents(publicKey: string): Promise<IAddressTransaction>
 
   /**
-   *
-   * @param address
+   * Validates if the input address is a valid blockchain address.
+   * @param address the address
    */
-  validateAddress(address: string): Promise<boolean>
+  abstract validateAddress(address: string): Promise<boolean>
 
   /**
-   *
-   * @param address
+   * Returns true when the address is no a contract address.
+   * @param address the address to validate
    */
-  validateAddressIsNotContractAddress(address: string): Promise<boolean>
+  abstract validateAddressIsNotContractAddress(address: string): Promise<boolean>
+
+  /**
+   * Returns true when the address is no a contract address.
+   * @param address the address to validate
+   */
+  abstract validateAddressIsNotContractAddress(address: string): Promise<boolean>
+
+  /**
+   * Subscribes for transaction confirmation for a given transaction hash. The confirmation count is defined by the implementation.
+   *
+   * @param transactionHash the transaction id/hash
+   * @param callbackURL the callback URL to invoke on transaction confirmation
+   */
+  abstract subscribeToTransactionConfirmationEvents(transactionHash: string, callbackURL: string): Promise<{ alreadyConfirmed: boolean }>
+
+  /**
+   * Returns the {@link BlockchainFacade} implementation instance based on the coin passed in.
+   * @param currency the currency to retrieve the implementation for
+   */
+  public static getInstance(currency: CurrencyCode) {
+    if (currency === CurrencyCode.bitcoin) {
+      return new BitcoinBlockchainFacade()
+    }
+
+    throw new Error(`Unsupported currency for BlockchainFacade ${currency}`)
+  }
 }

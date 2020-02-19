@@ -7,7 +7,7 @@ export * from './currency_gateway'
 export * from './test_currency_gateway'
 export * from './validation.utils'
 export * from './native'
-
+export * from './api-provider'
 export function getOnChainCurrencyManagerForEnvironment(environment: Environment, currencies: CurrencyCode[]) {
   return environment === Environment.test ? new TestCurrencyManager(currencies) : new CurrencyManager(environment, currencies)
 }

@@ -1,10 +1,11 @@
 import { flatMap } from 'lodash'
 import { Transaction } from 'sequelize'
 import { getModel } from '@abx-utils/db-connection-utils'
-import { CurrencyCode, CryptoCurrency, Currency } from '@abx-types/reference-data'
+import { CurrencyCode, CryptoCurrency, Currency, FiatCurrency } from '@abx-types/reference-data'
 import { findCurrencyForCodes } from '@abx-service-clients/reference-data'
 import { DepositAddress, DepositRequest, DepositRequestStatus } from '@abx-types/deposit'
 import { getMinimumDepositAmountForCurrency } from './deposit_amount_validator'
+import { Transaction as BlockchainTransaction } from '@abx-utils/blockchain-currency-gateway'
 
 let cachedCryptoCurrencies: Currency[] = []
 
@@ -30,6 +31,24 @@ export async function storeDepositRequests(deposits: DepositRequest[], transacti
       depositAddress: depositAddressIdToDepositAddress.get(persistedDepositRequest.depositAddressId!)!,
     }
   })
+}
+
+export async function createNewDepositRequest(
+  depositTransaction: BlockchainTransaction,
+  depositAddress: DepositAddress,
+  transactionFiatConversion: number,
+): Promise<DepositRequest> {
+  const newDepositInstance = await getModel<DepositRequest>('depositRequest').create({
+    depositAddress,
+    amount: depositTransaction.amount,
+    depositTxHash: depositTransaction.transactionHash,
+    from: depositTransaction.senderAddress,
+    fiatCurrencyCode: FiatCurrency.usd,
+    fiatConversion: transactionFiatConversion,
+    status: DepositRequestStatus.pendingDepositTransactionConfirmation,
+  })
+
+  return newDepositInstance.get()
 }
 
 export async function getAllDepositRequests(query: Partial<DepositRequest>, parentTransaction?: Transaction): Promise<DepositRequest[]> {
@@ -135,6 +154,15 @@ export async function getDepositRequestsForAccount(accountId: string) {
     ],
   })
   return requests.map(req => req.get())
+}
+
+export async function findDepositRequestByDepositTransactionHash(txHash: string): Promise<DepositRequest | null> {
+  const depositRequest = await getModel<DepositRequest>('depositRequest').findOne({
+    where: { depositTxHash: txHash },
+    include: [getModel<DepositAddress>('depositAddress')],
+  })
+
+  return !!depositRequest ? depositRequest.get({ plain: true }) : null
 }
 
 export async function findDepositRequestById(id: number): Promise<DepositRequest | null> {

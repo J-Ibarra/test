@@ -136,7 +136,7 @@ export class BitcoinTransactionDispatcher {
     const transaction = bitcoin.Transaction.fromHex(transactionHex)
 
     const transactionBuilder = new bitcoin.TransactionBuilder(this.network)
-    const keyPair = bitcoin.ECPair.fromWIF(senderWif, this.network)
+    const senderKeyPair = bitcoin.ECPair.fromWIF(senderWif, this.network)
 
     transaction.outs.forEach(txOut => {
       transactionBuilder.addOutput(txOut.script, txOut.value)
@@ -144,7 +144,7 @@ export class BitcoinTransactionDispatcher {
 
     transaction.ins.forEach((txIn, idx) => {
       transactionBuilder.addInput(txIn.hash, txIn.index)
-      transactionBuilder.sign(idx, keyPair)
+      transactionBuilder.sign(idx, senderKeyPair)
     })
 
     return transactionBuilder.build().toHex()

@@ -8,7 +8,7 @@ const sqs = new AWS.SQS()
 export class AwsQueueObserver implements QueuePoller {
   private logger = Logger.getInstance('aws-queue-poller', 'AwsQueueObserver')
 
-  subscribeToQueueMessages(queueUrl: string, handler: QueueMessageHandler) {
+  subscribeToQueueMessages<T>(queueUrl: string, handler: QueueMessageHandler<T>) {
     sqs.receiveMessage(
       {
         QueueUrl: queueUrl.trim(),

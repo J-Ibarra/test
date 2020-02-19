@@ -4,8 +4,6 @@ import { CurrencyCode } from '@abx-types/reference-data'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { DepositTransaction, OnChainCurrencyGateway } from './currency_gateway'
 import { CryptoAddress } from './api-provider/model'
-import { IAddressTransaction } from './api-provider/providers/crypto-apis'
-import { RuntimeError } from '@abx-types/error'
 
 export const TEST_CURRENCY_TICKER = 'TST' as CurrencyCode
 export const TEST_CURRENCY_ID = 1
@@ -95,10 +93,6 @@ export class TestCurrency implements OnChainCurrencyGateway {
       privateKey,
       publicKey,
     }
-  }
-
-  addressEventListener(): Promise<IAddressTransaction> {
-    throw new RuntimeError('Unsupported operation addressEventListener')
   }
 
   private generatePrivateKey() {

@@ -1,1 +1,1 @@
-export * from './service-wrappers/deposit-processor'
+export * from './service-wrappers/private-coin-deposit-processor'

@@ -4,7 +4,6 @@ import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { RuntimeError } from '@abx-types/error'
 import { BitcoinBlockchainFacade } from './BitcoinBlockchainFacade'
 import { CryptoAddress } from '../model'
-import { IAddressTransaction } from '../providers/crypto-apis'
 
 /** Adapting the {@link BitcoinBlockchainFacade} to {@link OnChainCurrencyGateway} for backwards-compatibility. */
 export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGateway {
@@ -21,10 +20,6 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
 
   async generateAddress(): Promise<CryptoAddress> {
     return this.bitcoinBlockchainFacade.generateAddress()
-  }
-
-  async addressEventListener(publicKey: string): Promise<IAddressTransaction> {
-    return this.bitcoinBlockchainFacade.addressEventListener(publicKey)
   }
 
   // This returns a string due to JS floats
@@ -52,8 +47,17 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
     throw new RuntimeError('Unsupported operation checkConfirmationOfTransaction')
   }
 
-  transferToExchangeHoldingsFrom(): Promise<TransactionResponse> {
-    throw new RuntimeError('Unsupported operation transferToExchangeHoldingsFrom')
+  transferToExchangeHoldingsFrom(
+    fromAddress: CryptoAddress | Pick<CryptoAddress, 'privateKey'>,
+    amount: number,
+    transactionConfirmationWebhookUrl: string,
+  ): Promise<TransactionResponse> {
+    return this.bitcoinBlockchainFacade.createTransaction({
+      senderAddress: fromAddress as CryptoAddress,
+      receiverAddress: process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS!,
+      amount,
+      webhookCallbackUrl: transactionConfirmationWebhookUrl,
+    })
   }
 
   transferFromExchangeHoldingsTo(toAddress: string, amount: number, transactionConfirmationWebhookUrl: string): Promise<TransactionResponse> {

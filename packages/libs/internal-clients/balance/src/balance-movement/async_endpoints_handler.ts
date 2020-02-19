@@ -53,7 +53,7 @@ export function finaliseReserve(payload: InitialReserveBalanceChangeAsyncRequest
     type: 'finaliseReserve',
     target: {
       local: localRedisBalanceChangeTopic,
-      deployedEnvironment: process.env.BALANCE_QUEUE_URL!,
+      deployedEnvironment: process.env.BALANCE_CHANGE_QUEUE_URL!,
     },
     payload: {
       requestedChanges: [
@@ -71,7 +71,7 @@ export function confirmPendingRedemption(payload: BasicBalanceAsyncRequestPayloa
     type: 'confirmPendingRedemption',
     target: {
       local: localRedisBalanceChangeTopic,
-      deployedEnvironment: process.env.BALANCE_QUEUE_URL!,
+      deployedEnvironment: process.env.BALANCE_CHANGE_QUEUE_URL!,
     },
     payload: {
       requestedChanges: [
@@ -89,7 +89,7 @@ export function denyPendingRedemption(payload: BasicBalanceAsyncRequestPayload) 
     type: 'denyPendingRedemption',
     target: {
       local: localRedisBalanceChangeTopic,
-      deployedEnvironment: process.env.BALANCE_QUEUE_URL!,
+      deployedEnvironment: process.env.BALANCE_CHANGE_QUEUE_URL!,
     },
     payload: {
       requestedChanges: [
@@ -107,7 +107,7 @@ export function createPendingDeposit(payload: BasicBalanceAsyncRequestPayload) {
     type: 'createPendingDeposit',
     target: {
       local: localRedisBalanceChangeTopic,
-      deployedEnvironment: process.env.BALANCE_QUEUE_URL!,
+      deployedEnvironment: process.env.BALANCE_CHANGE_QUEUE_URL!,
     },
     payload: {
       requestedChanges: [
@@ -125,7 +125,7 @@ export function confirmPendingDeposit(payload: BasicBalanceAsyncRequestPayload) 
     type: BalanceAsyncRequestType.createPendingDeposit,
     target: {
       local: localRedisBalanceChangeTopic,
-      deployedEnvironment: process.env.BALANCE_QUEUE_URL!,
+      deployedEnvironment: process.env.BALANCE_CHANGE_QUEUE_URL!,
     },
     payload: {
       requestedChanges: [
@@ -143,7 +143,7 @@ export function denyPendingDeposit(payload: BasicBalanceAsyncRequestPayload) {
     type: BalanceAsyncRequestType.denyPendingDeposit,
     target: {
       local: localRedisBalanceChangeTopic,
-      deployedEnvironment: process.env.BALANCE_QUEUE_URL!,
+      deployedEnvironment: process.env.BALANCE_CHANGE_QUEUE_URL!,
     },
     payload: {
       requestedChanges: [
@@ -161,7 +161,7 @@ export function confirmPendingWithdrawal(payload: BasicBalanceAsyncRequestPayloa
     type: BalanceAsyncRequestType.confirmPendingWithdrawal,
     target: {
       local: localRedisBalanceChangeTopic,
-      deployedEnvironment: process.env.BALANCE_QUEUE_URL!,
+      deployedEnvironment: process.env.BALANCE_CHANGE_QUEUE_URL!,
     },
     payload: {
       requestedChanges: [
@@ -179,7 +179,7 @@ export function denyPendingWithdrawal(payload: BasicBalanceAsyncRequestPayload) 
     type: BalanceAsyncRequestType.denyPendingWithdrawal,
     target: {
       local: localRedisBalanceChangeTopic,
-      deployedEnvironment: process.env.BALANCE_QUEUE_URL!,
+      deployedEnvironment: process.env.BALANCE_CHANGE_QUEUE_URL!,
     },
     payload: {
       requestedChanges: [
@@ -197,7 +197,7 @@ export function confirmPendingDebitCardTopUp(payload: BasicBalanceAsyncRequestPa
     type: BalanceAsyncRequestType.confirmPendingDebitCardTopUp,
     target: {
       local: localRedisBalanceChangeTopic,
-      deployedEnvironment: process.env.BALANCE_QUEUE_URL!,
+      deployedEnvironment: process.env.BALANCE_CHANGE_QUEUE_URL!,
     },
     payload: {
       requestedChanges: [
@@ -215,7 +215,7 @@ export function recordDebitCardToExchangeWithdrawal(payload: BasicBalanceAsyncRe
     type: BalanceAsyncRequestType.recordDebitCardToExchangeWithdrawal,
     target: {
       local: localRedisBalanceChangeTopic,
-      deployedEnvironment: process.env.BALANCE_QUEUE_URL!,
+      deployedEnvironment: process.env.BALANCE_CHANGE_QUEUE_URL!,
     },
     payload: {
       requestedChanges: [

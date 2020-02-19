@@ -1,1 +1,1 @@
-# The `notification` service
+# The notification service

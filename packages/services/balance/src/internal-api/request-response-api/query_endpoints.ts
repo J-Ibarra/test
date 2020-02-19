@@ -28,7 +28,7 @@ export function createQueryEndpointHandlers(): InternalRoute<any, any>[] {
     {
       path: BalanceRetrievalEndpoints.retrieveTotalOrderValueReceivedByAccount,
       handler: async ({ currencyReceivedId, accountId, tradeTransactionIds }) => {
-        const amount = await balanceAdjustmentRepository.retrieveTotalOrderValueReceivedByAccount(currencyReceivedId, accountId, tradeTransactionIds)
+        const amount = await balanceAdjustmentRepository.retrieveTotalOrderValueReceivedByAccount(accountId, currencyReceivedId, tradeTransactionIds)
 
         return { amount }
       },

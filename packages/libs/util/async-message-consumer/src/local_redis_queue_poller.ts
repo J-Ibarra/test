@@ -11,7 +11,7 @@ export class LocalRedisQueuePoller implements QueuePoller {
     this.epicurus = getEpicurusInstance()
   }
 
-  subscribeToQueueMessages(queueUrl: string, handler: QueueMessageHandler) {
+  subscribeToQueueMessages<Т>(queueUrl: string, handler: QueueMessageHandler<Т>) {
     this.epicurus.subscribe(queueUrl, handler)
   }
 }

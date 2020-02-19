@@ -7,7 +7,7 @@ import { SettlementEndpoints, SETTLEMENT_API_ROOT } from '@abx-service-clients/o
 import { addOrderToSettleQueue, runSettlementLogic } from './core'
 import { Environment } from '@abx-types/reference-data'
 
-export function bootstrapInternalApi() {
+export async function bootstrapInternalApi() {
   const app = express()
 
   app.use(requestIpMiddleware())
@@ -15,7 +15,7 @@ export function bootstrapInternalApi() {
   app.use(bodyParser.json())
   app.use(healthcheckMiddleware)
 
-  if (process.env.NODE_ENV !== Environment.test) {
+  if (process.env.NODE_ENV !== Environment.test && process.env.NODE_ENV !== Environment.development) {
     setupInternalApi(app, [
       {
         path: SettlementEndpoints.settleOrderMatch,

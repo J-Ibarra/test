@@ -8,7 +8,7 @@ export function consumeQueueMessage({ requestedChanges }: BalanceChangeAsyncRequ
   return wrapInTransaction(sequelize, null, async tran => {
     await Promise.all(
       requestedChanges.map(change => {
-        const targetBalanceMovementFn = balanceMovementFacade[change.type]
+        const targetBalanceMovementFn = balanceMovementFacade[change.type].bind(balanceMovementFacade)
 
         return targetBalanceMovementFn({
           ...change.payload,

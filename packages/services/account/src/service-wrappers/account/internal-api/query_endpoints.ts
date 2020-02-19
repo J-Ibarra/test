@@ -6,6 +6,7 @@ import {
   findOrCreateKinesisRevenueAccount,
   findOrCreateOperatorAccount,
   isAccountSuspended,
+  findUsersByAccountId,
 } from '../../../core'
 import { AccountEndpoints } from '@abx-service-clients/account'
 import { InternalRoute } from '@abx-utils/internal-api-tools'
@@ -26,7 +27,7 @@ export function createQueryEndpointHandlers(): InternalRoute<any, any>[] {
     },
     {
       path: AccountEndpoints.findUsersByAccountId,
-      handler: ({ accountIds }) => findAccountsByIdWithUserDetails(accountIds),
+      handler: ({ accountId }) => findUsersByAccountId(accountId),
     },
     {
       path: AccountEndpoints.findAccountWithUserDetails,

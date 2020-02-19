@@ -33,10 +33,14 @@ export class BitcoinBlockchainFacade implements BlockchainFacade {
   }
 
   async getTransaction(transactionHash: string): Promise<Transaction> {
-    const transactionDetails = await this.cryptoApiProviderProxy.getTransactionDetails({ txID: transactionHash })
+    const { txid, txouts, txins, time } = await this.cryptoApiProviderProxy.getTransactionDetails({ txID: transactionHash })
 
     return {
-      transactionHash: transactionDetails.txid,
+      transactionHash: txid,
+      receiverAddress: txouts[0].addresses[0],
+      senderAddress: txins[0].addresses[0],
+      amount: Number(txins[0].amount),
+      time: time,
     }
   }
 
@@ -50,14 +54,6 @@ export class BitcoinBlockchainFacade implements BlockchainFacade {
     })
 
     return generatedAddress
-  }
-
-  async addressEventListener(publicKey: string): Promise<IAddressTransaction> {
-    return this.cryptoApiProviderProxy.createAddressTransactiontEventSubscription({
-      address: publicKey,
-      callbackURL: `${process.env.API_URL}/webhooks/crypto/address-transactions`,
-      confirmations: 0,
-    })
   }
 
   async balanceAt(address: string): Promise<number> {
@@ -78,5 +74,25 @@ export class BitcoinBlockchainFacade implements BlockchainFacade {
 
   async validateAddressIsNotContractAddress(address: string): Promise<boolean> {
     return address !== process.env.BTC_CONTRACT_ADDRESS
+  }
+
+  async subscribeToTransactionConfirmationEvents(transactionHash: string, callbackURL: string): Promise<{ alreadyConfirmed: boolean }> {
+    const transactionConfirmation = await this.cryptoApiProviderProxy.createConfirmedTransactionEventSubscription({
+      callbackURL,
+      confirmations: Number(process.env.BTC_REQUIRED_TRANSACTION_CONFIRMATIONS),
+      transactionHash,
+    })
+
+    return {
+      alreadyConfirmed: transactionConfirmation.confirmations === Number(process.env.BTC_REQUIRED_TRANSACTION_CONFIRMATIONS),
+    }
+  }
+
+  subscribeToAddressTransactionEvents(publicKey: string): Promise<IAddressTransaction> {
+    return this.cryptoApiProviderProxy.createAddressTransactiontEventSubscription({
+      address: publicKey,
+      callbackURL: `${process.env.API_URL}/webhooks/crypto/address-transactions`,
+      confirmations: 0,
+    })
   }
 }

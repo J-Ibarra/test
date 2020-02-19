@@ -40,11 +40,13 @@ export async function generateTradeTransactionReportData(orderMatchData: OrderMa
     isBuying,
   })
 
-  const [quoteCurrencyBoundary, feeCurrencyBoundary, paidCurrencyBoundary] = await getBoundariesForCurrencies([
+  const { [quoteCurrency]: quoteCurrencyBoundary, [paidCurrencyCode]: paidCurrencyBoundary } = await getBoundariesForCurrencies([
     quoteCurrency,
     feeCurrency!,
     paidCurrencyCode,
   ])
+
+  const feeCurrencyBoundary = feeCurrency === paidCurrencyCode ? paidCurrencyBoundary : quoteCurrencyBoundary
 
   const feePercent: number = new Decimal(fee)
     .div(feeCurrencyIsBase ? amount : consideration)

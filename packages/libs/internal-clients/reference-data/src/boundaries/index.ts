@@ -18,8 +18,10 @@ export async function getSymbolBoundaries(symbolId: string): Promise<SymbolBound
   return internalApiRequestDispatcher.fireRequestToInternalApi<SymbolBoundaries>(BoundaryEndpoints.getSymbolBoundaries, { symbolId })
 }
 
-export async function getBoundariesForCurrencies(currencies: CurrencyCode[]): Promise<CurrencyBoundary[]> {
-  return internalApiRequestDispatcher.fireRequestToInternalApi<CurrencyBoundary[]>(BoundaryEndpoints.getBoundariesForCurrencies, { currencies })
+export async function getBoundariesForCurrencies(currencies: CurrencyCode[]): Promise<Record<CurrencyCode, CurrencyBoundary>> {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<Record<CurrencyCode, CurrencyBoundary>>(BoundaryEndpoints.getBoundariesForCurrencies, {
+    currencies,
+  })
 }
 
 export * from './endpoints'

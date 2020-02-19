@@ -4,9 +4,9 @@ export interface ITransactionDetailsRequest {
   txID: string
 }
 
-export interface ITransactionDetailsResponse extends PayloadWrapper<ITransactionDetails> {}
+export interface ITransactionDetailsResponse extends PayloadWrapper<IBitcoinTransactionDetails> {}
 
-export interface ITransactionDetails {
+export interface IBitcoinTransactionDetails {
   txid: string
   hash: string
   index: number
@@ -25,7 +25,7 @@ export interface ITransactionDetails {
       txout: string
       vout: number
       amount: string
-      addresses: string
+      addresses: string[]
       script: {
         asm: string
         hex: string
