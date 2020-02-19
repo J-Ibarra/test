@@ -8,7 +8,7 @@ import { startAllServices } from './service_starter'
 sourceMapSupport.install()
 
 async function bootstrap() {
-  await setEnvironmentVariables()
+  await setEnvironmentVariables(process.env.RUN_MODE || 'development')
 
   await startAllServices()
 

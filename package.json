@@ -20,7 +20,8 @@
     "build:services": "lerna run build --scope @abx/*",
     "run-legacy-migrations:test": "lerna run run-legacy-migrations-test",
     "run-legacy-migrations:dev": "lerna run run-legacy-migrations-dev",
-    "start-api-debug": "lerna run start-api-debug --stream"
+    "start-api-debug:dev": "RUN_MODE=development && lerna run start-api-debug --stream",
+    "start-api-debug:e2e": "RUN_MODE=e2e-local && lerna run start-api-debug --stream"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",

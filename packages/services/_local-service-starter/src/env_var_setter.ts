@@ -1,4 +1,4 @@
-export function setEnvironmentVariables() {
+export function setEnvironmentVariables(env: string) {
   process.env.ETHEREUM_HOLDINGS_SECRET = 'bd6814d923edfc4cbd3cd4fd9107144db26daaada24dedc37a9285aabe82532e'
   process.env.KAU_HOLDINGS_SECRET = 'SCBRXPGQHNW2YAH3X6YJ7SYRK5DCIEQAKYJCEOUZ3DWVRG6VK65MS72Y'
   process.env.KAG_HOLDINGS_SECRET = 'SDZ67NF65PALNRO7ZMB6VQSK2UBCUKTAYUJYTZVVHF6S57OEHNNGZKFW'
@@ -14,5 +14,5 @@ export function setEnvironmentVariables() {
   process.env.SALESFORCE_API_ADMIN_USERNAME = 'boris.shekerov@abx.com.testing'
   process.env.SALESFORCE_API_ADMIN_PASSWORD = 'Abcd12341234e5Zw811eM8IB3HKBzV21AwCi'
   process.env.KMS_DOMAIN = 'http://localhost:1234'
-  process.env.NODE_ENV = 'development'
+  process.env.NODE_ENV = env
 }
