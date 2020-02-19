@@ -20,6 +20,7 @@ import './order_match_controller'
 import './orders_admin_controller'
 import './transaction_history_controller'
 import './depth_controller'
+import './e2e-testing/E2eTestingDataSetupController'
 import { ORDER_DATA_API_PORT } from '@abx-service-clients/order'
 
 const logger = Logger.getInstance('api', 'bootstrapRestApi')

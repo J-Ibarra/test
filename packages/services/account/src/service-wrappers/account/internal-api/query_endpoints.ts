@@ -8,37 +8,41 @@ import {
   isAccountSuspended,
   findUsersByAccountId,
 } from '../../../core'
-import { AccountEndpoints } from '@abx-service-clients/account'
+import { AccountQueryEndpoints, findUsersByEmail } from '@abx-service-clients/account'
 import { InternalRoute } from '@abx-utils/internal-api-tools'
 
 export function createQueryEndpointHandlers(): InternalRoute<any, any>[] {
   return [
     {
-      path: AccountEndpoints.findAccountById,
+      path: AccountQueryEndpoints.findAccountById,
       handler: ({ accountId }) => findAccountById(accountId),
     },
     {
-      path: AccountEndpoints.findUserByAccountId,
+      path: AccountQueryEndpoints.findUserByAccountId,
       handler: ({ accountId }) => findUserByAccountId(accountId),
     },
     {
-      path: AccountEndpoints.findAccountsByIdWithUserDetails,
+      path: AccountQueryEndpoints.findUsersByEmail,
+      handler: ({ emails }) => findUsersByEmail(emails),
+    },
+    {
+      path: AccountQueryEndpoints.findAccountsByIdWithUserDetails,
       handler: ({ accountIds }) => findAccountsByIdWithUserDetails(accountIds),
     },
     {
-      path: AccountEndpoints.findUsersByAccountId,
+      path: AccountQueryEndpoints.findUsersByAccountId,
       handler: ({ accountId }) => findUsersByAccountId(accountId),
     },
     {
-      path: AccountEndpoints.findAccountWithUserDetails,
+      path: AccountQueryEndpoints.findAccountWithUserDetails,
       handler: request => findAccountWithUserDetails(request),
     },
     {
-      path: AccountEndpoints.findOrCreateKinesisRevenueAccount,
+      path: AccountQueryEndpoints.findOrCreateKinesisRevenueAccount,
       handler: () => findOrCreateKinesisRevenueAccount(),
     },
     {
-      path: AccountEndpoints.findOrCreateOperatorAccount,
+      path: AccountQueryEndpoints.findOrCreateOperatorAccount,
       handler: async () => {
         try {
           const acc = await findOrCreateOperatorAccount()
@@ -49,7 +53,7 @@ export function createQueryEndpointHandlers(): InternalRoute<any, any>[] {
       },
     },
     {
-      path: AccountEndpoints.isAccountSuspended,
+      path: AccountQueryEndpoints.isAccountSuspended,
       handler: async ({ account }) => {
         const accountSuspended = await isAccountSuspended(account)
 

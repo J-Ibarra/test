@@ -15,6 +15,8 @@ import {
 import { RegisterRoutes } from './routes'
 
 import './balances_controller'
+import './e2e-testing/E2eTestingDataSetupController'
+
 import { OverloadedRequest } from '@abx-types/account'
 import { BALANCE_REST_API_PORT } from '@abx-service-clients/balance'
 

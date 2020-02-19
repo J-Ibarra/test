@@ -21,6 +21,7 @@ import './password_reset_controller'
 import './session_controller'
 import './token_controller'
 import './user_controller'
+import './e2e-testing/E2eTestingDataSetupController'
 
 import { OverloadedRequest } from '@abx-types/account'
 import { ACCOUNT_REST_API_PORT } from '@abx-service-clients/account'
