@@ -41,7 +41,7 @@ const orderDataRoutes = [
   '/api/order-matches',
   '/api/admin/orders',
   '/api/transaction-history',
-  '/api/test-automation/balances',
+  '/api/test-automation/orders',
 ]
 const orderGatewayRoutes = ['/internal-api/order-gateway']
 const orderSettlementRoutes = ['/internal-api/order-settlement']
