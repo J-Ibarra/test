@@ -46,7 +46,13 @@ const orderDataRoutes = [
 const orderGatewayRoutes = ['/internal-api/order-gateway']
 const orderSettlementRoutes = ['/internal-api/order-settlement']
 const withdrawalRoutes = ['/internal-api/withdrawals', '/api/withdrawals', '/api/contacts', '/api/crypto']
-const depositRoutes = ['/internal-api/deposit', '/api/vault', '/api/wallets']
+const depositRoutes = [
+  '/internal-api/deposit',
+  '/api/vault',
+  '/api/wallets',
+  '/api/test-automation/deposit/transaction',
+  '/api/test-automation/deposit/transaction/eth',
+]
 
 const routesToPort: { routes: string[]; port: number }[] = [
   {
