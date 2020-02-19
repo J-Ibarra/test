@@ -25,7 +25,7 @@ async function bootstrap() {
   })
 
   console.log('Proxy listening on port 3000')
-  proxyServer.listen(3000)
+  proxyServer.listen(process.env.RUN_MODE === 'e2e-local' ? 12345 : 3000)
 }
 
 bootstrap()
