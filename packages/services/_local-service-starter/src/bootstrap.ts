@@ -8,7 +8,7 @@ import { startAllServices } from './service_starter'
 sourceMapSupport.install()
 
 async function bootstrap() {
-  await setEnvironmentVariables(process.env.RUN_MODE || 'development')
+  await setEnvironmentVariables()
 
   await startAllServices()
 
@@ -24,7 +24,7 @@ async function bootstrap() {
     res.end('Not Found')
   })
 
-  console.log('Proxy listening on port 3000')
+  console.log(`Proxy listening on port ${process.env.RUN_MODE === 'e2e-local' ? 12345 : 3000}`)
   proxyServer.listen(process.env.RUN_MODE === 'e2e-local' ? 12345 : 3000)
 }
 

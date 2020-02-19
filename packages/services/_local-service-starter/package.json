@@ -4,7 +4,8 @@
   "description": "This packages is used to bootstrap the exchange services locally",
   "scripts": {
     "start": "ts-node-dev src/bootstrap.ts",
-    "start-api-debug": "ABX_LOG_LEVEL=debug NEW_RELIC_NO_CONFIG_FILE=true TZ=UTC NODE_ENV=development tsnd --inspect --respawn src/bootstrap.ts"
+    "start-api-debug:dev": "ABX_LOG_LEVEL=debug NEW_RELIC_NO_CONFIG_FILE=true TZ=UTC NODE_ENV=development tsnd --inspect --respawn src/bootstrap.ts",
+    "start-api-debug:e2e-local": "ABX_LOG_LEVEL=debug NEW_RELIC_NO_CONFIG_FILE=true TZ=UTC NODE_ENV=e2e-local tsnd --inspect --respawn src/bootstrap.ts"
   },
   "dependencies": {
     "@abx-service-clients/reference-data": "^1.1.0",
