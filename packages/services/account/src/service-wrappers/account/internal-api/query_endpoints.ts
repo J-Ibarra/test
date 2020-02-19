@@ -7,8 +7,9 @@ import {
   findOrCreateOperatorAccount,
   isAccountSuspended,
   findUsersByAccountId,
+  findUsersByEmail,
 } from '../../../core'
-import { AccountQueryEndpoints, findUsersByEmail } from '@abx-service-clients/account'
+import { AccountQueryEndpoints } from '@abx-service-clients/account'
 import { InternalRoute } from '@abx-utils/internal-api-tools'
 
 export function createQueryEndpointHandlers(): InternalRoute<any, any>[] {

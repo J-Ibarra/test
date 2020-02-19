@@ -59,17 +59,30 @@ Scripts required for the setup are placed in `/_scripts`
 // Hover to view descriptions of existing attributes.
 // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
 "version": "0.2.0",
-"configurations": [{
-"name": "Launch via npm",
+"configurations": [
+{
+"name": "Start services dev",
 "type": "node",
 "request": "launch",
-"cwd": "\${workspaceFolder}",
+"cwd": "${workspaceFolder}",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run-script", "start-api-debug:dev"],
+      "port": 9229,
+      "stopOnEntry": true,
+      "sourceMaps": true,
+    },
+    {
+      "name": "Start services e2e-local",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
 "runtimeExecutable": "npm",
-"runtimeArgs": ["run-script", "start-api-debug"],
+"runtimeArgs": ["run-script", "start-api-debug:e2e-local"],
 "port": 9229,
 "stopOnEntry": true,
 "sourceMaps": true,
-}]
+}
+]
 }
 
 ### Conventions

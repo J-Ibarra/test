@@ -10,7 +10,7 @@ import { WITHDRAWAL_REST_API_PORT } from '@abx-service-clients/withdrawal'
 import { DEPOSIT_API_PORT } from '@abx-service-clients/deposit'
 
 const accountRoutes = [
-  'internal-api/accounts',
+  '/internal-api/accounts',
   '/api/accounts',
   '/api/admin/account',
   '/api/mfa',

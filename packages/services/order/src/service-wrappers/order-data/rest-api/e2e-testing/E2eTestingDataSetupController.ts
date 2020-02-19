@@ -32,7 +32,9 @@ export class E2eTestingDataSetupController {
       await getModel<OrderQueueStatus>('orderQueueStatus').update({ processing: false, lastProcessed: new Date() } as any, {
         where: {},
       })
-      return this.truncateOrderData()
+      this.logger.info('Truncating order data.')
+      await this.truncateOrderData()
+      this.logger.info('Truncated order data.')
     }
   }
 
@@ -53,7 +55,7 @@ export class E2eTestingDataSetupController {
     if (e2eTestingEnvironments.includes(getEnvironment())) {
       this.logger.info(`Setting up account for ${email}`)
 
-      let users = await findUsersByEmail(email.toLocaleLowerCase())
+      let users = await findUsersByEmail([email.toLocaleLowerCase()])
       let user
       if (!users || users.length === 0) {
         const account = await createAccount(email, email)

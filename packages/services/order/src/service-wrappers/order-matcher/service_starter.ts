@@ -27,7 +27,7 @@ export async function bootstrapWorkerService() {
   const configuration: OrderModuleConfig = {
     broadcastOrderUpdated: handleOrderUpdated,
     broadcastOrderMatched: async (orderMatch: UsdMidPriceEnrichedOrderMatch) => {
-      await settleOrderMatch(orderMatch.id!, orderMatch.feeCurrencyToUsdMidPrice || 0)
+      await settleOrderMatch(orderMatch.id!, orderMatch.feeCurrencyToUsdMidPrice || 0, orderMatch.symbolId)
     },
     broadcastAskDepthUpdated: broadcastAskDepthUpdate,
     broadcastBidDepthUpdated: broadcastBidDepthUpdate,

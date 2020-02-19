@@ -5,8 +5,8 @@ export const SETTLEMENT_API_ROOT = 3113
 
 const internalApiRequestDispatcher = new InternalApiRequestDispatcher(SETTLEMENT_API_ROOT)
 
-export function settleOrderMatch(id: number, feeCurrencyToUsdMidPrice: number): Promise<void> {
-  return internalApiRequestDispatcher.fireRequestToInternalApi<void>(SettlementEndpoints.settleOrderMatch, { id, feeCurrencyToUsdMidPrice })
+export function settleOrderMatch(id: number, feeCurrencyToUsdMidPrice: number, symbolId: string): Promise<void> {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<void>(SettlementEndpoints.settleOrderMatch, { id, feeCurrencyToUsdMidPrice, symbolId })
 }
 
 export * from './endpoints'
