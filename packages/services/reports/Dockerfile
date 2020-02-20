@@ -17,6 +17,7 @@ COPY tsconfig.build.json .
 RUN npm install --loglevel notice
 RUN npm i -g typescript
 RUN npm i -g ts-node-dev
+RUN npm i -g phantomjs
 
 # Copying required modules (.dockerignore will make sure , node_modules are not copied over)
 COPY packages/libs ./packages/libs
