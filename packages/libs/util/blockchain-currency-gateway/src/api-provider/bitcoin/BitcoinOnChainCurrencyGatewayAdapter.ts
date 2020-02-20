@@ -4,6 +4,7 @@ import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { RuntimeError } from '@abx-types/error'
 import { BitcoinBlockchainFacade } from './BitcoinBlockchainFacade'
 import { CryptoAddress } from '../model'
+import { DepositAddress } from '@abx-types/deposit'
 
 /** Adapting the {@link BitcoinBlockchainFacade} to {@link OnChainCurrencyGateway} for backwards-compatibility. */
 export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGateway {
@@ -18,10 +19,22 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
     return getCurrencyId(this.ticker)
   }
 
-  async generateAddress(): Promise<CryptoAddress> {
+  generateAddress(): Promise<CryptoAddress> {
     return this.bitcoinBlockchainFacade.generateAddress()
   }
 
+  async listenToAddressEvents(depositAddressDetails: DepositAddress): Promise<boolean> {
+    try {
+      if (depositAddressDetails.address) {
+        return false
+      }
+      await this.bitcoinBlockchainFacade.subscribeToAddressTransactionEvents(depositAddressDetails.address!, 1) // listen for new transactions
+      await this.bitcoinBlockchainFacade.subscribeToAddressTransactionEvents(depositAddressDetails.address!, 3) // listen for confirmed transactions
+      return true
+    } catch (e) {
+      return false
+    }
+  }
   // This returns a string due to JS floats
   balanceAt(address: string): Promise<number> {
     return this.bitcoinBlockchainFacade.balanceAt(address)

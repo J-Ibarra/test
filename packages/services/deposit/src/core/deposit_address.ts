@@ -4,11 +4,12 @@ import { Logger } from '@abx-utils/logging'
 import { CurrencyManager, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
 import { getModel } from '@abx-utils/db-connection-utils'
 import { ValidationError } from '@abx-types/error'
-import { findCryptoCurrencies, isFiatCurrency } from '@abx-service-clients/reference-data'
+import { findCryptoCurrencies, isFiatCurrency, findCurrencyForCode } from '@abx-service-clients/reference-data'
 import { DepositAddress } from '@abx-types/deposit'
 import { encryptValue } from '@abx-utils/encryption'
 import { groupBy } from 'lodash'
 import { getAllKycVerifiedAccountIds } from '@abx-service-clients/account'
+import { Account } from '@abx-types/account'
 
 const logger = Logger.getInstance('lib', 'deposit_address')
 const KYC_ACCOUNTS_CACHE_EXPIRY_10_MINUTES = 10 * 60 * 1000
@@ -97,7 +98,10 @@ export async function storeDepositAddress(address: DepositAddress) {
   const savedAddress = await getModel<DepositAddress>('depositAddress').create(address)
   return savedAddress.get()
 }
-
+export async function updateDepositAddress(address: DepositAddress) {
+  const [, savedAddress] = await getModel<DepositAddress>('depositAddress').update(address, { where: { id: address.id! }, returning: true })
+  return savedAddress[0].get()
+}
 export async function createMissingDepositAddressesForAccount(
   accountId: string,
   existingDepositAddresses: DepositAddress[],
@@ -137,4 +141,23 @@ export async function createNewDepositAddress(manager: CurrencyManager, accountI
 
   const address = await generateNewDepositAddress(accountId, manager.getCurrencyFromTicker(currencyTicker))
   return storeDepositAddress(address)
+}
+
+export const findDepositAddressAndListenForEvents = async (
+  { id }: Account,
+  publicKey: string,
+  currencyCode: CurrencyCode,
+): Promise<DepositAddress> => {
+  const { id: currencyId } = await findCurrencyForCode(currencyCode)
+  const depositAddress = await findDepositAddress({ publicKey, accountId: id, currencyId })
+  if (!depositAddress) {
+    throw new ValidationError(`Deposit address does not exist for currency id: ${currencyId} and account id: ${id}`)
+  }
+  if (depositAddress.activated) {
+    logger.debug(`Deposit address already activated for currency id: ${currencyId} and account id: ${id}`)
+    return depositAddress
+  }
+  const manager = new CurrencyManager(getEnvironment(), [currencyCode])
+  const successfulEventCreation = await manager.getCurrencyFromTicker(currencyCode).listenToAddressEvents(depositAddress)
+  return updateDepositAddress({ ...depositAddress, activated: successfulEventCreation })
 }

@@ -52,6 +52,11 @@ export class Kinesis implements OnChainCurrencyGateway {
     }
   }
 
+  public async listenToAddressEvents(_: any): Promise<boolean> {
+    logger.debug('Not supported')
+    return true
+  }
+
   private generatePrivateKey() {
     return Keypair.random().secret()
   }

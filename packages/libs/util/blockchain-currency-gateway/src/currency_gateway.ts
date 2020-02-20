@@ -1,5 +1,6 @@
 import { CurrencyCode, FiatCurrency } from '@abx-types/reference-data'
 import { CryptoAddress } from './api-provider/model'
+import { DepositAddress } from '@abx-types/deposit'
 
 export interface DepositTransaction {
   txHash: string
@@ -29,6 +30,7 @@ export interface OnChainCurrencyGateway {
   // This returns a string due to JS floats
   balanceAt(address: string): Promise<number>
   generateAddress(): Promise<CryptoAddress>
+  listenToAddressEvents(depositAddressDetails: DepositAddress): Promise<boolean>
   /**
    * Retrieves n block(different for each implementation) retrieving all transactions to a given account
    * @param address the public address

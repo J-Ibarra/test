@@ -95,6 +95,10 @@ export class TestCurrency implements OnChainCurrencyGateway {
     }
   }
 
+  public async listenToAddressEvents(_: any): Promise<boolean> {
+    return true
+  }
+
   private generatePrivateKey() {
     const newPrivate = `private${this.addressCounter}`
     const newAddress = `address${this.addressCounter}`

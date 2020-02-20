@@ -26,7 +26,7 @@ export class AddressGenerator {
     this.logger.debug(`Found address id to listen on : ${addressDetails.id}`)
 
     const blockchainFacade = BlockchainFacade.getInstance(code)
-    return blockchainFacade.subscribeToAddressTransactionEvents(addressDetails.address!)
+    return blockchainFacade.subscribeToAddressTransactionEvents(addressDetails.address!, 1)
   }
 
   async generateDepositAddress(accountId: string, currencyTicker: CurrencyCode): Promise<DepositAddress> {
@@ -62,6 +62,7 @@ export class AddressGenerator {
       encryptedWif: encryptedAddress.wif!,
       publicKey: encryptedAddress.publicKey,
       encryptedPrivateKey: encryptedAddress.privateKey,
+      activated: false,
     })
   }
 

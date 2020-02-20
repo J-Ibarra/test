@@ -34,6 +34,10 @@ export default function depositAddressModel(sequelize: Sequelize.Sequelize) {
         type: Sequelize.STRING,
         allowNull: true,
       },
+      activated: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+      },
     },
     {
       tableName: 'deposit_address',

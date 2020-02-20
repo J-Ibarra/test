@@ -76,6 +76,27 @@ export function RegisterRoutes(app: express.Express) {
             const promise = controller.retrieveWalletAddressesForAccount.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
+    app.post('/api/wallets/activate/address',
+        authenticateMiddleware([{ "cookieAuth": [] }, { "tokenAuth": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+                body: { "in": "body", "name": "body", "required": true, "dataType": "any" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new WalletsController();
+
+
+            const promise = controller.activateWalletAddressForAccount.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
     app.get('/api/wallets/kinesis-bank-details',
         authenticateMiddleware([{ "cookieAuth": [] }, { "tokenAuth": [] }]),
         function(request: any, response: any, next: any) {

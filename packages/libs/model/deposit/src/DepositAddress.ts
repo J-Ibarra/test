@@ -11,4 +11,5 @@ export interface DepositAddress {
   publicKey: string
   address?: string
   encryptedWif?: string
+  activated: boolean
 }
