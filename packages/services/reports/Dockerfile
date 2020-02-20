@@ -18,7 +18,7 @@ RUN npm install --loglevel notice
 RUN npm i -g typescript
 RUN npm i -g ts-node-dev
 
-# Copying required modules (.dockerignore will make sure, node_modules are not copied over)
+# Copying required modules (.dockerignore will make sure , node_modules are not copied over)
 COPY packages/libs ./packages/libs
 COPY packages/services/reports ./packages/services/reports
 
