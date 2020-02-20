@@ -3,8 +3,11 @@ import { EmailEndpoints, localRedisEmailTopic, EmailAsyncRequest, OpsEmailPayloa
 import { getQueuePoller } from '@abx-utils/async-message-consumer'
 import { sendNotificationToOps, sendEmail } from '../core/lib/email/mandrill'
 import { Email } from '@abx-types/notification'
+import { Logger } from '@abx-utils/logging'
 
 const localEnvironments = [Environment.test, Environment.development, Environment.e2eLocal]
+
+const logger = Logger.getInstance('notification', 'create_email')
 
 export function bootstrapInternalApi() {
   const queuePoller = getQueuePoller()
@@ -13,6 +16,8 @@ export function bootstrapInternalApi() {
 }
 
 async function consumeQueueMessage({ payload, type }: EmailAsyncRequest) {
+  logger.debug(`Consumed queue message of type ${type}`)
+
   if (!localEnvironments.includes(process.env.NODE_ENV as Environment)) {
     if (type === EmailEndpoints.sendNotificationToOps) {
       const opsEmailContent = payload as OpsEmailPayload

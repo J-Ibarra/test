@@ -14,13 +14,18 @@ import {
   NotificationStatus,
   EmailTemplates,
 } from '@abx-types/notification'
+import { Logger } from '@abx-utils/logging'
 
 const mandrillClient = new Mandrill(config.mandrillApi)
+const logger = Logger.getInstance('notification', 'mandrill')
 
 export async function sendEmail(email: Email) {
+  logger.debug(`Sending email ${JSON.stringify(email)}`)
   const mandrillEmail = toMandrillEmail(email)
 
   const mandrillResult = await sendToMandrill(mandrillEmail)
+  logger.debug(`Mandril result ${JSON.stringify(mandrillResult)}`)
+
   const notificationStatus = getNotificationStatus(mandrillResult)
 
   return {
