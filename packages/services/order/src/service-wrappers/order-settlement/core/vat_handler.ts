@@ -65,7 +65,7 @@ export async function calculateVatValue(
 ): Promise<VatValue> {
   const vatFeeCurrencyValue = calculateVat(executionFee, vatRate)
   const vatUsdValue = await calculateVatUsdValue(executionFee, symbol, feeCurrencyToUsdMidPrice, vatRate)
-  const vatChfValue = vatUsdValue.times(chfForOneUsd)
+  const vatChfValue = vatUsdValue.times(chfForOneUsd.toNumber())
 
   return {
     valueInFeeCurrency: new Decimal(vatFeeCurrencyValue.toDP(taxScale, Decimal.ROUND_DOWN)),
