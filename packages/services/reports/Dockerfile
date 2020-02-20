@@ -1,4 +1,4 @@
-FROM node:13.6.0-alpine3.10
+FROM node:13.6.0
 
 # Required by lerna bootstrap (some 3rd party dependencies are fetched from git)
 RUN apk add --update git openssh
