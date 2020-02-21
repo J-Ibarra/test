@@ -3,7 +3,7 @@ import http from 'http'
 import sourceMapSupport from 'source-map-support'
 import { pickRouteBasedForwarding } from './request_handler'
 import { setEnvironmentVariables } from './env_var_setter'
-import { startAllServices } from './service_starter'
+import { startAllServices } from './services_starter'
 
 sourceMapSupport.install()
 

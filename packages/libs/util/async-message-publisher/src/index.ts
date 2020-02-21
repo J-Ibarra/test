@@ -13,7 +13,9 @@ export interface AsyncMessage<T> {
    * and the AWS SQS queue name for when the logic is executing in AWS.
    */
   target: {
+    /** The Redis topic to be used when running the app locally (in development mode). */
     local: string
+    /** The SQS queue URL for when executing in AWS. */
     deployedEnvironment: string
   }
   payload: T
