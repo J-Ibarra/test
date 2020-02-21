@@ -7,7 +7,7 @@ import { AccountStatus, AccountType } from '@abx-types/account'
 import { findAccountById, verifyUserAccount, createAccount, findUserById, validatePassword, createCookie } from '../..'
 import { truncateTables } from '@abx-utils/db-connection-utils'
 
-describe.only('accounts', () => {
+describe('accounts', () => {
   beforeEach(async () => {
     await truncateTables()
   })
