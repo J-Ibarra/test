@@ -58,7 +58,9 @@
     "newrelic": "4.10.0",
     "request-ip": "2.1.3",
     "sequelize": "4.41.0",
-    "tsoa": "2.3.81"
+    "tsoa": "2.3.81",
+    "web3": "1.2.1",
+    "@types/web3": "1.0.14"
   },
   "devDependencies": {
     "@abx-utils/account": "^1.1.0",
