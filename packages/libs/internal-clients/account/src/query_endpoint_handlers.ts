@@ -78,7 +78,6 @@ export async function getAllKycVerifiedAccountIds(cacheExpiryInSeconds?: number)
   }
 
   kycVerifiedAccountIds = await internalApiRequestDispatcher.fireRequestToInternalApi<string[]>(AccountQueryEndpoints.getAllKycVerifiedAccountIds)
-
   return new Set<string>(kycVerifiedAccountIds)
 }
 
@@ -89,7 +88,7 @@ async function returnCachedValueOrRetrieveFromSource<T>(endpoint: AccountQueryEn
     return cachedValue as T
   }
 
-  const freshValue = await await internalApiRequestDispatcher.fireRequestToInternalApi<T>(endpoint)
+  const freshValue = await internalApiRequestDispatcher.fireRequestToInternalApi<T>(endpoint)
   await memoryCache.set<T>({
     key: cacheKey,
     ttl: cacheExpiryInSeconds,
