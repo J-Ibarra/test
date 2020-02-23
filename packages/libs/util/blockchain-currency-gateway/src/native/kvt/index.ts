@@ -193,6 +193,10 @@ export class KVT implements OnChainCurrencyGateway {
     return this.transferTo({ amount, privateKey: holdingPrivateKey, toAddress })
   }
 
+  public kinesisManagesConfirmations(): boolean {
+    return true
+  }
+
   /**
    * Transfer amount of token from one account (using private key) to another account (using address)
    * @param {string} privateKey - Private key of funded account

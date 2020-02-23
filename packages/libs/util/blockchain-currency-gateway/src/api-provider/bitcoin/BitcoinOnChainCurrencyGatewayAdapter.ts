@@ -44,7 +44,14 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
   }
 
   checkConfirmationOfTransaction(): Promise<boolean> {
-    throw new RuntimeError('Unsupported operation checkConfirmationOfTransaction')
+    /**
+     * We trust the third party api's so we can just return true
+     */
+    return Promise.resolve(true)
+  }
+
+  kinesisManagesConfirmations(): boolean {
+    return false
   }
 
   transferToExchangeHoldingsFrom(

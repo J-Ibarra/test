@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Request, Route, Security, SuccessResponse } from 'tsoa'
 
-import { initialiseWithdrawal, CryptoWithdrawalGatekeeper, prepareWithdrawalRequestEmail, PENDING_WITHDRAWAL_GATEKEEPER_NAME } from '../core'
+import { initialiseWithdrawal, CryptoWithdrawalGatekeeper, prepareWithdrawalRequestEmail, PENDING_HOLDINGS_WITHDRAWAL_GATEKEEPER_NAME } from '../core'
 import { Logger } from '@abx-utils/logging'
 import { createEmail } from '@abx-service-clients/notification'
 import { getWithdrawalConfig, getWithdrawalConfigForCurrency, isFiatCurrency } from '@abx-service-clients/reference-data'
@@ -11,7 +11,7 @@ import { WithdrawalRequestParams } from '@abx-types/withdrawal'
 @Route('/withdrawals')
 export class WithdrawalsController extends Controller {
   private logger = Logger.getInstance('api', 'WithdrawalsController')
-  private withdrawalGatekeeper = CryptoWithdrawalGatekeeper.getSingletonInstance(PENDING_WITHDRAWAL_GATEKEEPER_NAME)
+  private withdrawalGatekeeper = CryptoWithdrawalGatekeeper.getSingletonInstance(PENDING_HOLDINGS_WITHDRAWAL_GATEKEEPER_NAME)
 
   @Security('cookieAuth')
   @Security('tokenAuth')

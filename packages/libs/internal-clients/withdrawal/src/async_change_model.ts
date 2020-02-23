@@ -1,5 +1,5 @@
 import { CurrencyCode } from '@abx-types/reference-data'
-
+import { IConfirmedTransactionEventPayload } from '@abx-utils/blockchain-currency-gateway'
 export enum WithdrawalStatusChangeRequestType {
   cancelFiatWithdrawal = 'cancelFiatWithdrawal',
   createFiatWithdrawal = 'createFiatWithdrawal',
@@ -29,4 +29,12 @@ export interface FiatWithdrawalCreationRequest {
 export interface AsyncWithdrawalStatusChangeRequest {
   type: WithdrawalStatusChangeRequestType
   payload: FiatWithdrawalCancellationChangeRequest | FiatWithdrawalCreationRequest | FiatWithdrawalCompletionRequestPayload
+}
+
+export enum EWebhookWithdrawalCompletedRequestType {
+  confirmedTransaction = 'confirmedTransaction',
+}
+export interface IAsyncWebhookWithdrawalCompletedRequest {
+  type: EWebhookWithdrawalCompletedRequestType
+  payload: IConfirmedTransactionEventPayload
 }

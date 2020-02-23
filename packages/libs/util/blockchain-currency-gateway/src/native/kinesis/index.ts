@@ -222,6 +222,10 @@ export class Kinesis implements OnChainCurrencyGateway {
     })
   }
 
+  public kinesisManagesConfirmations(): boolean {
+    return true
+  }
+
   public async transferFromExchangeHoldings(transactionEnvelope: string) {
     const holdingSignerSecret = await this.getHoldingsSignerSecret(this.ticker)
 

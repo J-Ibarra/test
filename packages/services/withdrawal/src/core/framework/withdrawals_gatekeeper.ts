@@ -14,7 +14,9 @@ import { findWithdrawalRequests } from '../lib'
 import { findAllCurrencies } from '@abx-service-clients/reference-data'
 
 const logger = Logger.getInstance('withdrawals', 'CryptoWithdrawalGatekeeper')
-export const PENDING_WITHDRAWAL_GATEKEEPER_NAME = 'pending withdrawal transfer'
+
+export const PENDING_HOLDINGS_WITHDRAWAL_GATEKEEPER_NAME = 'pending withdrawal transfer'
+export const PENDING_COMPLETION_WITHDRAWAL_GATEKEEPER_NAME = 'pending completion'
 
 export class CryptoWithdrawalGatekeeper {
   private static gatekeeperNameToGatekeeper: Record<string, CryptoWithdrawalGatekeeper | null>

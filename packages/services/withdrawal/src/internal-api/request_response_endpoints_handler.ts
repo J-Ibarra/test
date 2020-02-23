@@ -1,12 +1,12 @@
 import { WithdrawalEndpoints, findWithdrawalRequestsForTransactionHashes, findWithdrawalRequestsByIds } from '@abx-service-clients/withdrawal'
-import { findWithdrawalRequest, findWithdrawalRequestById, getWithdrawalFee, completeFiatWithdrawal, getWithdrawalFees } from '../core'
+import { findWithdrawalRequestById, getWithdrawalFee, completeFiatWithdrawal, getWithdrawalFees, findWithdrawalRequestByTxHash } from '../core'
 import { InternalRoute } from '@abx-utils/internal-api-tools'
 
 export function createRequestResponseEndpointHandlers(): InternalRoute<any, any>[] {
   return [
     {
       path: WithdrawalEndpoints.findWithdrawalRequestForTransactionHash,
-      handler: ({ txHash }) => findWithdrawalRequest({ txHash }),
+      handler: ({ txHash }) => findWithdrawalRequestByTxHash(txHash),
     },
     {
       path: WithdrawalEndpoints.findWithdrawalRequestsForTransactionHashes,

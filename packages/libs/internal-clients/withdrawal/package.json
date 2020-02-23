@@ -23,6 +23,7 @@
     "@abx-types/reference-data": "^1.1.0",
     "@abx-types/withdrawal": "^1.1.0",
     "@abx-utils/async-message-publisher": "^1.1.0",
+    "@abx-utils/blockchain-currency-gateway": "^1.1.0",
     "@abx-utils/internal-api-tools": "^1.1.0",
     "@abx-utils/logging": "^1.1.0",
     "aws-sdk": "2.574.0",

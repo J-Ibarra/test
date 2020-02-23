@@ -1,3 +1,5 @@
+export * from './model'
+export * from './providers'
 export * from './BlockchainFacade'
 export * from './model'
 export * from './providers/crypto-apis'
