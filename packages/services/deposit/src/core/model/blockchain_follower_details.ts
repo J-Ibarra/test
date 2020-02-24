@@ -3,7 +3,7 @@ import { BlockchainFollowerDetails } from '@abx-types/deposit'
 
 export interface BlockchainFollowerDetailsInstance extends Sequelize.Instance<BlockchainFollowerDetails>, BlockchainFollowerDetails {}
 
-export default function(sequelize: Sequelize.Sequelize) {
+export default function blockchainFollowerDetailsModel(sequelize: Sequelize.Sequelize) {
   const blockchainFollowerDetails = sequelize.define<BlockchainFollowerDetailsInstance, BlockchainFollowerDetails>('blockchain_follower_details', {
     id: {
       type: Sequelize.INTEGER,

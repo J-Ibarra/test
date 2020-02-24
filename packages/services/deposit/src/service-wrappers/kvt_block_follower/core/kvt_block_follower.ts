@@ -1,28 +1,27 @@
 import * as Sequelize from 'sequelize'
-import { Block, Transaction } from 'web3/eth/types'
+import { EventLog } from 'web3/types'
+import { findBoundaryForCurrency, findCurrencyForCode } from '@abx-service-clients/reference-data'
+import { CurrencyBoundary, CurrencyCode } from '@abx-types/reference-data'
 import { Logger } from '@abx-utils/logging'
-import { CurrencyManager, Ethereum } from '@abx-utils/blockchain-currency-gateway'
+import { CurrencyManager, KVT } from '@abx-utils/blockchain-currency-gateway'
 import { getBlockchainFollowerDetailsForCurrency, updateBlockchainFollowerDetailsForCurrency } from '../../../core'
 import { BlockchainFollowerDetails, DepositAddress } from '@abx-types/deposit'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { findKycOrEmailVerifiedDepositAddresses, storeDepositRequests } from '../../../core'
+import { FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION, convertTransactionToDepositRequest } from '../../deposit-processor/core/deposit_transactions_fetcher'
 import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-data'
-import { FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION } from '../../deposit-processor/core/transaction-fetching-strategies/fetch_for_each_address'
-import { CurrencyCode, CurrencyBoundary } from '@abx-types/reference-data'
-import { findCurrencyForCode, findBoundaryForCurrency } from '@abx-service-clients/reference-data'
-import { convertTransactionToDepositRequest } from '../../deposit-processor/core/deposit_transactions_fetcher'
 
 const ETHEREUM_BLOCK_DELAY = 12
 
-const logger = Logger.getInstance('services', 'ethereum_block_follower')
+const logger = Logger.getInstance('services', 'kvt_block_follower')
 
 const testEnvironments = ['test', 'development']
 
-export async function triggerEthereumBlockFollower(onChainCurrencyManager: CurrencyManager) {
-  const ethereum: Ethereum = (await onChainCurrencyManager.getCurrencyFromTicker(CurrencyCode.ethereum)) as Ethereum
+export async function triggerKVTBlockFollower(onChainCurrencyManager: CurrencyManager) {
+  const kvt: KVT = (await onChainCurrencyManager.getCurrencyFromTicker(CurrencyCode.kvt)) as KVT
 
   try {
-    const { id: currencyId } = await findCurrencyForCode(CurrencyCode.ethereum)
+    const { id: currencyId } = await findCurrencyForCode(CurrencyCode.kvt)
     const depositAddresses = await findKycOrEmailVerifiedDepositAddresses(currencyId)
     const { lastBlockNumberProcessed } = await getBlockchainFollowerDetailsForCurrency(currencyId) as BlockchainFollowerDetails
 
@@ -30,7 +29,7 @@ export async function triggerEthereumBlockFollower(onChainCurrencyManager: Curre
       throw new Error('Waiting for lastProcessedBlockNumber to be updated from 0')
     }
 
-    const currentBlockNumber = await ethereum.getLatestBlockNumber()
+    const currentBlockNumber = await kvt.getLatestBlockNumber()
     let blockDifference = currentBlockNumber - ETHEREUM_BLOCK_DELAY - Number(lastBlockNumberProcessed)
 
     // Only process 5 blocks at a time
@@ -39,8 +38,8 @@ export async function triggerEthereumBlockFollower(onChainCurrencyManager: Curre
     }
 
     const [fiatValueOfOneCryptoCurrency, currencyBoundary] = await Promise.all([
-      calculateRealTimeMidPriceForSymbol(`${ethereum.ticker}_${FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION}`),
-      findBoundaryForCurrency(ethereum.ticker),
+      calculateRealTimeMidPriceForSymbol(`${kvt.ticker}_${FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION}`),
+      findBoundaryForCurrency(kvt.ticker),
     ])
 
     const publicKeyToDepositAddress = depositAddresses.reduce(
@@ -56,13 +55,8 @@ export async function triggerEthereumBlockFollower(onChainCurrencyManager: Curre
             const blockNumberToProcess = Number(lastBlockNumberProcessed) + (index + 1)
             logger.debug(`Processing Block #${blockNumberToProcess}`)
 
-            const blockData = (await ethereum.getBlockData(blockNumberToProcess)) as Block
-            if (blockData) {
-              const transactions = blockData.transactions.filter(tx => tx.to && tx.to !== process.env.KVT_CONTRACT_ADDRESS)
-              await handleEthereumTransactions(transactions, publicKeyToDepositAddress, ethereum, fiatValueOfOneCryptoCurrency, currencyBoundary, t)
-            } else {
-              throw new Error('Could not find block data, will try again in 10 seconds')
-            }
+            const KVTEvents = await kvt.contract.getPastEvents('Transfer', { fromBlock: blockNumberToProcess, toBlock: blockNumberToProcess })
+            await handleKVTTransactions(KVTEvents, publicKeyToDepositAddress, kvt, fiatValueOfOneCryptoCurrency, currencyBoundary, t)
           })
         }),
       )
@@ -73,29 +67,27 @@ export async function triggerEthereumBlockFollower(onChainCurrencyManager: Curre
     logger.error(e)
   }
 
-  setTimeout(() => triggerEthereumBlockFollower(onChainCurrencyManager), 10_000)
+  setTimeout(() => triggerKVTBlockFollower(onChainCurrencyManager), 10_000)
 }
 
-export async function handleEthereumTransactions(
-  transactions: Transaction[],
+export async function handleKVTTransactions(
+  KVTEvents: EventLog[],
   publicKeyToDepositAddress: Map<string, DepositAddress>,
-  onChainCurrencyGateway: Ethereum,
+  onChainCurrencyGateway: KVT,
   fiatValueOfOneCryptoCurrency: number,
   currencyBoundary: CurrencyBoundary,
   t: Sequelize.Transaction,
 ) {
-  const potentialDepositTransactions = transactions.reduce(
-    (acc, transaction) =>
-      publicKeyToDepositAddress.has(transaction.to)
-        ? acc.concat({ tx: transaction, depositAddress: publicKeyToDepositAddress.get(transaction.to)! })
-        : acc,
-    [] as { tx: Transaction, depositAddress: DepositAddress }[],
-  )
+  const potentialDepositTransactions = KVTEvents.reduce((acc, event) => {
+    return publicKeyToDepositAddress.has(event.returnValues.to)
+      ? acc.concat({ event, depositAddress: publicKeyToDepositAddress.get(event.returnValues.to)! })
+      : acc
+  }, [] as { event: EventLog, depositAddress: DepositAddress }[])
 
   if (potentialDepositTransactions.length > 0) {
     logger.debug(`Found Potential Deposits: ${potentialDepositTransactions}`)
     const depositRequests = potentialDepositTransactions.map(tx => {
-      const depositTransaction = onChainCurrencyGateway.apiToDepositTransaction(tx.tx)
+      const depositTransaction = onChainCurrencyGateway.apiToDepositTransaction(tx.event)
       return convertTransactionToDepositRequest(tx.depositAddress, depositTransaction, fiatValueOfOneCryptoCurrency, currencyBoundary)
     })
     await storeDepositRequests(depositRequests, t)

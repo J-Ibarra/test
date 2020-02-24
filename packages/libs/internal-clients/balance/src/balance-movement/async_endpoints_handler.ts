@@ -122,7 +122,7 @@ export function createPendingDeposit(payload: BasicBalanceAsyncRequestPayload) {
 
 export function confirmPendingDeposit(payload: BasicBalanceAsyncRequestPayload) {
   return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
-    type: BalanceAsyncRequestType.createPendingDeposit,
+    type: BalanceAsyncRequestType.confirmPendingDeposit,
     target: {
       local: localRedisBalanceChangeTopic,
       deployedEnvironment: process.env.BALANCE_CHANGE_QUEUE_URL!,
@@ -130,7 +130,7 @@ export function confirmPendingDeposit(payload: BasicBalanceAsyncRequestPayload) 
     payload: {
       requestedChanges: [
         {
-          type: BalanceAsyncRequestType.createPendingDeposit,
+          type: BalanceAsyncRequestType.confirmPendingDeposit,
           payload,
         },
       ],
