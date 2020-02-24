@@ -47,6 +47,7 @@ export interface OnChainCurrencyGateway {
     transactionConfirmationWebhookUrl?: string,
   ): Promise<TransactionResponse>
   transferFromExchangeHoldingsTo(toAddress: string, amount: number, transactionConfirmationWebhookUrl?: string): Promise<TransactionResponse>
+  kinesisManagesConfirmations(): boolean
   transferTo(parameters: { privateKey: string; amount: number; toAddress: string; signerKey?: string }): Promise<TransactionResponse>
   validateAddress(address: string): Promise<boolean>
   validateAddressIsNotContractAddress(address: string): Promise<boolean>

@@ -59,6 +59,7 @@ export async function transferCryptoForLatestWithdrawalRequest(
         updatedWithdrawalRequest!,
         pendingHoldingsAccountTransferGatekeeper,
         pendingCompletionGatekeeper,
+        shouldAddToCompletionGatekeeper(onChainCurrencyGateway),
         updatedFeeRequest || undefined,
       )
     } catch (error) {
@@ -144,13 +145,25 @@ function updateRequestInGatekeepers(
   updatedWithdrawalRequest: CurrencyEnrichedWithdrawalRequest,
   pendingHoldingsAccountTransferGatekeeper: CryptoWithdrawalGatekeeper,
   pendingCompletionGatekeeper: CryptoWithdrawalGatekeeper,
+  addToCompletionGatekeeper: boolean,
   feeRequest?: CurrencyEnrichedWithdrawalRequest,
 ) {
   pendingHoldingsAccountTransferGatekeeper.removeRequest(updatedWithdrawalRequest.currency.code, updatedWithdrawalRequest.id!)
+  if (addToCompletionGatekeeper) {
+    pendingCompletionGatekeeper.addNewWithdrawalRequestForCurrency(
+      updatedWithdrawalRequest.currency.code,
+      { withdrawalRequest: updatedWithdrawalRequest, feeRequest },
+      secondsToWaitBeforeTriggeringCompletionLogic,
+    )
+  }
+}
 
-  pendingCompletionGatekeeper.addNewWithdrawalRequestForCurrency(
-    updatedWithdrawalRequest.currency.code,
-    { withdrawalRequest: updatedWithdrawalRequest, feeRequest },
-    secondsToWaitBeforeTriggeringCompletionLogic,
-  )
+/**
+ * This function is used to check if we add the withdrawal request to the completion gatekeeper.
+ * Reasons for not adding it are:
+ * 1. Webhooks from third parties will confirm the transaction and then add it to the completion gatekeeper
+ * @param currencyGateway
+ */
+function shouldAddToCompletionGatekeeper(currencyGateway: OnChainCurrencyGateway) {
+  return currencyGateway.kinesisManagesConfirmations()
 }

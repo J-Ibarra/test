@@ -1,16 +1,13 @@
-import { Environment } from '@abx-types/reference-data'
 import { WithdrawalStatusChangeRequestType, FiatWithdrawalCreationRequest, AsyncWithdrawalStatusChangeRequest } from './async_change_model'
 import { sendAsyncChangeMessage } from '@abx-utils/async-message-publisher'
-
-export const environmentsWithLocalRedisQueue = [Environment.development, Environment.e2eLocal, Environment.test]
-export const localRedisWithdrawalChangeTopic = 'local-withdrawal-change-topic'
+import { WITHDRAWAL_STATUS_CHANGE_QUEUE_URL, localRedisWithdrawalChangeTopic } from './async_endpoint_handler.constants'
 
 export function cancelFiatWithdrawal(adminRequestId: number) {
   return sendAsyncChangeMessage<AsyncWithdrawalStatusChangeRequest>({
     type: WithdrawalStatusChangeRequestType.cancelFiatWithdrawal,
     target: {
-      local: 'localRedisWithdrawalChangeTopic',
-      deployedEnvironment: process.env.WITHDRAWAL_STATUS_CHANGE_QUEUE_URL!,
+      local: localRedisWithdrawalChangeTopic,
+      deployedEnvironment: WITHDRAWAL_STATUS_CHANGE_QUEUE_URL!,
     },
     payload: {
       type: WithdrawalStatusChangeRequestType.cancelFiatWithdrawal,
@@ -25,8 +22,8 @@ export function createFiatWithdrawal(fiatWithdrawalCreationParams: FiatWithdrawa
   return sendAsyncChangeMessage<AsyncWithdrawalStatusChangeRequest>({
     type: WithdrawalStatusChangeRequestType.createFiatWithdrawal,
     target: {
-      local: 'localRedisWithdrawalChangeTopic',
-      deployedEnvironment: process.env.WITHDRAWAL_STATUS_CHANGE_QUEUE_URL!,
+      local: localRedisWithdrawalChangeTopic,
+      deployedEnvironment: WITHDRAWAL_STATUS_CHANGE_QUEUE_URL!,
     },
     payload: {
       type: WithdrawalStatusChangeRequestType.createFiatWithdrawal,

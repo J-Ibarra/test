@@ -25,9 +25,7 @@ export async function findCurrencyForCodes(currencyCodes: CurrencyCode[]): Promi
 }
 
 export async function findCurrencyForCode(currencyCode: CurrencyCode): Promise<Currency> {
-  const allCurrencies = await findAllCurrencies()
-
-  return allCurrencies.find(({ code }) => code === currencyCode)!
+  return internalApiRequestDispatcher.fireRequestToInternalApi<Currency>(CurrencyEndpoints.findCurrencyForCode, { currencyCode })
 }
 
 export async function findCurrencyForId(currencyId: number): Promise<Currency> {
@@ -43,11 +41,8 @@ export async function getCurrencyId(currencyCode: CurrencyCode): Promise<number>
   return currency.id
 }
 
-export async function getCurrencyCode(currencyId: number) {
-  const allCurrencies = await findAllCurrencies()
-  const currency = allCurrencies.find(({ id }) => id === currencyId)
-
-  return currency && currency.code
+export async function getCurrencyCode(currencyId: number): Promise<CurrencyCode> {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<CurrencyCode>(CurrencyEndpoints.getCurrencyCode, { currencyId })
 }
 
 export async function findAllCurrencies(): Promise<Currency[]> {

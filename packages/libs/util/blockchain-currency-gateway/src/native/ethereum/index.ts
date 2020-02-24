@@ -168,6 +168,10 @@ export class Ethereum implements OnChainCurrencyGateway {
     return this.transferTo({ amount, privateKey: holdingPrivateKey, toAddress, gasPrice })
   }
 
+  public kinesisManagesConfirmations(): boolean {
+    return true
+  }
+
   public async transferTo({ privateKey, amount, toAddress, gasPrice }): Promise<TransactionResponse> {
     const { utils } = this.web3
 

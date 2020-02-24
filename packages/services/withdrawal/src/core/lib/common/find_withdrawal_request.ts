@@ -61,3 +61,5 @@ export async function findWithdrawalRequests(query: Partial<WithdrawalRequest>) 
 
   return withdrawalRequests.map(withdrawalRequest => withdrawalRequest.get({ plain: true }))
 }
+
+export const findWithdrawalRequestByTxHash =  (txHash: string) => findWithdrawalRequest({ txHash })

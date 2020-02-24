@@ -81,7 +81,9 @@ export class TestCurrency implements OnChainCurrencyGateway {
   public async transferFromExchangeHoldingsTo(address: string) {
     return this.transferTo(address)
   }
-
+  kinesisManagesConfirmations() {
+    return true
+  }
   public async transferTo(_) {
     return { txHash: 'test-transaction-hash' }
   }
