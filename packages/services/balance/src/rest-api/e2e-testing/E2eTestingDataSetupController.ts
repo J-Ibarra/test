@@ -1,5 +1,4 @@
 import { Route, Body, Patch } from 'tsoa'
-import { e2eTestingEnvironments, getEnvironment } from '@abx-types/reference-data'
 import { findUsersByEmail } from '@abx-service-clients/account'
 import { BalanceRepository } from '../../core'
 
@@ -9,10 +8,8 @@ export class E2eTestingDataSetupController {
 
   @Patch('/balances')
   public async updateBalancesForAccount(@Body() { email, balances }): Promise<void> {
-    if (e2eTestingEnvironments.includes(getEnvironment())) {
-      const users = await findUsersByEmail([email.toLocaleLowerCase()])
+    const users = await findUsersByEmail([email.toLocaleLowerCase()])
 
-      await this.balanceRepository.setupAccountBalances(users[0].accountId, balances)
-    }
+    await this.balanceRepository.setupAccountBalances(users[0].accountId, balances)
   }
 }

@@ -1,6 +1,5 @@
 import { Route, Post, Body } from 'tsoa'
 import moment from 'moment'
-import { e2eTestingEnvironments, getEnvironment } from '@abx-types/reference-data'
 import { Logger } from '@abx-utils/logging'
 import { getCacheClient, getModel, sequelize } from '@abx-utils/db-connection-utils'
 import { OrderQueueStatus, OrderValidity, OrderDirection } from '@abx-types/order'
@@ -26,19 +25,15 @@ export class E2eTestingDataSetupController {
 
   @Post('/orders/data-reset')
   public async resetOrderData(): Promise<void> {
-    if (e2eTestingEnvironments.includes(getEnvironment())) {
-      this.logger.info('Resetting order data.')
-      await getCacheClient().flush()
-      await getModel<OrderQueueStatus>('orderQueueStatus').update({ processing: false, lastProcessed: new Date() } as any, {
-        where: {},
-      })
-      this.logger.info('Truncating order data.')
-      await this.truncateOrderData()
-      this.logger.info('Truncated order data.')
-    }
+    this.logger.info('Resetting order data.')
+    await getCacheClient().flush()
+    await getModel<OrderQueueStatus>('orderQueueStatus').update({ processing: false, lastProcessed: new Date() } as any, {
+      where: {},
+    })
+    this.logger.info('Truncating order data.')
+    await this.truncateOrderData()
+    this.logger.info('Truncated order data.')
   }
-
-  Д
 
   private async truncateOrderData() {
     await sequelize.query(`TRUNCATE ${tablesToTruncate.map(table => `"${table}"`).join(', ')} RESTART IDENTITY CASCADE;`)
@@ -52,26 +47,24 @@ export class E2eTestingDataSetupController {
 
   @Post('/orders/account-setup-scripts')
   public async runAccountSetupScript(@Body() { email, balances, orders }): Promise<void> {
-    if (e2eTestingEnvironments.includes(getEnvironment())) {
-      this.logger.info(`Setting up account for ${email}`)
+    this.logger.info(`Setting up account for ${email}`)
 
-      let users = await findUsersByEmail([email.toLocaleLowerCase()])
-      let user
-      if (!users || users.length === 0) {
-        const account = await createAccount(email, email)
-        user = account.users![0]
-      } else {
-        user = users[0]
-      }
-
-      await setupAccountBalances(user.accountId, balances)
-      this.logger.info(`Balances set up for ${email}`)
-
-      await this.createOrdersForAccount(user.accountId, OrderDirection.buy, orders.buy)
-      await this.createOrdersForAccount(user.accountId, OrderDirection.sell, orders.sell)
-
-      this.logger.info(`${orders.sell.length} sell orders and ${orders.buy.length} buy orders created for ${email}`)
+    let users = await findUsersByEmail([email.toLocaleLowerCase()])
+    let user
+    if (!users || users.length === 0) {
+      const account = await createAccount(email, email)
+      user = account.users![0]
+    } else {
+      user = users[0]
     }
+
+    await setupAccountBalances(user.accountId, balances)
+    this.logger.info(`Balances set up for ${email}`)
+
+    await this.createOrdersForAccount(user.accountId, OrderDirection.buy, orders.buy)
+    await this.createOrdersForAccount(user.accountId, OrderDirection.sell, orders.sell)
+
+    this.logger.info(`${orders.sell.length} sell orders and ${orders.buy.length} buy orders created for ${email}`)
   }
 
   private async createOrdersForAccount(accountId: string, direction: OrderDirection, orders: AccountSetupOrderDetails[]) {
