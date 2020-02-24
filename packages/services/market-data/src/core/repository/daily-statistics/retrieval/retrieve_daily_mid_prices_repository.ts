@@ -15,7 +15,7 @@ const calculateDailyChangeForSymbol = async (symbolId: string): Promise<[string,
 
   const latestMidPrice = getLatestMidPrice(symbolId, allMidPrices)
   const oldestMidPrice = getOldestMidPrice(symbolId, allMidPrices)
-  const dailyChangeForSymbol = latestMidPrice === oldestMidPrice ? latestMidPrice : (latestMidPrice - oldestMidPrice) / oldestMidPrice
+  const dailyChangeForSymbol = latestMidPrice === oldestMidPrice ? latestMidPrice / 100 : (latestMidPrice - oldestMidPrice) / oldestMidPrice
 
   return [symbolId, dailyChangeForSymbol]
 }
