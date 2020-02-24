@@ -6,12 +6,16 @@ import { Environment, getAwsRegionForEnvironment } from '@abx-types/reference-da
 export interface AsyncMessage<T> {
   /** A descriptor of the message. */
   type: string
+  /** Used for FIFO SQS queues to define the MessageGroupId. */
+  id?: string
   /**
    * The message target, contains both the local redis pub-sub target
    * and the AWS SQS queue name for when the logic is executing in AWS.
    */
   target: {
+    /** The Redis topic to be used when running the app locally (in development mode). */
     local: string
+    /** The SQS queue URL for when executing in AWS. */
     deployedEnvironment: string
   }
   payload: T
@@ -35,13 +39,27 @@ export function sendAsyncChangeMessage<T>(message: AsyncMessage<T>): Promise<voi
     : queueChangeInSQS<T>(message)
 }
 
-function queueChangeInSQS<T>({ target, payload, type }: AsyncMessage<T>): Promise<void> {
+/**
+ * Sends a message to an SQS queue.
+ * If and id is passed in the parameter object, it will be considered that the message needs to be
+ * sent to a FIFO queue so the id will be used to set the mandatory MessageGroupId and MessageDeduplicationId
+ *
+ * @param param the message contents
+ */
+function queueChangeInSQS<T>({ target, payload, type, id }: AsyncMessage<T>): Promise<void> {
   return new Promise((resolve, reject) => {
     sqs.sendMessage(
-      {
-        QueueUrl: target.deployedEnvironment,
-        MessageBody: JSON.stringify(payload),
-      },
+      !!id
+        ? {
+            MessageGroupId: id,
+            MessageDeduplicationId: id,
+            QueueUrl: target.deployedEnvironment,
+            MessageBody: JSON.stringify(payload),
+          }
+        : {
+            QueueUrl: target.deployedEnvironment,
+            MessageBody: JSON.stringify(payload),
+          },
       err => {
         if (!!err) {
           logger.error(`Error encountered while trying to place ${type} message on queue ${target.deployedEnvironment}: ${JSON.stringify(err)}`)

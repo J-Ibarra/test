@@ -41,9 +41,6 @@ dist
 *.DS_Store
 .idea/
 
-#Visual Studio Code editor
-.vscode
-
 # vim swapfiles
 *.swp
 

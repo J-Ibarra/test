@@ -1,14 +1,15 @@
+import { Transaction } from 'sequelize'
 import { sequelize, getModel } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { WithdrawalKinesisCoinEmission } from '@abx-types/withdrawal'
 
-export async function findWithdrawalEmission(withdrawalRequestId: number): Promise<WithdrawalKinesisCoinEmission | null> {
+export async function findWithdrawalEmission(withdrawalRequestId: number, transaction?: Transaction): Promise<WithdrawalKinesisCoinEmission | null> {
   const mintEmission = await getModel<WithdrawalKinesisCoinEmission>('withdrawalKinesisCoinEmission').findOne({
     where: {
       withdrawalRequestId,
     },
+    transaction,
   })
-
   return mintEmission ? mintEmission.get() : null
 }
 
@@ -28,25 +29,25 @@ export async function getLatestWithdrawalEmissionSequenceNumber(currency: Curren
   return largestSequence || '0'
 }
 
-export async function createWithdrawalEmission({
-  currency,
-  withdrawalRequestId,
-  sequence,
-  txEnvelope,
-}: WithdrawalKinesisCoinEmission): Promise<WithdrawalKinesisCoinEmission | null> {
+export async function createWithdrawalEmission(
+  { currency, withdrawalRequestId, sequence, txEnvelope }: WithdrawalKinesisCoinEmission,
+  transaction: Transaction,
+): Promise<WithdrawalKinesisCoinEmission> {
   try {
-    const createdMintEmission = await getModel<WithdrawalKinesisCoinEmission>('withdrawalKinesisCoinEmission').create({
-      currency,
-      withdrawalRequestId,
-      sequence,
-      txEnvelope,
-    })
-
+    const createdMintEmission = await getModel<WithdrawalKinesisCoinEmission>('withdrawalKinesisCoinEmission').create(
+      {
+        currency,
+        withdrawalRequestId,
+        sequence,
+        txEnvelope,
+      },
+      { transaction },
+    )
     return createdMintEmission.get()
   } catch (error) {
     // handle the case where it's due to the foreign key constraint on orderMatchTransactionId
     if (error.errors && error.errors.find(hasExistingOrderMatchId)) {
-      return findWithdrawalEmission(withdrawalRequestId)
+      return (await findWithdrawalEmission(withdrawalRequestId))!
     }
 
     throw error

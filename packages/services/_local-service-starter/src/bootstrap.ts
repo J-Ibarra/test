@@ -2,7 +2,7 @@ import httpProxy from 'http-proxy'
 import http from 'http'
 import sourceMapSupport from 'source-map-support'
 import { pickRouteBasedForwarding } from './request_handler'
-import { startAllServices } from './service_starter'
+import { startAllServices } from './services_starter'
 
 sourceMapSupport.install()
 

@@ -40,9 +40,9 @@ export function initialiseCryptoWithdrawalRequest(
       withdrawalFee,
     )
 
-    epicurus.publish(withdrawalRequestCreated, amountRequest)
+    epicurus.publish(withdrawalRequestCreated, { withdrawalRequest: amountRequest })
     if (!!feeRequest) {
-      epicurus.publish(withdrawalRequestCreated, feeRequest)
+      epicurus.publish(withdrawalRequestCreated, { withdrawalRequest: feeRequest })
     }
 
     logger.info(

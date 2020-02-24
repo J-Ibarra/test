@@ -1,0 +1,7 @@
+{
+  "mocha.files.glob": "test/**/*.spec.ts",
+  "mocha.requires": [
+    "ts-node/register"
+  ],
+  "git.ignoreLimitWarning": true
+}
