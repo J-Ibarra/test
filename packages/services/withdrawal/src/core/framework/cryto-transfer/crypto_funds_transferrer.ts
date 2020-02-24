@@ -6,7 +6,7 @@ import { WithdrawalRequest } from '@abx-types/withdrawal'
 import { transferWithdrawalFundsForKinesisCurrency } from './kinesis_currency_transferrer'
 
 export async function withdrawFundsFromHoldingsAccountToTargetAddress(
-  { accountId, address, amount, id }: WithdrawalRequest,
+  { accountId, address, amount, id, memo = '' }: WithdrawalRequest,
   currencyGateway: OnChainCurrencyGateway,
   transaction: Transaction,
 ): Promise<{ txHash: string; transactionFee: number }> {
@@ -23,7 +23,7 @@ export async function withdrawFundsFromHoldingsAccountToTargetAddress(
     })
   }
 
-  const { txHash, transactionFee } = await transferFunds(id!, currencyGateway, address!, amount, transaction)
+  const { txHash, transactionFee } = await transferFunds(id!, currencyGateway, address!, memo, amount, transaction)
 
   return {
     txHash,
@@ -37,6 +37,7 @@ function transferFunds(
   withdrawalRequestId: number,
   currencyGateway: OnChainCurrencyGateway,
   address: string,
+  memo: string,
   amount: number,
   transaction: Transaction,
 ) {
@@ -47,6 +48,7 @@ function transferFunds(
         kinesisCurrencyGateway: currencyGateway as Kinesis,
         targetAddress: address,
         amount,
+        memo,
       },
       transaction,
     )
