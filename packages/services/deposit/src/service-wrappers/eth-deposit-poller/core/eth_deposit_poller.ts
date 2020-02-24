@@ -14,8 +14,8 @@ import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-
 import { CurrencyCode } from '@abx-types/reference-data'
 import { filterOutAllAddressesWithPositiveBalance } from './deposit_address_filter'
 import { findCurrencyForCode, findBoundaryForCurrency, truncateCurrencyDecimals } from '@abx-service-clients/reference-data'
-import { createDepositTransaction } from '../../private-coin-deposit-processor/core/transaction-fetching-strategies/fetch_once_at_the_start'
-import { FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION } from '../../private-coin-deposit-processor/core/transaction-fetching-strategies/fetch_for_each_address'
+import { createDepositTransaction } from '../../kinesis-and-eth-coin-deposit-processor/core/transaction-fetching-strategies/fetch_once_at_the_start'
+import { FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION } from '../../kinesis-and-eth-coin-deposit-processor/core/transaction-fetching-strategies/fetch_for_each_address'
 
 // Etherscan has a hard limit of 5 requests per second
 const etherscanRateLimit = 2

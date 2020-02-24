@@ -19,7 +19,6 @@ COPY tsconfig.json .
 COPY tsconfig.build.json .
 
 RUN npm install --loglevel notice
-RUN npm i lerna -g --loglevel notice
 RUN npm i -g typescript
 RUN npm i -g ts-node-dev
 
@@ -27,10 +26,8 @@ RUN npm i -g ts-node-dev
 COPY packages/libs ./packages/libs
 COPY packages/services/deposit ./packages/services/deposit
 
-RUN lerna bootstrap
-RUN npm run build:eth-deposit-poller
-WORKDIR /sync/packages/services/deposit/src/service-wrappers/eth-deposit-poller
+RUN npm run bootstrap:production
+RUN npm run build:kinesis-and-eth-coin-deposit-processor
+WORKDIR /sync/packages/services/deposit/src/service-wrappers/kinesis-and-eth-coin-deposit-processor
 
-EXPOSE 3116
-
-CMD ["ts-node-dev","--transpileOnly", "src/bootstrap.ts"]
+CMD  "./docker-start.sh"

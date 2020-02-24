@@ -2,7 +2,7 @@ import { Transaction } from 'sequelize'
 import { getEnvironment, CurrencyCode, Currency } from '@abx-types/reference-data'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyManager, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
-import { getModel } from '@abx-utils/db-connection-utils'
+import { getModel, getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { ValidationError } from '@abx-types/error'
 import { findCryptoCurrencies, isFiatCurrency, findCurrencyForCode } from '@abx-service-clients/reference-data'
 import { DepositAddress } from '@abx-types/deposit'
@@ -10,6 +10,7 @@ import { encryptValue } from '@abx-utils/encryption'
 import { groupBy } from 'lodash'
 import { getAllKycVerifiedAccountIds } from '@abx-service-clients/account'
 import { Account } from '@abx-types/account'
+import { DepositPubSubChannels } from '@abx-service-clients/deposit'
 
 const logger = Logger.getInstance('lib', 'deposit_address')
 const KYC_ACCOUNTS_CACHE_EXPIRY_10_MINUTES = 10 * 60 * 1000
@@ -71,6 +72,9 @@ export async function findOrCreateDepositAddressesForAccount(accountId: string) 
     const missingDepositAddresses = await createMissingDepositAddressesForAccount(accountId, existingDepositAddresses)
 
     logger.debug(`Created missing deposit addresses for currenciy ids: ${missingDepositAddresses.map(d => d.currencyId)}`)
+
+    const epicurus = getEpicurusInstance()
+    epicurus.publish(DepositPubSubChannels.walletAddressesForNewAccountCreated, { accountId })
 
     return findDepositAddressesForAccount(accountId)
   }
