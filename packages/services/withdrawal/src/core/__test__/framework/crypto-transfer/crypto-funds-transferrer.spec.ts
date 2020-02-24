@@ -2,6 +2,7 @@ import { expect } from 'chai'
 import sinon from 'sinon'
 import { withdrawFundsFromHoldingsAccountToTargetAddress } from '../../../framework'
 import { withdrawalRequest } from '../test-utils'
+import { wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 
 const testTxHash = '1231312312312'
 const testTransactionFee = '123'
@@ -17,7 +18,9 @@ describe('crypto_funds_transferrer', () => {
     }
 
     try {
-      await withdrawFundsFromHoldingsAccountToTargetAddress(withdrawalRequest, currency as any)
+      await wrapInTransaction(sequelize, null, async t => {
+        await withdrawFundsFromHoldingsAccountToTargetAddress(withdrawalRequest, currency as any, t)
+      })
     } catch (e) {
       expect(e.message).to.eql('Withdrawal request amount is greater than holding balance for currency')
     }
@@ -30,7 +33,9 @@ describe('crypto_funds_transferrer', () => {
       transferFromExchangeHoldingsTo,
     }
 
-    const { txHash, transactionFee } = await withdrawFundsFromHoldingsAccountToTargetAddress(withdrawalRequest, currency as any)
+    const { txHash, transactionFee } = await wrapInTransaction(sequelize, null, async t =>
+      withdrawFundsFromHoldingsAccountToTargetAddress(withdrawalRequest, currency as any, t),
+    )
 
     expect(txHash).to.eql(testTxHash)
     expect(transactionFee).to.eql(+testTransactionFee)

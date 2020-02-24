@@ -92,7 +92,7 @@ describe('Reset password', () => {
       }
     })
 
-    it('return invalid when the new password length is < 12', async () => {
+    it('return invalid when the new password length is < 8', async () => {
       const pw1 = 'as'
       const pw2 = 'as'
 

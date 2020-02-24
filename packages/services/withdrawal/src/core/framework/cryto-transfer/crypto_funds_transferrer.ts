@@ -1,10 +1,14 @@
-import { OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
+import { Transaction } from 'sequelize'
+import { OnChainCurrencyGateway, Kinesis } from '@abx-utils/blockchain-currency-gateway'
 import { FatalError } from '@abx-types/error'
+import { CurrencyCode } from '@abx-types/reference-data'
 import { WithdrawalRequest } from '@abx-types/withdrawal'
+import { transferWithdrawalFundsForKinesisCurrency } from './kinesis_currency_transferrer'
 
 export async function withdrawFundsFromHoldingsAccountToTargetAddress(
   { accountId, address, amount, id }: WithdrawalRequest,
   currencyGateway: OnChainCurrencyGateway,
+  transaction: Transaction,
 ): Promise<{ txHash: string; transactionFee: number }> {
   const holdingBalance = await currencyGateway.getHoldingBalance()
 
@@ -19,10 +23,34 @@ export async function withdrawFundsFromHoldingsAccountToTargetAddress(
     })
   }
 
-  const { txHash, transactionFee } = await currencyGateway.transferFromExchangeHoldingsTo(address!, amount)
+  const { txHash, transactionFee } = await transferFunds(id!, currencyGateway, address!, amount, transaction)
 
   return {
     txHash,
     transactionFee: +transactionFee!,
   }
+}
+
+const kinesisCoins = [CurrencyCode.kau, CurrencyCode.kag]
+
+function transferFunds(
+  withdrawalRequestId: number,
+  currencyGateway: OnChainCurrencyGateway,
+  address: string,
+  amount: number,
+  transaction: Transaction,
+) {
+  if (kinesisCoins.includes(currencyGateway.ticker!)) {
+    return transferWithdrawalFundsForKinesisCurrency(
+      {
+        withdrawalRequestId,
+        kinesisCurrencyGateway: currencyGateway as Kinesis,
+        targetAddress: address,
+        amount,
+      },
+      transaction,
+    )
+  }
+
+  return currencyGateway.transferFromExchangeHoldingsTo(address, amount)
 }

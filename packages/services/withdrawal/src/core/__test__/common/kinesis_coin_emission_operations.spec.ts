@@ -1,9 +1,14 @@
 import { expect } from 'chai'
-import { createTemporaryTestingAccount } from '@abx-utils/account'
+import { wrapInTransaction, sequelize, truncateTables } from '@abx-utils/db-connection-utils'
 import { CurrencyCode, FiatCurrency } from '@abx-types/reference-data'
 import { WithdrawalRequest, WithdrawalRequestType, WithdrawalState } from '@abx-types/withdrawal'
-import { createWithdrawalRequest, createWithdrawalEmission, findWithdrawalEmission, getLatestWithdrawalEmissionSequenceNumber } from '../..'
-import { truncateTables } from '@abx-utils/db-connection-utils'
+import { createWithdrawalRequest } from '../../lib'
+import {
+  createWithdrawalEmission,
+  findWithdrawalEmission,
+  getLatestWithdrawalEmissionSequenceNumber,
+} from '../../lib/common/kinesis_coin_emission_operations'
+import { createTemporaryTestingAccount } from '@abx-utils/account'
 
 describe('Withdrawal Emissions', () => {
   let account
@@ -11,7 +16,7 @@ describe('Withdrawal Emissions', () => {
   let withdrawalRequest2: WithdrawalRequest
 
   beforeEach(async () => {
-    await truncateTables()
+    await truncateTables(['withdrawal_kinesis_coin_emission'])
     account = await createTemporaryTestingAccount()
     withdrawalRequest = await createWithdrawalRequest({
       amount: 1,
@@ -49,20 +54,25 @@ describe('Withdrawal Emissions', () => {
     })
 
     it('Returns a withdrawal emission for given withdrawalRequestId', async function() {
-      const created = await createWithdrawalEmission({
-        currency: CurrencyCode.kau,
-        withdrawalRequestId: withdrawalRequest.id!,
-        sequence: '1',
-        txEnvelope: 'txEnvelope',
-      })
+      const created = (await wrapInTransaction(sequelize, null, async t =>
+        createWithdrawalEmission(
+          {
+            currency: CurrencyCode.kau,
+            withdrawalRequestId: withdrawalRequest.id!,
+            sequence: '1',
+            txEnvelope: 'txEnvelope',
+          },
+          t,
+        ),
+      ))!
 
-      const emission = await findWithdrawalEmission(withdrawalRequest.id!)
+      const emission = (await findWithdrawalEmission(withdrawalRequest.id!))!
 
-      expect(emission!.id).to.equal(created!.id)
-      expect(emission!.withdrawalRequestId).to.equal(created!.withdrawalRequestId)
-      expect(emission!.sequence).to.equal(created!.sequence)
-      expect(emission!.txEnvelope).to.equal(created!.txEnvelope)
-      expect(emission!.currency).to.equal(created!.currency)
+      expect(emission.id).to.equal(created.id)
+      expect(emission.withdrawalRequestId).to.equal(created.withdrawalRequestId)
+      expect(emission.sequence).to.equal(created.sequence)
+      expect(emission.txEnvelope).to.equal(created.txEnvelope)
+      expect(emission.currency).to.equal(created.currency)
     })
   })
 
@@ -71,30 +81,40 @@ describe('Withdrawal Emissions', () => {
       const sequence = '1'
       const txEnvelope = 'txEnvelope'
 
-      const withdrawalEmission = await createWithdrawalEmission({
-        currency: CurrencyCode.kau,
-        withdrawalRequestId: withdrawalRequest.id!,
-        sequence,
-        txEnvelope,
-      })
+      const withdrawalEmission = (await wrapInTransaction(sequelize, null, async t =>
+        createWithdrawalEmission(
+          {
+            currency: CurrencyCode.kau,
+            withdrawalRequestId: withdrawalRequest.id!,
+            sequence,
+            txEnvelope,
+          },
+          t,
+        ),
+      ))!
 
-      expect(withdrawalEmission!.withdrawalRequestId).to.equal(withdrawalRequest.id)
-      expect(withdrawalEmission!.sequence).to.equal(sequence)
-      expect(withdrawalEmission!.txEnvelope).to.equal(txEnvelope)
-      expect(withdrawalEmission!.currency).to.equal(CurrencyCode.kau)
+      expect(withdrawalEmission.withdrawalRequestId).to.equal(withdrawalRequest.id)
+      expect(withdrawalEmission.sequence).to.equal(sequence)
+      expect(withdrawalEmission.txEnvelope).to.equal(txEnvelope)
+      expect(withdrawalEmission.currency).to.equal(CurrencyCode.kau)
 
-      const deDupedWithdrawalEmission = await createWithdrawalEmission({
-        currency: CurrencyCode.kau,
-        withdrawalRequestId: withdrawalRequest.id!,
-        sequence: '2',
-        txEnvelope: 'duplicateTxEnvelope',
-      })
+      const deDupedWithdrawalEmission = (await wrapInTransaction(sequelize, null, async t =>
+        createWithdrawalEmission(
+          {
+            currency: CurrencyCode.kau,
+            withdrawalRequestId: withdrawalRequest.id!,
+            sequence: '2',
+            txEnvelope: 'duplicateTxEnvelope',
+          },
+          t,
+        ),
+      ))!
 
-      expect(deDupedWithdrawalEmission!.id).to.equal(withdrawalEmission!.id)
-      expect(deDupedWithdrawalEmission!.withdrawalRequestId).to.equal(withdrawalEmission!.id)
-      expect(deDupedWithdrawalEmission!.sequence).to.equal(withdrawalEmission!.sequence)
-      expect(deDupedWithdrawalEmission!.txEnvelope).to.equal(withdrawalEmission!.txEnvelope)
-      expect(deDupedWithdrawalEmission!.currency).to.equal(withdrawalEmission!.currency)
+      expect(deDupedWithdrawalEmission.id).to.equal(withdrawalEmission.id)
+      expect(deDupedWithdrawalEmission.withdrawalRequestId).to.equal(withdrawalEmission.id)
+      expect(deDupedWithdrawalEmission.sequence).to.equal(withdrawalEmission.sequence)
+      expect(deDupedWithdrawalEmission.txEnvelope).to.equal(withdrawalEmission.txEnvelope)
+      expect(deDupedWithdrawalEmission.currency).to.equal(withdrawalEmission.currency)
     })
 
     it('Throws error if more than one record attempted to be created for the same network and sequence', async function() {
@@ -102,74 +122,94 @@ describe('Withdrawal Emissions', () => {
       const txEnvelope = 'txEnvelope'
       const currency = CurrencyCode.kau
 
-      await createWithdrawalEmission({
-        currency,
-        withdrawalRequestId: withdrawalRequest.id!,
-        sequence,
-        txEnvelope,
-      })
-
+      await wrapInTransaction(sequelize, null, async t =>
+        createWithdrawalEmission(
+          {
+            currency,
+            withdrawalRequestId: withdrawalRequest.id!,
+            sequence,
+            txEnvelope,
+          },
+          t,
+        ),
+      )
       try {
-        await createWithdrawalEmission({
-          currency,
-          withdrawalRequestId: withdrawalRequest2.id!,
-          sequence,
-          txEnvelope: 'otherTxEnvelope',
-        })
-
+        await wrapInTransaction(sequelize, null, async t =>
+          createWithdrawalEmission(
+            {
+              currency,
+              withdrawalRequestId: withdrawalRequest2.id!,
+              sequence,
+              txEnvelope: 'otherTxEnvelope',
+            },
+            t,
+          ),
+        )
         throw new Error('Wrong error for unique network_sequence validation')
       } catch (e) {
         expect(e.fields).to.deep.equal({
-          currency: CurrencyCode.kau,
+          currency,
           sequence: sequence.toString(),
         })
       }
     })
+  })
 
-    it('Creates a mint emission record', async function() {
-      const sequence = '1'
-      const txEnvelope = 'txEnvelope'
-      const mintEmission = await createWithdrawalEmission({
-        currency: CurrencyCode.kau,
-        withdrawalRequestId: withdrawalRequest.id!,
-        sequence,
-        txEnvelope,
-      })
+  it('Creates a mint emission record', async function() {
+    const sequence = '1'
+    const txEnvelope = 'txEnvelope'
+    const mintEmission = (await wrapInTransaction(sequelize, null, async t =>
+      createWithdrawalEmission(
+        {
+          currency: CurrencyCode.kau,
+          withdrawalRequestId: withdrawalRequest.id!,
+          sequence,
+          txEnvelope,
+        },
+        t,
+      ),
+    ))!
+    expect(mintEmission.withdrawalRequestId).to.equal(withdrawalRequest.id)
+    expect(mintEmission.sequence).to.equal(sequence)
+    expect(mintEmission.txEnvelope).to.equal(txEnvelope)
+    expect(mintEmission.currency).to.equal(CurrencyCode.kau)
+  })
 
-      expect(mintEmission!.withdrawalRequestId).to.equal(withdrawalRequest.id)
-      expect(mintEmission!.sequence).to.equal(sequence)
-      expect(mintEmission!.txEnvelope).to.equal(txEnvelope)
-      expect(mintEmission!.currency).to.equal(CurrencyCode.kau)
-    })
+  it('Creates records with the same sequence if currency is different', async function() {
+    const sequence = '1'
+    const txEnvelope = 'txEnvelope'
 
-    it('Creates records with the same sequence if currency is different', async function() {
-      const sequence = '1'
-      const txEnvelope = 'txEnvelope'
+    const kauWithdrawalEmission = (await wrapInTransaction(sequelize, null, async t =>
+      createWithdrawalEmission(
+        {
+          currency: CurrencyCode.kau,
+          withdrawalRequestId: withdrawalRequest.id!,
+          sequence,
+          txEnvelope,
+        },
+        t,
+      ),
+    ))!
+    const kagWithdrawalRequest = (await wrapInTransaction(sequelize, null, async t =>
+      createWithdrawalEmission(
+        {
+          currency: CurrencyCode.kag,
+          withdrawalRequestId: withdrawalRequest2.id!,
+          sequence,
+          txEnvelope: 'otherTxEnvelope',
+        },
+        t,
+      ),
+    ))!
+    expect(kauWithdrawalEmission.withdrawalRequestId).to.equal(withdrawalRequest.id)
+    expect(kauWithdrawalEmission.sequence).to.equal(sequence)
+    expect(kauWithdrawalEmission.txEnvelope).to.equal(txEnvelope)
+    expect(kauWithdrawalEmission.currency).to.equal(CurrencyCode.kau)
 
-      const kauWithdrawalEmission = await createWithdrawalEmission({
-        currency: CurrencyCode.kau,
-        withdrawalRequestId: withdrawalRequest.id!,
-        sequence,
-        txEnvelope,
-      })
-
-      const kagWithdrawalRequest = await createWithdrawalEmission({
-        currency: CurrencyCode.kag,
-        withdrawalRequestId: withdrawalRequest2.id!,
-        sequence,
-        txEnvelope: 'otherTxEnvelope',
-      })
-
-      expect(kauWithdrawalEmission!.withdrawalRequestId).to.equal(withdrawalRequest.id)
-      expect(kauWithdrawalEmission!.sequence).to.equal(sequence)
-      expect(kauWithdrawalEmission!.txEnvelope).to.equal(txEnvelope)
-      expect(kauWithdrawalEmission!.currency).to.equal(CurrencyCode.kau)
-
-      expect(kagWithdrawalRequest!.withdrawalRequestId).to.equal(withdrawalRequest2.id)
-      expect(kagWithdrawalRequest!.sequence).to.equal(sequence)
-      expect(kagWithdrawalRequest!.txEnvelope).to.equal('otherTxEnvelope')
-      expect(kagWithdrawalRequest!.currency).to.equal(CurrencyCode.kag)
-    })
+    expect(kagWithdrawalRequest.withdrawalRequestId).to.equal(withdrawalRequest2.id)
+    expect(kagWithdrawalRequest.sequence).to.equal(sequence)
+    expect(kagWithdrawalRequest.txEnvelope).to.equal('otherTxEnvelope')
+    expect(kagWithdrawalRequest.currency).to.equal(CurrencyCode.kag)
   })
 
   describe('getLatestWithdrawalEmissionSequenceNumber', () => {
@@ -180,25 +220,33 @@ describe('Withdrawal Emissions', () => {
     })
 
     it('Returns the largest sequence number from all mint emissions for network', async function() {
-      const emission1 = await createWithdrawalEmission({
-        currency: CurrencyCode.kag,
-        withdrawalRequestId: withdrawalRequest.id!,
-        sequence: '1',
-        txEnvelope: 'txEnvelope1',
-      })
-
-      const emission2 = await createWithdrawalEmission({
-        currency: CurrencyCode.kau,
-        withdrawalRequestId: withdrawalRequest2.id!,
-        sequence: '2',
-        txEnvelope: 'txEnvelope2',
-      })
-
+      const emission1 = (await wrapInTransaction(sequelize, null, async t =>
+        createWithdrawalEmission(
+          {
+            currency: CurrencyCode.kag,
+            withdrawalRequestId: withdrawalRequest.id!,
+            sequence: '1',
+            txEnvelope: 'txEnvelope1',
+          },
+          t,
+        ),
+      ))!
+      const emission2 = (await wrapInTransaction(sequelize, null, async t =>
+        createWithdrawalEmission(
+          {
+            currency: CurrencyCode.kau,
+            withdrawalRequestId: withdrawalRequest2.id!,
+            sequence: '2',
+            txEnvelope: 'txEnvelope2',
+          },
+          t,
+        ),
+      ))!
       const largestKAGSequenceNumber = await getLatestWithdrawalEmissionSequenceNumber(CurrencyCode.kag)
       const largestKAUSequenceNumber = await getLatestWithdrawalEmissionSequenceNumber(CurrencyCode.kau)
 
-      expect(largestKAGSequenceNumber).to.equal(emission1!.sequence)
-      expect(largestKAUSequenceNumber).to.equal(emission2!.sequence)
-    })
+      expect(largestKAGSequenceNumber).to.equal(emission1.sequence)
+      expect(largestKAUSequenceNumber).to.equal(emission2.sequence)
+    }).timeout(60_0000)
   })
 })
