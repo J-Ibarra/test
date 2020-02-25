@@ -21,6 +21,8 @@ async function bootstrap() {
     res.end('Not Found')
   })
 
+  proxyServer.timeout = 120000
+
   console.log(`Proxy listening on port ${process.env.NODE_ENV === 'e2e-local' ? 12345 : 3000}`)
   proxyServer.listen(process.env.NODE_ENV === 'e2e-local' ? 12345 : 3000)
 }

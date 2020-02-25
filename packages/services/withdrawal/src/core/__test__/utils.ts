@@ -79,11 +79,11 @@ export function stubFindCurrencyBalancesCall(
 ) {
   sinon.stub(balanceOperations, 'findCurrencyAvailableBalances').resolves(
     feeCurrency
-      ? new Map<CurrencyCode, number>([
-          [withdrawalCurrency, withdrawnCurrencyBalance],
-          [feeCurrency, feeCurrencyBalance || withdrawnCurrencyBalance],
-        ])
-      : new Map<CurrencyCode, number>([[withdrawalCurrency, withdrawnCurrencyBalance]]),
+      ? {
+          [withdrawalCurrency]: withdrawnCurrencyBalance,
+          [feeCurrency]:  feeCurrencyBalance || withdrawnCurrencyBalance,
+      }
+      : { [withdrawalCurrency]: withdrawnCurrencyBalance },
   )
 }
 

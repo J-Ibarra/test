@@ -18,7 +18,7 @@ export class BalanceRetrievalHandler {
     return this.instance
   }
 
-  public async findCurrencyAvailableBalances(accountId: string, currencyCodes: CurrencyCode[]): Promise<Map<CurrencyCode, number>> {
+  public async findCurrencyAvailableBalances(accountId: string, currencyCodes: CurrencyCode[]): Promise<Record<CurrencyCode, number>> {
     const allCurrencies = await findAllCurrencies()
 
     const currencyIdToCode = allCurrencies.reduce(
@@ -30,11 +30,19 @@ export class BalanceRetrievalHandler {
       currencyIds: Array.from(currencyIdToCode.keys()),
     })
 
-    return rawBalances.reduce(
-      (acc, { currencyId, balanceTypeId, value }) =>
-        balanceTypeId === BalanceType.available ? acc.set(currencyIdToCode.get(currencyId)!, value || 0) : acc,
-      new Map<CurrencyCode, number>(),
-    )
+    const availableBalances: Record<CurrencyCode, number> = currencyCodes.reduce((acc, currencyCode) => {
+      acc[currencyCode] = 0
+
+      return acc
+    }, {} as Record<CurrencyCode, number>)
+
+    rawBalances.forEach(balance => {
+      if (balance.balanceTypeId === BalanceType.available) {
+        availableBalances[currencyIdToCode.get(balance.currencyId)!] = balance.value || 0
+      }
+    });
+
+    return availableBalances
   }
 
   /**

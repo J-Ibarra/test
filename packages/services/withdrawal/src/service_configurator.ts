@@ -1,6 +1,6 @@
 import { Logger } from '@abx-utils/logging'
 import { CryptoCurrency, getEnvironment } from '@abx-types/reference-data'
-import { completeWithdrawal, CryptoWithdrawalGatekeeper, transferCryptoForLatestWithdrawalRequest } from './core/framework'
+import { completeWithdrawal, CryptoWithdrawalGatekeeper, transferCryptoForLatestWithdrawalRequest, PENDING_WITHDRAWAL_GATEKEEPER_NAME } from './core/framework'
 import { WithdrawalState } from '@abx-types/withdrawal'
 import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 
@@ -53,7 +53,7 @@ async function setupPendingCompletionCryptoWithdrawalProcessor(pendingCompletion
 }
 
 async function setupWithdrawalRequestGatekeepers() {
-  const pendingHoldingsTransferGatekeeper = new CryptoWithdrawalGatekeeper('pending withdrawal transfer')
+  const pendingHoldingsTransferGatekeeper = CryptoWithdrawalGatekeeper.getSingletonInstance(PENDING_WITHDRAWAL_GATEKEEPER_NAME)
   const pendingCompletionDepositsGatekeeper = new CryptoWithdrawalGatekeeper('pending completion')
 
   await Promise.all([

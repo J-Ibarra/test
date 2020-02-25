@@ -7,7 +7,7 @@ import { bootstrapReportsService } from '@abx/exchange-report-service'
 import { bootstrapNotificationService } from '@abx/exchange-notification-service'
 // import { bootstrapSchedulerService } from '@abx/exchange-scheduler-service'
 import { bootstrapDepositProcessor, bootstrapEthereumBlockFollowerProcessor, bootstrapKVTBlockFollowerProcessor } from '@abx/exchange-deposit-service'
-
+import { bootstrapWithdrawalService } from '@abx/exchange-withdrawal-service'
 import { bootstrapOrderDataService, bootstrapOrderGatewayService, bootstrapWorkerService, bootstrapSettlementService } from '@abx/order-service'
 
 export async function startAllServices() {
@@ -24,6 +24,7 @@ export async function startAllServices() {
   await bootstrapNotificationService()
   // await bootstrapSchedulerService()
   await bootstrapDepositProcessor()
+  await bootstrapWithdrawalService()
   await bootstrapEthereumBlockFollowerProcessor()
   await bootstrapKVTBlockFollowerProcessor()
 }

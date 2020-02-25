@@ -249,7 +249,7 @@ function createUniqueHash(payloads: BasicBalanceAsyncRequestPayload[]) {
 
   let hash = 0
 
-  if (this.length == 0) return hash
+  if (concantenatedSourceIds.length == 0) return hash
 
   for (let i = 0; i < concantenatedSourceIds.length; i++) {
     const char = concantenatedSourceIds.charCodeAt(i)
