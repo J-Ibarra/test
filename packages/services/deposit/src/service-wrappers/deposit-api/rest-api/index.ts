@@ -11,11 +11,13 @@ import {
   maintenanceMiddleware,
   overloadRequestWithSessionInfo,
   healthcheckMiddleware,
+  e2eTestingEndpointGuard,
 } from '@abx-utils/express-middleware'
 import { RegisterRoutes } from './routes'
 
 import './vault_controller'
 import './wallet_controller'
+import './E2eTestingController'
 import { DEPOSIT_API_PORT } from '@abx-service-clients/deposit'
 
 const logger = Logger.getInstance('api', 'bootstrapRestApi')
@@ -30,6 +32,7 @@ export function bootstrapRestApi(): express.Express {
   app.use(methodOverride())
   app.use(maintenanceMiddleware)
   app.use(healthcheckMiddleware)
+  app.use(e2eTestingEndpointGuard)
   app.use(overloadRequestWithSessionInfo)
   app.all('*', auditMiddleware)
 

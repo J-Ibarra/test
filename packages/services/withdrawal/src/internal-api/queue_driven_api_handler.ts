@@ -10,6 +10,10 @@ import { consumeFiatWithdrawalQueueMessages, consumeCompletedWithdrawalQueueMess
 export function bootstrapQueueDrivenApi() {
   const queuePoller = getQueuePoller()
 
+<<<<<<< HEAD
   queuePoller.subscribeToQueueMessages(WITHDRAWAL_STATUS_CHANGE_QUEUE_URL || localRedisWithdrawalChangeTopic, consumeFiatWithdrawalQueueMessages)
   queuePoller.subscribeToQueueMessages(WITHDRAWAL_COMPLETED_QUEUE_URL || localRedisWithdrawalCompletionTopic, consumeCompletedWithdrawalQueueMessage)
+=======
+  queuePoller.subscribeToQueueMessages(process.env.WITHDRAWAL_CHANGE_REQUEST_QUEUE_URL || localRedisBalanceChangeTopic, consumeQueueMessage)
+>>>>>>> develop
 }

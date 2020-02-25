@@ -11,6 +11,7 @@ import {
   maintenanceMiddleware,
   overloadRequestWithSessionInfo,
   healthcheckMiddleware,
+  e2eTestingEndpointGuard,
 } from '@abx-utils/express-middleware'
 import { RegisterRoutes } from './routes'
 
@@ -20,6 +21,7 @@ import './order_match_controller'
 import './orders_admin_controller'
 import './transaction_history_controller'
 import './depth_controller'
+import './e2e-testing/E2eTestingDataSetupController'
 import { ORDER_DATA_API_PORT } from '@abx-service-clients/order'
 
 const logger = Logger.getInstance('api', 'bootstrapRestApi')
@@ -34,6 +36,7 @@ export function bootstrapRestApi() {
   app.use(methodOverride())
   app.use(maintenanceMiddleware)
   app.use(healthcheckMiddleware)
+  app.use(e2eTestingEndpointGuard)
   app.use(overloadRequestWithSessionInfo)
   app.all('*', auditMiddleware)
 

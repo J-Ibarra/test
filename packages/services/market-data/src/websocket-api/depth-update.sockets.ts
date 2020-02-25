@@ -20,6 +20,7 @@ export function openSocket(server?: Server) {
     path: '/notifications/market-data-v2/depth-updates/',
     origins: CORS_ENABLED_ORIGINS,
     allowRequest: async (request, callback) => {
+      logger.debug('Received socket connection request.')
       const cookies = request.headers.cookie ? request.headers.cookie.split('; ') : []
       request.header = (headerName: string) => request.headers[headerName.toLowerCase()]
 

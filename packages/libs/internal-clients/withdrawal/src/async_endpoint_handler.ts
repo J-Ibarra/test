@@ -4,10 +4,15 @@ import { WITHDRAWAL_STATUS_CHANGE_QUEUE_URL, localRedisWithdrawalChangeTopic } f
 
 export function cancelFiatWithdrawal(adminRequestId: number) {
   return sendAsyncChangeMessage<AsyncWithdrawalStatusChangeRequest>({
+    id: `${adminRequestId}`,
     type: WithdrawalStatusChangeRequestType.cancelFiatWithdrawal,
     target: {
       local: localRedisWithdrawalChangeTopic,
+<<<<<<< HEAD
       deployedEnvironment: WITHDRAWAL_STATUS_CHANGE_QUEUE_URL!,
+=======
+      deployedEnvironment: process.env.WITHDRAWAL_STATUS_CHANGE_QUEUE_URL!,
+>>>>>>> develop
     },
     payload: {
       type: WithdrawalStatusChangeRequestType.cancelFiatWithdrawal,
@@ -20,10 +25,15 @@ export function cancelFiatWithdrawal(adminRequestId: number) {
 
 export function createFiatWithdrawal(fiatWithdrawalCreationParams: FiatWithdrawalCreationRequest) {
   return sendAsyncChangeMessage<AsyncWithdrawalStatusChangeRequest>({
+    id: fiatWithdrawalCreationParams.transactionId,
     type: WithdrawalStatusChangeRequestType.createFiatWithdrawal,
     target: {
       local: localRedisWithdrawalChangeTopic,
+<<<<<<< HEAD
       deployedEnvironment: WITHDRAWAL_STATUS_CHANGE_QUEUE_URL!,
+=======
+      deployedEnvironment: process.env.WITHDRAWAL_STATUS_CHANGE_QUEUE_URL!,
+>>>>>>> develop
     },
     payload: {
       type: WithdrawalStatusChangeRequestType.createFiatWithdrawal,

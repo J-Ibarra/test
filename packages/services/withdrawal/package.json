@@ -77,7 +77,8 @@
     "ts-node": "8.5.2",
     "ts-node-dev": "1.0.0-pre.44",
     "tslint": "5.20.1",
-    "typescript": "3.7.2"
+    "typescript": "3.7.2",
+    "node-uuid": "1.4.7"
   },
   "private": true,
   "gitHead": "2b18771f45308f72071df0b35862789d6f1102d9"

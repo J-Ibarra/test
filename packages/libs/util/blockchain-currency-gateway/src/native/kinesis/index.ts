@@ -14,6 +14,7 @@ import {
   StrKey,
   Transaction,
   TransactionBuilder,
+  Memo,
 } from 'js-kinesis-sdk'
 
 import { createHash } from 'crypto'
@@ -136,6 +137,7 @@ export class Kinesis implements OnChainCurrencyGateway {
   public async createWithdrawalHoldingsTransactionEnvelope(
     amount: number,
     toAddress: string,
+    memo: string,
     currentDbEmissionSequence: string,
   ): Promise<{ txEnvelope: string; nextSequenceNumber: string }> {
     logger.debug(`Creating withdrawal transaction envelope to address ${toAddress}`)
@@ -170,6 +172,7 @@ export class Kinesis implements OnChainCurrencyGateway {
           )
           .catch(() => Operation.createAccount({ destination: toAddress, startingBalance: String(amount) })),
       )
+      .addMemo(Memo.text(memo))
       .build()
 
     return {

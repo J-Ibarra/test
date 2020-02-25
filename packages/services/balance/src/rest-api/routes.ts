@@ -1,6 +1,10 @@
 /* tslint:disable */
 import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute } from 'tsoa';
 import { BalancesController } from './balances_controller';
+<<<<<<< HEAD
+=======
+import { E2eTestingDataSetupController } from './e2e-testing/E2eTestingDataSetupController';
+>>>>>>> develop
 import { expressAuthentication } from './middleware/authentication';
 import * as express from 'express';
 
@@ -61,6 +65,28 @@ export function RegisterRoutes(app: express.Express) {
             const promise = controller.getAllBalancesForAccount.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
+<<<<<<< HEAD
+=======
+    app.patch('/api/test-automation/balances',
+        function(request: any, response: any, next: any) {
+            const args = {
+                undefined: { "in": "body", "required": true, "dataType": "any" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new E2eTestingDataSetupController();
+
+
+            const promise = controller.updateBalancesForAccount.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+>>>>>>> develop
 
     function authenticateMiddleware(security: TsoaRoute.Security[] = []) {
         return (request: any, _response: any, next: any) => {
