@@ -76,7 +76,7 @@ export function RegisterRoutes(app: express.Express) {
             const promise = controller.retrieveWalletAddressesForAccount.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
-    app.post('/api/wallets/activate/address',
+    app.post('/api/wallets/address/activation',
         authenticateMiddleware([{ "cookieAuth": [] }, { "tokenAuth": [] }]),
         function(request: any, response: any, next: any) {
             const args = {
