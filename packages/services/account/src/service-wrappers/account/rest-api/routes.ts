@@ -7,10 +7,7 @@ import { ResetPasswordController } from './password_reset_controller';
 import { SessionsController } from './session_controller';
 import { TokensController } from './token_controller';
 import { UserStateController } from './user_controller';
-<<<<<<< HEAD
-=======
 import { E2eTestingDataSetupController } from './e2e-testing/E2eTestingDataSetupController';
->>>>>>> develop
 import { expressAuthentication } from './middleware/authentication';
 import * as express from 'express';
 
@@ -143,8 +140,6 @@ const models: TsoaRoute.Models = {
             "password": { "dataType": "string", "required": true },
         },
     },
-<<<<<<< HEAD
-=======
     "AccountTypeUpdateRequest": {
         "properties": {
             "email": { "dataType": "string", "required": true },
@@ -159,7 +154,6 @@ const models: TsoaRoute.Models = {
             "hasTriggeredKycCheck": { "dataType": "boolean" },
         },
     },
->>>>>>> develop
 };
 const validationService = new ValidationService(models);
 
@@ -666,8 +660,6 @@ export function RegisterRoutes(app: express.Express) {
             const promise = controller.activateUser.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
-<<<<<<< HEAD
-=======
     app.patch('/api/test-automation/accounts/type',
         function(request: any, response: any, next: any) {
             const args = {
@@ -706,7 +698,6 @@ export function RegisterRoutes(app: express.Express) {
             const promise = controller.updateAccountStatus.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
->>>>>>> develop
 
     function authenticateMiddleware(security: TsoaRoute.Security[] = []) {
         return (request: any, _response: any, next: any) => {

@@ -6,10 +6,7 @@ import { OrderMatchesController } from './order_match_controller';
 import { AdminOrdersController } from './orders_admin_controller';
 import { TransactionHistoryController } from './transaction_history_controller';
 import { DepthController } from './depth_controller';
-<<<<<<< HEAD
-=======
 import { E2eTestingDataSetupController } from './e2e-testing/E2eTestingDataSetupController';
->>>>>>> develop
 import { expressAuthentication } from './middleware/authentication';
 import * as express from 'express';
 
@@ -417,8 +414,6 @@ export function RegisterRoutes(app: express.Express) {
             const promise = controller.getDepthForCurrencyPair.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
-<<<<<<< HEAD
-=======
     app.post('/api/test-automation/orders/data-reset',
         function(request: any, response: any, next: any) {
             const args = {
@@ -456,7 +451,6 @@ export function RegisterRoutes(app: express.Express) {
             const promise = controller.runAccountSetupScript.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
->>>>>>> develop
 
     function authenticateMiddleware(security: TsoaRoute.Security[] = []) {
         return (request: any, _response: any, next: any) => {

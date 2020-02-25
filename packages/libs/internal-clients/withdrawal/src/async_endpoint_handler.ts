@@ -8,11 +8,7 @@ export function cancelFiatWithdrawal(adminRequestId: number) {
     type: WithdrawalStatusChangeRequestType.cancelFiatWithdrawal,
     target: {
       local: localRedisWithdrawalChangeTopic,
-<<<<<<< HEAD
       deployedEnvironment: WITHDRAWAL_STATUS_CHANGE_QUEUE_URL!,
-=======
-      deployedEnvironment: process.env.WITHDRAWAL_STATUS_CHANGE_QUEUE_URL!,
->>>>>>> develop
     },
     payload: {
       type: WithdrawalStatusChangeRequestType.cancelFiatWithdrawal,
@@ -29,11 +25,7 @@ export function createFiatWithdrawal(fiatWithdrawalCreationParams: FiatWithdrawa
     type: WithdrawalStatusChangeRequestType.createFiatWithdrawal,
     target: {
       local: localRedisWithdrawalChangeTopic,
-<<<<<<< HEAD
       deployedEnvironment: WITHDRAWAL_STATUS_CHANGE_QUEUE_URL!,
-=======
-      deployedEnvironment: process.env.WITHDRAWAL_STATUS_CHANGE_QUEUE_URL!,
->>>>>>> develop
     },
     payload: {
       type: WithdrawalStatusChangeRequestType.createFiatWithdrawal,

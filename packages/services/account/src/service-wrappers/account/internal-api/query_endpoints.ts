@@ -7,11 +7,8 @@ import {
   findOrCreateOperatorAccount,
   isAccountSuspended,
   findUsersByAccountId,
-<<<<<<< HEAD
-=======
   findUsersByEmail,
   findAllKycVerifiedAccountIds,
->>>>>>> develop
 } from '../../../core'
 import { AccountQueryEndpoints } from '@abx-service-clients/account'
 import { InternalRoute } from '@abx-utils/internal-api-tools'
@@ -32,15 +29,9 @@ export function createQueryEndpointHandlers(): InternalRoute<any, any>[] {
       handler: ({ emails }) => findUsersByEmail(emails),
     } as InternalRoute<{ emails: string[] }, User[]>,
     {
-<<<<<<< HEAD
-      path: AccountEndpoints.findUsersByAccountId,
-      handler: ({ accountId }) => findUsersByAccountId(accountId),
-    },
-=======
       path: AccountQueryEndpoints.findAccountsByIdWithUserDetails,
       handler: ({ accountIds }) => findAccountsByIdWithUserDetails(accountIds),
     } as InternalRoute<{ accountIds: string[] }, Account[]>,
->>>>>>> develop
     {
       path: AccountQueryEndpoints.findUsersByAccountId,
       handler: ({ accountId }) => findUsersByAccountId(accountId),
@@ -62,7 +53,7 @@ export function createQueryEndpointHandlers(): InternalRoute<any, any>[] {
         } catch (e) {
           throw e
         }
-      }
+      },
     },
     {
       path: AccountQueryEndpoints.isAccountSuspended,
