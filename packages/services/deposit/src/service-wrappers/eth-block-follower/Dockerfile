@@ -29,6 +29,6 @@ COPY packages/services/deposit ./packages/services/deposit
 
 RUN npm run bootstrap:production
 RUN npm run build:deposit
-WORKDIR /sync/packages/services/deposit/src/service-wrappers/ethereum_block_follower
+WORKDIR /sync/packages/services/deposit/src/service-wrappers/eth-block-follower
 
-CMD ["ts-node-dev","--transpileOnly", "src/bootstrap.ts"]
+CMD ["ts-node-dev","--transpileOnly", "bootstrap.ts"]
