@@ -97,7 +97,7 @@ export class TestCurrency implements OnChainCurrencyGateway {
     }
   }
 
-  public async createAddressTransactionSubscription(_: any): Promise<boolean> {
+  public async createAddressTransactionSubscription(): Promise<boolean> {
     return true
   }
 
@@ -124,7 +124,7 @@ export class TestCurrency implements OnChainCurrencyGateway {
     return Promise.resolve(!!address && !address.includes('invalid'))
   }
 
-  public async validateAddressIsNotContractAddress(_: string): Promise<boolean> {
+  public async validateAddressIsNotContractAddress(): Promise<boolean> {
     return true
   }
 

@@ -1,7 +1,7 @@
 {
   "swagger": {
     "outputDirectory": "./dist",
-    "entryFile": "./src/service-wrappers/deposit-entry-processor/rest-api/index.ts",
+    "entryFile": "./src/service-wrappers/deposit-api/rest-api/index.ts",
     "basePath": "/api",
     "securityDefinitions": {
       "cookieAuth": {
@@ -18,9 +18,9 @@
   },
   "routes": {
     "basePath": "/api",
-    "entryFile": "./src/service-wrappers/deposit-entry-processor/rest-api/index.ts",
-    "routesDir": "./src/service-wrappers/deposit-entry-processor/rest-api",
-    "authenticationModule": "./src/service-wrappers/deposit-entry-processor/rest-api/middleware/authentication.ts"
+    "entryFile": "./src/service-wrappers/deposit-api/rest-api/index.ts",
+    "routesDir": "./src/service-wrappers/deposit-api/rest-api",
+    "authenticationModule": "./src/service-wrappers/deposit-api/rest-api/middleware/authentication.ts"
   },
   "compilerOptions": {
     "baseUrl": "src"

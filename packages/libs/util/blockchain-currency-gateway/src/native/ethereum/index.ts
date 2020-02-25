@@ -61,7 +61,7 @@ export class Ethereum implements OnChainCurrencyGateway {
       publicKey,
     }
   }
-  public async createAddressTransactionSubscription(_: any): Promise<boolean> {
+  public async createAddressTransactionSubscription(): Promise<boolean> {
     return true
   }
 

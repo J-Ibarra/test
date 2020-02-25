@@ -27,7 +27,7 @@ COPY packages/libs ./packages/libs
 COPY packages/services/deposit ./packages/services/deposit
 
 RUN npm run bootstrap:production
-RUN npm run build:third-party-coin-deposit-processor
+RUN npm run build:deposit
 WORKDIR /sync/packages/services/deposit/src/service-wrappers/third-party-coin-deposit-processor
 
-CMD ["ts-node-dev","--transpileOnly", "src/bootstrap.ts"]
+CMD ["ts-node-dev","--transpileOnly", "bootstrap.ts"]

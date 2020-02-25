@@ -102,10 +102,12 @@ export async function storeDepositAddress(address: DepositAddress) {
   const savedAddress = await getModel<DepositAddress>('depositAddress').create(address)
   return savedAddress.get()
 }
+
 export async function updateDepositAddress(address: DepositAddress) {
   const [, savedAddress] = await getModel<DepositAddress>('depositAddress').update(address, { where: { id: address.id! }, returning: true })
   return savedAddress[0].get()
 }
+
 export async function createMissingDepositAddressesForAccount(
   accountId: string,
   existingDepositAddresses: DepositAddress[],

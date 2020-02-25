@@ -27,9 +27,9 @@ COPY packages/libs ./packages/libs
 COPY packages/services/deposit ./packages/services/deposit
 
 RUN npm run bootstrap:production
-RUN npm run build:deposit-entry-processor
-WORKDIR /sync/packages/services/deposit/src/service-wrappers/deposit-entry-processor
+RUN npm run build:deposit
+WORKDIR /sync/packages/services/deposit/src/service-wrappers/deposit-api
 
-EXPOSE 3114
+EXPOSE 3112
 
-CMD ["ts-node-dev","--transpileOnly", "src/bootstrap.ts"]
+CMD ["ts-node-dev","--transpileOnly", "bootstrap.ts"]

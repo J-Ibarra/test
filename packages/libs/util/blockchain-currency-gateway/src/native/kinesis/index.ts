@@ -52,8 +52,7 @@ export class Kinesis implements OnChainCurrencyGateway {
     }
   }
 
-  public async createAddressTransactionSubscription(_: any): Promise<boolean> {
-    logger.debug('Not supported')
+  public async createAddressTransactionSubscription(): Promise<boolean> {
     return true
   }
 

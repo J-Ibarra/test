@@ -27,7 +27,7 @@ COPY packages/libs ./packages/libs
 COPY packages/services/deposit ./packages/services/deposit
 
 RUN npm run bootstrap:production
-RUN npm run build:kinesis-and-eth-coin-deposit-processor
+RUN npm run build:deposit
 WORKDIR /sync/packages/services/deposit/src/service-wrappers/kinesis-and-eth-coin-deposit-processor
 
-CMD  "./docker-start.sh"
+CMD ["ts-node-dev","--transpileOnly", "bootstrap.ts"]
