@@ -97,7 +97,7 @@ export class TestCurrency implements OnChainCurrencyGateway {
     }
   }
 
-  public async listenToAddressEvents(_: any): Promise<boolean> {
+  public async createAddressTransactionSubscription(_: any): Promise<boolean> {
     return true
   }
 

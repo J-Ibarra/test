@@ -78,7 +78,7 @@ export class KVT implements OnChainCurrencyGateway {
       publicKey,
     }
   }
-  public async listenToAddressEvents(_: any): Promise<boolean> {
+  public async createAddressTransactionSubscription(_: any): Promise<boolean> {
     logger.debug('Not supported')
     return true
   }

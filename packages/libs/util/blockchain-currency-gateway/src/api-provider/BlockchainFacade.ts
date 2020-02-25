@@ -25,7 +25,7 @@ export abstract class BlockchainFacade {
   abstract generateAddress(): Promise<CryptoAddress>
 
   /** A call made to listen on the specified address */
-  abstract subscribeToAddressTransactionEvents(address: string, confirmations): Promise<IAddressTransaction>
+  abstract subscribeToAddressTransactionEvents(address: string, confirmations: number): Promise<IAddressTransaction>
 
   /**
    * Validates if the input address is a valid blockchain address.

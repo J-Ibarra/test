@@ -154,14 +154,17 @@ export const findDepositAddressAndListenForEvents = async (
 ): Promise<DepositAddress> => {
   const { id: currencyId } = await findCurrencyForCode(currencyCode)
   const depositAddress = await findDepositAddress({ publicKey, accountId: id, currencyId })
+
   if (!depositAddress) {
     throw new ValidationError(`Deposit address does not exist for currency id: ${currencyId} and account id: ${id}`)
   }
+
   if (depositAddress.activated) {
     logger.debug(`Deposit address already activated for currency id: ${currencyId} and account id: ${id}`)
     return depositAddress
   }
+
   const manager = new CurrencyManager(getEnvironment(), [currencyCode])
-  const successfulEventCreation = await manager.getCurrencyFromTicker(currencyCode).listenToAddressEvents(depositAddress)
+  const successfulEventCreation = await manager.getCurrencyFromTicker(currencyCode).createAddressTransactionSubscription(depositAddress)
   return updateDepositAddress({ ...depositAddress, activated: successfulEventCreation })
 }

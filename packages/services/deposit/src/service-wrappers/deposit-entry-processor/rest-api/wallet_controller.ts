@@ -34,7 +34,7 @@ export class WalletsController extends Controller {
   }
   @Security('cookieAuth')
   @Security('tokenAuth')
-  @Post('/activate/address')
+  @Post('/address/activation')
   public async activateWalletAddressForAccount(
     @Request() request: OverloadedRequest,
     @Body() body: { publicKey: string; currencyCode: CurrencyCode },

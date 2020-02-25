@@ -61,8 +61,7 @@ export class Ethereum implements OnChainCurrencyGateway {
       publicKey,
     }
   }
-  public async listenToAddressEvents(_: any): Promise<boolean> {
-    logger.debug('Not supported')
+  public async createAddressTransactionSubscription(_: any): Promise<boolean> {
     return true
   }
 
