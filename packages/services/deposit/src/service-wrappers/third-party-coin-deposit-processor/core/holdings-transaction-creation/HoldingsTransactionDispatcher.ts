@@ -63,7 +63,7 @@ export class HoldingsTransactionDispatcher {
       },
       receiverAddress: process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS!,
       amount,
-      webhookCallbackUrl: process.env.DEPOSIT_TRANSACTION_CONFIRMATION_CALLBACK_URL!,
+      webhookCallbackUrl: process.env.DEPOSIT_HOLDINGS_TRANSACTION_CONFIRMATION_CALLBACK_URL!,
     })
   }
 }
