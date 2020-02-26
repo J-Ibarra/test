@@ -27,8 +27,8 @@ RUN npm i -g ts-node-dev
 COPY packages/libs ./packages/libs
 COPY packages/services/deposit ./packages/services/deposit
 
-RUN lerna bootstrap
+RUN npm run bootstrap:production
 RUN npm run build:deposit
-WORKDIR /sync/packages/services/deposit/src/service-wrappers/deposit-processor
+WORKDIR /sync/packages/services/deposit/src/service-wrappers/kvt-block-follower
 
-CMD ["ts-node-dev","--transpileOnly", "src/bootstrap.ts"]
+CMD ["ts-node-dev","--transpileOnly", "bootstrap.ts"]

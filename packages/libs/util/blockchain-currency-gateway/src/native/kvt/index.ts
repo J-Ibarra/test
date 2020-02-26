@@ -300,6 +300,19 @@ export class KVT implements OnChainCurrencyGateway {
     return currencySecret
   }
 
+   /**
+   * Convert EventLog to DepositTransaction
+   * @param {EventLog} event - EventLog return from contract
+   */
+  public apiToDepositTransaction = (event: EventLog): DepositTransaction => {
+    return {
+      from: event.returnValues.from,
+      txHash: event.transactionHash,
+      amount: Number(event.returnValues.value),
+    }
+  }
+
+
   /**
    * Get all Transfer Event from contract that transfer token into address
    * @param {string} address - deposit account
@@ -312,18 +325,6 @@ export class KVT implements OnChainCurrencyGateway {
       },
       fromBlock: 0,
     })
-  }
-
-  /**
-   * Convert EventLog to DepositTransaction
-   * @param {EventLog} event - EventLog return from contract
-   */
-  private apiToDepositTransaction = (event: EventLog): DepositTransaction => {
-    return {
-      from: event.returnValues.from,
-      txHash: event.transactionHash,
-      amount: Number(event.returnValues.value),
-    }
   }
 
   private async transferEthForKVTGasFee(privateKey: string) {
@@ -363,5 +364,9 @@ export class KVT implements OnChainCurrencyGateway {
 
     logger.info(`Estimated and Transfered ${amountToSend} ETH for KVT transfer`)
     return { txHash: response.transactionHash, gasPrice: kvtTransferGasPrice.toNumber() }
+  }
+
+  public async getLatestBlockNumber() {
+    return this.web3.eth.getBlockNumber()
   }
 }

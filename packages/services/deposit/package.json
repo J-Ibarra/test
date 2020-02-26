@@ -18,11 +18,13 @@
     "start": "ts-node-dev src/index.ts",
     "test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_PATH=dist ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts --require ../../../_test-setup/test_globals.js src/**/*.spec.ts --exit",
     "build-image-deposit-processor": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-deposit-processor:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-deposit-processor:latest -f packages/services/deposit/src/service-wrappers/deposit-processor/Dockerfile . && cd packages/services/deposit ",
-    "build-image-eth-deposit-poller": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-eth-deposit-poller:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-eth-deposit-poller:latest -f packages/services/deposit/src/service-wrappers/eth-deposit-poller/Dockerfile . && cd packages/services/deposit ",
-    "build-image-latest": "npm run build-image-deposit-processor && npm run build-image-eth-deposit-poller",
+    "build-image-eth-block-follower": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-eth-block-follower:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-eth-block-follower:latest -f packages/services/deposit/src/service-wrappers/eth-block-follower/Dockerfile . && cd packages/services/deposit ",
+    "build-image-kvt-block-follower": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-kvt-block-follower:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-kvt-block-follower:latest -f packages/services/deposit/src/service-wrappers/kvt-block-follower/Dockerfile . && cd packages/services/deposit ",
+    "build-image-latest": "npm run build-image-deposit-processor && npm run build-image-eth-block-follower && npm run build-image-kvt-block-follower",
     "push-deposit-processor-image": "docker push $KINESIS_ECR_URL/kbe-services-deposit-processor",
-    "push-eth-deposit-poller-image": "docker push $KINESIS_ECR_URL/kbe-services-eth-deposit-poller",
-    "push-image": "npm run push-deposit-processor-image && npm run push-eth-deposit-poller-image"
+    "push-eth-block-follower-image": "docker push $KINESIS_ECR_URL/kbe-services-eth-block-follower",
+    "push-kvt-block-follower-image": "docker push $KINESIS_ECR_URL/kbe-services-kvt-block-follower",
+    "push-image": "npm run push-deposit-processor-image && npm run push-eth-block-follower-image && npm run push-kvt-block-follower-image"
   },
   "dependencies": {
     "@abx-service-clients/account": "^1.1.0",
@@ -58,7 +60,9 @@
     "newrelic": "4.10.0",
     "request-ip": "2.1.3",
     "sequelize": "4.41.0",
-    "tsoa": "2.3.81"
+    "tsoa": "2.3.81",
+    "web3": "1.2.1",
+    "@types/web3": "1.0.14"
   },
   "devDependencies": {
     "@abx-utils/account": "^1.1.0",

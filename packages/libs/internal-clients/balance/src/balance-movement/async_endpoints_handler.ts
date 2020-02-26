@@ -137,7 +137,7 @@ export function confirmPendingDeposit(payload: BasicBalanceAsyncRequestPayload) 
     payload: {
       requestedChanges: [
         {
-          type: BalanceAsyncRequestType.createPendingDeposit,
+          type: BalanceAsyncRequestType.confirmPendingDeposit,
           payload,
         },
       ],
