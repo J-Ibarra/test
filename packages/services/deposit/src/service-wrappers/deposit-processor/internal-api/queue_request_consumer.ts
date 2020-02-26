@@ -10,7 +10,7 @@ const logger = Logger.getInstance('queue_request_consumer', 'consumeQueueMessage
 export function bootstrapQueueDrivenApi() {
   const queuePoller = getQueuePoller()
 
-  queuePoller.subscribeToQueueMessages(process.env.BALANCE_CHANGE_QUEUE_URL || localDepositChangeTopic, consumeQueueMessage)
+  queuePoller.subscribeToQueueMessages(process.env.DEPOSIT_CHANGE_QUEUE_URL || localDepositChangeTopic, consumeQueueMessage)
 }
 
 async function consumeQueueMessage({ type, payload }: DepositAsyncRequest): Promise<void> {

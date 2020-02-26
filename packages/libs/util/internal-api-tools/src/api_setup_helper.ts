@@ -1,7 +1,10 @@
 import express from 'express'
 
+/** A container for the logic executed to handle a request to a specific route. {@type T - the request body type} {@type K - the response type} */
 export interface InternalRoute<T, K> {
+  /** The route path. */
   path: string
+  /** The handler function invoked on request. */
   handler: (requestParams: T) => Promise<K>
 }
 

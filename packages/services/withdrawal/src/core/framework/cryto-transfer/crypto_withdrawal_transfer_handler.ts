@@ -35,7 +35,7 @@ export async function transferCryptoForLatestWithdrawalRequest(
       const onChainCurrencyGateway = manager.getCurrencyFromTicker(currencyCode)
 
       // TODO add check here to make sure funds have not been transferred already (if previous request "failed")
-      const { txHash, transactionFee } = await withdrawFundsFromHoldingsAccountToTargetAddress(withdrawalRequest, onChainCurrencyGateway)
+      const { txHash, transactionFee } = await withdrawFundsFromHoldingsAccountToTargetAddress(withdrawalRequest, onChainCurrencyGateway, transaction)
       logger.info(
         `Created withdrawal transaction for withdrawal request ${withdrawalRequest.id} with transaction hash ${txHash} and fee ${transactionFee}`,
       )

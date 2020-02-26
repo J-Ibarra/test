@@ -90,7 +90,7 @@ export async function createAndSaveNewPassword(userId: string, newPassword: stri
     throw new ValidationError(ResetPasswordValidationError.passwordNotMatch)
   }
 
-  if (newPasswordEntry.length < 12) {
+  if (newPasswordEntry.length < 8) {
     throw new ValidationError(ResetPasswordValidationError.passwordNotStrength)
   }
 

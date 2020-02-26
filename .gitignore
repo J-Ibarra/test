@@ -41,9 +41,6 @@ dist
 *.DS_Store
 .idea/
 
-#Visual Studio Code editor
-.vscode
-
 # vim swapfiles
 *.swp
 
@@ -56,3 +53,4 @@ _logs
 
 # The local db data
 data
+docker-compose.override.yml

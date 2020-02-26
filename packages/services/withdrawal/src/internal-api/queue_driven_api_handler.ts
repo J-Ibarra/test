@@ -5,5 +5,5 @@ import { localRedisBalanceChangeTopic } from '@abx-service-clients/balance'
 export function bootstrapQueueDrivenApi() {
   const queuePoller = getQueuePoller()
 
-  queuePoller.subscribeToQueueMessages(process.env.BALANCE_CHANGE_QUEUE_URL || localRedisBalanceChangeTopic, consumeQueueMessage)
+  queuePoller.subscribeToQueueMessages(process.env.WITHDRAWAL_CHANGE_REQUEST_QUEUE_URL || localRedisBalanceChangeTopic, consumeQueueMessage)
 }

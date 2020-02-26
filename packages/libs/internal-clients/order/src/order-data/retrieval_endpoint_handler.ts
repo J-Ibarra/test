@@ -33,8 +33,8 @@ export function findTradeTransaction(id: number): Promise<TradeTransaction> {
   return internalApiRequestDispatcher.fireRequestToInternalApi<TradeTransaction>(OrderDataEndpoints.findTradeTransaction, { id })
 }
 
-export function getOpenOrders(symbolId: string, direction: OrderDirection, limit?: number): Promise<Order[]> {
-  return internalApiRequestDispatcher.fireRequestToInternalApi<Order[]>(OrderDataEndpoints.getOpenOrders, { symbolId, direction, limit })
+export function getOpenOrders(symbolId: string, orderDirection: OrderDirection, limit?: number): Promise<Order[]> {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<Order[]>(OrderDataEndpoints.getOpenOrders, { symbolId, orderDirection, limit })
 }
 
 export * from './endpoints'
