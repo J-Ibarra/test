@@ -1,11 +1,16 @@
-import { Route, Body, Patch } from 'tsoa'
+import { Route, Body, Patch, Get } from 'tsoa'
 import { findUserByEmail, updateAccount, updateUser } from '../../../../core'
 import { AccountTypeUpdateRequest, AccountStatusUpdateRequest } from './model'
 import { getModel, getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { AccountStatus, SalesforceReferenceTable, KycStatusChange } from '@abx-types/account'
 import { AccountPubSubTopics } from '@abx-service-clients/account'
+import CryptoApis from 'cryptoapis.io'
 
-@Route('test-automation')
+const apiKey = '99fd56a51dcdf7e069402d68f605fad34d656301'
+const caClient = new CryptoApis(apiKey)
+caClient.BC.ETH.switchNetwork(caClient.BC.ETH.NETWORKS.ROPSTEN)
+
+@Route('test-automation/accounts')
 export class E2eTestingDataSetupController {
   @Patch('/accounts/type')
   public async updateAccountType(@Body() { email, type }: AccountTypeUpdateRequest): Promise<void> {
@@ -13,7 +18,7 @@ export class E2eTestingDataSetupController {
     await updateAccount(user!.accountId, { type })
   }
 
-  @Patch('/accounts/account-status')
+  @Patch('/account-status')
   public async updateAccountStatus(@Body() { email, status, enableMfa, hasTriggeredKycCheck }: AccountStatusUpdateRequest): Promise<void> {
     const user = await findUserByEmail(email.toLocaleLowerCase())
     await getModel<Partial<Account>>('account').update(
@@ -41,5 +46,10 @@ export class E2eTestingDataSetupController {
       // It is only used to disable MFA prompts on the UI
       await updateUser({ mfaSecret: 'fooBard', id: user!.id })
     }
+  }
+
+  @Get('/details/{publicKey}')
+  public async getAddressDetailsByPublicKey(publicKey: string): Promise<any> {
+    return caClient.BC.ETH.address.getInfo(publicKey)
   }
 }

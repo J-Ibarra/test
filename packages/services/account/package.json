@@ -47,11 +47,13 @@
     "@abx-utils/internal-api-tools": "^1.1.0",
     "@abx-utils/kbe-legacy-migrations": "^1.1.0",
     "@abx-utils/logging": "^1.1.0",
+    "@types/sequelize": "3.30.4",
     "aws-sdk": "2.454.0",
     "axios": "0.19.0",
     "bcryptjs": "2.4.3",
     "body-parser": "1.18.3",
     "cookie-parser": "1.4.3",
+    "cryptoapis.io": "^4.2.3",
     "express": "4.16.4",
     "jsonwebtoken": "8.5.0",
     "method-override": "2.3.10",
@@ -61,8 +63,7 @@
     "sequelize": "4.41.0",
     "speakeasy": "2.0.0",
     "tsoa": "2.3.81",
-    "typescript": "3.7.2",
-    "@types/sequelize": "3.30.4"
+    "typescript": "3.7.2"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",
