@@ -14,12 +14,9 @@ export function setEnvironmentVariables() {
   process.env.SALESFORCE_API_ADMIN_USERNAME = 'boris.shekerov@abx.com.testing'
   process.env.SALESFORCE_API_ADMIN_PASSWORD = 'Abcd12341234e5Zw811eM8IB3HKBzV21AwCi'
   process.env.KMS_DOMAIN = 'http://localhost:1234'
-<<<<<<< HEAD
   process.env.NODE_ENV = 'development'
-=======
-  process.env.KBE_INFURA_PROJECT_ID='5ada5f39db534bda836abc3caf333002'
-  process.env.KVT_INFURA_PROJECT_ID='c2ea3bc13d094d3a824322a7628f4882'
-  process.env.KVT_FEE_HOLDINGS_SECRET='B7AFD4671093505A4C1197099270F77532DF63959676824E88B91C86688C8CFA'
-  process.env.ETHERSCAN_API_DOMAIN_ROOT='ropsten'
->>>>>>> develop
+  process.env.KBE_INFURA_PROJECT_ID = '5ada5f39db534bda836abc3caf333002'
+  process.env.KVT_INFURA_PROJECT_ID = 'c2ea3bc13d094d3a824322a7628f4882'
+  process.env.KVT_FEE_HOLDINGS_SECRET = 'B7AFD4671093505A4C1197099270F77532DF63959676824E88B91C86688C8CFA'
+  process.env.ETHERSCAN_API_DOMAIN_ROOT = 'ropsten'
 }

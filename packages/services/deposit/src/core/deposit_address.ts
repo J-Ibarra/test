@@ -4,7 +4,7 @@ import { Logger } from '@abx-utils/logging'
 import { CurrencyManager, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
 import { getModel, getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { ValidationError } from '@abx-types/error'
-import { findCryptoCurrencies, isFiatCurrency, findCurrencyForCode } from '@abx-service-clients/reference-data'
+import { findCryptoCurrencies, isFiatCurrency, findCurrencyForCode, findCurrencyForId } from '@abx-service-clients/reference-data'
 import { DepositAddress } from '@abx-types/deposit'
 import { encryptValue } from '@abx-utils/encryption'
 import { groupBy } from 'lodash'
@@ -27,6 +27,7 @@ export async function generateNewDepositAddress(accountId: string, currency: OnC
     publicKey: cryptoAddress.publicKey,
     address: cryptoAddress.address,
     encryptedPrivateKey,
+    activated: false,
   } as DepositAddress
 }
 
@@ -61,7 +62,7 @@ export async function findKycOrEmailVerifiedDepositAddresses(currencyId: number,
 export async function findOrCreateDepositAddressesForAccount(accountId: string) {
   logger.debug(`Finding existing deposit addresses for account ${accountId}`)
 
-  const existingDepositAddresses = await findDepositAddressesForAccount(accountId)
+  const existingDepositAddresses = await findDepositAddressesForAccountWithCurrency(accountId)
   logger.debug(`Found existing deposit addresses for currency: ${existingDepositAddresses.map(({ currencyId }) => currencyId).join(',')}`)
 
   if (cryptoCurrencies.length === 0) {
@@ -76,7 +77,7 @@ export async function findOrCreateDepositAddressesForAccount(accountId: string) 
     const epicurus = getEpicurusInstance()
     epicurus.publish(DepositPubSubChannels.walletAddressesForNewAccountCreated, { accountId })
 
-    return findDepositAddressesForAccount(accountId)
+    return findDepositAddressesForAccountWithCurrency(accountId)
   }
 
   return existingDepositAddresses
@@ -96,6 +97,20 @@ export async function findDepositAddressesForAccount(accountId: string) {
   })
 
   return depositAddresses.map(address => address.get({ plain: true }))
+}
+export async function findDepositAddressesForAccountWithCurrency(accountId: string): Promise<DepositAddress[]> {
+  const depositAddresses = await findDepositAddressesForAccount(accountId)
+  return Promise.all(
+    depositAddresses.map(
+      async (depositAddress): Promise<DepositAddress> => {
+        const { id, code } = await findCurrencyForId(depositAddress.currencyId)
+        return {
+          ...depositAddress,
+          currency: { id, code },
+        }
+      },
+    ),
+  )
 }
 
 export async function storeDepositAddress(address: DepositAddress) {
