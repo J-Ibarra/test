@@ -6,6 +6,8 @@ import { createEmail } from '..'
 
 describe('Notification Service', () => {
   describe('Email', () => {
+    before(() => (process.env.NOTIFICATION_ENV = 'test'))
+
     describe('createEmail', () => {
       const templateContent = {
         key1: 'value1',

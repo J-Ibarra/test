@@ -12,7 +12,7 @@ const config: NotificationConfig = {
   activeEnvironments: ['uat', 'integration', 'production', 'development'],
   fromEmail: process.env.NOTIFICATION_FROM_EMAIL || 'no-reply@kinesis.money',
   mandrillApi: process.env.MANDRILL_API || '5U8lA1W0NPMIqwMsOYEbJg', // Test key
-  notificationEnv: process.env.NOTIFICATION_ENV || 'development',
+  notificationEnv: process.env.NOTIFICATION_ENV || 'test',
   notificationSubjectPrefix,
 }
 
