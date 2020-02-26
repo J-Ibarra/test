@@ -6,7 +6,7 @@ export const localDepositChangeTopic = 'local-deposit-change-topic'
 
 export function createWalletAddressesForNewAccount(accountId: string) {
   return sendAsyncChangeMessage<DepositAsyncRequest>({
-    id: `createWalletAddressesForNewAccount-${accountId}`
+    id: `createWalletAddressesForNewAccount-${accountId}`,
     type: DepositAsyncEndpoints.createWalletAddressesForNewAccount,
     target: {
       local: localDepositChangeTopic,
