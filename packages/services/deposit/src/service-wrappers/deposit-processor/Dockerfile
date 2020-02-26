@@ -4,4 +4,4 @@ WORKDIR /sync/packages/services/deposit/src/service-wrappers/deposit-processor
 
 EXPOSE 3112
 
-CMD ["ts-node-dev","--transpileOnly", "src/bootstrap.ts"]
+CMD ["ts-node-dev","--transpileOnly", "bootstrap.ts"]
