@@ -19,6 +19,7 @@ export const localRedisBalanceChangeTopic = 'local-balance-change-topic'
  */
 export function triggerMultipleBalanceChanges(changes: BalanceChangeAsyncRequest[]) {
   return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    id: `triggerMultipleBalanceChanges-${createUniqueHash(changes.map(({ payload }) => payload))}`,
     type: 'triggerMultipleBalanceChanges',
     target: {
       local: localRedisBalanceChangeTopic,
@@ -32,6 +33,7 @@ export function triggerMultipleBalanceChanges(changes: BalanceChangeAsyncRequest
 
 export function releaseReserve(payload: BasicBalanceAsyncRequestPayload) {
   return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    id: `releaseReserve-${payload.sourceEventId}`,
     type: 'releaseReserve',
     target: {
       local: localRedisBalanceChangeTopic,
@@ -50,6 +52,7 @@ export function releaseReserve(payload: BasicBalanceAsyncRequestPayload) {
 
 export function finaliseReserve(payload: InitialReserveBalanceChangeAsyncRequestPayload) {
   return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    id: `finaliseReserve-${payload.sourceEventId}`,
     type: 'finaliseReserve',
     target: {
       local: localRedisBalanceChangeTopic,
@@ -68,6 +71,7 @@ export function finaliseReserve(payload: InitialReserveBalanceChangeAsyncRequest
 
 export function confirmPendingRedemption(payload: BasicBalanceAsyncRequestPayload) {
   return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    id: `confirmPendingRedemption-${payload.sourceEventId}`,
     type: 'confirmPendingRedemption',
     target: {
       local: localRedisBalanceChangeTopic,
@@ -86,6 +90,7 @@ export function confirmPendingRedemption(payload: BasicBalanceAsyncRequestPayloa
 
 export function denyPendingRedemption(payload: BasicBalanceAsyncRequestPayload) {
   return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    id: `denyPendingRedemption-${payload.sourceEventId}`,
     type: 'denyPendingRedemption',
     target: {
       local: localRedisBalanceChangeTopic,
@@ -104,6 +109,7 @@ export function denyPendingRedemption(payload: BasicBalanceAsyncRequestPayload) 
 
 export function createPendingDeposit(payload: BasicBalanceAsyncRequestPayload) {
   return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    id: `createPendingDeposit-${payload.sourceEventId}`,
     type: 'createPendingDeposit',
     target: {
       local: localRedisBalanceChangeTopic,
@@ -122,7 +128,8 @@ export function createPendingDeposit(payload: BasicBalanceAsyncRequestPayload) {
 
 export function confirmPendingDeposit(payload: BasicBalanceAsyncRequestPayload) {
   return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
-    type: BalanceAsyncRequestType.createPendingDeposit,
+    id: `confirmPendingDeposit-${payload.sourceEventId}`,
+    type: BalanceAsyncRequestType.confirmPendingDeposit,
     target: {
       local: localRedisBalanceChangeTopic,
       deployedEnvironment: process.env.BALANCE_CHANGE_QUEUE_URL!,
@@ -140,6 +147,7 @@ export function confirmPendingDeposit(payload: BasicBalanceAsyncRequestPayload) 
 
 export function denyPendingDeposit(payload: BasicBalanceAsyncRequestPayload) {
   return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    id: `${BalanceAsyncRequestType.denyPendingDeposit}-${payload.sourceEventId}`,
     type: BalanceAsyncRequestType.denyPendingDeposit,
     target: {
       local: localRedisBalanceChangeTopic,
@@ -158,6 +166,7 @@ export function denyPendingDeposit(payload: BasicBalanceAsyncRequestPayload) {
 
 export function confirmPendingWithdrawal(payload: BasicBalanceAsyncRequestPayload) {
   return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    id: `${BalanceAsyncRequestType.confirmPendingWithdrawal}-${payload.sourceEventId}`,
     type: BalanceAsyncRequestType.confirmPendingWithdrawal,
     target: {
       local: localRedisBalanceChangeTopic,
@@ -176,6 +185,7 @@ export function confirmPendingWithdrawal(payload: BasicBalanceAsyncRequestPayloa
 
 export function denyPendingWithdrawal(payload: BasicBalanceAsyncRequestPayload) {
   return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    id: `${BalanceAsyncRequestType.denyPendingWithdrawal}-${payload.sourceEventId}`,
     type: BalanceAsyncRequestType.denyPendingWithdrawal,
     target: {
       local: localRedisBalanceChangeTopic,
@@ -194,6 +204,7 @@ export function denyPendingWithdrawal(payload: BasicBalanceAsyncRequestPayload) 
 
 export function confirmPendingDebitCardTopUp(payload: BasicBalanceAsyncRequestPayload) {
   return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    id: `${BalanceAsyncRequestType.confirmPendingDebitCardTopUp}-${payload.sourceEventId}`,
     type: BalanceAsyncRequestType.confirmPendingDebitCardTopUp,
     target: {
       local: localRedisBalanceChangeTopic,
@@ -212,6 +223,7 @@ export function confirmPendingDebitCardTopUp(payload: BasicBalanceAsyncRequestPa
 
 export function recordDebitCardToExchangeWithdrawal(payload: BasicBalanceAsyncRequestPayload) {
   return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    id: `${BalanceAsyncRequestType.recordDebitCardToExchangeWithdrawal}-${payload.sourceEventId}`,
     type: BalanceAsyncRequestType.recordDebitCardToExchangeWithdrawal,
     target: {
       local: localRedisBalanceChangeTopic,
@@ -226,4 +238,26 @@ export function recordDebitCardToExchangeWithdrawal(payload: BasicBalanceAsyncRe
       ],
     },
   })
+}
+
+/**
+ * Creates a unique hash based on the sourceEventIds of the balance change payload objects.
+ * Used to create an identifier when using triggerMultipleBalanceChanges.
+ */
+function createUniqueHash(payloads: BasicBalanceAsyncRequestPayload[]) {
+  const concantenatedSourceIds = payloads.reduce((acc, { sourceEventId }) => acc.concat(`${sourceEventId}`), '')
+
+  let hash = 0
+
+  if (this.length == 0) return hash
+
+  for (let i = 0; i < concantenatedSourceIds.length; i++) {
+    const char = concantenatedSourceIds.charCodeAt(i)
+
+    hash = (hash << 5) - hash + char
+
+    hash = hash & hash // Convert to 32bit integer
+  }
+
+  return hash
 }

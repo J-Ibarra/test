@@ -1,5 +1,6 @@
 import { CurrencyCode } from '@abx-types/reference-data'
 import { IConfirmedTransactionEventPayload } from '@abx-utils/blockchain-currency-gateway'
+
 export enum WithdrawalStatusChangeRequestType {
   cancelFiatWithdrawal = 'cancelFiatWithdrawal',
   createFiatWithdrawal = 'createFiatWithdrawal',

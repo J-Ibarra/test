@@ -21,9 +21,9 @@ import { TEST_CURRENCY_TICKER } from '@abx-utils/blockchain-currency-gateway'
 import { expect } from 'chai'
 import { SourceEventType } from '@abx-types/balance'
 import { CurrencyCode } from '@abx-types/reference-data'
+import { v4 } from 'node-uuid'
 
 const testCurrencyId = 1
-
 describe('Withdrawal Request Initialisation', () => {
   const sandbox = sinon.createSandbox()
   let createPendingDepositStub
@@ -89,6 +89,11 @@ describe('Withdrawal Request Initialisation', () => {
         feeAmount,
         minimumAmount: 5,
       })
+      sinon.stub(accountOperations, 'findAccountWithUserDetails').resolves({
+        id: v4(),
+        status: AccountStatus.kycVerified,
+        users: [{ email: 'test-email' }],
+      })
       stubFindCurrencyBalancesCall(TEST_CURRENCY_TICKER, startingBalance)
       stubFindCurrencyForCodesCall(blockChainOperations.TEST_CURRENCY_TICKER)
 
@@ -153,6 +158,11 @@ describe('Withdrawal Request Initialisation', () => {
         feeAmount,
         minimumAmount: 5,
       })
+      sinon.stub(accountOperations, 'findAccountWithUserDetails').resolves({
+        id: v4(),
+        status: AccountStatus.kycVerified,
+        users: [{ email: 'test-email' }],
+      })
       stubFindCurrencyBalancesCall(CurrencyCode.usd, startingBalance)
       stubFindCurrencyForCodesCall(USD.code)
 
@@ -188,6 +198,11 @@ describe('Withdrawal Request Initialisation', () => {
         feeAmount: 25,
         minimumAmount: 5,
       })
+      sinon.stub(accountOperations, 'findAccountWithUserDetails').resolves({
+        id: v4(),
+        status: AccountStatus.kycVerified,
+        users: [{ email: 'test-email' }],
+      })
       stubFindCurrencyBalancesCall(CurrencyCode.usd, 0)
       stubFindCurrencyForCodesCall(USD.code)
 
@@ -218,6 +233,11 @@ describe('Withdrawal Request Initialisation', () => {
         feeCurrency: TEST_CURRENCY_TICKER,
         feeAmount: 0,
         minimumAmount: 5,
+      })
+      sinon.stub(accountOperations, 'findAccountWithUserDetails').resolves({
+        id: v4(),
+        status: AccountStatus.kycVerified,
+        users: [{ email: 'test-email' }],
       })
       stubFindCurrencyBalancesCall(TEST_CURRENCY_TICKER, startingBalance)
       stubFindCurrencyForCodesCall(blockChainOperations.TEST_CURRENCY_TICKER)
@@ -257,6 +277,11 @@ describe('Withdrawal Request Initialisation', () => {
         feeCurrency: USD.code,
         feeAmount: 0,
         minimumAmount: 5,
+      })
+      sinon.stub(accountOperations, 'findAccountWithUserDetails').resolves({
+        id: v4(),
+        status: AccountStatus.emailVerified,
+        users: [{ email: 'test-email' }],
       })
       stubFindCurrencyBalancesCall(CurrencyCode.usd, startingBalance)
       stubFindCurrencyForCodesCall(USD.code)

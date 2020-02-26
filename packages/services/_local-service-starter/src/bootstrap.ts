@@ -3,7 +3,7 @@ import http from 'http'
 import sourceMapSupport from 'source-map-support'
 import { pickRouteBasedForwarding } from './request_handler'
 import { setEnvironmentVariables } from './env_var_setter'
-import { startAllServices } from './service_starter'
+import { startAllServices } from './services_starter'
 
 sourceMapSupport.install()
 
@@ -24,8 +24,8 @@ async function bootstrap() {
     res.end('Not Found')
   })
 
-  console.log('Proxy listening on port 3000')
-  proxyServer.listen(3000)
+  console.log(`Proxy listening on port ${process.env.NODE_ENV === 'e2e-local' ? 12345 : 3000}`)
+  proxyServer.listen(process.env.NODE_ENV === 'e2e-local' ? 12345 : 3000)
 }
 
 bootstrap()

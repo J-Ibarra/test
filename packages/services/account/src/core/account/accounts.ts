@@ -100,12 +100,12 @@ export async function findAccountWithUserDetails(accountQuery: Partial<Account>,
   })
 }
 
-export async function findAllKycVerifiedAccountIds(): Promise<Account[]> {
+export async function findAllKycVerifiedAccountIds(): Promise<string[]> {
   const kycVerifiedAccountInstances = await getModel<Account>('account').findAll({
     where: { status: AccountStatus.kycVerified } as any,
   })
 
-  return kycVerifiedAccountInstances.map(kycVerifiedAccountInstance => kycVerifiedAccountInstance.get())
+  return kycVerifiedAccountInstances.map(kycVerifiedAccountInstance => kycVerifiedAccountInstance.get().id)
 }
 
 export async function findAccountsByIdWithUserDetails(id: string[], t?: Transaction): Promise<Account[]> {

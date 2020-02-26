@@ -46,13 +46,6 @@ export class BitcoinBlockchainFacade implements BlockchainFacade {
 
   async generateAddress(): Promise<CryptoAddress> {
     const generatedAddress = await this.cryptoApiProviderProxy.generateAddress()
-
-    this.cryptoApiProviderProxy.createAddressTransactiontEventSubscription({
-      address: generatedAddress.publicKey,
-      callbackURL: `${process.env.API_URL}/webhooks/crypto/address-transactions`,
-      confirmations: 2,
-    })
-
     return generatedAddress
   }
 
@@ -88,11 +81,11 @@ export class BitcoinBlockchainFacade implements BlockchainFacade {
     }
   }
 
-  subscribeToAddressTransactionEvents(publicKey: string): Promise<IAddressTransaction> {
+  subscribeToAddressTransactionEvents(publicKey: string, confirmations: number): Promise<IAddressTransaction> {
     return this.cryptoApiProviderProxy.createAddressTransactiontEventSubscription({
       address: publicKey,
       callbackURL: `${process.env.API_URL}/webhooks/crypto/address-transactions`,
-      confirmations: 0,
+      confirmations,
     })
   }
 }

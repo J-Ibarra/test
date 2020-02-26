@@ -1,11 +1,15 @@
 import { Transaction } from 'sequelize'
 
-import { getModel, sequelize } from '@abx-utils/db-connection-utils'
-import { RawBalance } from '@abx-types/balance'
+import { getModel, sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
+import { RawBalance, BalanceType } from '@abx-types/balance'
 import { BalanceLockParams } from '../balance_movement_facade'
+import { AccountSetupBalance } from '@abx-service-clients/balance'
+import { findCurrencyForCode } from '@abx-service-clients/reference-data'
+import { Logger } from '@abx-utils/logging'
 
 /** The gateway used to fetch {@link RawBalance} from persistent storage */
 export class BalanceRepository {
+  private logger: Logger = Logger.getInstance('balance', 'BalanceRepository')
   private static instance: BalanceRepository
 
   public static getInstance(): BalanceRepository {
@@ -129,5 +133,46 @@ export class BalanceRepository {
     ])
 
     return result as boolean
+  }
+
+  public async setupAccountBalances(accountId: string, balances: AccountSetupBalance[], t?: Transaction) {
+    await wrapInTransaction(sequelize, t, async transaction => {
+      await Promise.all(
+        balances.map(async balanceDetails => {
+          const currency = await findCurrencyForCode(balanceDetails.currencyCode)
+
+          this.logger.info(`Updating available ${currency.code} ${balanceDetails.amount}`)
+          await sequelize.query(
+            `
+                insert into balance ("balanceTypeId", "accountId", "currencyId", "value", "createdAt", "updatedAt")
+                values (
+                  :balanceTypeId,
+                  :accountId,
+                  :currencyId,
+                  :balanceValue,
+                  :createdAt,
+                  :updatedAt
+                )
+                on conflict on constraint account_balance
+                do
+                  update
+                    set "value" = :balanceValue, "updatedAt" = :updatedAt;
+              `,
+            {
+              transaction,
+              replacements: {
+                balanceValue: balanceDetails.amount,
+                accountId,
+                currencyId: currency.id,
+                balanceTypeId: BalanceType.available,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+              },
+            },
+          )
+          this.logger.info(`Updated available ${currency.code} ${balanceDetails.amount}`)
+        }),
+      )
+    })
   }
 }

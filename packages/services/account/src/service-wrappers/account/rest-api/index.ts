@@ -11,6 +11,7 @@ import {
   maintenanceMiddleware,
   overloadRequestWithSessionInfo,
   healthcheckMiddleware,
+  e2eTestingEndpointGuard,
 } from '@abx-utils/express-middleware'
 import { RegisterRoutes } from './routes'
 
@@ -21,6 +22,7 @@ import './password_reset_controller'
 import './session_controller'
 import './token_controller'
 import './user_controller'
+import './e2e-testing/E2eTestingDataSetupController'
 
 import { OverloadedRequest } from '@abx-types/account'
 import { ACCOUNT_REST_API_PORT } from '@abx-service-clients/account'
@@ -36,6 +38,7 @@ export function bootstrapRestApi() {
   app.use(bodyParser.json())
   app.use(methodOverride())
   app.use(healthcheckMiddleware)
+  app.use(e2eTestingEndpointGuard)
   app.use(maintenanceMiddleware)
   app.use((request: OverloadedRequest, _: express.Response = {} as any, next: () => void = () => ({})) => {
     overloadRequestWithSessionInfo(request, undefined, next)

@@ -78,7 +78,9 @@ export class KVT implements OnChainCurrencyGateway {
       publicKey,
     }
   }
-
+  public async createAddressTransactionSubscription(): Promise<boolean> {
+    return true
+  }
   /**
    * Generate a private key
    * @return {string} - private key

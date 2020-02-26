@@ -18,10 +18,13 @@ export const cryptoWithdrawalRequestValidators: WithdrawalRequestValidator[] = [
     isInvalid: currencyCode !== feeCurrency.code && feeAmount > feeCurrencyAvailableBalance,
     error: `Withdrawal request fee amount ${feeCurrency ? feeCurrency.code : ''} ${feeAmount} is greater than available balance`,
   }),
-  ({ currencyCode, address, manager }: CompleteValidationParams) => ({
-    isInvalid: !cryptoWithdrawalAddressValid(manager, currencyCode, address!),
-    error: `${currencyCode} address (${address}) is not valid`,
-  }),
+  async ({ currencyCode, address, manager }: CompleteValidationParams) => {
+    const addressValid = await cryptoWithdrawalAddressValid(manager, currencyCode, address!)
+    return {
+      isInvalid: !addressValid,
+      error: `${currencyCode} address (${address}) is not valid`,
+    }
+  },
 ]
 
 async function cryptoWithdrawalAddressValid(manager: CurrencyManager, currencyCode: CurrencyCode, address: string) {

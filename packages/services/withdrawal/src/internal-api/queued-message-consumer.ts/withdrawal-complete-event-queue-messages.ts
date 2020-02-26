@@ -12,6 +12,7 @@ export async function consumeCompletedWithdrawalQueueMessage(request: IAsyncWebh
     case EWebhookWithdrawalCompletedRequestType.confirmedTransaction:
       await submitWithdrawalCompletedEvent(request)
   }
+
   return Promise.resolve()
 }
 

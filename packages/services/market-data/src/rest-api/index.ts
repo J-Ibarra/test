@@ -11,6 +11,7 @@ import {
   maintenanceMiddleware,
   overloadRequestWithSessionInfo,
   healthcheckMiddleware,
+  e2eTestingEndpointGuard,
 } from '@abx-utils/express-middleware'
 import { RegisterRoutes } from './routes'
 import { MARKET_DATA_REST_API_PORT } from '@abx-service-clients/market-data'
@@ -32,6 +33,7 @@ export function bootstrapRestApi() {
   app.use(methodOverride())
   app.use(maintenanceMiddleware)
   app.use(healthcheckMiddleware)
+  app.use(e2eTestingEndpointGuard)
   app.use((request: OverloadedRequest, _: express.Response = {} as any, next: () => void = () => ({})) => {
     overloadRequestWithSessionInfo(request, undefined, next)
   })

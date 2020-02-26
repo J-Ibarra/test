@@ -8,7 +8,7 @@ export function getAggregateDepth(orders: Order[], limit?: number): DepthItem[] 
     .groupBy('limitPrice')
     .map(groupedOrders => {
       return {
-        amount: _.sumBy(groupedOrders, 'remaining'),
+        amount: groupedOrders.reduce((prev, { remaining }) => new Decimal(remaining).plus(prev).toNumber(), 0),
         price: groupedOrders[0].limitPrice || 0,
       }
     })

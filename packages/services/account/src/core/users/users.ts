@@ -112,6 +112,14 @@ export async function findUserByEmail(email: string, trans?: Transaction): Promi
   return findUser({ email }, false, trans)
 }
 
+export async function findUsersByEmail(emails: string[]): Promise<User[]> {
+  const users = await getModel<User>('user').findAll({
+    where: { email: { $in: emails } } as any,
+  })
+
+  return users.map(userInstance => userInstance.get())
+}
+
 export async function findUserByEmailWithAccount(email: string, trans?: Transaction): Promise<User | null> {
   return findUser({ email }, true, trans)
 }

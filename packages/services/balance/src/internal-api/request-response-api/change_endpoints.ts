@@ -1,10 +1,11 @@
 import { wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
-import { RequestResponseBalanceMovementEndpoints } from '@abx-service-clients/balance'
-import { BalanceMovementFacade } from '../../core'
+import { RequestResponseBalanceMovementEndpoints, E2eTestingBalanceEndpoints } from '@abx-service-clients/balance'
+import { BalanceMovementFacade, BalanceRepository } from '../../core'
 import { InternalRoute } from '@abx-utils/internal-api-tools'
 
 export function createChangeEndpointHandlers(): InternalRoute<any, any>[] {
   const balanceMovementFacade = BalanceMovementFacade.getInstance()
+  const balanceRepository = BalanceRepository.getInstance()
 
   return [
     {
@@ -39,6 +40,10 @@ export function createChangeEndpointHandlers(): InternalRoute<any, any>[] {
     {
       path: RequestResponseBalanceMovementEndpoints.createPendingDebitCardTopUp,
       handler: params => balanceMovementFacade.createPendingDebitCardTopUp(params),
+    },
+    {
+      path: E2eTestingBalanceEndpoints.setupAccountBalances,
+      handler: ({ accountId, balances }) => balanceRepository.setupAccountBalances(accountId, balances),
     },
   ]
 }

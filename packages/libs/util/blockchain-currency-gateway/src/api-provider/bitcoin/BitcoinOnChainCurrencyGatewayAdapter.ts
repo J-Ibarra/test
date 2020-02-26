@@ -4,10 +4,14 @@ import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { RuntimeError } from '@abx-types/error'
 import { BitcoinBlockchainFacade } from './BitcoinBlockchainFacade'
 import { CryptoAddress } from '../model'
+import { DepositAddress } from '@abx-types/deposit'
+import { Logger } from '@abx-utils/logging'
 
 /** Adapting the {@link BitcoinBlockchainFacade} to {@link OnChainCurrencyGateway} for backwards-compatibility. */
 export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGateway {
   ticker: CurrencyCode.bitcoin
+  logger = Logger.getInstance('blockchain-currency-gateway', 'BitcoinOnChainCurrencyGatewayAdapter')
+
   private bitcoinBlockchainFacade: BitcoinBlockchainFacade
 
   constructor() {
@@ -18,10 +22,30 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
     return getCurrencyId(this.ticker)
   }
 
-  async generateAddress(): Promise<CryptoAddress> {
+  generateAddress(): Promise<CryptoAddress> {
     return this.bitcoinBlockchainFacade.generateAddress()
   }
 
+  async createAddressTransactionSubscription(depositAddressDetails: DepositAddress): Promise<boolean> {
+    try {
+      if (!depositAddressDetails.address) {
+        this.logger.warn('Received deposit address details have no address field. Please consider that you are passing in the wrong currency asset.')
+        return false
+      }
+      if (depositAddressDetails.activated) {
+        this.logger.warn(`We have already activated transaction events for this address: ${depositAddressDetails.address}`)
+        return true
+      }
+      await this.bitcoinBlockchainFacade.subscribeToAddressTransactionEvents(depositAddressDetails.address, 1)
+      this.logger.info(`Activated transaction events for this address: ${depositAddressDetails.address}`)
+      return true
+    } catch (e) {
+      this.logger.error(
+        `unexpected error thrown -  createAddressTransactionSubscription for address : ${depositAddressDetails.address}, err: ${e.message}`,
+      )
+      return false
+    }
+  }
   // This returns a string due to JS floats
   balanceAt(address: string): Promise<number> {
     return this.bitcoinBlockchainFacade.balanceAt(address)

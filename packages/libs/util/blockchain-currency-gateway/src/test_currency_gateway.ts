@@ -97,6 +97,10 @@ export class TestCurrency implements OnChainCurrencyGateway {
     }
   }
 
+  public async createAddressTransactionSubscription(): Promise<boolean> {
+    return true
+  }
+
   private generatePrivateKey() {
     const newPrivate = `private${this.addressCounter}`
     const newAddress = `address${this.addressCounter}`
@@ -120,7 +124,7 @@ export class TestCurrency implements OnChainCurrencyGateway {
     return Promise.resolve(!!address && !address.includes('invalid'))
   }
 
-  public async validateAddressIsNotContractAddress(_: string): Promise<boolean> {
+  public async validateAddressIsNotContractAddress(): Promise<boolean> {
     return true
   }
 

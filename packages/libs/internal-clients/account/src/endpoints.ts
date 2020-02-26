@@ -1,6 +1,7 @@
-export enum AccountEndpoints {
+export enum AccountQueryEndpoints {
   findAccountWithUserDetails = 'accounts/findAccountWithUserDetails',
   findAccountsByIdWithUserDetails = 'accounts/findAccountsByIdWithUserDetails',
+  findUsersByEmail = 'accounts/findUsersByEmail',
   findUserByAccountId = 'accounts/findUserByAccountId',
   findUsersByAccountId = 'accounts/findUsersByAccountId',
   findAccountById = 'accounts/findAccountById',
@@ -8,4 +9,8 @@ export enum AccountEndpoints {
   findOrCreateOperatorAccount = 'accounts/findOrCreateOperatorAccount',
   isAccountSuspended = 'accounts/isAccountSuspended',
   getAllKycVerifiedAccountIds = 'accounts/getAllKycVerifiedAccountIds',
+}
+
+export enum AccountChangeEndpoints {
+  createAccount = 'accounts/createAccount',
 }

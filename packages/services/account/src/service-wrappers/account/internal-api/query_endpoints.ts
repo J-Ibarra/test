@@ -7,38 +7,45 @@ import {
   findOrCreateOperatorAccount,
   isAccountSuspended,
   findUsersByAccountId,
+  findUsersByEmail,
+  findAllKycVerifiedAccountIds,
 } from '../../../core'
-import { AccountEndpoints } from '@abx-service-clients/account'
+import { AccountQueryEndpoints } from '@abx-service-clients/account'
 import { InternalRoute } from '@abx-utils/internal-api-tools'
+import { User, Account } from '@abx-types/account'
 
 export function createQueryEndpointHandlers(): InternalRoute<any, any>[] {
   return [
     {
-      path: AccountEndpoints.findAccountById,
+      path: AccountQueryEndpoints.findAccountById,
       handler: ({ accountId }) => findAccountById(accountId),
-    },
+    } as InternalRoute<{ accountId: string }, Account | null>,
     {
-      path: AccountEndpoints.findUserByAccountId,
+      path: AccountQueryEndpoints.findUserByAccountId,
       handler: ({ accountId }) => findUserByAccountId(accountId),
-    },
+    } as InternalRoute<{ accountId: string }, User | null>,
     {
-      path: AccountEndpoints.findAccountsByIdWithUserDetails,
+      path: AccountQueryEndpoints.findUsersByEmail,
+      handler: ({ emails }) => findUsersByEmail(emails),
+    } as InternalRoute<{ emails: string[] }, User[]>,
+    {
+      path: AccountQueryEndpoints.findAccountsByIdWithUserDetails,
       handler: ({ accountIds }) => findAccountsByIdWithUserDetails(accountIds),
-    },
+    } as InternalRoute<{ accountIds: string[] }, Account[]>,
     {
-      path: AccountEndpoints.findUsersByAccountId,
+      path: AccountQueryEndpoints.findUsersByAccountId,
       handler: ({ accountId }) => findUsersByAccountId(accountId),
-    },
+    } as InternalRoute<{ accountId: string }, User[]>,
     {
-      path: AccountEndpoints.findAccountWithUserDetails,
+      path: AccountQueryEndpoints.findAccountWithUserDetails,
       handler: request => findAccountWithUserDetails(request),
-    },
+    } as InternalRoute<Partial<Account>, Account | null>,
     {
-      path: AccountEndpoints.findOrCreateKinesisRevenueAccount,
+      path: AccountQueryEndpoints.findOrCreateKinesisRevenueAccount,
       handler: () => findOrCreateKinesisRevenueAccount(),
-    },
+    } as InternalRoute<void, Account>,
     {
-      path: AccountEndpoints.findOrCreateOperatorAccount,
+      path: AccountQueryEndpoints.findOrCreateOperatorAccount,
       handler: async () => {
         try {
           const acc = await findOrCreateOperatorAccount()
@@ -49,12 +56,16 @@ export function createQueryEndpointHandlers(): InternalRoute<any, any>[] {
       },
     },
     {
-      path: AccountEndpoints.isAccountSuspended,
-      handler: async ({ account }) => {
-        const accountSuspended = await isAccountSuspended(account)
+      path: AccountQueryEndpoints.isAccountSuspended,
+      handler: async ({ accountId }) => {
+        const accountSuspended = await isAccountSuspended(accountId)
 
         return { accountSuspended }
       },
     },
+    {
+      path: AccountQueryEndpoints.getAllKycVerifiedAccountIds,
+      handler: () => findAllKycVerifiedAccountIds(),
+    } as InternalRoute<{}, string[]>,
   ]
 }

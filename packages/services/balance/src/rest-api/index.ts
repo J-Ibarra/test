@@ -11,10 +11,13 @@ import {
   maintenanceMiddleware,
   overloadRequestWithSessionInfo,
   healthcheckMiddleware,
+  e2eTestingEndpointGuard,
 } from '@abx-utils/express-middleware'
 import { RegisterRoutes } from './routes'
 
 import './balances_controller'
+import './e2e-testing/E2eTestingDataSetupController'
+
 import { OverloadedRequest } from '@abx-types/account'
 import { BALANCE_REST_API_PORT } from '@abx-service-clients/balance'
 
@@ -29,6 +32,7 @@ export function bootstrapRestApi() {
   app.use(bodyParser.json())
   app.use(methodOverride())
   app.use(healthcheckMiddleware)
+  app.use(e2eTestingEndpointGuard)
   app.use(maintenanceMiddleware)
   app.use((request: OverloadedRequest, _: express.Response = {} as any, next: () => void = () => ({})) => {
     overloadRequestWithSessionInfo(request, undefined, next)
