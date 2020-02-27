@@ -72,7 +72,7 @@ export class SessionsController extends Controller {
 
       const isMfaEnabledForUser = await hasMfaEnabled(user.id)
 
-      if (isMfaEnabledForUser && !localTestEnvironments.includes(process.env.NODE_ENV as Environment)) {
+      if (isMfaEnabledForUser && !localDev) {
         if (!mfaToken) {
           this.setStatus(403)
           return { message: 'MFA Required' }
