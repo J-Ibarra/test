@@ -111,7 +111,7 @@ export async function createMissingDepositAddressesForAccount(
 
   const cryptoCurrenciesToGenerateAddressFor = cryptoCurrencies.filter(({ id }) => (currencyIdToDepositAddress[id] || []).length === 0)
 
-  logger.debug(`Currencies to generate: ${cryptoCurrenciesToGenerateAddressFor.join(', ')}`)
+  logger.debug(`Currencies to generate: ${cryptoCurrenciesToGenerateAddressFor.map(JSON.stringify).join(', ')}`)
 
   return Promise.all(
     cryptoCurrenciesToGenerateAddressFor.map(({ code }) => {
