@@ -1,9 +1,9 @@
 import AWS from 'aws-sdk'
-import { Environment, getAwsRegionForEnvironment, e2eTestingEnvironments } from '@abx-types/reference-data'
+import { Environment, localAndTestEnvironments } from '@abx-types/reference-data'
 
-const kms = new AWS.KMS({ region: getAwsRegionForEnvironment(process.env.NODE_ENV! as Environment) })
+const kms = new AWS.KMS({ region: 'ap-southeast-2' })
 
-const environmentsWithoutKMSEncryption = .concat(Environment.development)
+const environmentsWithoutKMSEncryption = localAndTestEnvironments
 
 export async function decryptValue(key: string) {
   // Dont decrypt when testing
