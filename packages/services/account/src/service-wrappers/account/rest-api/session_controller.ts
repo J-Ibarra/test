@@ -2,7 +2,7 @@ import aws from 'aws-sdk'
 import { sign } from 'jsonwebtoken'
 import moment from 'moment'
 import { Body, Controller, Delete, Post, Request, Response, Route, Security, SuccessResponse } from 'tsoa'
-import { Environment, localAndTestEnvironments, localTestEnvironments } from '@abx-types/reference-data'
+import { Environment, localAndTestEnvironments, localTestEnvironments, getAwsRegionForEnvironment } from '@abx-types/reference-data'
 import { createSessionForUser, isAccountSuspended, killSession, validateUserCredentials, authenticateMfa, hasMfaEnabled } from '../../../core'
 import { Logger } from '@abx-utils/logging'
 import { ValidationError } from '@abx-types/error'
@@ -31,7 +31,7 @@ const logger = Logger.getInstance('api', 'SessionsController')
 async function getJwt() {
   const secretsManager = new aws.SecretsManager({
     apiVersion: '2017-10-17',
-    region: 'ap-southeast-2',
+    region: getAwsRegionForEnvironment(process.env.NODE_ENV as Environment),
   })
 
   return new Promise((resolve, reject) => {
