@@ -19,16 +19,12 @@ COPY tsconfig.json .
 COPY tsconfig.build.json .
 
 RUN npm install --loglevel notice
-RUN npm i lerna -g --loglevel notice
 RUN npm i -g typescript
 RUN npm i -g ts-node-dev
 
 # Copying required modules (.dockerignore will make sure, node_modules are not copied over)
 COPY packages/libs ./packages/libs
-COPY packages/services/deposit ./packages/services/deposit
+COPY packages/services/order ./packages/services/order
 
 RUN npm run bootstrap:production
-RUN npm run build:deposit
-WORKDIR /sync/packages/services/deposit/src/service-wrappers/ethereum_block_follower
-
-CMD ["ts-node-dev","--transpileOnly", "src/bootstrap.ts"]
+RUN npm run build:order

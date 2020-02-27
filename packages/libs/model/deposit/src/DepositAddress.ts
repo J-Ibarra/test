@@ -9,6 +9,4 @@ export interface DepositAddress {
   currencyId: number
   encryptedPrivateKey: string
   publicKey: string
-  address?: string
-  encryptedWif?: string
 }

@@ -15,6 +15,7 @@ interface WithdrawalKinesisCurrencyTransferParams {
   withdrawalRequestId: number
   kinesisCurrencyGateway: Kinesis
   targetAddress: string
+  memo: string
   amount: number
 }
 
@@ -39,6 +40,7 @@ async function getWithdrawalEmissionEntry(
   const { txEnvelope, nextSequenceNumber } = await params.kinesisCurrencyGateway.createWithdrawalHoldingsTransactionEnvelope(
     params.amount,
     params.targetAddress,
+    params.memo,
     latestWithdrawalEmissionSequenceNumber,
   )
   logger.debug(`Next sequence number: ${nextSequenceNumber}`)

@@ -1,3 +1,3 @@
 export * from './service-wrappers/deposit-processor'
-export * from './service-wrappers/ethereum_block_follower'
-export * from './service-wrappers/kvt_block_follower'
+export * from './service-wrappers/eth-block-follower'
+export * from './service-wrappers/kvt-block-follower'
