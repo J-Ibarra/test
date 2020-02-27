@@ -16,14 +16,14 @@ import { truncateTables } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import * as onChainIntegration from '@abx-utils/blockchain-currency-gateway'
 
-describe('Deposit Address module', () => {
+describe.only('Deposit Address module', () => {
   let ACCOUNT_ID: string
 
   let currencyId: number = 2
   let ethereumCurrencyId: number = 3
 
   const testCurrencyManager = {
-    generatePrivateKey: () => 'private-key',
+    generateAddress: () => ({ privateKey: 'private-key', publicKey: 'publicKey' }),
     getAddressFromPrivateKey: () => 'address',
     encryptValue: value => Promise.resolve(value),
     getId: () => currencyId,
