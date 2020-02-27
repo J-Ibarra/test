@@ -18,6 +18,8 @@ export async function overloadRequestWithSessionInfo(
   const encryptedSession = get(request, 'cookies.appSession')
   const apiTokenPresent = request.header('Authorization')
 
+  logger.debug(`Encrypted session: ${JSON.stringify(encryptedSession)}`)
+
   if (encryptedSession) {
     await enrichRequestWithSessionDetails(encryptedSession, request)
   } else if (apiTokenPresent) {
@@ -68,6 +70,8 @@ const enrichRequestWithSessionDetails = async (encryptedSession: string, request
 
   let session: Session | null
   let userAndAccount: User | null
+
+  logger.debug(`Decyphered sessionId: ${sessionId}`)
 
   try {
     session = await findSession(sessionId)
