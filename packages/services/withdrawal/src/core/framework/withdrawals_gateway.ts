@@ -51,8 +51,8 @@ async function validateRequest(
     findCurrencyAvailableBalances([currencyCode, feeCurrencyCode], accountId),
   ])
   const [withdrawalRequestCurrency, feeCurrency] = currencies!
-  const availableBalance = availableBalances!.get(currencyCode) || 0
-  const feeCurrencyAvailableBalance = availableBalances!.get(feeCurrency.code) || 0
+  const availableBalance = availableBalances![currencyCode] || 0
+  const feeCurrencyAvailableBalance = availableBalances![feeCurrency.code] || 0
 
   await validateWithdrawal({
     currency: withdrawalRequestCurrency,

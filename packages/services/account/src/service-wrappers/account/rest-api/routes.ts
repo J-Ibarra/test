@@ -660,7 +660,7 @@ export function RegisterRoutes(app: express.Express) {
             const promise = controller.activateUser.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
-    app.patch('/api/test-automation/accounts/type',
+    app.patch('/api/test-automation/accounts/accounts/type',
         function(request: any, response: any, next: any) {
             const args = {
                 undefined: { "in": "body", "required": true, "ref": "AccountTypeUpdateRequest" },
@@ -696,6 +696,25 @@ export function RegisterRoutes(app: express.Express) {
 
 
             const promise = controller.updateAccountStatus.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.get('/api/test-automation/accounts/details/:publicKey',
+        function(request: any, response: any, next: any) {
+            const args = {
+                publicKey: { "in": "path", "name": "publicKey", "required": true, "dataType": "string" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new E2eTestingDataSetupController();
+
+
+            const promise = controller.getAddressDetailsByPublicKey.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
 

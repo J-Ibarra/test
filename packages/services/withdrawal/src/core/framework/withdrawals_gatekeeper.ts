@@ -17,7 +17,7 @@ const logger = Logger.getInstance('withdrawals', 'CryptoWithdrawalGatekeeper')
 export const PENDING_WITHDRAWAL_GATEKEEPER_NAME = 'pending withdrawal transfer'
 
 export class CryptoWithdrawalGatekeeper {
-  private static gatekeeperNameToGatekeeper: Record<string, CryptoWithdrawalGatekeeper | null>
+  private static gatekeeperNameToGatekeeper: Record<string, CryptoWithdrawalGatekeeper | null> = {}
   private currencyToWithdrawalRequests: Map<CurrencyCode, LockableWithdrawalRequest[]> = new Map()
 
   constructor(private gatekeeperName: string) {}

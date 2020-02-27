@@ -1,8 +1,11 @@
 import { expect } from 'chai'
 import { getAccountVaultPublicKey, persistAccountVaultPublicKey, validateAccount } from '../vault/vault_data_retrieval'
 import { createTemporaryTestingAccount } from '@abx-utils/account'
+import { truncateTables } from '@abx-utils/db-connection-utils'
 
 describe('vault_address', () => {
+  beforeEach(async () => await truncateTables(['vault_address']))
+
   it('persistUsersVaultPublicKey should store vault address generated', async () => {
     const account = await createTemporaryTestingAccount()
     const vaultPublicKey = 'persistUsersVaultPublicKey_PublicKey'
