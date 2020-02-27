@@ -101,7 +101,9 @@ export class SessionsController extends Controller {
 
       this.setHeader(
         'Set-Cookie',
-        `appSession=${sessionCookie}; ${localDev ? '' : 'Secure;'} HttpOnly; Path=/; SameSite=Strict; expires=${appSessionExpires};`,
+        `appSession=${sessionCookie}; ${localDev ? '' : 'Secure;'} HttpOnly; Path=/; ${
+          localDev ? '' : 'SameSite=Strict;'
+        } expires=${appSessionExpires};`,
       )
 
       return {
