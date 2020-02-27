@@ -19,7 +19,7 @@ export interface LoginRequest {
 }
 
 const environmentNameRecord = {
-  [Environment.e2eAws]: 'test-automation',
+  [Environment.e2eAws]: 'end-to-end',
   [Environment.staging]: 'stg',
   [Environment.integration]: 'int',
   [Environment.uat]: 'uat',
