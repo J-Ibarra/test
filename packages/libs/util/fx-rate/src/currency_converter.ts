@@ -34,8 +34,8 @@ export async function convertAndTruncateCurrencyValue(
   const midPrice = (await calculateRealTimeMidPriceForSymbol(targetSymbol.id)) || 1
   const convertedValue =
     targetSymbol.quote.code === toCurrencyCode
-      ? new Decimal(tradeAmount).times(midPrice).toNumber()
-      : new Decimal(tradeAmount).dividedBy(midPrice).toNumber()
+      ? tradeAmount.times(midPrice).toNumber()
+      : tradeAmount.dividedBy(midPrice).toNumber()
 
   return truncateCurrencyValue({ currencyCode: toCurrencyCode, value: convertedValue })
 }

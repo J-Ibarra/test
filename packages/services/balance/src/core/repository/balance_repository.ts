@@ -53,7 +53,7 @@ export class BalanceRepository {
     transaction?: Transaction
   }): Promise<RawBalance[]> {
     const balances = await getModel<RawBalance>('balance').findAll({
-      where: { currencyId: { $in: { currencyIds } }, accountId },
+      where: { currencyId: { $in: currencyIds }, accountId },
       transaction,
     })
 

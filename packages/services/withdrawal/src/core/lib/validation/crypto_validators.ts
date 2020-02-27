@@ -8,9 +8,12 @@ import { isFiatCurrency } from '@abx-service-clients/reference-data'
 export const cryptoWithdrawalRequestValidators: WithdrawalRequestValidator[] = [
   ...commonWithdrawalRequestValidators,
   ({ amount, availableBalance, currencyCode, feeAmount, feeCurrency }: CompleteValidationParams) => {
+    const am = new Decimal(`${amount}`)
+    const res = am.add(`${feeAmount}`)
+    const bool = res.greaterThan(availableBalance || 0)
     return {
       isInvalid:
-        currencyCode !== feeCurrency.code ? amount > availableBalance : new Decimal(amount).add(feeAmount).greaterThan(availableBalance || 0),
+        currencyCode !== feeCurrency.code ? amount > availableBalance : bool,
       error: `Withdrawal request amount ${currencyCode}${amount} is greater than available balance`,
     }
   },

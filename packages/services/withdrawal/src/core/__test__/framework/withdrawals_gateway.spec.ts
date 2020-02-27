@@ -47,7 +47,7 @@ describe('withdrawals_gateway', () => {
 
     sinon.stub(referenceDataOperations, 'getWithdrawalConfigForCurrency').resolves({ feeAmount, feeCurrency: CurrencyCode.usd })
     sinon.stub(referenceDataOperations, 'findCurrencyForCodes').resolves([currency, currency])
-    sinon.stub(balanceOperations, 'findCurrencyAvailableBalances').resolves(new Map([[CurrencyCode.usd, balance.available.value]]))
+    sinon.stub(balanceOperations, 'findCurrencyAvailableBalances').resolves({ [CurrencyCode.usd]: balance.available.value })
     const handleFiatCurrencyWithdrawalRequestStub = sinon.stub(requestHandlers, 'handleFiatCurrencyWithdrawalRequest')
     const validateWithdrawalStub = sinon.stub(withdrawalOperations, 'validateWithdrawal').resolves()
 
@@ -81,7 +81,7 @@ describe('withdrawals_gateway', () => {
 
     sinon.stub(referenceDataOperations, 'getWithdrawalConfigForCurrency').resolves({ feeAmount, feeCurrency: CurrencyCode.kau })
     sinon.stub(referenceDataOperations, 'findCurrencyForCodes').resolves([currency, currency])
-    sinon.stub(balanceOperations, 'findCurrencyAvailableBalances').resolves(new Map([[CurrencyCode.kau, balance.available.value]]))
+    sinon.stub(balanceOperations, 'findCurrencyAvailableBalances').resolves({ [CurrencyCode.kau]: balance.available.value })
     const handleCryptoCurrencyWithdrawalRequest = sinon.stub(requestHandlers, 'handleCryptoCurrencyWithdrawalRequest')
     const validateWithdrawalStub = sinon.stub(withdrawalOperations, 'validateWithdrawal').resolves()
 
