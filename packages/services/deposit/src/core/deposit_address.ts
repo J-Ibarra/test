@@ -104,6 +104,7 @@ export async function findDepositAddressesForAccountWithCurrency(accountId: stri
     depositAddresses.map(
       async (depositAddress): Promise<DepositAddress> => {
         const { id, code } = await findCurrencyForId(depositAddress.currencyId)
+
         return {
           ...depositAddress,
           currency: { id, code },
