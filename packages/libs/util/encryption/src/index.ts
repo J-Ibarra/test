@@ -3,8 +3,8 @@ import { Environment, getAwsRegionForEnvironment, e2eTestingEnvironments } from 
 
 const kms = new AWS.KMS({ region: getAwsRegionForEnvironment(process.env.NODE_ENV! as Environment) })
 
-const environmentsWithoutKMSEncryption = e2eTestingEnvironments.concat(Environment.development)
-
+const environmentsWithoutKMSEncryption = .concat(Environment.development)
+e2eTestingEnvironments
 export async function decryptValue(key: string) {
   // Dont decrypt when testing
   // This is because the key isn't encrypted in the first case,
