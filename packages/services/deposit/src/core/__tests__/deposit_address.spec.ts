@@ -16,7 +16,7 @@ import { truncateTables } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import * as onChainIntegration from '@abx-utils/blockchain-currency-gateway'
 
-describe.only('Deposit Address module', () => {
+describe('Deposit Address module', () => {
   let ACCOUNT_ID: string
 
   let currencyId: number = 2
