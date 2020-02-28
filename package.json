@@ -16,12 +16,15 @@
     "build:market-data": "lerna run build --scope @abx/exchange-market-data-service --include-dependencies",
     "build:deposit": "lerna run build --scope @abx/exchange-deposit-service --include-dependencies",
     "build:admin-fund-management": "lerna run build --scope @abx/admin-fund-management-service --include-dependencies",
+    "build:debit-card": "lerna run build --scope @abx/debit-card --include-dependencies",
     "build:account": "lerna run build --scope @abx/exchange-account-data-service --include-dependencies",
     "build:services": "lerna run build --scope @abx/*",
     "run-legacy-migrations:test": "lerna run run-legacy-migrations-test",
     "run-legacy-migrations:dev": "lerna run run-legacy-migrations-dev",
     "start-api-debug:dev": "lerna run start-api-debug:dev --stream",
-    "start-api-debug:e2e": "lerna run start-api-debug:e2e-local --stream"
+    "start-api-debug:e2e": "lerna run start-api-debug:e2e-local --stream",
+    "start-api-debug-debit-card:dev": "npm start-api-debug:dev run lerna run start-api-debug-debit-card:dev --stream",
+    "start-api-debug-debit-card:e2e": "start-api-debug:e2e lerna run start-api-debug-debit-card:e2e-local --stream"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",

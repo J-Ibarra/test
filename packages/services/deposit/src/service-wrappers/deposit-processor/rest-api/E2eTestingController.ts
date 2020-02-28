@@ -3,7 +3,7 @@ const CryptoApis = require('cryptoapis.io')
 import { Route, Body, Post } from 'tsoa'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode, getEnvironment } from '@abx-types/reference-data'
-import { CurrencyManager, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
+import { CurrencyManager, OnChainCurrencyGateway, Kinesis } from '@abx-utils/blockchain-currency-gateway'
 
 const apiKey = '99fd56a51dcdf7e069402d68f605fad34d656301'
 const caClient = new CryptoApis(apiKey)
@@ -35,9 +35,13 @@ export class E2eTestingController {
 
   @Post('/transaction')
   public async createTransaction(@Body() { currencyCode, privateKey, value, toAddress, signerKey }): Promise<void> {
+    
     this.logger.info(`Creating new ${currencyCode} transaction.`)
 
     const currency: OnChainCurrencyGateway = this.currencyManager.getCurrencyFromTicker(currencyCode)
+    
+    const pK = await (currency as Kinesis)['getAddressFromPrivateKey'](privateKey)
+    this.logger.info(pK)
 
     await currency.transferTo({
       privateKey,
