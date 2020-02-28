@@ -13,7 +13,7 @@ import {
 } from './core'
 import { DepositRequestStatus } from '@abx-types/deposit'
 import { getAllPendingDepositRequestsForCurrencyAboveMinimumAmount, loadAllPendingDepositRequestsAboveMinimumAmount } from '../../core'
-import { findCurrencyForCode } from '@abx-service-clients/reference-data'
+import { findCurrencyForCodes } from '@abx-service-clients/reference-data'
 
 const onChainCurrencyManager = new CurrencyManager(getEnvironment())
 
@@ -38,8 +38,9 @@ export async function configureDepositHandler(depositPollingFrequencyConfig: Dep
 
   await triggerFailedHoldingsTransactionChecker(pendingHoldingsTransferGatekeeper)
 
-  const ethereum = await findCurrencyForCode(CurrencyCode.ethereum)
+  const [ethereum, kvt] = await findCurrencyForCodes([CurrencyCode.ethereum, CurrencyCode.kvt])
   hydrateGatekeeperWithNewDeposits(pendingHoldingsTransferGatekeeper, ethereum)
+  hydrateGatekeeperWithNewDeposits(pendingHoldingsTransferGatekeeper, kvt)
 }
 
 async function setupDepositRequestGatekeepers() {
