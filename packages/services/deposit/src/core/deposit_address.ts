@@ -119,8 +119,8 @@ export async function storeDepositAddress(address: DepositAddress) {
 }
 
 export async function updateDepositAddress(address: DepositAddress) {
-  const [, savedAddress] = await getModel<DepositAddress>('depositAddress').update(address, { where: { id: address.id! }, returning: true })
-  return savedAddress[0].get()
+  const [, [savedAddress]] = await getModel<DepositAddress>('depositAddress').update(address, { where: { id: address.id! }, returning: true })
+  return savedAddress && savedAddress.get()
 }
 
 export async function createMissingDepositAddressesForAccount(
@@ -182,6 +182,10 @@ export const findDepositAddressAndListenForEvents = async (
   }
 
   const manager = new CurrencyManager(getEnvironment(), [currencyCode])
+
   const successfulEventCreation = await manager.getCurrencyFromTicker(currencyCode).createAddressTransactionSubscription(depositAddress)
-  return updateDepositAddress({ ...depositAddress, activated: successfulEventCreation })
+
+  const updatedDepositAddress = await updateDepositAddress({ ...depositAddress, activated: successfulEventCreation })
+
+  return updatedDepositAddress
 }
