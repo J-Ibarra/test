@@ -41,5 +41,4 @@ jobs:
     - stage: 'Build image and push to ECR'
       if: branch = develop and type = push
       script:
-        - cd _scripts/travis
-        - ./travis-build-service-release.sh
+        - ./_scripts/travis/travis-build-service-release.sh

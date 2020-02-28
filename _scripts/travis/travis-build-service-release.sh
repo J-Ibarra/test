@@ -1,4 +1,4 @@
-source ./travis-build-tag-creation-helpers.sh 
+source ./_scripts/travis/travis-build-tag-creation-helpers.sh 
 
 # Authenticating with ECR
 eval $(aws ecr get-login --region ap-southeast-2 --no-include-email)
