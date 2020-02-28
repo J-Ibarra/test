@@ -16,10 +16,10 @@ createJiraTicketSubstring() {
 # The JIRA ticket number found in the commit message will be used as the TAG
 # If no ticket number is found the commit hash will be used
 function createDockerImageTag {
-  TAG=$COMMIT_HASH
+  TAG=$TRAVIS_COMMIT
 
-  if [[ "$COMMIT_MESSAGE" == *"ABX"* ]]; then
-    TAG=`createJiraTicketSubstring "$COMMIT_MESSAGE"`
+  if [[ "$TRAVIS_COMMIT_MESSAGE" == *"ABX"* ]]; then
+    TAG=`createJiraTicketSubstring "$TRAVIS_COMMIT_MESSAGE"`
   fi
 
   echo $TAG
