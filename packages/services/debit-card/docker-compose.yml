@@ -1,0 +1,75 @@
+version: '3.3'
+# networks:
+#   default:
+#     external:
+#       name: kinesis-secondary-exchange_default
+services:
+  redis-test:
+    image: redis
+    container_name: redis-test
+    ports:
+      - '7380:6379'
+  debit-card-postgres:
+    image: postgres:9.6
+    container_name: debit-card-postgres
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    ports:
+      - '5433:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=db
+  debit-card-postgres-test:
+    image: postgres:9.6
+    container_name: postgres-test
+    ports:
+      - '5434:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=debit_card_db_test
+  # debit-card-service:
+  #   build:
+  #     context: ./
+  #     dockerfile: Dockerfile
+  #     args:
+  #       NPM_TOKEN: '${NPM_TOKEN}'
+  #   container_name: ke-debit-card-service
+  #   command: ./docker-start.sh
+  #   volumes:
+  #     - ./dist:/sync/dist
+  #   ports:
+  #     - '3031:3031'
+  #   environment:
+  #     - ENV=integration
+  #     - API_PORT=3031
+  #     - EXCHANGE_DB_HOST=postgres
+  #     - EXCHANGE_DB_PORT=6432
+  #     - EXCHANGE_DB_USERNAME=postgres
+  #     - EXCHANGE_DB_NAME=kinesis_exchange
+  #     - EXCHANGE_DB_PASSWORD=''
+  #     - DEBIT_CARD_DB_HOST=debit-card-postgres
+  #     - DEBIT_CARD_DB_PORT=5432
+  #     - DEBIT_CARD_DB_USERNAME=postgres
+  #     - DEBIT_CARD_DB_NAME=db
+  #     - DEBIT_CARD_DB_PASSWORD=postgres
+  #     - REDIS_HOST=redis
+  #     - REDIS_PORT=6379
+  #     - UI_DOMAIN='localhost:1234'
+  #     - LOG_LEVEL=debug
+  #     - COOKIE_KEY=7yH*clwZeD0Pq&WPSYE*Q!1x9HafSs@X
+  #     - COOKIE_IV=67Jo*Jip5C8m6P%n
+  #     - JWT_SECRET=foo
+  #     - CONTIS_USERNAME=KINEUR_beta
+  #     - CONTIS_PASSWORD=myaqcd34
+  #     - CONTIS_API_ROOT=https://sandboxapi.contis.com
+  #     - CONTIS_WEBHOOK_WHITELISTED_IP='127.0.0.1'
+  #     - CONTIS_CARD_ORDER_FEE=5
+  #     - CONTIS_CARD_ORDER_VALIDATION_SLA=5
+  #   depends_on:
+  #     - 'debit-card-postgres'
+  #   logging:
+  #     driver: 'json-file'
+  #     options:
+  #       max-size: '30m'
+  #       max-file: '10'
