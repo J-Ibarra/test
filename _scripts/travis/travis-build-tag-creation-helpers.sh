@@ -15,7 +15,7 @@ createJiraTicketSubstring() {
 # This function creates the TAG to be used when tagging the docker images
 # The JIRA ticket number found in the commit message will be used as the TAG
 # If no ticket number is found the commit hash will be used
-createDockerJiraImageTag() {
+function createDockerImageTag {
   TAG=$COMMIT_HASH
 
   if [[ "$COMMIT_MESSAGE" == *"ABX"* ]]; then
