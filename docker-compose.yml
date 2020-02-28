@@ -15,7 +15,6 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=kinesis_exchange
-
   debit-card-postgres:
     image: postgres:9.6
     container_name: debit-card-postgres

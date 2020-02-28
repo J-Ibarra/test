@@ -1,6 +1,6 @@
 import { MemoryCache } from '@abx-utils/db-connection-utils'
 import { AccountQueryEndpoints } from './endpoints'
-import { User, Account } from '@abx-types/account'
+import { User, Account, KycVerifiedAccountDetails } from '@abx-types/account'
 import { InternalApiRequestDispatcher } from '@abx-utils/internal-api-tools'
 
 export const ACCOUNT_REST_API_PORT = 3103
@@ -58,6 +58,17 @@ export async function findOrCreateOperatorAccount(): Promise<Account> {
   }
 
   return internalApiRequestDispatcher.fireRequestToInternalApi<Account>(AccountQueryEndpoints.findOrCreateOperatorAccount)
+}
+
+/**
+ * Retrieves the Kyc verification details recorded for the account in Salesforce.
+ *
+ * @param accountId the account id to retrieve the details for
+ */
+export async function getKycVerifiedAccountDetails(accountId: string): Promise<KycVerifiedAccountDetails> {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<KycVerifiedAccountDetails>(AccountQueryEndpoints.getKycVerifiedAccountDetails, {
+    accountId,
+  })
 }
 
 /**

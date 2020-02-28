@@ -9,10 +9,11 @@ import {
   findUsersByAccountId,
   findUsersByEmail,
   findAllKycVerifiedAccountIds,
+  getKycVerifiedAccountDetails,
 } from '../../../core'
 import { AccountQueryEndpoints } from '@abx-service-clients/account'
 import { InternalRoute } from '@abx-utils/internal-api-tools'
-import { User, Account } from '@abx-types/account'
+import { User, Account, KycVerifiedAccountDetails } from '@abx-types/account'
 
 export function createQueryEndpointHandlers(): InternalRoute<any, any>[] {
   return [
@@ -53,7 +54,7 @@ export function createQueryEndpointHandlers(): InternalRoute<any, any>[] {
         } catch (e) {
           throw e
         }
-      }
+      },
     },
     {
       path: AccountQueryEndpoints.isAccountSuspended,
@@ -66,6 +67,10 @@ export function createQueryEndpointHandlers(): InternalRoute<any, any>[] {
     {
       path: AccountQueryEndpoints.getAllKycVerifiedAccountIds,
       handler: () => findAllKycVerifiedAccountIds(),
-    } as InternalRoute<{}, string[]>,
+    } as InternalRoute<void, string[]>,
+    {
+      path: AccountQueryEndpoints.getKycVerifiedAccountDetails,
+      handler: ({ accountId }) => getKycVerifiedAccountDetails(accountId),
+    } as InternalRoute<{ accountId: string }, KycVerifiedAccountDetails>,
   ]
 }

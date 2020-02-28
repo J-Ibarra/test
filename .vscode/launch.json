@@ -9,7 +9,8 @@
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
-      "runtimeExecutable": "/Users/Marin/.nvm/versions/node/v10.13.0/bin/node",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run-script", "start-api-debug:e2e"],
       "port": 9229,
       "stopOnEntry": true,
       "sourceMaps": true
@@ -19,7 +20,8 @@
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
-      "runtimeExecutable": "/Users/Marin/.nvm/versions/node/v10.13.0/bin/node",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run-script", "start-api-debug:dev"],
       "port": 9229,
       "stopOnEntry": true,
       "sourceMaps": true
