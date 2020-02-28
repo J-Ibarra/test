@@ -1,4 +1,4 @@
-# The 'admin-fund-management' service
+# The admin-fund-management service
 
 Handles the logic related to:
 
