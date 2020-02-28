@@ -39,7 +39,7 @@ export async function configureDepositHandler(depositPollingFrequencyConfig: Dep
   await triggerFailedHoldingsTransactionChecker(pendingHoldingsTransferGatekeeper)
 
   const ethereum = await findCurrencyForCode(CurrencyCode.ethereum)
-  hydrateGatekeeperWithNewEthDeposits(pendingHoldingsTransferGatekeeper, ethereum)
+  hydrateGatekeeperWithNewDeposits(pendingHoldingsTransferGatekeeper, ethereum)
 }
 
 async function setupDepositRequestGatekeepers() {
@@ -114,16 +114,17 @@ async function triggerFailedHoldingsTransactionChecker(pendingHoldingsTransferGa
   setInterval(async () => await cleanExpiredFailedRequests(pendingHoldingsTransferGatekeeper), 50_000)
 }
 
-async function hydrateGatekeeperWithNewEthDeposits(pendingHoldingsTransferGatekeeper: DepositGatekeeper, ethCurrency: Currency) {
-  const newPendingDeposits = await getAllPendingDepositRequestsForCurrencyAboveMinimumAmount(ethCurrency)
+/** This mechanism is required in order to take all the deposit requests recorded by the block followers (currently ETH and KVT). */
+async function hydrateGatekeeperWithNewDeposits(pendingHoldingsTransferGatekeeper: DepositGatekeeper, currency: Currency) {
+  const newPendingDeposits = await getAllPendingDepositRequestsForCurrencyAboveMinimumAmount(currency)
 
-  const depositIdsInGatekeeper = pendingHoldingsTransferGatekeeper.getAllDepositsForCurrency(ethCurrency.code).map(({ id }) => id)
+  const depositIdsInGatekeeper = pendingHoldingsTransferGatekeeper.getAllDepositsForCurrency(currency.code).map(({ id }) => id)
   pendingHoldingsTransferGatekeeper.addNewDepositsForCurrency(
-    CurrencyCode.ethereum,
+    currency.code,
     newPendingDeposits.filter(newDeposit => !depositIdsInGatekeeper.includes(newDeposit.id)),
   )
 
-  setTimeout(() => hydrateGatekeeperWithNewEthDeposits(pendingHoldingsTransferGatekeeper, ethCurrency), 30_000)
+  setTimeout(() => hydrateGatekeeperWithNewDeposits(pendingHoldingsTransferGatekeeper, currency), 30_000)
 }
 
 function triggerSuspendedDepositChecker(
