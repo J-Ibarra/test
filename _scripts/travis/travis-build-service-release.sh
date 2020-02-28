@@ -6,6 +6,8 @@ eval $(aws ecr get-login --region ap-southeast-2 --no-include-email)
 # Invoking createImageTag from travis-build-tag-creation-helpers.sh, exporting the result to used for the Docker images
 export JIRA_IMAGE_TAG=`createDockerJiraImageTag`
 
+echo $JIRA_IMAGE_TAG
+
 # Getting the previouscommit
 PREVIOUS_COMMIT_HASH=$(git rev-parse @~)
 
