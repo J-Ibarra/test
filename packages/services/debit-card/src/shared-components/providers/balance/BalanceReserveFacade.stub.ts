@@ -4,7 +4,6 @@ export class BalanceReserveFacadeStub {
     private confirmTopUpBalanceStub = Promise.resolve(),
     private recordCardToExchangeWithdrawalStub = Promise.resolve(),
   ) {}
-
   public reserveTopUpBalance(): Promise<any> {
     return this.reserveTopUpBalanceStub
   }

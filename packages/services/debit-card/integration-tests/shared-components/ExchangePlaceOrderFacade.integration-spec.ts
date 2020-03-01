@@ -11,7 +11,7 @@ describe('ExchangeOrderPlacementFacade', () => {
 
   beforeAll(async () => {
     const config = ConfigSourceFactory.getConfigSourceForEnvironment()
-    placeOrderFacade = new ExchangeOrderPlacementFacade(ConfigSourceFactory.getConfigSourceForEnvironment())
+    placeOrderFacade = new ExchangeOrderPlacementFacade()
     epicurus = getEpicurusInstance(config.getRedisConfig())
     epicurus.server('contractExchange:placeOrder', ({  }: any, respond: (err: any, response?: any) => void) => {
       respond(null, { id: orderId })
