@@ -10,6 +10,7 @@ import { truncateTables } from '@abx-utils/db-connection-utils'
 import * as notificationClientOperations from '@abx-service-clients/notification'
 import * as orderClientOperations from '@abx-service-clients/order'
 import { ACCOUNT_REST_API_PORT } from '@abx-service-clients/account'
+import * as depositOperations from '@abx-service-clients/deposit'
 
 describe('api:sessions', () => {
   let app
@@ -54,6 +55,8 @@ describe('api:sessions', () => {
     const testAccount: Account = await createTemporaryTestingAccount(AccountType.admin)
     const user: User = testAccount.users![0]
 
+    const createWalletAddressesForNewAccount = sinon.stub(depositOperations, 'createWalletAddressesForNewAccount').resolves()
+
     const { status, body } = await request(app)
       .post('/api/sessions')
       .send({
@@ -65,6 +68,7 @@ describe('api:sessions', () => {
     expect(status).to.eql(200)
     expect(body).to.have.property('accountId', testAccount.id)
     expect(body).to.have.property('email', user.email)
+    expect(createWalletAddressesForNewAccount.calledWith(testAccount.id)).to.eql(true)
   })
 
   it('does not allow a user to log in if they provide an incorrect password', async () => {
