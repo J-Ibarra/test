@@ -80,6 +80,15 @@ export async function loadAllPendingDepositRequestsAboveMinimumAmount(): Promise
   return flatMap(depositRequestsForAllCurrencies, requests => requests)
 }
 
+export async function findDepositRequestByHoldingsTransactionHash(txHash: string): Promise<DepositRequest | null> {
+  const depositRequest = await getModel<DepositRequest>('depositRequest').findOne({
+    where: { holdingsTxHash: txHash },
+    include: [getModel<DepositAddress>('depositAddress')],
+  })
+
+  return !!depositRequest ? depositRequest.get({ plain: true }) : null
+}
+
 export async function getAllPendingDepositRequestsForCurrencyAboveMinimumAmount(
   currency: Currency,
   parentTransaction?: Transaction,

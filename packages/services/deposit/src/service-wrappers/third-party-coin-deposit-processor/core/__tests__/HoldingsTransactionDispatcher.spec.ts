@@ -30,7 +30,7 @@ describe('HoldingsTransactionDispatcher', () => {
 
   beforeEach(() => {
     process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS = bitcoinHoldingsAddress
-    process.env.DEPOSIT_TRANSACTION_CONFIRMATION_CALLBACK_URL = depositConfirmationCallbackUrl
+    process.env.DEPOSIT_HOLDINGS_TRANSACTION_CONFIRMATION_CALLBACK_URL = depositConfirmationCallbackUrl
   })
 
   afterEach(() => sinon.restore())
@@ -75,7 +75,7 @@ describe('HoldingsTransactionDispatcher', () => {
           },
           receiverAddress: process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS!,
           amount: depositRequest.amount,
-          webhookCallbackUrl: process.env.DEPOSIT_TRANSACTION_CONFIRMATION_CALLBACK_URL!,
+          webhookCallbackUrl: process.env.DEPOSIT_HOLDINGS_TRANSACTION_CONFIRMATION_CALLBACK_URL!,
         }),
       ).to.eql(true)
 

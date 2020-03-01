@@ -19,7 +19,7 @@ describe('getPotentialDepositRequests', () => {
     encryptedPrivateKey: 'encr-PK',
     currencyId: TEST_CURRENCY_ID,
     publicKey: TEST_PUBLIC_KEY,
-  }
+  } as any
 
   const testBoundary: CurrencyBoundary = {
     minAmount: 0.00001,
@@ -48,7 +48,7 @@ describe('getPotentialDepositRequests', () => {
       currencyId: TEST_CURRENCY_ID,
       encryptedPrivateKey: TEST_PRIVATE_KEY,
       publicKey: TEST_ADDRESS,
-    }
+    } as any
 
     const potentialDepositRequests = await getPotentialDepositRequests(testCurrencyManager, [testDepositAddress])
     expect(potentialDepositRequests.length).to.eql(0)
