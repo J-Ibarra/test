@@ -1,17 +1,20 @@
 ---
 title: Kinesis Exchange API
 language_tabs:
+  - http: HTTP
+  - javascript: JavaScript
+  - javascript--nodejs: Node.JS
   - python: Python
-  - javascript: Javascript
+  - ruby: Ruby
 toc_footers: []
 includes: []
-search: false
+search: true
 highlight_theme: darkula
 headingLevel: 2
 
 ---
 
-<h1 id="kinesis-exchange-api">Kinesis Exchange API v1.1.0</h1>
+<h1 id="kinesis-exchange-api">Kinesis Exchange API v1.2.0</h1>
 
 > Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
 
@@ -37,17 +40,10 @@ Base URLs:
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/admin/fund-management/account-summary/{accountHin} HTTP/1.1
 
-r = requests.get('/api/admin/fund-management/account-summary/{accountHin}', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -66,6 +62,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/admin/fund-management/account-summary/{accountHin}',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/admin/fund-management/account-summary/{accountHin}', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/admin/fund-management/account-summary/{accountHin}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -104,17 +152,10 @@ adminAuth
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/admin/fund-management/admin-requests HTTP/1.1
 
-r = requests.get('/api/admin/fund-management/admin-requests', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -133,6 +174,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/admin/fund-management/admin-requests',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/admin/fund-management/admin-requests', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/admin/fund-management/admin-requests',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -156,8 +249,8 @@ $.ajax({
     "fee": 0,
     "id": 0,
     "globalTransactionId": "string",
-    "createdAt": "2020-02-27T00:17:40Z",
-    "updatedAt": "2020-02-27T00:17:40Z",
+    "createdAt": "2020-03-02T01:36:22Z",
+    "updatedAt": "2020-03-02T01:36:22Z",
     "tradingPlatformName": "string"
   }
 ]
@@ -221,18 +314,11 @@ adminAuth
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-}
+```http
+POST /api/admin/fund-management/admin-requests HTTP/1.1
 
-r = requests.post('/api/admin/fund-management/admin-requests', params={
-
-}, headers = headers)
-
-print r.json()
+Content-Type: application/json
+Accept: application/json
 
 ```
 
@@ -252,6 +338,68 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{
+  "hin": "string",
+  "type": "withdrawal",
+  "description": "string",
+  "asset": "ETH",
+  "amount": 0,
+  "fee": 0
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+fetch('/api/admin/fund-management/admin-requests',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('/api/admin/fund-management/admin-requests', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+}
+
+result = RestClient.post '/api/admin/fund-management/admin-requests',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -303,17 +451,10 @@ adminAuth
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/admin/fund-management/admin-requests/{accountHin} HTTP/1.1
 
-r = requests.get('/api/admin/fund-management/admin-requests/{accountHin}', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -332,6 +473,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/admin/fund-management/admin-requests/{accountHin}',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/admin/fund-management/admin-requests/{accountHin}', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/admin/fund-management/admin-requests/{accountHin}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -361,8 +554,8 @@ $.ajax({
     "fee": 0,
     "id": 0,
     "globalTransactionId": "string",
-    "createdAt": "2020-02-27T00:17:40Z",
-    "updatedAt": "2020-02-27T00:17:40Z",
+    "createdAt": "2020-03-02T01:36:22Z",
+    "updatedAt": "2020-03-02T01:36:22Z",
     "tradingPlatformName": "string"
   }
 ]
@@ -426,18 +619,11 @@ adminAuth
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-}
+```http
+PATCH /api/admin/fund-management/admin-requests/{id} HTTP/1.1
 
-r = requests.patch('/api/admin/fund-management/admin-requests/{id}', params={
-
-}, headers = headers)
-
-print r.json()
+Content-Type: application/json
+Accept: application/json
 
 ```
 
@@ -460,6 +646,64 @@ $.ajax({
 
 ```
 
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{
+  "status": "pending",
+  "updatedAt": "2020-03-02T01:36:22Z"
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+fetch('/api/admin/fund-management/admin-requests/{id}',
+{
+  method: 'PATCH',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.patch('/api/admin/fund-management/admin-requests/{id}', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+}
+
+result = RestClient.patch '/api/admin/fund-management/admin-requests/{id}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
 `PATCH /admin/fund-management/admin-requests/{id}`
 
 > Body parameter
@@ -467,7 +711,7 @@ $.ajax({
 ```json
 {
   "status": "pending",
-  "updatedAt": "2020-02-27T00:17:40Z"
+  "updatedAt": "2020-03-02T01:36:22Z"
 }
 ```
 
@@ -505,17 +749,10 @@ adminAuth
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/accounts/bank-details HTTP/1.1
 
-r = requests.get('/api/accounts/bank-details', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -534,6 +771,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/accounts/bank-details',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/accounts/bank-details', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/accounts/bank-details',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -576,18 +865,11 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-}
+```http
+POST /api/accounts/bank-details HTTP/1.1
 
-r = requests.post('/api/accounts/bank-details', params={
-
-}, headers = headers)
-
-print r.json()
+Content-Type: application/json
+Accept: application/json
 
 ```
 
@@ -607,6 +889,73 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{
+  "id": 0,
+  "accountHolderName": "string",
+  "bankName": "string",
+  "iban": "string",
+  "bankSwiftCode": "string",
+  "routingCode": "string",
+  "abaNumber": "string",
+  "accountNumber": "string",
+  "notes": "string",
+  "bankAddress": "string",
+  "accountId": "string"
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+fetch('/api/accounts/bank-details',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('/api/accounts/bank-details', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+}
+
+result = RestClient.post '/api/accounts/bank-details',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -663,18 +1012,11 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-}
+```http
+PATCH /api/accounts/password HTTP/1.1
 
-r = requests.patch('/api/accounts/password', params={
-
-}, headers = headers)
-
-print r.json()
+Content-Type: application/json
+Accept: application/json
 
 ```
 
@@ -694,6 +1036,64 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{
+  "currentPassword": "string",
+  "newPassword": "string"
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+fetch('/api/accounts/password',
+{
+  method: 'PATCH',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.patch('/api/accounts/password', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+}
+
+result = RestClient.patch '/api/accounts/password',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -741,17 +1141,10 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/accounts/kyc-details HTTP/1.1
 
-r = requests.get('/api/accounts/kyc-details', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -770,6 +1163,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/accounts/kyc-details',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/accounts/kyc-details', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/accounts/kyc-details',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -820,17 +1265,10 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/accounts/{id} HTTP/1.1
 
-r = requests.get('/api/accounts/{id}', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -849,6 +1287,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/accounts/{id}',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/accounts/{id}', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/accounts/{id}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -888,18 +1378,11 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-}
+```http
+POST /api/accounts HTTP/1.1
 
-r = requests.post('/api/accounts', params={
-
-}, headers = headers)
-
-print r.json()
+Content-Type: application/json
+Accept: application/json
 
 ```
 
@@ -919,6 +1402,67 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{
+  "email": "string",
+  "password": "string",
+  "firstName": "string",
+  "lastName": "string",
+  "referrerHin": "string"
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+fetch('/api/accounts',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('/api/accounts', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+}
+
+result = RestClient.post '/api/accounts',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -970,14 +1514,8 @@ This operation does not require authentication
 
 > Code samples
 
-```python
-import requests
-
-r = requests.post('/api/accounts/verification/generation', params={
-
-)
-
-print r.json()
+```http
+POST /api/accounts/verification/generation HTTP/1.1
 
 ```
 
@@ -991,6 +1529,45 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+fetch('/api/accounts/verification/generation',
+{
+  method: 'POST'
+
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+
+r = requests.post('/api/accounts/verification/generation', params={
+
+)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+result = RestClient.post '/api/accounts/verification/generation',
+  params: {
+  }
+
+p JSON.parse(result)
 
 ```
 
@@ -1013,18 +1590,11 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-}
+```http
+POST /api/accounts/verification HTTP/1.1
 
-r = requests.post('/api/accounts/verification', params={
-
-}, headers = headers)
-
-print r.json()
+Content-Type: application/json
+Accept: application/json
 
 ```
 
@@ -1044,6 +1614,63 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{
+  "userToken": "string"
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+fetch('/api/accounts/verification',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('/api/accounts/verification', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+}
+
+result = RestClient.post '/api/accounts/verification',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -1089,17 +1716,10 @@ This operation does not require authentication
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+POST /api/accounts/kyc-form-submission HTTP/1.1
 
-r = requests.post('/api/accounts/kyc-form-submission', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -1118,6 +1738,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/accounts/kyc-form-submission',
+{
+  method: 'POST',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.post('/api/accounts/kyc-form-submission', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.post '/api/accounts/kyc-form-submission',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -1150,17 +1822,10 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/admin/accounts/search?hin=string HTTP/1.1
 
-r = requests.get('/api/admin/accounts/search', params={
-  'hin': 'string'
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -1179,6 +1844,59 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/admin/accounts/search?hin=string',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/admin/accounts/search', params={
+  'hin': 'string'
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/admin/accounts/search',
+  params: {
+  'hin' => 'string'
+}, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -1250,18 +1968,11 @@ adminAuth
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-}
+```http
+PATCH /api/admin/accounts/{accountId}/status HTTP/1.1
 
-r = requests.patch('/api/admin/accounts/{accountId}/status', params={
-
-}, headers = headers)
-
-print r.json()
+Content-Type: application/json
+Accept: application/json
 
 ```
 
@@ -1281,6 +1992,63 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{
+  "status": "registered"
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+fetch('/api/admin/accounts/{accountId}/status',
+{
+  method: 'PATCH',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.patch('/api/admin/accounts/{accountId}/status', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+}
+
+result = RestClient.patch '/api/admin/accounts/{accountId}/status',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -1328,18 +2096,11 @@ cookieAuth & adminAuth
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-}
+```http
+PATCH /api/admin/accounts/{accountId}/suspension HTTP/1.1
 
-r = requests.patch('/api/admin/accounts/{accountId}/suspension', params={
-
-}, headers = headers)
-
-print r.json()
+Content-Type: application/json
+Accept: application/json
 
 ```
 
@@ -1359,6 +2120,63 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{
+  "suspended": true
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+fetch('/api/admin/accounts/{accountId}/suspension',
+{
+  method: 'PATCH',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.patch('/api/admin/accounts/{accountId}/suspension', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+}
+
+result = RestClient.patch '/api/admin/accounts/{accountId}/suspension',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -1406,17 +2224,10 @@ cookieAuth & adminAuth
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/mfa?email=string HTTP/1.1
 
-r = requests.get('/api/mfa', params={
-  'email': 'string'
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -1435,6 +2246,59 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/mfa?email=string',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/mfa', params={
+  'email': 'string'
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/mfa',
+  params: {
+  'email' => 'string'
+}, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -1472,17 +2336,10 @@ This operation does not require authentication
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+POST /api/mfa HTTP/1.1
 
-r = requests.post('/api/mfa', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -1501,6 +2358,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/mfa',
+{
+  method: 'POST',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.post('/api/mfa', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.post '/api/mfa',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -1531,14 +2440,8 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-
-r = requests.delete('/api/mfa/{token}', params={
-
-)
-
-print r.json()
+```http
+DELETE /api/mfa/{token} HTTP/1.1
 
 ```
 
@@ -1552,6 +2455,45 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+fetch('/api/mfa/{token}',
+{
+  method: 'DELETE'
+
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+
+r = requests.delete('/api/mfa/{token}', params={
+
+)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+result = RestClient.delete '/api/mfa/{token}',
+  params: {
+  }
+
+p JSON.parse(result)
 
 ```
 
@@ -1580,18 +2522,11 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-}
+```http
+POST /api/mfa/verification HTTP/1.1
 
-r = requests.post('/api/mfa/verification', params={
-
-}, headers = headers)
-
-print r.json()
+Content-Type: application/json
+Accept: application/json
 
 ```
 
@@ -1611,6 +2546,61 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+fetch('/api/mfa/verification',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('/api/mfa/verification', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+}
+
+result = RestClient.post '/api/mfa/verification',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -1656,18 +2646,11 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-}
+```http
+POST /api/reset-password HTTP/1.1
 
-r = requests.post('/api/reset-password', params={
-
-}, headers = headers)
-
-print r.json()
+Content-Type: application/json
+Accept: application/json
 
 ```
 
@@ -1687,6 +2670,63 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{
+  "email": "string"
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+fetch('/api/reset-password',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('/api/reset-password', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+}
+
+result = RestClient.post '/api/reset-password',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -1732,17 +2772,10 @@ This operation does not require authentication
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/reset-password?userId=string&token=string HTTP/1.1
 
-r = requests.get('/api/reset-password', params={
-  'userId': 'string',  'token': 'string'
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -1761,6 +2794,60 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/reset-password?userId=string&token=string',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/reset-password', params={
+  'userId': 'string',  'token': 'string'
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/reset-password',
+  params: {
+  'userId' => 'string',
+'token' => 'string'
+}, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -1799,18 +2886,11 @@ This operation does not require authentication
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-}
+```http
+PUT /api/reset-password HTTP/1.1
 
-r = requests.put('/api/reset-password', params={
-
-}, headers = headers)
-
-print r.json()
+Content-Type: application/json
+Accept: application/json
 
 ```
 
@@ -1830,6 +2910,66 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{
+  "userId": "string",
+  "newPassword": "string",
+  "newPasswordRetyped": "string",
+  "token": "string"
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+fetch('/api/reset-password',
+{
+  method: 'PUT',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.put('/api/reset-password', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+}
+
+result = RestClient.put '/api/reset-password',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -1879,18 +3019,11 @@ This operation does not require authentication
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-}
+```http
+POST /api/sessions HTTP/1.1
 
-r = requests.post('/api/sessions', params={
-
-}, headers = headers)
-
-print r.json()
+Content-Type: application/json
+Accept: application/json
 
 ```
 
@@ -1910,6 +3043,65 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{
+  "email": "string",
+  "password": "string",
+  "mfaToken": "string"
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+fetch('/api/sessions',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('/api/sessions', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+}
+
+result = RestClient.post '/api/sessions',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -1958,14 +3150,8 @@ This operation does not require authentication
 
 > Code samples
 
-```python
-import requests
-
-r = requests.delete('/api/sessions', params={
-
-)
-
-print r.json()
+```http
+DELETE /api/sessions HTTP/1.1
 
 ```
 
@@ -1979,6 +3165,45 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+fetch('/api/sessions',
+{
+  method: 'DELETE'
+
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+
+r = requests.delete('/api/sessions', params={
+
+)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+result = RestClient.delete '/api/sessions',
+  params: {
+  }
+
+p JSON.parse(result)
 
 ```
 
@@ -2001,17 +3226,10 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/tokens HTTP/1.1
 
-r = requests.get('/api/tokens', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -2030,6 +3248,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/tokens',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/tokens', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/tokens',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -2075,18 +3345,11 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-}
+```http
+POST /api/tokens HTTP/1.1
 
-r = requests.post('/api/tokens', params={
-
-}, headers = headers)
-
-print r.json()
+Content-Type: application/json
+Accept: application/json
 
 ```
 
@@ -2106,6 +3369,64 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{
+  "email": "string",
+  "password": "string"
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+fetch('/api/tokens',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('/api/tokens', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+}
+
+result = RestClient.post '/api/tokens',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -2153,14 +3474,8 @@ This operation does not require authentication
 
 > Code samples
 
-```python
-import requests
-
-r = requests.delete('/api/tokens/{id}', params={
-
-)
-
-print r.json()
+```http
+DELETE /api/tokens/{id} HTTP/1.1
 
 ```
 
@@ -2174,6 +3489,45 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+fetch('/api/tokens/{id}',
+{
+  method: 'DELETE'
+
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+
+r = requests.delete('/api/tokens/{id}', params={
+
+)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+result = RestClient.delete '/api/tokens/{id}',
+  params: {
+  }
+
+p JSON.parse(result)
 
 ```
 
@@ -2202,14 +3556,8 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-
-r = requests.patch('/api/users/activate', params={
-
-)
-
-print r.json()
+```http
+PATCH /api/users/activate HTTP/1.1
 
 ```
 
@@ -2223,6 +3571,45 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+fetch('/api/users/activate',
+{
+  method: 'PATCH'
+
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+
+r = requests.patch('/api/users/activate', params={
+
+)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+result = RestClient.patch '/api/users/activate',
+  params: {
+  }
+
+p JSON.parse(result)
 
 ```
 
@@ -2245,17 +3632,10 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json'
-}
+```http
+PATCH /api/test-automation/accounts/type HTTP/1.1
 
-r = requests.patch('/api/test-automation/accounts/type', params={
-
-}, headers = headers)
-
-print r.json()
+Content-Type: application/json
 
 ```
 
@@ -2274,6 +3654,61 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{
+  "email": "string",
+  "type": "individual"
+}';
+const headers = {
+  'Content-Type':'application/json'
+
+};
+
+fetch('/api/test-automation/accounts/type',
+{
+  method: 'PATCH',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json'
+}
+
+r = requests.patch('/api/test-automation/accounts/type', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json'
+}
+
+result = RestClient.patch '/api/test-automation/accounts/type',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -2310,17 +3745,10 @@ This operation does not require authentication
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json'
-}
+```http
+PATCH /api/test-automation/accounts/account-status HTTP/1.1
 
-r = requests.patch('/api/test-automation/accounts/account-status', params={
-
-}, headers = headers)
-
-print r.json()
+Content-Type: application/json
 
 ```
 
@@ -2339,6 +3767,63 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{
+  "email": "string",
+  "status": "registered",
+  "enableMfa": true,
+  "hasTriggeredKycCheck": true
+}';
+const headers = {
+  'Content-Type':'application/json'
+
+};
+
+fetch('/api/test-automation/accounts/account-status',
+{
+  method: 'PATCH',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json'
+}
+
+r = requests.patch('/api/test-automation/accounts/account-status', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json'
+}
+
+result = RestClient.patch '/api/test-automation/accounts/account-status',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -2377,17 +3862,10 @@ This operation does not require authentication
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/balances HTTP/1.1
 
-r = requests.get('/api/balances', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -2406,6 +3884,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/balances',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/balances', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/balances',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -2473,17 +4003,10 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json'
-}
+```http
+PATCH /api/test-automation/balances HTTP/1.1
 
-r = requests.patch('/api/test-automation/balances', params={
-
-}, headers = headers)
-
-print r.json()
+Content-Type: application/json
 
 ```
 
@@ -2502,6 +4025,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{}';
+const headers = {
+  'Content-Type':'application/json'
+
+};
+
+fetch('/api/test-automation/balances',
+{
+  method: 'PATCH',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json'
+}
+
+r = requests.patch('/api/test-automation/balances', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json'
+}
+
+result = RestClient.patch '/api/test-automation/balances',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -2535,18 +4110,11 @@ This operation does not require authentication
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-}
+```http
+POST /api/vault HTTP/1.1
 
-r = requests.post('/api/vault', params={
-
-}, headers = headers)
-
-print r.json()
+Content-Type: application/json
+Accept: application/json
 
 ```
 
@@ -2566,6 +4134,63 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{
+  "publicKey": "string"
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+fetch('/api/vault',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('/api/vault', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+}
+
+result = RestClient.post '/api/vault',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -2612,17 +4237,10 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/vault HTTP/1.1
 
-r = requests.get('/api/vault', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -2641,6 +4259,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/vault',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/vault', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/vault',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -2673,17 +4343,10 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/wallets HTTP/1.1
 
-r = requests.get('/api/wallets', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -2702,6 +4365,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/wallets',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/wallets', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/wallets',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -2734,17 +4449,10 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/wallets/kinesis-bank-details HTTP/1.1
 
-r = requests.get('/api/wallets/kinesis-bank-details', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -2763,6 +4471,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/wallets/kinesis-bank-details',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/wallets/kinesis-bank-details', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/wallets/kinesis-bank-details',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -2795,17 +4555,10 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+POST /api/wallets/address/{currency} HTTP/1.1
 
-r = requests.post('/api/wallets/address/{currency}', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -2824,6 +4577,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/wallets/address/{currency}',
+{
+  method: 'POST',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.post('/api/wallets/address/{currency}', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.post '/api/wallets/address/{currency}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -2875,17 +4680,10 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+POST /api/wallets/address/events/{currency} HTTP/1.1
 
-r = requests.post('/api/wallets/address/events/{currency}', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -2904,6 +4702,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/wallets/address/events/{currency}',
+{
+  method: 'POST',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.post('/api/wallets/address/events/{currency}', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.post '/api/wallets/address/events/{currency}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -2955,17 +4805,10 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json'
-}
+```http
+POST /api/test-automation/deposit/transaction/eth HTTP/1.1
 
-r = requests.post('/api/test-automation/deposit/transaction/eth', params={
-
-}, headers = headers)
-
-print r.json()
+Content-Type: application/json
 
 ```
 
@@ -2984,6 +4827,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{}';
+const headers = {
+  'Content-Type':'application/json'
+
+};
+
+fetch('/api/test-automation/deposit/transaction/eth',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json'
+}
+
+r = requests.post('/api/test-automation/deposit/transaction/eth', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json'
+}
+
+result = RestClient.post '/api/test-automation/deposit/transaction/eth',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -3017,17 +4912,10 @@ This operation does not require authentication
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json'
-}
+```http
+POST /api/test-automation/deposit/transaction HTTP/1.1
 
-r = requests.post('/api/test-automation/deposit/transaction', params={
-
-}, headers = headers)
-
-print r.json()
+Content-Type: application/json
 
 ```
 
@@ -3046,6 +4934,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{}';
+const headers = {
+  'Content-Type':'application/json'
+
+};
+
+fetch('/api/test-automation/deposit/transaction',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json'
+}
+
+r = requests.post('/api/test-automation/deposit/transaction', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json'
+}
+
+result = RestClient.post '/api/test-automation/deposit/transaction',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -3079,17 +5019,10 @@ This operation does not require authentication
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/market-data/ohlc?symbolId=string&timeFrame=1&fromDate=2020-03-02T01%3A36%3A22Z HTTP/1.1
 
-r = requests.get('/api/market-data/ohlc', params={
-  'symbolId': 'string',  'timeFrame': '1',  'fromDate': '2020-02-27T00:17:40Z'
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -3102,12 +5035,67 @@ var headers = {
 $.ajax({
   url: '/api/market-data/ohlc',
   method: 'get',
-  data: '?symbolId=string&timeFrame=1&fromDate=2020-02-27T00%3A17%3A40Z',
+  data: '?symbolId=string&timeFrame=1&fromDate=2020-03-02T01%3A36%3A22Z',
   headers: headers,
   success: function(data) {
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/market-data/ohlc?symbolId=string&timeFrame=1&fromDate=2020-03-02T01%3A36%3A22Z',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/market-data/ohlc', params={
+  'symbolId': 'string',  'timeFrame': '1',  'fromDate': '2020-03-02T01:36:22Z'
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/market-data/ohlc',
+  params: {
+  'symbolId' => 'string',
+'timeFrame' => 'string',
+'fromDate' => 'string(date-time)'
+}, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -3161,17 +5149,10 @@ This operation does not require authentication
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/market-data/snapshots/all HTTP/1.1
 
-r = requests.get('/api/market-data/snapshots/all', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -3190,6 +5171,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/market-data/snapshots/all',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/market-data/snapshots/all', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/market-data/snapshots/all',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -3222,17 +5255,10 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/market-data/snapshots/{currency} HTTP/1.1
 
-r = requests.get('/api/market-data/snapshots/{currency}', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -3251,6 +5277,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/market-data/snapshots/{currency}',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/market-data/snapshots/{currency}', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/market-data/snapshots/{currency}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -3302,17 +5380,10 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/mid-price?symbolPairId=string HTTP/1.1
 
-r = requests.get('/api/mid-price', params={
-  'symbolPairId': 'string'
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -3331,6 +5402,59 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/mid-price?symbolPairId=string',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/mid-price', params={
+  'symbolPairId': 'string'
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/mid-price',
+  params: {
+  'symbolPairId' => 'string'
+}, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -3385,17 +5509,10 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/mid-price/real-time HTTP/1.1
 
-r = requests.get('/api/mid-price/real-time', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -3414,6 +5531,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/mid-price/real-time',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/mid-price/real-time', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/mid-price/real-time',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -3446,17 +5615,10 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/mid-price/real-time/{symbolId} HTTP/1.1
 
-r = requests.get('/api/mid-price/real-time/{symbolId}', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -3475,6 +5637,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/mid-price/real-time/{symbolId}',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/mid-price/real-time/{symbolId}', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/mid-price/real-time/{symbolId}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -3513,17 +5727,10 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/boundaries HTTP/1.1
 
-r = requests.get('/api/boundaries', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -3542,6 +5749,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/boundaries',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/boundaries', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/boundaries',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -3571,17 +5830,10 @@ This operation does not require authentication
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/currencies HTTP/1.1
 
-r = requests.get('/api/currencies', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -3600,6 +5852,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/currencies',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/currencies', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/currencies',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -3661,17 +5965,10 @@ This operation does not require authentication
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/feature-flags HTTP/1.1
 
-r = requests.get('/api/feature-flags', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -3690,6 +5987,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/feature-flags',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/feature-flags', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/feature-flags',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -3741,17 +6090,10 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/symbols HTTP/1.1
 
-r = requests.get('/api/symbols', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -3770,6 +6112,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/symbols',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/symbols', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/symbols',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -3857,17 +6251,10 @@ This operation does not require authentication
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/symbols/apply-threshold HTTP/1.1
 
-r = requests.get('/api/symbols/apply-threshold', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -3886,6 +6273,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/symbols/apply-threshold',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/symbols/apply-threshold', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/symbols/apply-threshold',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -3921,18 +6360,11 @@ None, cookieAuth
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-}
+```http
+POST /api/withdrawals HTTP/1.1
 
-r = requests.post('/api/withdrawals', params={
-
-}, headers = headers)
-
-print r.json()
+Content-Type: application/json
+Accept: application/json
 
 ```
 
@@ -3952,6 +6384,66 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{
+  "address": "string",
+  "amount": 0,
+  "currencyCode": "ETH",
+  "memo": "string"
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+fetch('/api/withdrawals',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('/api/withdrawals', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+}
+
+result = RestClient.post '/api/withdrawals',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -4001,17 +6493,10 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/withdrawals/configs HTTP/1.1
 
-r = requests.get('/api/withdrawals/configs', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -4030,6 +6515,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/withdrawals/configs',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/withdrawals/configs', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/withdrawals/configs',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -4062,17 +6599,10 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/withdrawals/configs/{currency} HTTP/1.1
 
-r = requests.get('/api/withdrawals/configs/{currency}', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -4091,6 +6621,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/withdrawals/configs/{currency}',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/withdrawals/configs/{currency}', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/withdrawals/configs/{currency}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -4142,17 +6724,10 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/crypto/validate?code=ETH&address=string HTTP/1.1
 
-r = requests.get('/api/crypto/validate', params={
-  'code': 'ETH',  'address': 'string'
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -4171,6 +6746,60 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/crypto/validate?code=ETH&address=string',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/crypto/validate', params={
+  'code': 'ETH',  'address': 'string'
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/crypto/validate',
+  params: {
+  'code' => 'string',
+'address' => 'string'
+}, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -4221,17 +6850,10 @@ cookieAuth
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+GET /api/contacts/{currencyCode} HTTP/1.1
 
-r = requests.get('/api/contacts/{currencyCode}', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -4250,6 +6872,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/contacts/{currencyCode}',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/contacts/{currencyCode}', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/contacts/{currencyCode}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -4303,18 +6977,11 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-}
+```http
+POST /api/contacts HTTP/1.1
 
-r = requests.post('/api/contacts', params={
-
-}, headers = headers)
-
-print r.json()
+Content-Type: application/json
+Accept: application/json
 
 ```
 
@@ -4334,6 +7001,65 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{
+  "currency": "ETH",
+  "name": "string",
+  "publicKey": "string"
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+fetch('/api/contacts',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('/api/contacts', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+}
+
+result = RestClient.post '/api/contacts',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -4382,18 +7108,11 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-}
+```http
+POST /api/orders HTTP/1.1
 
-r = requests.post('/api/orders', params={
-
-}, headers = headers)
-
-print r.json()
+Content-Type: application/json
+Accept: application/json
 
 ```
 
@@ -4413,6 +7132,61 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+fetch('/api/orders',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('/api/orders', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+}
+
+result = RestClient.post '/api/orders',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -4458,17 +7232,10 @@ cookieAuth, None
 
 > Code samples
 
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
+```http
+DELETE /api/orders/{id} HTTP/1.1
 
-r = requests.delete('/api/orders/{id}', params={
-
-}, headers = headers)
-
-print r.json()
+Accept: application/json
 
 ```
 
@@ -4487,6 +7254,58 @@ $.ajax({
     console.log(JSON.stringify(data));
   }
 })
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/orders/{id}',
+{
+  method: 'DELETE',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.delete('/api/orders/{id}', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.delete '/api/orders/{id}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
 
 ```
 
@@ -4612,8 +7431,8 @@ cookieAuth, None
   "fee": 0,
   "id": 0,
   "globalTransactionId": "string",
-  "createdAt": "2020-02-27T00:17:40Z",
-  "updatedAt": "2020-02-27T00:17:40Z",
+  "createdAt": "2020-03-02T01:36:22Z",
+  "updatedAt": "2020-03-02T01:36:22Z",
   "tradingPlatformName": "string"
 }
 
@@ -4647,7 +7466,7 @@ cookieAuth, None
 ```json
 {
   "status": "pending",
-  "updatedAt": "2020-02-27T00:17:40Z"
+  "updatedAt": "2020-03-02T01:36:22Z"
 }
 
 ```

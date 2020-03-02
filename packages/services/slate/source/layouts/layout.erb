@@ -70,7 +70,6 @@ under the License.
         <ul class="search-results"></ul>
       <% end %>
       <ul id="toc" class="toc-list-h1">
-        <li id="vtwo-link1" style="font-size: 14px;color: rgba(89,88,100,0.03);"><a class="toc-h1 toc-link" href="/sub1/">Sub 1</a></li>
         <% toc_data(page_content).each do |h1| %>
           <li>
             <a href="#<%= h1[:id] %>" class="toc-h1 toc-link" data-title="<%= h1[:title] %>"><%= h1[:content] %></a>

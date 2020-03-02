@@ -7,8 +7,7 @@
   "license": "ISC",
   "main": "lib/slate.js",
   "directories": {
-    "lib": "lib",
-    "test": "__tests__"
+    "lib": "lib"
   },
   "files": [
     "lib"
@@ -18,9 +17,19 @@
     "url": "git+https://github.com/bullioncapital/secondary-exchange-services.git"
   },
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "start": "docker-compose up -d",
+    "mergeSwagger": "clean:swagger && node mergeSwagger.js",
+    "convert": "widdershins --environment ./widdershins.config.json --summary swagger.json -o source/index.html.md",
+    "build:static": "docker-compose run --rm slate bundle exec middleman build --clean",
+    "clean:build": "rm -rf build",
+    "clean:swagger": "rm swagger.json",
+    "clean": "npm run clean:build && npm run clean:swagger",
+    "build:api": "npm run mergeSwagger && npm run convert && npm run build:static"
   },
   "bugs": {
     "url": "https://github.com/bullioncapital/secondary-exchange-services/issues"
+  },
+  "dependencies": {
+    "widdershins": "3.6.7"
   }
 }
