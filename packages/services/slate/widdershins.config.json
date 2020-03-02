@@ -3,12 +3,12 @@
   "verbose": true,
   "tagGroups": [
     {
-      "title": "Companies",
-      "tags": ["companies"]
+      "title": "Account",
+      "tags": ["accounts"]
     },
     {
-      "title": "Billing",
-      "tags": ["invoice-create", "invoice-close", "invoice-delete"]
+      "title": "Auth",
+      "tags": ["session", "invoice-close", "invoice-delete"]
     }
   ]
 }

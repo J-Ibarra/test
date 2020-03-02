@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, Query, Response, Route, SuccessResponse } from 'tsoa'
+import {Body, Controller, Get, Post, Put, Query, Response, Route, SuccessResponse, Tags} from 'tsoa'
 
 import {
   createAndSaveNewPassword,
@@ -23,6 +23,7 @@ interface ResetPasswordRequest {
 
 const genericPasswordResetResponse = { message: 'If your email is in our system, you will receive a password recovery link to your inbox shortly.' }
 
+@Tags('accounts')
 @SuccessResponse('200')
 @Response('400', 'Bad request')
 @Route('reset-password')

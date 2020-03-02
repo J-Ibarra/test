@@ -18,7 +18,7 @@
   },
   "scripts": {
     "start": "docker-compose up -d",
-    "mergeSwagger": "clean:swagger && node mergeSwagger.js",
+    "mergeSwagger": "node mergeSwagger.js",
     "convert": "widdershins --environment ./widdershins.config.json --summary swagger.json -o source/index.html.md",
     "build:static": "docker-compose run --rm slate bundle exec middleman build --clean",
     "clean:build": "rm -rf build",
