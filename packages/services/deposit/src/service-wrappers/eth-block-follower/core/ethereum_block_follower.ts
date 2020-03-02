@@ -24,7 +24,7 @@ export async function triggerEthereumBlockFollower(onChainCurrencyManager: Curre
   try {
     const { id: currencyId } = await findCurrencyForCode(CurrencyCode.ethereum)
     const depositAddresses = await findKycOrEmailVerifiedDepositAddresses(currencyId)
-    const { lastBlockNumberProcessed } = await getBlockchainFollowerDetailsForCurrency(currencyId) as BlockchainFollowerDetails
+    const { lastBlockNumberProcessed } = (await getBlockchainFollowerDetailsForCurrency(currencyId)) as BlockchainFollowerDetails
 
     if (Number(lastBlockNumberProcessed) === 0 && !testEnvironments.includes(process.env.NODE_ENV as string)) {
       throw new Error('Waiting for lastProcessedBlockNumber to be updated from 0')
@@ -89,7 +89,7 @@ export async function handleEthereumTransactions(
       publicKeyToDepositAddress.has(transaction.to)
         ? acc.concat({ tx: transaction, depositAddress: publicKeyToDepositAddress.get(transaction.to)! })
         : acc,
-    [] as { tx: Transaction, depositAddress: DepositAddress }[],
+    [] as { tx: Transaction; depositAddress: DepositAddress }[],
   )
 
   if (potentialDepositTransactions.length > 0) {
