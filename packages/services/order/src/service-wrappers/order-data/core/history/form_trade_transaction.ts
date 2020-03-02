@@ -5,7 +5,7 @@ import { OrderDirection, TradeTransaction, TransactionType } from '@abx-types/or
 import { CurrencyCode, SymbolPair, CurrencyBoundary } from '@abx-types/reference-data'
 import { TransactionHistory, TransactionHistoryDirection } from './model'
 
-const logger = Logger.getInstance('dataset_retrieval', 'form_trade_Transaction')
+const logger = Logger.getInstance('order-data', 'form_trade_Transaction')
 
 /**
  * Form Order type balance adjustment to history
@@ -18,8 +18,11 @@ export function formTradeTransactionToHistory(
   allSymbols: SymbolPair[],
   currencyBoundaries: CurrencyBoundary[],
 ): TransactionHistory {
+  logger.debug(`Traded transaction: ${JSON.stringify(tradeTransaction)}`)
+  logger.debug(`selected currency code: ${selectedCurrencyCode}, symbols: ${JSON.stringify(allSymbols)}`)
   const feeCurrency = allSymbols.find(({ fee }) => fee.code === selectedCurrencyCode)!.fee
   const tradeSymbol = allSymbols.find(symbol => symbol.id === tradeTransaction.symbolId)
+  logger.debug(`Traded symbol: ${JSON.stringify(tradeSymbol)}`)
 
   const { primaryAmount, memo, direction, preferredCurrencyAmount } = formResult(
     tradeTransaction,
