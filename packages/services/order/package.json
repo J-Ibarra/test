@@ -28,7 +28,8 @@
     "build-image-order-gateway": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-order-gateway:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-order-gateway:latest -f packages/services/order/src/service-wrappers/order-gateway/Dockerfile . && cd packages/services/order",
     "build-image-order-settlement": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-order-settlement:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-order-settlement:latest -f packages/services/order/src/service-wrappers/order-settlement/Dockerfile . && cd packages/services/order",
     "build-image-order-matcher": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-order-matcher:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-order-matcher:latest -f packages/services/order/src/service-wrappers/order-matcher/Dockerfile . && cd packages/services/order",
-    "build-image-latest": "npm run build-image-order-data && npm run build-image-order-gateway && npm run build-image-order-settlement && npm run build-image-order-matcher",
+    "build-base-image": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-order-base -f packages/services/order/Dockerfile . && cd packages/services/order",
+    "build-image-latest": "npm run build-base-image && npm run build-image-order-data && npm run build-image-order-gateway && npm run build-image-order-settlement && npm run build-image-order-matcher",
     "push-image-order-data": "docker push $KINESIS_ECR_URL/kbe-services-order-data",
     "push-image-order-gateway": "docker push $KINESIS_ECR_URL/kbe-services-order-gateway",
     "push-image-order-settlement": "docker push $KINESIS_ECR_URL/kbe-services-order-settlement",
@@ -73,7 +74,8 @@
     "request-ip": "2.1.3",
     "sequelize": "4.41.0",
     "tsoa": "2.3.81",
-    "@types/sequelize": "3.30.4"
+    "@types/sequelize": "3.30.4",
+    "lodash": "4.17.5"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",

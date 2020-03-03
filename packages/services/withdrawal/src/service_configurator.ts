@@ -59,7 +59,7 @@ async function setupPendingCompletionCryptoWithdrawalProcessor(pendingCompletion
 }
 
 async function setupWithdrawalRequestGatekeepers() {
-  const pendingHoldingsTransferGatekeeper = new CryptoWithdrawalGatekeeper(PENDING_HOLDINGS_WITHDRAWAL_GATEKEEPER_NAME)
+  const pendingHoldingsTransferGatekeeper = CryptoWithdrawalGatekeeper.getSingletonInstance(PENDING_HOLDINGS_WITHDRAWAL_GATEKEEPER_NAME)
   const pendingCompletionDepositsGatekeeper = new CryptoWithdrawalGatekeeper(PENDING_COMPLETION_WITHDRAWAL_GATEKEEPER_NAME)
 
   await Promise.all([

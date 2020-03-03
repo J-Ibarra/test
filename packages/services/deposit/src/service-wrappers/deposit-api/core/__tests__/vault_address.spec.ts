@@ -4,9 +4,7 @@ import { createTemporaryTestingAccount } from '@abx-utils/account'
 import { truncateTables } from '@abx-utils/db-connection-utils'
 
 describe('vault_address', () => {
-  beforeEach(async () => {
-    await truncateTables()
-  })
+  beforeEach(async () => await truncateTables(['vault_address']))
 
   it('persistUsersVaultPublicKey should store vault address generated', async () => {
     const account = await createTemporaryTestingAccount()

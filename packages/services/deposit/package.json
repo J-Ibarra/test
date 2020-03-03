@@ -21,13 +21,18 @@
     "test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_PATH=dist ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts --require ../../../_test-setup/test_globals.js src/**/*.spec.ts --exit",
     "run-migrations": "ts-node-dev src/migrations/index.ts",
     "build-image-deposit-api": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-deposit-api:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-deposit-api:latest -f packages/services/deposit/src/service-wrappers/deposit-api/Dockerfile . && cd packages/services/deposit ",
+    "build-image-eth-block-follower": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-ethereum-block-follower:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-ethereum-block-follower:latest -f packages/services/deposit/src/service-wrappers/eth-block-follower/Dockerfile . && cd packages/services/deposit ",
+    "build-image-kvt-block-follower": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-kvt-block-follower:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-kvt-block-follower:latest -f packages/services/deposit/src/service-wrappers/kvt-block-follower/Dockerfile . && cd packages/services/deposit ",
     "build-image-kinesis-and-eth-coin-deposit-processor": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-kinesis-and-eth-coin-deposit-processor:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-kinesis-and-eth-coin-deposit-processor:latest -f packages/services/deposit/src/service-wrappers/kinesis-and-eth-coin-deposit-processor/Dockerfile . && cd packages/services/deposit ",
     "build-image-third-party-coin-deposit-processor": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-third-party-coin-deposit-processor:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-third-party-coin-deposit-processor:latest -f packages/services/deposit/src/service-wrappers/third-party-coin-deposit-processor/Dockerfile . && cd packages/services/deposit ",
-    "build-image-latest": "npm run build-image-deposit-api && npm run build-image-kinesis-and-eth-coin-deposit-processor && npm run build-image-third-party-coin-deposit-processor",
+    "build-base-image": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-deposit-base -f packages/services/deposit/Dockerfile .",
+    "build-image-latest": "npm run build-base-image && npm run build-image-deposit-api && npm run build-image-eth-block-follower && npm run build-image-kvt-block-follower && npm run build-image-deposit-api && npm run build-image-kinesis-and-eth-coin-deposit-processor && npm run build-image-third-party-coin-deposit-processor",
     "push-deposit-api-image": "docker push $KINESIS_ECR_URL/kbe-services-deposit-api",
+    "push-eth-block-follower-image": "docker push $KINESIS_ECR_URL/kbe-services-ethereum-block-follower",
+    "push-kvt-block-follower-image": "docker push $KINESIS_ECR_URL/kbe-services-kvt-block-follower",
     "push-kinesis-and-eth-coin-deposit-processor-image": "docker push $KINESIS_ECR_URL/kbe-services-kinesis-and-eth-coin-deposit-processor",
     "push-third-party-coin-deposit-processor-image": "docker push $KINESIS_ECR_URL/kbe-services-third-party-coin-deposit-processor",
-    "push-image": "npm run && npm run push-third-party-coin-deposit-processor-image && npm run push-deposit-api-image && npm run push-kinesis-and-eth-coin-deposit-processor-image"
+    "push-image": "npm run push-deposit-api-image && npm run push-eth-block-follower-image && npm run push-kvt-block-follower-image && push-kinesis-and-eth-coin-deposit-processor-image && push-third-party-coin-deposit-processor-image"
   },
   "dependencies": {
     "@abx-service-clients/account": "^1.1.0",
@@ -63,7 +68,10 @@
     "newrelic": "4.10.0",
     "request-ip": "2.1.3",
     "sequelize": "4.41.0",
-    "tsoa": "2.3.81"
+    "tsoa": "2.3.81",
+    "js-kinesis-sdk": "0.9.9",
+    "web3": "1.2.1",
+    "@types/web3": "1.0.14"
   },
   "devDependencies": {
     "@abx-utils/account": "^1.1.0",

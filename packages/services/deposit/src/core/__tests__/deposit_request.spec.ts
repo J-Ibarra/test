@@ -70,6 +70,7 @@ describe('Deposit Request module', () => {
 
       const pendingDepositRequest: DepositRequest = {
         ...confirmedDepositRequest,
+        depositTxHash: 'TX-2',
         status: DepositRequestStatus.pendingHoldingsTransaction,
       }
 

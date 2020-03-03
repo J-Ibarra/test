@@ -20,7 +20,8 @@
     "test-account": "NEW_RELIC_NO_CONFIG_FILE=true NODE_PATH=dist ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts --require ../../../_test-setup/test_globals.js src/**/*.spec.ts --exit",
     "build-image-account": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-account:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-account:latest -f packages/services/account/src/service-wrappers/account/Dockerfile . && cd packages/services/account",
     "build-image-salesforce": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-salesforce-integration:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-salesforce-integration:latest -f packages/services/account/src/service-wrappers/salesforce/Dockerfile . && cd packages/services/account",
-    "build-image-latest": "npm run build-image-account && npm run build-image-salesforce",
+    "build-base-image": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-account-base:latest -f packages/services/account/Dockerfile . && cd packages/services/account",
+    "build-image-latest": "npm run build-base-image && npm run build-image-account && npm run build-image-salesforce",
     "push-image-account": "docker push $KINESIS_ECR_URL/kbe-services-account",
     "push-image-salesforce": "docker push $KINESIS_ECR_URL/kbe-services-salesforce-integration",
     "push-image": "npm run push-image-account && npm run push-image-salesforce"
@@ -47,11 +48,13 @@
     "@abx-utils/internal-api-tools": "^1.1.0",
     "@abx-utils/kbe-legacy-migrations": "^1.1.0",
     "@abx-utils/logging": "^1.1.0",
+    "@types/sequelize": "3.30.4",
     "aws-sdk": "2.454.0",
     "axios": "0.19.0",
     "bcryptjs": "2.4.3",
     "body-parser": "1.18.3",
     "cookie-parser": "1.4.3",
+    "cryptoapis.io": "^4.2.3",
     "express": "4.16.4",
     "jsonwebtoken": "8.5.0",
     "method-override": "2.3.10",
@@ -62,7 +65,7 @@
     "speakeasy": "2.0.0",
     "tsoa": "2.3.81",
     "typescript": "3.7.2",
-    "@types/sequelize": "3.30.4"
+    "lodash": "4.17.5"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",

@@ -4,7 +4,7 @@ import { WITHDRAWAL_STATUS_CHANGE_QUEUE_URL, localRedisWithdrawalChangeTopic } f
 
 export function cancelFiatWithdrawal(adminRequestId: number) {
   return sendAsyncChangeMessage<AsyncWithdrawalStatusChangeRequest>({
-    id: `${adminRequestId}`,
+    id: `cancelFiatWithdrawal-${adminRequestId}`,
     type: WithdrawalStatusChangeRequestType.cancelFiatWithdrawal,
     target: {
       local: localRedisWithdrawalChangeTopic,
@@ -21,7 +21,7 @@ export function cancelFiatWithdrawal(adminRequestId: number) {
 
 export function createFiatWithdrawal(fiatWithdrawalCreationParams: FiatWithdrawalCreationRequest) {
   return sendAsyncChangeMessage<AsyncWithdrawalStatusChangeRequest>({
-    id: fiatWithdrawalCreationParams.transactionId,
+    id: `createFiatWithdrawal-${fiatWithdrawalCreationParams.transactionId}`,
     type: WithdrawalStatusChangeRequestType.createFiatWithdrawal,
     target: {
       local: localRedisWithdrawalChangeTopic,

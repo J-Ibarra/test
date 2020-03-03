@@ -1,4 +1,4 @@
-import { FindOptions } from 'sequelize'
+import { Transaction, FindOptions } from 'sequelize'
 import { getModel } from '@abx-utils/db-connection-utils'
 import { RuntimeError } from '@abx-types/error'
 import { CurrencyCode } from '@abx-types/reference-data'
@@ -20,6 +20,16 @@ export async function findCurrencyTransactions(query: FindOptions) {
     })
   }
 }
+
+export async function createCurrencyTransaction(
+  currencyTransaction: CurrencyTransaction,
+  transaction?: Transaction,
+): Promise<CurrencyTransaction> {
+  const createdInst = await getModel<CurrencyTransaction>('currencyTransaction').create(currencyTransaction, { transaction })
+
+  return createdInst.get()
+}
+
 
 export async function findCurrencyTransaction(id: number) {
   try {

@@ -7,6 +7,7 @@ import { fetchTransactionsForDepositAddresses } from './transaction-fetching-str
 import { findCurrencyForId } from '@abx-service-clients/reference-data'
 
 const logger = Logger.getInstance('deposit_transactions_fetcher', 'getPotentialDepositRequests')
+
 export const FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION = FiatCurrency.usd
 
 export async function getPotentialDepositRequests(manager: CurrencyManager, depositAddresses: DepositAddress[]): Promise<DepositRequest[]> {

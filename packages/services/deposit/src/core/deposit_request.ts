@@ -11,15 +11,20 @@ let cachedCryptoCurrencies: Currency[] = []
 
 export async function storeDepositRequests(deposits: DepositRequest[], transaction?: Transaction): Promise<DepositRequest[]> {
   const depositAddressIdToDepositAddress: Map<number, DepositAddress> = deposits.reduce(
-    (idToDepsitAddress, request) => idToDepsitAddress.set(request.depositAddress.id, request.depositAddress),
+    (idToDepositAddress, request) => idToDepositAddress.set(request.depositAddress.id, request.depositAddress),
     new Map(),
   )
 
+  const existingDepositRequests = await findAllDepositRequestsByTxHashes(deposits.map(deposit => deposit.depositTxHash))
+  const existingDepositRequestIds: Set<string> = new Set<string>(existingDepositRequests.map(request => request.depositTxHash))
+
   const depositRequestInstances = await getModel<DepositRequest>('depositRequest').bulkCreate(
-    deposits.map(depositRequest => ({
-      ...depositRequest,
-      depositAddressId: depositRequest.depositAddress.id,
-    })),
+    deposits
+      .filter(deposit => !existingDepositRequestIds.has(deposit.depositTxHash))
+      .map(depositRequest => ({
+        ...depositRequest,
+        depositAddressId: depositRequest.depositAddress.id,
+      })),
     { transaction, returning: true },
   )
 
@@ -172,6 +177,14 @@ export async function findDepositRequestByDepositTransactionHash(txHash: string)
   })
 
   return !!depositRequest ? depositRequest.get({ plain: true }) : null
+}
+
+export async function findAllDepositRequestsByTxHashes(depositTxHashes: string[]): Promise<DepositRequest[]> {
+  const depositRequests = await getModel<DepositRequest>('depositRequest').findAll({
+    where: { depositTxHash: { $in: depositTxHashes } },
+  })
+
+  return depositRequests.map(depositRequest => depositRequest.get({ plain: true }))
 }
 
 export async function findDepositRequestById(id: number): Promise<DepositRequest | null> {

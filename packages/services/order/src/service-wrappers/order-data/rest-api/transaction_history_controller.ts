@@ -19,6 +19,8 @@ export class TransactionHistoryController extends Controller {
     } catch (error) {
       this.setStatus(error.status || 400)
       this.logger.error(`Retrieving history for currency: ${selectedCurrency} errors: ${error.status || 400} - ${error.message}`)
+      this.logger.error(`${JSON.stringify(error)}`)
+
       return {
         message: error.message as string,
       }

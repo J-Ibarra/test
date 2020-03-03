@@ -23,11 +23,7 @@ describe('Deposit Address module', () => {
   let ethereumCurrencyId: number = 3
 
   const testCurrencyManager = {
-    generateAddress: () => ({
-      privateKey: 'private-key',
-      address: 'address',
-      publicKey: 'public-key',
-    }),
+    generateAddress: () => ({ privateKey: 'private-key', publicKey: 'publicKey' }),
     getAddressFromPrivateKey: () => 'address',
     encryptValue: value => Promise.resolve(value),
     getId: () => currencyId,

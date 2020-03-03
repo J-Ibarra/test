@@ -25,7 +25,6 @@ export async function generateNewDepositAddress(accountId: string, currency: OnC
     accountId,
     currencyId,
     publicKey: cryptoAddress.publicKey,
-    address: cryptoAddress.address,
     encryptedPrivateKey,
     activated: false,
   } as DepositAddress
@@ -143,7 +142,7 @@ export async function createMissingDepositAddressesForAccount(
 
   const cryptoCurrenciesToGenerateAddressFor = cryptoCurrencies.filter(({ id }) => (currencyIdToDepositAddress[id] || []).length === 0)
 
-  logger.debug(`Currencies to generate: ${cryptoCurrenciesToGenerateAddressFor.join(', ')}`)
+  logger.debug(`Currencies to generate: ${cryptoCurrenciesToGenerateAddressFor.map(address => JSON.stringify(address)).join(', ')}`)
 
   return Promise.all(
     cryptoCurrenciesToGenerateAddressFor.map(({ code }) => {

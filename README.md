@@ -215,6 +215,18 @@ for (userIteration = 0; userIteration < numberOfUsers; userIteration++) {
 }
 ```
 
+#### CI Pipeline
+
+The CI pipeline utilizes Lerna in order to release only the service where changes have ocurred.
+
+For each change that is pushed to develop branch (on PR merge) the CI flow publishes a new docker image tag for the services that have changed to `ECR`.
+
+**!!!** It has been previously agreed that the `COMMIT_HASH` is not the best candidate for the docker image tag, so in order to be able to more easily link the change to the requirement that it implements the CI flow looks for a JIRA number in the commit message (the logic can be found in `createDockerImageTag` function in `_scripts/travis/travis-build-tag-creation-helpers.sh` ).
+
+### That is why when merging PR it is best if the default commit message is edited and the ticket number is added to the commit message
+
+After the new images are pushed to ECR the [kbe-service-versions](https://github.com/bullioncapital/kbe-service-versions) repo should be used to promote the new ECR images to the required environments. (Documentations on how to use and how it works have been added to the repo README)
+
 #### Coding methodology
 
 Functions should be kept succinct and aim to achieve a single purpose. This is to aid in the creation of unit tests and reduce the complexity required in producing tests.

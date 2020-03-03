@@ -10,8 +10,11 @@ import {
   bootstrapKinesisAndEthCoinDepositProcessor,
   bootstrapThirdPartyCoinDepositProcessor,
   bootstrapDepositEntryProcessor,
+  bootstrapEthereumBlockFollowerProcessor,
+  bootstrapKVTBlockFollowerProcessor,
 } from '@abx/exchange-deposit-service'
 
+import { bootstrapWithdrawalService } from '@abx/exchange-withdrawal-service'
 import { bootstrapOrderDataService, bootstrapOrderGatewayService, bootstrapWorkerService, bootstrapSettlementService } from '@abx/order-service'
 
 export async function startAllServices() {
@@ -27,7 +30,12 @@ export async function startAllServices() {
   await bootstrapReportsService()
   await bootstrapNotificationService()
   // await bootstrapSchedulerService()
+  await bootstrapWithdrawalService()
+
+  // Deposit Services
   await bootstrapThirdPartyCoinDepositProcessor()
   await bootstrapDepositEntryProcessor()
   await bootstrapKinesisAndEthCoinDepositProcessor()
+  await bootstrapEthereumBlockFollowerProcessor()
+  await bootstrapKVTBlockFollowerProcessor()
 }
