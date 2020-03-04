@@ -15,6 +15,7 @@ import {
 } from '@abx-utils/express-middleware'
 import { RegisterRoutes } from './routes'
 
+import './admin_order_controller'
 import './order_change_controller'
 import { ORDER_GATEWAY_API_PORT } from '@abx-service-clients/order'
 

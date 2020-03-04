@@ -10,7 +10,7 @@ export function cancelFiatWithdrawal(adminRequestId: number) {
     id: `cancelFiatWithdrawal-${adminRequestId}`,
     type: WithdrawalStatusChangeRequestType.cancelFiatWithdrawal,
     target: {
-      local: 'localRedisWithdrawalChangeTopic',
+      local: localRedisWithdrawalChangeTopic,
       deployedEnvironment: process.env.WITHDRAWAL_STATUS_CHANGE_QUEUE_URL!,
     },
     payload: {
@@ -27,7 +27,7 @@ export function createFiatWithdrawal(fiatWithdrawalCreationParams: FiatWithdrawa
     id: `createFiatWithdrawal-${fiatWithdrawalCreationParams.transactionId}`,
     type: WithdrawalStatusChangeRequestType.createFiatWithdrawal,
     target: {
-      local: 'localRedisWithdrawalChangeTopic',
+      local: localRedisWithdrawalChangeTopic,
       deployedEnvironment: process.env.WITHDRAWAL_STATUS_CHANGE_QUEUE_URL!,
     },
     payload: {
