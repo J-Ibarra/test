@@ -11,15 +11,22 @@
   "scripts": {
     "swagger-gen": "tsoa swagger",
     "routes-gen": "tsoa routes",
+    "build-withdrawal-rest-api": "npm run swagger-gen -- -c ./src/service-wrappers/withdrawal-api/tsoa.json && npm run routes-gen -- -c ./src/service-wrappers/withdrawal-api/tsoa.json",
     "api-build": "npm run swagger-gen && npm run routes-gen",
     "build": "npm run clean && npm run compile",
     "clean": "rm -rf ./dist",
-    "compile": "npm run clean && npm run api-build && tsc -p tsconfig.build.json --skipLibCheck",
+    "compile": "npm run build-withdrawal-rest-api && tsc -p tsconfig.build.json --skipLibCheck",
+    "run-migrations:test": "npm run compile && NODE_ENV=test NODE_PATH=dist node dist/migrations/index.js",
     "migrate-db": "npm run build && NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test NODE_PATH=dist node dist/migrations/index.js",
     "start": "ts-node-dev src/index.ts",
     "test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test NODE_PATH=dist ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts src/**/*.spec.ts --exit",
-    "build-image-latest": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-withdrawal:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-withdrawal:latest -f packages/services/withdrawal/Dockerfile . && cd packages/services/withdrawal ",
-    "push-image": "docker push $KINESIS_ECR_URL/kbe-services-withdrawal"
+    "build-image-withdrawal-api": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-withdrawal-api:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-withdrawal-api:latest -f packages/services/withdrawal/src/service-wrappers/withdrawal-api/Dockerfile . && cd packages/services/withdrawal ",
+    "build-image-withdrawal-processor": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-withdrawal-processor:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-withdrawal-processor:latest -f packages/services/withdrawal/src/service-wrappers/withdrawal-processor/Dockerfile . && cd packages/services/withdrawal ",
+    "build-base-image": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-withdrawal-base:latest -f packages/services/withdrawal/Dockerfile . && cd packages/services/withdrawal ",
+    "build-image-latest": "npm run build-base-image && npm run build-image-withdrawal-api && npm run build-image-withdrawal-processor",
+    "push-image-withdrawal-api": "docker push $KINESIS_ECR_URL/kbe-services-withdrawal-api",
+    "push-image-withdrawal-processor": "docker push $KINESIS_ECR_URL/kbe-services-withdrawal-processor",
+    "push-image": "npm run push-image-withdrawal-api && npm run push-image-withdrawal-processor"
   },
   "dependencies": {
     "@abx-service-clients/account": "^1.1.0",
@@ -38,6 +45,7 @@
     "@abx-types/reference-data": "^1.1.0",
     "@abx-types/withdrawal": "^1.1.0",
     "@abx-utils/async-message-consumer": "^1.1.0",
+    "@abx-utils/async-message-publisher": "^1.1.0",
     "@abx-utils/blockchain-currency-gateway": "^1.1.0",
     "@abx-utils/db-connection-utils": "^1.1.0",
     "@abx-utils/express-middleware": "^1.1.0",

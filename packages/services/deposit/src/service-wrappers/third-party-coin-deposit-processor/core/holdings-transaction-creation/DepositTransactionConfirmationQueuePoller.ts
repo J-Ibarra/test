@@ -1,9 +1,9 @@
 import { getQueuePoller } from '@abx-utils/async-message-consumer'
 import { IConfirmedTransactionEventPayload } from '@abx-utils/blockchain-currency-gateway'
 import { HoldingsTransactionDispatcher } from './HoldingsTransactionDispatcher'
-import { findDepositRequestByDepositTransactionHash, updateDepositRequest } from '../../../../core'
+import { findDepositRequestByDepositTransactionHash } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
-import { DepositRequestStatus } from '@abx-types/deposit'
+import { DEPOSIT_CONFIRMED_TRANSACTION_QUEUE_URL } from '../constants'
 
 export class DepositTransactionConfirmationQueuePoller {
   private readonly logger = Logger.getInstance('public-coin-deposit-processor', 'DepositTransactionConfirmationQueuePoller')
@@ -14,8 +14,8 @@ export class DepositTransactionConfirmationQueuePoller {
     const queuePoller = getQueuePoller()
 
     queuePoller.subscribeToQueueMessages<IConfirmedTransactionEventPayload>(
-      process.env.DEPOSIT_ADDRESS_TRANSACTION_QUEUE__URL! || 'local-deposit-transaction-queue',
-      this.processDepositAddressTransaction,
+      DEPOSIT_CONFIRMED_TRANSACTION_QUEUE_URL,
+      this.processDepositAddressTransaction.bind(this),
     )
   }
 
@@ -28,7 +28,6 @@ export class DepositTransactionConfirmationQueuePoller {
       return
     }
 
-    await this.holdingsTransactionDispatcher.transferTransactionAmountToHoldingsWallet(currency, txid, depositRequest)
-    await updateDepositRequest(depositRequest.id!, { status: DepositRequestStatus.pendingHoldingsTransactionConfirmation })
+    await this.holdingsTransactionDispatcher.transferTransactionAmountToHoldingsWallet(currency, depositRequest)
   }
 }

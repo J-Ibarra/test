@@ -39,7 +39,7 @@ describe('Deposit Request module', () => {
       SAVED_TEST_DEPOSIT_ADDRESS = await storeDepositAddress({
         ...TEST_DEPOSIT_ADDRESS,
         accountId: SAVED_TEST_ACCOUNT_ID,
-        activated: false,
+        transactionTrackingActivated: false,
       })
     })
 
@@ -121,14 +121,14 @@ describe('Deposit Request module', () => {
         encryptedPrivateKey: TEST_PRIVATE_KEY,
         publicKey: TEST_ADDRESS,
         accountId: SAVED_TEST_ACCOUNT_ID,
-        activated: false,
+        transactionTrackingActivated: false,
       })
       SAVED_ETH_DEPOSIT_ADDRESS = await storeDepositAddress({
         currencyId: ethId,
         encryptedPrivateKey: TEST_PRIVATE_KEY,
         publicKey: TEST_ADDRESS,
         accountId: SAVED_TEST_ACCOUNT_ID,
-        activated: false,
+        transactionTrackingActivated: false,
       })
     })
 

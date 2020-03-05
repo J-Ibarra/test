@@ -6,10 +6,14 @@ import { BitcoinBlockchainFacade } from './BitcoinBlockchainFacade'
 import { CryptoAddress } from '../model'
 import { DepositAddress } from '@abx-types/deposit'
 import { Logger } from '@abx-utils/logging'
+import { decryptValue } from '@abx-utils/encryption'
 
 /** Adapting the {@link BitcoinBlockchainFacade} to {@link OnChainCurrencyGateway} for backwards-compatibility. */
 export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGateway {
-  ticker: CurrencyCode.bitcoin
+  // Should use 0 when allowed by CRYPTO API
+  private readonly UNCONFIRMED_TRANSACTIONS = 1
+
+  ticker = CurrencyCode.bitcoin
   logger = Logger.getInstance('blockchain-currency-gateway', 'BitcoinOnChainCurrencyGatewayAdapter')
 
   private bitcoinBlockchainFacade: BitcoinBlockchainFacade
@@ -32,11 +36,11 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
         this.logger.warn('Received deposit address details have no address field. Please consider that you are passing in the wrong currency asset.')
         return false
       }
-      if (depositAddressDetails.activated) {
+      if (depositAddressDetails.transactionTrackingActivated) {
         this.logger.warn(`We have already activated transaction events for this address: ${depositAddressDetails.address}`)
         return true
       }
-      await this.bitcoinBlockchainFacade.subscribeToAddressTransactionEvents(depositAddressDetails.address, 1)
+      await this.bitcoinBlockchainFacade.subscribeToAddressTransactionEvents(depositAddressDetails.address, this.UNCONFIRMED_TRANSACTIONS)
       this.logger.info(`Activated transaction events for this address: ${depositAddressDetails.address}`)
       return true
     } catch (e) {
@@ -91,12 +95,17 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
     })
   }
 
-  transferFromExchangeHoldingsTo(toAddress: string, amount: number, transactionConfirmationWebhookUrl: string): Promise<TransactionResponse> {
+  async transferFromExchangeHoldingsTo(toAddress: string, amount: number, transactionConfirmationWebhookUrl: string): Promise<TransactionResponse> {
+    const [holdingsPrivateKey, holdingsWif] = await Promise.all([
+      decryptValue(process.env.KINESIS_BITCOIN_HOLDINGS_PRIVATE_KEY!),
+      decryptValue(process.env.KINESIS_BITCOIN_HOLDINGS_PRIVATE_KEY!),
+    ])
+
     return this.bitcoinBlockchainFacade.createTransaction({
       senderAddress: {
-        privateKey: process.env.KINESIS_BITCOIN_HOLDINGS_SECRET!,
+        privateKey: holdingsPrivateKey!,
         address: process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS!,
-        wif: process.env.KINESIS_BITCOIN_HOLDINGS_WIF!,
+        wif: holdingsWif,
       },
       receiverAddress: toAddress,
       amount,

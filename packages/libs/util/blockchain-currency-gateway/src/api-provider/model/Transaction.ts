@@ -5,4 +5,5 @@ export interface Transaction {
   amount: number
   senderAddress: string
   receiverAddress: string
+  confirmations?: number
 }

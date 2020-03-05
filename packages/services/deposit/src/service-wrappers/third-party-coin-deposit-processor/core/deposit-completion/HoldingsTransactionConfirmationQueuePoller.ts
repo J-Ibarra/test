@@ -3,6 +3,7 @@ import { IConfirmedTransactionEventPayload } from '@abx-utils/blockchain-currenc
 import { findDepositRequestByHoldingsTransactionHash } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
 import { DepositCompleter } from './DepositCompleter'
+import { DEPOSIT_HOLDINGS_TRANSACTION_CONFIRMATION_QUEUE_URL } from '../constants'
 
 export class HoldingsTransactionConfirmationQueuePoller {
   private readonly logger = Logger.getInstance('public-coin-deposit-processor', 'HoldingsTransactionConfirmationQueuePoller')
@@ -12,8 +13,8 @@ export class HoldingsTransactionConfirmationQueuePoller {
     const queuePoller = getQueuePoller()
 
     queuePoller.subscribeToQueueMessages<IConfirmedTransactionEventPayload>(
-      process.env.DEPOSIT_HOLDINGS_TRANSACTION_CONFIRMATION_QUEUE__URL! || 'local-holdings-transactions-queue',
-      this.completeDepositRequest,
+      DEPOSIT_HOLDINGS_TRANSACTION_CONFIRMATION_QUEUE_URL,
+      this.completeDepositRequest.bind(this),
     )
   }
 
@@ -26,6 +27,7 @@ export class HoldingsTransactionConfirmationQueuePoller {
       return
     }
 
-    return this.depositCompleter.completeDepositRequest(depositRequest)
+    await this.depositCompleter.completeDepositRequest(depositRequest)
+    this.logger.info(`Completed deposit request ${depositRequest.id}`)
   }
 }

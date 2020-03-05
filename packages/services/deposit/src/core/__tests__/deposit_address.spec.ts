@@ -67,7 +67,7 @@ describe('Deposit Address module', () => {
       currencyId: 1,
       encryptedPrivateKey: 'private-key-1',
       publicKey: 'public-key-2',
-      activated: false,
+      transactionTrackingActivated: false,
     }
 
     await storeDepositAddress(newAddress)
@@ -109,14 +109,14 @@ describe('Deposit Address module', () => {
       encryptedPrivateKey: 'encrPK',
       currencyId: ethereumCurrencyId,
       publicKey: 'pk1',
-      activated: false,
+      transactionTrackingActivated: false,
     })
     await storeDepositAddress({
       accountId: kycVerifiedAccount2.id,
       encryptedPrivateKey: 'encrPK2',
       currencyId: ethereumCurrencyId,
       publicKey: 'pk2',
-      activated: false,
+      transactionTrackingActivated: false,
     })
     sinon.stub(accountOperations, 'getAllKycVerifiedAccountIds').resolves(new Set([kycVerifiedAccount.id, kycVerifiedAccount2.id]))
 

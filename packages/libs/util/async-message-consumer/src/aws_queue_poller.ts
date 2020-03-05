@@ -1,8 +1,9 @@
 import { Logger } from '@abx-utils/logging'
 import { QueuePoller, QueueMessageHandler } from './queue_poller'
 import * as AWS from 'aws-sdk'
+import { getAwsRegionForEnvironment, Environment } from '@abx-types/reference-data'
 
-const sqs = new AWS.SQS()
+const sqs = new AWS.SQS({ region: getAwsRegionForEnvironment(process.env.NODE_ENV! as Environment) })
 
 /** Uses AWS SQS as queuing mechanism, subscribing to new messages. */
 export class AwsQueueObserver implements QueuePoller {

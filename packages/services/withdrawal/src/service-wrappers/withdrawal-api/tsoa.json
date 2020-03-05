@@ -1,0 +1,28 @@
+{
+  "swagger": {
+    "outputDirectory": "./dist",
+    "entryFile": "./src/service-wrappers/withdrawal-api/rest-api/index.ts",
+    "basePath": "/api",
+    "securityDefinitions": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "name": "appSession",
+        "in": "cookie"
+      },
+      "adminAuth": {
+        "type": "apiKey",
+        "name": "appSession",
+        "in": "cookie"
+      }
+    }
+  },
+  "routes": {
+    "basePath": "/api",
+    "entryFile": "./src/service-wrappers/withdrawal-api/rest-api/index.ts",
+    "routesDir": "./src/service-wrappers/withdrawal-api/rest-api",
+    "authenticationModule": "./src/service-wrappers/withdrawal-api/rest-api/middleware/authentication.ts"
+  },
+  "compilerOptions": {
+    "baseUrl": "src"
+  }
+}

@@ -18,8 +18,9 @@ export abstract class BlockchainFacade {
   /**
    * Retrieves the transaction details for a given hash
    * @param transactionHash transaction identifier
+   * @param targetAddress the transaction target address
    */
-  abstract getTransaction(transactionHash: string): Promise<Transaction>
+  abstract getTransaction(transactionHash: string, targetAddress: string): Promise<Transaction>
 
   /** Generates a new address. */
   abstract generateAddress(): Promise<CryptoAddress>
@@ -51,7 +52,7 @@ export abstract class BlockchainFacade {
    * @param transactionHash the transaction id/hash
    * @param callbackURL the callback URL to invoke on transaction confirmation
    */
-  abstract subscribeToTransactionConfirmationEvents(transactionHash: string, callbackURL: string): Promise<{ alreadyConfirmed: boolean }>
+  abstract subscribeToTransactionConfirmationEvents(transactionHash: string, callbackURL: string): Promise<void>
 
   /**
    * Returns the {@link BlockchainFacade} implementation instance based on the coin passed in.

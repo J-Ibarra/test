@@ -20,13 +20,21 @@ export async function generateNewDepositAddress(accountId: string, currency: OnC
   const cryptoAddress = await currency.generateAddress()
   const encryptedPrivateKey = await encryptValue(cryptoAddress.privateKey)
 
+  let encryptedWif
+  // Third party coins will have address and WIF
+  if (!!cryptoAddress.address) {
+    encryptedWif = await encryptValue(cryptoAddress.wif!)
+  }
+
   const currencyId = await currency.getId()
   return {
     accountId,
     currencyId,
     publicKey: cryptoAddress.publicKey,
     encryptedPrivateKey,
-    activated: false,
+    address: cryptoAddress.address,
+    encryptedWif,
+    transactionTrackingActivated: false,
   } as DepositAddress
 }
 
@@ -161,23 +169,22 @@ export async function createNewDepositAddress(manager: CurrencyManager, accountI
   }
 
   const address = await generateNewDepositAddress(accountId, manager.getCurrencyFromTicker(currencyTicker))
+
+  logger.debug(`Generated address for account ${accountId} and currency ${currencyTicker}`)
+
   return storeDepositAddress(address)
 }
 
-export const findDepositAddressAndListenForEvents = async (
-  { id }: Account,
-  publicKey: string,
-  currencyCode: CurrencyCode,
-): Promise<DepositAddress> => {
+export const findDepositAddressAndListenForEvents = async ({ id }: Account, currencyCode: CurrencyCode): Promise<DepositAddress> => {
   const { id: currencyId } = await findCurrencyForCode(currencyCode)
-  const depositAddress = await findDepositAddress({ publicKey, accountId: id, currencyId })
+  const depositAddress = await findDepositAddress({ accountId: id, currencyId })
 
   if (!depositAddress) {
     throw new ValidationError(`Deposit address does not exist for currency id: ${currencyId} and account id: ${id}`)
   }
 
-  if (depositAddress.activated) {
-    logger.debug(`Deposit address already activated for currency id: ${currencyId} and account id: ${id}`)
+  if (depositAddress.transactionTrackingActivated) {
+    logger.debug(`Deposit address transaction tracking already activated for currency id: ${currencyId} and account id: ${id}`)
     return depositAddress
   }
 
@@ -185,7 +192,7 @@ export const findDepositAddressAndListenForEvents = async (
 
   const successfulEventCreation = await manager.getCurrencyFromTicker(currencyCode).createAddressTransactionSubscription(depositAddress)
 
-  const updatedDepositAddress = await updateDepositAddress({ ...depositAddress, activated: successfulEventCreation })
+  const updatedDepositAddress = await updateDepositAddress({ ...depositAddress, transactionTrackingActivated: successfulEventCreation })
 
   return updatedDepositAddress
 }

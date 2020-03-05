@@ -4,7 +4,6 @@ import { DepositTransactionConfirmationQueuePoller } from '../holdings-transacti
 import * as coreOperations from '../../../../core'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { HoldingsTransactionDispatcher } from '../holdings-transaction-creation/HoldingsTransactionDispatcher'
-import { DepositRequestStatus } from '@abx-types/deposit'
 
 describe('DepositTransactionConfirmationQueuePoller', () => {
   const depositTransactionConfirmationQueuePoller = new DepositTransactionConfirmationQueuePoller()
@@ -34,7 +33,6 @@ describe('DepositTransactionConfirmationQueuePoller', () => {
       } as any
 
       sinon.stub(coreOperations, 'findDepositRequestByDepositTransactionHash').resolves(depositRequest)
-      const updateDepositRequestStub = sinon.stub(coreOperations, 'updateDepositRequest').resolves(depositRequest)
       const transferTransactionAmountToHoldingsWalletStub = sinon.stub(
         HoldingsTransactionDispatcher.prototype,
         'transferTransactionAmountToHoldingsWallet',
@@ -46,12 +44,7 @@ describe('DepositTransactionConfirmationQueuePoller', () => {
       } as any
 
       await depositTransactionConfirmationQueuePoller['processDepositAddressTransaction'](confirmedTransactionPayload)
-      expect(transferTransactionAmountToHoldingsWalletStub.calledWith(CurrencyCode.bitcoin, confirmedTransactionPayload.txid, depositRequest)).to.eql(
-        true,
-      )
-      expect(updateDepositRequestStub.calledWith(depositRequest.id, { status: DepositRequestStatus.pendingHoldingsTransactionConfirmation })).to.eql(
-        true,
-      )
+      expect(transferTransactionAmountToHoldingsWalletStub.calledWith(CurrencyCode.bitcoin, depositRequest)).to.eql(true)
     })
   })
 })

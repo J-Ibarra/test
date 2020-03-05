@@ -25,7 +25,7 @@ export class WalletsController extends Controller {
       this.logger.debug(`Retrieved ${wallets.length} wallets for account ${account!.id}`)
 
       return wallets.map(wallet => ({
-        publicKey: wallet.publicKey,
+        publicKey: wallet.address || wallet.publicKey,
         currency: { id: wallet.currencyId, code: currencyIdToCurrency.get(wallet.currencyId) },
       }))
     } catch (error) {
@@ -50,7 +50,7 @@ export class WalletsController extends Controller {
     try {
       this.logger.debug(`Activating ${body.currencyCode} address for account id ${account?.id}`)
 
-      const wallets = await findDepositAddressAndListenForEvents(account!, body.publicKey, body.currencyCode)
+      const wallets = await findDepositAddressAndListenForEvents(account!, body.currencyCode)
       this.logger.debug(`Activated ${body.currencyCode} address for account id ${account?.id}`)
 
       return wallets

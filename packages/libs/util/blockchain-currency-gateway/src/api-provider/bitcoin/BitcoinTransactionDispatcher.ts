@@ -13,10 +13,13 @@ import { Environment } from '@abx-types/reference-data'
 
 export class BitcoinTransactionDispatcher {
   private readonly LOGGER = Logger.getInstance('blockchain-currency-gateway', 'BitcoinBlockchainFacade')
-  private readonly AVERAGE_FEE_PER_BYTE = 'avg-fee-per-byte'
-  private readonly AVERAGE_FEE_PER_TRANSACTION = 'avg-fee-per-transaction'
+  private readonly MINIMUM_FEE_PER_BYTE_KEY = 'minimum-fee-per-byte'
+  private readonly AVERAGE_FEE_PER_TRANSACTION_KEY = 'avg-fee-per-transaction'
+  private readonly MINIMUM_TRANSACTION_FEE_KEY = 'minimum-transaction-fee'
+
   private readonly CACHE_EXPIRY_IN_MILLIS = 1000 * 60 * 30
   private readonly MAX_BITCOIN_DECIMALS = 8
+
   private readonly network = mainnetEnvironments.includes(process.env.NODE_ENV as Environment) ? bitcoin.networks.bitcoin : bitcoin.networks.testnet
 
   constructor(private cryptoApisProviderProxy: CryptoApisProviderProxy, private MEMORY_CACHE = new MemoryCache()) {}
@@ -45,9 +48,14 @@ export class BitcoinTransactionDispatcher {
       throw new ApiProviderError(errorMessage)
     }
 
+    let amountAfterFee = new Decimal(amount)
+      .minus(estimatedTransactionFee)
+      .toDP(this.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
+      .toNumber()
+
     let transactionHash
     try {
-      transactionHash = await this.sendTransaction(senderAddress, receiverAddress, amount, estimatedTransactionFee)
+      transactionHash = await this.sendTransaction(senderAddress, receiverAddress, amountAfterFee, estimatedTransactionFee)
       this.LOGGER.info(`Successfully sent transaction with hash ${transactionHash} for ${amount} from ${senderAddress.address} to ${receiverAddress}`)
     } catch (e) {
       const errorMessage = `An error has ocurred while trying to send transaction for transaction of ${amount} from ${senderAddress.address} to ${receiverAddress}`
@@ -68,46 +76,51 @@ export class BitcoinTransactionDispatcher {
 
   /**
    * In order to estimate transaction fee we follow the 3-step workflow:
-   * 1.Get analytics on the transaction fees payed for other transactions({@code getTransactionsFee}) in order to get average_fee_per_byte and average.
+   *
+   * 1.Get analytics on the transaction fees payed for other transactions({@code getTransactionsFee}) in order to get minimum_fee_per_byte and average.
    * We don’t need to be 100% accurate with the fee, so we can cache the values for 30 minutes in memory and use the cached value on subsequent calls.
-   * 2. Use {@code getTransactionSize} to calculate the transaction size.When invoking the endpoint, we would need to pass 1 input and 1 output addresses
-   * and a fee. The fee should be taken from the input address and for the fee value we can use the average from 1. It is important that the number of digits
+   * 2. Use {@code getTransactionSize} to calculate the transaction size.When invoking the endpoint, we would need to the txin from the {@code transactionWithRelayFee}
+   * and a fee. The fee should be taken from the input address and for the fee value we can use the minimum from 1. It is important that the number of digits
    * used here equals the number of digits of the fee used when creating the transaction.
-   * 3.Use the block size response from 2. and the average_fee_per_byte from 1. to calculate the actual fee for the current transaction
+   * 3*.Use the block size response from 2. and the minimum_fee_per_byte from 1. to calculate the actual fee for the current transaction
+   * * - If the result from 3 is bigger than the amount to transfer the minimum transaction fee (taken from 1.) is used
    */
   private async estimateTransactionFee(
     senderAddress: Pick<CryptoAddress, 'privateKey' | 'address' | 'wif'>,
     receiverAddress: string,
     amount: number,
   ): Promise<number> {
-    let averageFeePerByte = this.MEMORY_CACHE.get<string>(this.AVERAGE_FEE_PER_BYTE)
-    let averageFeePerTransaction = this.MEMORY_CACHE.get<string>(this.AVERAGE_FEE_PER_TRANSACTION)
+    let minimumFeePerByte = this.MEMORY_CACHE.get<string>(this.MINIMUM_FEE_PER_BYTE_KEY)
+    let averageFeePerTransaction = this.MEMORY_CACHE.get<string>(this.AVERAGE_FEE_PER_TRANSACTION_KEY)
+    let minimumFee = this.MEMORY_CACHE.get<string>(this.AVERAGE_FEE_PER_TRANSACTION_KEY)
 
-    if (!averageFeePerByte) {
+    if (!minimumFeePerByte) {
       const {
         average: latestAverageFeePerTransaction,
-        average_fee_per_byte: latestAverageFeePerByte,
+        average_fee_per_byte: latestMinimumFeePerByte,
+        min: latestMinimumFee,
       } = await this.cryptoApisProviderProxy.getTransactionsFee()
-      this.MEMORY_CACHE.set({ key: this.AVERAGE_FEE_PER_BYTE, ttl: this.CACHE_EXPIRY_IN_MILLIS, val: latestAverageFeePerByte })
-      this.MEMORY_CACHE.set({ key: this.AVERAGE_FEE_PER_TRANSACTION, ttl: this.CACHE_EXPIRY_IN_MILLIS, val: latestAverageFeePerTransaction })
+      this.MEMORY_CACHE.set({ key: this.MINIMUM_FEE_PER_BYTE_KEY, ttl: this.CACHE_EXPIRY_IN_MILLIS, val: latestMinimumFeePerByte })
+      this.MEMORY_CACHE.set({ key: this.AVERAGE_FEE_PER_TRANSACTION_KEY, ttl: this.CACHE_EXPIRY_IN_MILLIS, val: latestAverageFeePerTransaction })
+      this.MEMORY_CACHE.set({ key: this.MINIMUM_TRANSACTION_FEE_KEY, ttl: this.CACHE_EXPIRY_IN_MILLIS, val: latestMinimumFee })
 
-      averageFeePerByte = latestAverageFeePerByte
+      minimumFeePerByte = latestMinimumFeePerByte
       averageFeePerTransaction = latestAverageFeePerTransaction
+      minimumFee = latestMinimumFee
     }
 
     const { tx_size_bytes } = await this.cryptoApisProviderProxy.getTransactionSize({
-      inputs: this.createTransactionAddressArray(senderAddress.address!, amount),
-      outputs: this.createTransactionAddressArray(receiverAddress, amount),
+      inputs: [this.createTransactionAddress(senderAddress.address!, amount)],
+      outputs: [this.createTransactionAddress(receiverAddress, amount)],
       fee: {
         address: senderAddress.address!,
         value: new Decimal(averageFeePerTransaction!).toDP(this.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN).toNumber(),
       },
     })
 
-    return new Decimal(tx_size_bytes)
-      .times(averageFeePerByte!)
-      .toDP(this.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
-      .toNumber()
+    const estimatedMinimumTransactionFee = new Decimal(tx_size_bytes).times(minimumFeePerByte!).toDP(this.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
+
+    return estimatedMinimumTransactionFee.greaterThan(amount) ? Number(minimumFee) : estimatedMinimumTransactionFee.toNumber()
   }
 
   private async sendTransaction(
@@ -117,8 +130,8 @@ export class BitcoinTransactionDispatcher {
     fee: number,
   ): Promise<string> {
     const { hex: transactionHex } = await this.cryptoApisProviderProxy.createTransaction({
-      inputs: this.createTransactionAddressArray(senderAddress.address!, amount),
-      outputs: this.createTransactionAddressArray(receiverAddress, amount),
+      inputs: [this.createTransactionAddress(senderAddress.address!, amount)],
+      outputs: [this.createTransactionAddress(receiverAddress, amount)],
       fee: {
         address: senderAddress.address!,
         value: fee,
@@ -132,7 +145,7 @@ export class BitcoinTransactionDispatcher {
   }
 
   /** In order to keep all wifs private we use offline/native signing (instead of submitting request to the API provider). */
-  private signTransaction(transactionHex: string, senderWif: string): string {
+  public signTransaction(transactionHex: string, senderWif: string): string {
     const transaction = bitcoin.Transaction.fromHex(transactionHex)
 
     const transactionBuilder = new bitcoin.TransactionBuilder(this.network)
@@ -142,8 +155,11 @@ export class BitcoinTransactionDispatcher {
       transactionBuilder.addOutput(txOut.script, txOut.value)
     })
 
-    transaction.ins.forEach((txIn, idx) => {
+    transaction.ins.forEach(txIn => {
       transactionBuilder.addInput(txIn.hash, txIn.index)
+    })
+
+    transaction.ins.forEach((_, idx) => {
       transactionBuilder.sign(idx, senderKeyPair)
     })
 
@@ -168,7 +184,7 @@ export class BitcoinTransactionDispatcher {
           this.cryptoApisProviderProxy.createConfirmedTransactionEventSubscription({
             callbackURL: webhookCallbackUrl,
             transactionHash,
-            confirmations: Number(process.env.BITCOIN_CONFIRMATION_BLOCKS),
+            confirmations: Number(process.env.BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS),
           }),
       })
 
@@ -190,12 +206,10 @@ export class BitcoinTransactionDispatcher {
     }
   }
 
-  private createTransactionAddressArray(address: string, amount: number) {
-    return [
-      {
-        address,
-        value: amount,
-      },
-    ]
+  private createTransactionAddress(address: string, amount: number) {
+    return {
+      address,
+      value: amount,
+    }
   }
 }

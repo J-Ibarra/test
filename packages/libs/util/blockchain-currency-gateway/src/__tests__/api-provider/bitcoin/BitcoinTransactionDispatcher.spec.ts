@@ -5,7 +5,9 @@ import Decimal from 'decimal.js'
 import { EndpointInvocationUtils } from '../../../api-provider/providers/EndpointInvocationUtils'
 import * as testUtils from './BitcoinTransactionDispatcher.utils'
 import * as asyncMessagePublisher from '@abx-utils/async-message-publisher'
-import * as bitcoin from 'bitcoinjs-lib'
+// import * as bitcoin from 'bitcoinjs-lib'
+import { CryptoApisProviderProxy, ENetworkTypes } from '../../../api-provider'
+import { CurrencyCode } from '@abx-types/reference-data'
 
 describe.only('BitcoinTransactionDispatcher', () => {
   let bitcoinTransactionDispatcher: BitcoinTransactionDispatcher
@@ -13,18 +15,20 @@ describe.only('BitcoinTransactionDispatcher', () => {
   const signedTransactionHex = 'signedTransactionHex'
 
   beforeEach(() => {
-    process.env.BITCOIN_CONFIRMATION_BLOCKS = `${testUtils.bitcoinConfirmationBlocks}`
-    bitcoinTransactionDispatcher = new BitcoinTransactionDispatcher(testUtils.cryptoApiClient as any)
+    process.env.BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS = `${testUtils.bitcoinConfirmationBlocks}`
+    bitcoinTransactionDispatcher = new BitcoinTransactionDispatcher(
+      new CryptoApisProviderProxy(CurrencyCode.bitcoin, ENetworkTypes.TESTNET, '801c9ee2538cb40da9dbc03790894ea3431fb8ac'),
+    )
     invokeEndpointWithProgressiveRetryStub = sinon.stub(EndpointInvocationUtils, 'invokeEndpointWithProgressiveRetry')
 
-    sinon.stub(bitcoin.TransactionBuilder.prototype, 'build').returns({
-      toHex: () => signedTransactionHex,
-    } as any)
-    sinon.stub(bitcoin.Transaction, 'fromHex').returns({
-      outs: [],
-      ins: [],
-    } as any)
-    sinon.stub(bitcoin.ECPair, 'fromWIF').returns({} as any)
+    // sinon.stub(bitcoin.TransactionBuilder.prototype, 'build').returns({
+    //   toHex: () => signedTransactionHex,
+    // } as any)
+    // sinon.stub(bitcoin.Transaction, 'fromHex').returns({
+    //   outs: [],
+    //   ins: [],
+    // } as any)
+    // sinon.stub(bitcoin.ECPair, 'fromWIF').returns({} as any)
   })
 
   afterEach(() => {
@@ -182,5 +186,14 @@ describe.only('BitcoinTransactionDispatcher', () => {
         },
       }),
     ).to.eql(true)
+  })
+
+  it.only('foo bar', async () => {
+    const result = await bitcoinTransactionDispatcher.signTransaction(
+      '0200000003fedf54e412a959cb9965625b6bea650d542f3fab09c63aa281b4344cee8512740000000000ffffffffdbd2eceb6e27cc17c036527deba21ba17925aa75c57d485e368ac16596a55a770000000000ffffffff03b22f5186e51e6ea949706da5b46c9a761d93acf0526964eb31be72380132920000000000ffffffff025a000000000000001976a914a236af4ac2e37678ea6a3e3f58f33dceef379a7388ac64000000000000001976a914ed2978d100f77e66b99aea6f4c393b4dc253327c88ac00000000',
+      'cSTwnCDo4UPrwVtdoEiZVg8R4vWiGkkWJ1RpQLPZyTk4YRSg4z7n',
+    )
+
+    console.log(result)
   })
 })

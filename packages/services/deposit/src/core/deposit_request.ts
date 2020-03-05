@@ -45,6 +45,7 @@ export async function createNewDepositRequest(
 ): Promise<DepositRequest> {
   const newDepositInstance = await getModel<DepositRequest>('depositRequest').create({
     depositAddress,
+    depositAddressId: depositAddress.id,
     amount: depositTransaction.amount,
     depositTxHash: depositTransaction.transactionHash,
     from: depositTransaction.senderAddress,
