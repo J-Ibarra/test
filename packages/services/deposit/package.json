@@ -17,15 +17,19 @@
     "build": "npm run clean && npm run build-deposit-processor && tsc -p tsconfig.build.json --skipLibCheck",
     "start": "ts-node-dev src/index.ts",
     "test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_PATH=dist ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts --require ../../../_test-setup/test_globals.js src/**/*.spec.ts --exit",
-    "build-image-deposit-processor": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-deposit-processor:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-deposit-processor:latest -f packages/services/deposit/src/service-wrappers/deposit-processor/Dockerfile . && cd packages/services/deposit ",
-    "build-image-eth-block-follower": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-ethereum-block-follower:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-ethereum-block-follower:latest -f packages/services/deposit/src/service-wrappers/eth-block-follower/Dockerfile . && cd packages/services/deposit ",
-    "build-image-kvt-block-follower": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-kvt-block-follower:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-kvt-block-follower:latest -f packages/services/deposit/src/service-wrappers/kvt-block-follower/Dockerfile . && cd packages/services/deposit ",
+    "build-image-deposit-processor": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-deposit-processor:$JIRA_IMAGE_TAG -t $KINESIS_ECR_URL/kbe-services-deposit-processor:latest -f packages/services/deposit/src/service-wrappers/deposit-processor/Dockerfile . && cd packages/services/deposit ",
+    "build-image-eth-block-follower": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-ethereum-block-follower:$JIRA_IMAGE_TAG -t $KINESIS_ECR_URL/kbe-services-ethereum-block-follower:latest -f packages/services/deposit/src/service-wrappers/eth-block-follower/Dockerfile . && cd packages/services/deposit ",
+    "build-image-kvt-block-follower": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-kvt-block-follower:$JIRA_IMAGE_TAG -t $KINESIS_ECR_URL/kbe-services-kvt-block-follower:latest -f packages/services/deposit/src/service-wrappers/kvt-block-follower/Dockerfile . && cd packages/services/deposit ",
     "build-base-image": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-deposit-base -f packages/services/deposit/Dockerfile .",
     "build-image-latest": "npm run build-base-image && npm run build-image-deposit-processor && npm run build-image-eth-block-follower && npm run build-image-kvt-block-follower",
     "push-deposit-processor-image": "docker push $KINESIS_ECR_URL/kbe-services-deposit-processor",
     "push-eth-block-follower-image": "docker push $KINESIS_ECR_URL/kbe-services-ethereum-block-follower",
     "push-kvt-block-follower-image": "docker push $KINESIS_ECR_URL/kbe-services-kvt-block-follower",
-    "push-image": "npm run push-deposit-processor-image && npm run push-eth-block-follower-image && npm run push-kvt-block-follower-image"
+    "push-image": "npm run push-deposit-processor-image && npm run push-eth-block-follower-image && npm run push-kvt-block-follower-image",
+    "deploy-latest-integration:deposit-processor": "aws ecs update-service --service kbe-int-deposit-processor-service-v2 --cluster kbe-int-cluster --region ap-southeast-2",
+    "deploy-latest-integration:eth-block-follower": "aws ecs update-service --service kbe-int-ethereum-block-follower-v2 --cluster kbe-int-cluster --region ap-southeast-2",
+    "deploy-latest-integration:kvt-block-follower": "aws ecs update-service --service kbe-int-kvt-block-follower-service-v2 --cluster kbe-int-cluster --region ap-southeast-2",
+    "deploy-latest-integration": "npm run deploy-latest-integration:deposit-processor && npm run deploy-latest-integration:eth-block-follower && npm run deploy-latest-integration:kvt-block-follower"
   },
   "dependencies": {
     "@abx-service-clients/account": "^1.1.0",

@@ -18,3 +18,6 @@ lerna run build-image-latest --since $PREVIOUS_COMMIT_HASH
 
 # Invoking push-image script on each service package that has changed since previous commit
 lerna run push-image --since $PREVIOUS_COMMIT_HASH
+
+# Invoking deploy-latest-integration script on each service package that has changed since previous commit
+lerna run deploy-latest-integration --since $PREVIOUS_COMMIT_HASH
