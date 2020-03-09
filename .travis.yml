@@ -42,3 +42,10 @@ jobs:
       if: branch = develop and type = push
       script:
         - ./_scripts/travis/travis-build-service-release.sh
+    - stage: 'Build api docs and push to s3'
+      if: branch = develop and type = push
+      script:
+        - npm run bootstrap
+        - npm run build
+        - npm run build:api-docs
+        - npm run push-api-docs-to-s3
