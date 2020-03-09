@@ -1,13 +1,13 @@
 import { getQueuePoller } from '@abx-utils/async-message-consumer'
 import { IAddressTransactionEventPayload, BlockchainFacade } from '@abx-utils/blockchain-currency-gateway'
-import { findDepositAddress, createNewDepositRequest, findMostRecentlyUpdatedDepositRequest } from '../../../../core'
-import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-data'
-import { FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION } from '../../../kinesis-and-eth-coin-deposit-processor/core/deposit_transactions_fetcher'
+import { findDepositAddress } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
 import { DEPOSIT_ADDRESS_UNCONFIRMED_TRANSACTION_QUEUE_URL } from '../constants'
+import { NewTransactionRecorder } from './NewTransactionRecorder'
 
 export class DepositAddressNewTransactionQueuePoller {
   private readonly logger = Logger.getInstance('public-coin-deposit-processor', 'NewDepositTransactionQueuePoller')
+  private readonly newTransactionRecorder = new NewTransactionRecorder()
 
   public bootstrapPoller() {
     const queuePoller = getQueuePoller()
@@ -30,29 +30,11 @@ export class DepositAddressNewTransactionQueuePoller {
     }
 
     const depositTransactionDetails = await providerFacade.getTransaction(txid, address)
-    const shouldProcessTransaction = await this.shouldProcessTransaction(txid)
 
-    if (shouldProcessTransaction) {
-      const fiatValueOfOneCryptoCurrency = await calculateRealTimeMidPriceForSymbol(`${currency}_${FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION}`)
-
-      await createNewDepositRequest(depositTransactionDetails, depositAddress, fiatValueOfOneCryptoCurrency)
-      await this.subscribeForDepositConfirmation(txid, providerFacade)
-    }
-  }
-
-  private async subscribeForDepositConfirmation(txid: string, providerFacade: BlockchainFacade) {
-    await providerFacade.subscribeToTransactionConfirmationEvents(txid, process.env.DEPOSIT_CONFIRMED_TRANSACTION_CALLBACK_URL!)
-
-    this.logger.info(`Subscribed for transaction confirmation events for deposit transaction ${txid}`)
-  }
-
-  private async shouldProcessTransaction(txid: string) {
-    const existingDepositRequest = await findMostRecentlyUpdatedDepositRequest({ depositTxHash: txid, holdingsTxHash: txid })
-
-    if (!!existingDepositRequest) {
-      this.logger.debug(`Attempted to process deposit address transaction ${txid} which has already been recorded`)
-    }
-
-    return !existingDepositRequest
+    this.newTransactionRecorder.recordDepositTransaction({
+      currency,
+      depositAddress,
+      depositTransactionDetails,
+    })
   }
 }

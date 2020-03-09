@@ -42,6 +42,7 @@ export async function createNewDepositRequest(
   depositTransaction: BlockchainTransaction,
   depositAddress: DepositAddress,
   transactionFiatConversion: number,
+  status = DepositRequestStatus.pendingDepositTransactionConfirmation,
 ): Promise<DepositRequest> {
   const newDepositInstance = await getModel<DepositRequest>('depositRequest').create({
     depositAddress,
@@ -51,7 +52,7 @@ export async function createNewDepositRequest(
     from: depositTransaction.senderAddress,
     fiatCurrencyCode: FiatCurrency.usd,
     fiatConversion: transactionFiatConversion,
-    status: DepositRequestStatus.pendingDepositTransactionConfirmation,
+    status,
   })
 
   return newDepositInstance.get()
@@ -86,13 +87,13 @@ export async function loadAllPendingDepositRequestsAboveMinimumAmount(): Promise
   return flatMap(depositRequestsForAllCurrencies, requests => requests)
 }
 
-export async function findDepositRequestByHoldingsTransactionHash(txHash: string): Promise<DepositRequest | null> {
-  const depositRequest = await getModel<DepositRequest>('depositRequest').findOne({
+export async function findDepositRequestsByHoldingsTransactionHash(txHash: string): Promise<DepositRequest[]> {
+  const depositInstances = await getModel<DepositRequest>('depositRequest').findAll({
     where: { holdingsTxHash: txHash },
     include: [getModel<DepositAddress>('depositAddress')],
   })
 
-  return !!depositRequest ? depositRequest.get({ plain: true }) : null
+  return depositInstances.map(req => req.get({ plain: true }))
 }
 
 export async function getAllPendingDepositRequestsForCurrencyAboveMinimumAmount(
@@ -132,6 +133,32 @@ export async function findMostRecentlyUpdatedDepositRequest(
   })
 
   return depositInstance ? depositInstance.get({ plain: true }) : null
+}
+
+export async function findDepositRequestsWithInsufficientAmount(depositAddressId: number): Promise<DepositRequest[]> {
+  const depositInstances = await getModel<DepositRequest>('depositRequest').findAll({
+    where: {
+      status: DepositRequestStatus.insufficientAmount,
+      depositAddressId,
+    },
+  })
+
+  return depositInstances.map(req => req.get({ plain: true }))
+}
+
+export async function findDepositRequestsWhereTransactionHashPresent(transactionHash: string): Promise<DepositRequest[]> {
+  const depositInstances = await getModel<DepositRequest>('depositRequest').findAll({
+    where: {
+      $or: [{ depositTxHash: transactionHash }, { holdingsTxHash: transactionHash }],
+    },
+    include: [
+      {
+        model: getModel<DepositAddress>('depositAddress'),
+      },
+    ],
+  })
+
+  return depositInstances.map(req => req.get({ plain: true }))
 }
 
 export async function getPendingDepositRequests(currencyId: number, parentTransaction?: Transaction) {
@@ -206,7 +233,7 @@ export async function findDepositAddressForIds(ids: number[]): Promise<DepositRe
   return depositRequests.map(depositRequestInstance => depositRequestInstance.get())
 }
 
-export async function updateAllDepositRequests(id: number[], update: Partial<DepositRequest>, transaction: Transaction) {
+export async function updateAllDepositRequests(id: number[], update: Partial<DepositRequest>, transaction?: Transaction) {
   const [, updatedDepositRequests] = await getModel<DepositRequest>('depositRequest').update({ ...update } as DepositRequest, {
     where: { id },
     returning: true,

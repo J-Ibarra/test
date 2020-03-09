@@ -23,6 +23,14 @@ export interface TransactionResponse {
   transactionFee?: string
 }
 
+export interface ExchangeHoldingsTransfer {
+  toAddress: string
+  amount: number
+  memo?: string
+  transactionConfirmationWebhookUrl?: string
+  feeLimit?: number
+}
+
 export interface OnChainCurrencyGateway {
   ticker?: CurrencyCode
   getId(): Promise<number>
@@ -46,7 +54,7 @@ export interface OnChainCurrencyGateway {
     amount: number,
     transactionConfirmationWebhookUrl?: string,
   ): Promise<TransactionResponse>
-  transferFromExchangeHoldingsTo(toAddress: string, amount: number, transactionConfirmationWebhookUrl?: string): Promise<TransactionResponse>
+  transferFromExchangeHoldingsTo(params: ExchangeHoldingsTransfer): Promise<TransactionResponse>
   kinesisManagesConfirmations(): boolean
   transferTo(parameters: { privateKey: string; amount: number; toAddress: string; signerKey?: string }): Promise<TransactionResponse>
   validateAddress(address: string): Promise<boolean>

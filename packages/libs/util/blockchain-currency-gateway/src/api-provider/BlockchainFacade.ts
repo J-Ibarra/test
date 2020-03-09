@@ -6,6 +6,15 @@ import { IAddressTransaction } from './providers/crypto-apis'
 
 /** The main mechanism for conducting blockchain operations. */
 export abstract class BlockchainFacade {
+  private static currencyFacades: Map<CurrencyCode, BlockchainFacade> = new Map()
+
+  /**
+   * Retrieves the available balance at a given address.
+   *
+   * @param address the address to retrieve the details for
+   */
+  abstract getAddressBalance(address: string): Promise<number>
+
   /**
    * Creates a new transaction and broadcasts it to the chain.
    *
@@ -60,7 +69,14 @@ export abstract class BlockchainFacade {
    */
   public static getInstance(currency: CurrencyCode) {
     if (currency === CurrencyCode.bitcoin) {
-      return new BitcoinBlockchainFacade()
+      let existingFacade = this.currencyFacades.get(currency)
+
+      if (!existingFacade) {
+        existingFacade = new BitcoinBlockchainFacade()
+        this.currencyFacades.set(currency, existingFacade)
+      }
+
+      return existingFacade
     }
 
     throw new Error(`Unsupported currency for BlockchainFacade ${currency}`)

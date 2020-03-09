@@ -5,7 +5,7 @@ import { SourceEventType } from '@abx-types/balance'
 import { BlockchainFacade, TransactionResponse } from '@abx-utils/blockchain-currency-gateway'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { decryptValue } from '@abx-utils/encryption'
-import { updateDepositRequest } from '../../../../core'
+import { updateDepositRequest, updateAllDepositRequests } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
 
 export class HoldingsTransactionDispatcher {
@@ -17,10 +17,14 @@ export class HoldingsTransactionDispatcher {
    * The logic is only executed for active accounts.
    *
    * @param currency the deposited coin
-   * @param transactionHash the transaction hash
+   * @param depositRequest the deposit request
    * @param param the deposit request
    */
-  public async transferTransactionAmountToHoldingsWallet(currency: CurrencyCode, { amount, id, depositAddress }: DepositRequest) {
+  public async transferTransactionAmountToHoldingsWallet(
+    currency: CurrencyCode,
+    { amount, id, depositAddress }: DepositRequest,
+    joinedDepositRequestsWithInsufficientBalance: number[],
+  ): Promise<string | undefined> {
     const accountIsSuspended = await isAccountSuspended(depositAddress.accountId)
 
     if (!accountIsSuspended) {
@@ -30,7 +34,6 @@ export class HoldingsTransactionDispatcher {
         amount,
       )
       this.logger.debug(`Created holdings transaction for request ${id}`)
-
       await createPendingDeposit({
         accountId: depositAddress.accountId,
         amount,
@@ -42,12 +45,24 @@ export class HoldingsTransactionDispatcher {
       await this.coverFeeByKinesisRevenueAccount(Number(holdingsTransactionFee), id!, depositAddress.currencyId)
       this.logger.debug(`Created pending deposit balance for deposit request${id}`)
 
-      await updateDepositRequest(id!, {
-        holdingsTxHash: holdingsTransactionHash,
-        holdingsTxFee: Number(holdingsTransactionFee),
-        status: DepositRequestStatus.pendingHoldingsTransactionConfirmation,
-      })
+      await Promise.all([
+        updateDepositRequest(id!, {
+          holdingsTxHash: holdingsTransactionHash,
+          holdingsTxFee: Number(holdingsTransactionFee),
+          status: DepositRequestStatus.pendingCompletion,
+        }),
+        joinedDepositRequestsWithInsufficientBalance.length > 0
+          ? updateAllDepositRequests(joinedDepositRequestsWithInsufficientBalance, {
+              holdingsTxHash: holdingsTransactionHash,
+              status: DepositRequestStatus.pendingCompletion,
+            })
+          : (Promise.resolve() as any),
+      ])
+
+      return holdingsTransactionHash
     }
+
+    return
   }
 
   private async createHoldingsTransaction(depositAddress: DepositAddress, currency: CurrencyCode, amount: number): Promise<TransactionResponse> {
@@ -65,7 +80,6 @@ export class HoldingsTransactionDispatcher {
       },
       receiverAddress: process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS!,
       amount,
-      webhookCallbackUrl: process.env.DEPOSIT_HOLDINGS_TRANSACTION_CONFIRMATION_CALLBACK_URL!,
     })
   }
 

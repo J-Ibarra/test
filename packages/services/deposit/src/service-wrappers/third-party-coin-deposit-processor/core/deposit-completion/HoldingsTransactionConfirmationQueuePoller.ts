@@ -1,9 +1,15 @@
 import { getQueuePoller } from '@abx-utils/async-message-consumer'
 import { IConfirmedTransactionEventPayload } from '@abx-utils/blockchain-currency-gateway'
-import { findDepositRequestByHoldingsTransactionHash } from '../../../../core'
+import { findDepositRequestsByHoldingsTransactionHash } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
 import { DepositCompleter } from './DepositCompleter'
 import { DEPOSIT_HOLDINGS_TRANSACTION_CONFIRMATION_QUEUE_URL } from '../constants'
+import { CurrencyCode } from '@abx-types/reference-data'
+
+export interface CompletionPendingTransactionDetails {
+  currency: CurrencyCode
+  txid: string
+}
 
 export class HoldingsTransactionConfirmationQueuePoller {
   private readonly logger = Logger.getInstance('public-coin-deposit-processor', 'HoldingsTransactionConfirmationQueuePoller')
@@ -18,16 +24,16 @@ export class HoldingsTransactionConfirmationQueuePoller {
     )
   }
 
-  private async completeDepositRequest({ currency, txid }: IConfirmedTransactionEventPayload) {
-    this.logger.info(`Received a deposit transaction confirmation for currency ${currency} and transaction hash ${txid}`)
-    const depositRequest = await findDepositRequestByHoldingsTransactionHash(txid)
+  private async completeDepositRequest({ currency, txid }: CompletionPendingTransactionDetails) {
+    this.logger.info(`Received a deposit holdings transaction confirmation for currency ${currency} and transaction hash ${txid}`)
+    const depositRequests = await findDepositRequestsByHoldingsTransactionHash(txid)
 
-    if (!depositRequest) {
+    if (depositRequests.length === 0) {
       this.logger.warn(`Deposit request not found for holdings transaction ${txid}, not processing any further`)
       return
     }
 
-    await this.depositCompleter.completeDepositRequest(depositRequest)
-    this.logger.info(`Completed deposit request ${depositRequest.id}`)
+    await this.depositCompleter.completeDepositRequests(depositRequests)
+    this.logger.info(`Completed deposit requests ${JSON.stringify(depositRequests)}`)
   }
 }

@@ -8,9 +8,9 @@ import {
   storeDepositRequests,
   findKycOrEmailVerifiedDepositAddresses,
   splitDepositAddressesIntoBatches,
+  depositAmountAboveMinimumForCurrency,
 } from '../../../../core'
 import { getPotentialDepositRequests } from '../deposit_transactions_fetcher'
-import { depositAmountAboveMinimumForCurrency } from './deposit_amount_validator'
 import { DepositGatekeeper } from './deposit_gatekeeper'
 import { findCurrencyForCode } from '@abx-service-clients/reference-data'
 

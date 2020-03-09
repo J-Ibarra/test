@@ -26,6 +26,12 @@ export class BitcoinBlockchainFacade implements BlockchainFacade {
     this.bitcoinTransactionDispatcher = new BitcoinTransactionDispatcher(this.cryptoApiProviderProxy)
   }
 
+  async getAddressBalance(address: string): Promise<number> {
+    const addressDetails = await this.cryptoApiProviderProxy.getAddressDetails({ publicKey: address })
+
+    return Number(addressDetails.balance)
+  }
+
   createTransaction(params: CreateTransactionPayload): Promise<TransactionResponse> {
     this.LOGGER.debug(`Creating transaction of ${params.amount} from ${params.senderAddress.address} to ${params.receiverAddress}`)
 
@@ -40,7 +46,7 @@ export class BitcoinBlockchainFacade implements BlockchainFacade {
       transactionHash: txid,
       receiverAddress: txouts[0].addresses[0],
       senderAddress: txins[0].addresses[0],
-      amount: Number(txOutForTargetAddress!.amount),
+      amount: Number(txOutForTargetAddress ? txOutForTargetAddress!.amount : 0),
       time: time,
       confirmations,
     }

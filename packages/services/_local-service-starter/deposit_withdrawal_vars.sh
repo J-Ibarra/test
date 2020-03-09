@@ -17,5 +17,5 @@ export DEPOSIT_CONFIRMED_TRANSACTION_QUEUE_URL='https://sqs.ap-southeast-2.amazo
 export WITHDRAWAL_STATUS_CHANGE_QUEUE_URL='https://sqs.ap-southeast-2.amazonaws.com/884998542479/${ENV}-kbe-withdrawal-change.fifo'
 export WITHDRAWAL_NEW_TRANSACTION_QUEUE_URL='https://sqs.ap-southeast-2.amazonaws.com/884998542479/${ENV}-kbe-withdrawal-new-request.fifo'
 export WITHDRAWAL_TRANSACTION_SENT_QUEUE_URL='https://sqs.ap-southeast-2.amazonaws.com/884998542479/${ENV}-kbe-withdrawal-transaction-sent.fifo'
-export WITHDRAWAL_TRANSACTION_COMPLETION_PENDING_QUEUE_URL='https://sqs.ap-southeast-2.amazonaws.com/884998542479/${ENV}-kbe-withdrawal-transaction-completion-pending.fifo'
+export WITHDRAWAL_TRANSACTION_COMPLETION_PENDING_QUEUE_URL='https://sqs.ap-southeast-2.amazonaws.com/884998542479/${ENV}-kbe-withdrawal-transaction-completion-pending'
 export WITHDRAWAL_TRANSACTION_CONFIRMATION_CALLBACK_URL='https://${ENV}-api.kinesis.money/api/webhooks/crypto/withdrawals/confirmations'

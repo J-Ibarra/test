@@ -8,3 +8,5 @@ const environmentsWithLocalRedisQueue = [Environment.development, Environment.e2
 export function getQueuePoller(): QueuePoller {
   return environmentsWithLocalRedisQueue.includes(process.env.NODE_ENV as Environment) ? new LocalRedisQueuePoller() : new AwsQueueObserver()
 }
+
+export * from './queue_poller'

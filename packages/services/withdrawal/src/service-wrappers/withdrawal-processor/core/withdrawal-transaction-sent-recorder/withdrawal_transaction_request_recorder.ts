@@ -9,71 +9,104 @@ import { sendAsyncChangeMessage } from '@abx-utils/async-message-publisher'
 import { deductOnChainTransactionFeeFromRevenueBalance } from '../withdrawal-transaction-creation/kinesis_revenie_transaction_fee_reconciler'
 import { WithdrawalCompletionPendingPayload } from '../withdrawal-completion/model'
 import { Logger } from '@abx-utils/logging'
+import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
+import { nativelyImplementedCoins } from '../common'
+import { QueueConsumerOutput } from '@abx-utils/async-message-consumer'
+import { Transaction } from 'sequelize'
 
 const currencyToCoverOnChainFeeFor = [CurrencyCode.ethereum, CurrencyCode.kvt, CurrencyCode.bitcoin]
 const logger = Logger.getInstance('withdrawal-processor', 'withdrawal_transaction_request_recorder')
 
-export async function recordWithdrawalOnChainTransaction({ withdrawalRequestId, transactionFee, transactionHash }: WithdrawalTransactionSent) {
-  const withdrawalRequest = await findWithdrawalRequestByIdWithFeeRequest(withdrawalRequestId)
+export async function recordWithdrawalOnChainTransaction({
+  withdrawalRequestId,
+  transactionFee,
+  transactionHash,
+}: WithdrawalTransactionSent): Promise<void | QueueConsumerOutput> {
+  logger.info(`Recording on chain transaction details for withdrawal request ${withdrawalRequestId}`)
 
-  if (!withdrawalRequest) {
-    logger.warn(`Attempted to record on chain transaction details for withdrawal that could not be found ${withdrawalRequestId}`)
-    throw new Error(`Attempted to record withdrawal on chain transaction for non-existent withdrawal request: ${withdrawalRequestId}`)
-  }
+  return wrapInTransaction(sequelize, null, async transaction => {
+    const withdrawalRequest = await findWithdrawalRequestByIdWithFeeRequest(withdrawalRequestId, transaction)
 
+    if (!withdrawalRequest) {
+      logger.warn(`Attempted to record on chain transaction details for withdrawal that could not be found ${withdrawalRequestId}`)
+      return { skipMessageDeletion: true }
+    }
+
+    const { withdrawalCurrency, onChainCurrencyGateway } = await getOnChainCurrencyGatewayAndWithdrawnCurrency(withdrawalRequest.currencyId)
+
+    await deductOnChainTransactionFeeFromRevenueBalance(
+      withdrawalRequest.id!,
+      transactionFee,
+      onChainCurrencyGateway,
+      !!withdrawalRequest.feeRequest ? withdrawalRequest.feeRequest.currencyId : withdrawalRequest.currencyId,
+    )
+
+    await updateRequestStatuses(
+      { ...withdrawalRequest!, currency: withdrawalCurrency },
+      transactionHash,
+      transactionFee,
+      transaction,
+      withdrawalRequest.feeRequest,
+    )
+
+    logger.debug(`Queuing request for completion ${withdrawalRequest.id}`)
+    return queueForCompletion(transactionHash, withdrawalCurrency.code)
+  })
+}
+
+async function getOnChainCurrencyGatewayAndWithdrawnCurrency(currencyId: number) {
   const currencies = await findCryptoCurrencies()
   const currencyManager = getOnChainCurrencyManagerForEnvironment(
     process.env.NODE_ENV as Environment,
     currencies.map(({ code }) => code),
   )
-  const withdrawalCurrency = currencies.find(({ id }) => id === withdrawalRequest!.currencyId)!
+  const withdrawalCurrency = currencies.find(({ id }) => id === currencyId)!
 
-  await deductOnChainTransactionFeeFromRevenueBalance(
-    withdrawalRequest.id!,
-    transactionFee,
-    currencyManager.getCurrencyFromTicker(withdrawalCurrency.code),
-    !!withdrawalRequest.feeRequest ? withdrawalRequest.feeRequest.currencyId : withdrawalRequest.currencyId,
-  )
-
-  await updateRequestStatuses({ ...withdrawalRequest!, currency: withdrawalCurrency }, transactionHash, transactionFee, withdrawalRequest.feeRequest)
-
-  logger.debug(`Queuing request for completion ${withdrawalRequest.id}`)
-  await queueForCompletion(withdrawalRequest.txHash!, withdrawalCurrency.code)
+  return { withdrawalCurrency, onChainCurrencyGateway: currencyManager.getCurrencyFromTicker(withdrawalCurrency.code) }
 }
 
 async function updateRequestStatuses(
   withdrawalRequest: CurrencyEnrichedWithdrawalRequest,
   withdrawalTransactionHash: string,
   onChainTransactionFee: number,
+  transaction: Transaction,
   feeRequest?: WithdrawalRequest | null,
 ) {
   return Promise.all([
-    updateWithdrawalRequest({
-      id: withdrawalRequest.id,
-      txHash: withdrawalTransactionHash,
-      kinesisCoveredOnChainFee: currencyToCoverOnChainFeeFor.includes(withdrawalRequest.currency.code) ? onChainTransactionFee : 0,
-      state: WithdrawalState.holdingsTransactionCompleted,
-    }),
+    updateWithdrawalRequest(
+      {
+        id: withdrawalRequest.id,
+        txHash: withdrawalTransactionHash,
+        kinesisCoveredOnChainFee: currencyToCoverOnChainFeeFor.includes(withdrawalRequest.currency.code) ? onChainTransactionFee : 0,
+        state: WithdrawalState.holdingsTransactionCompleted,
+      },
+      transaction,
+    ),
     !!feeRequest
-      ? updateWithdrawalRequest({
-          id: feeRequest.id,
-          state: WithdrawalState.holdingsTransactionCompleted,
-        })
+      ? updateWithdrawalRequest(
+          {
+            id: feeRequest.id,
+            state: WithdrawalState.holdingsTransactionCompleted,
+          },
+          transaction,
+        )
       : Promise.resolve(null),
   ])
 }
 
 async function queueForCompletion(txid: string, currency: CurrencyCode) {
-  await sendAsyncChangeMessage<WithdrawalCompletionPendingPayload>({
-    id: `withdrawal-completion-pending-${txid}`,
-    type: 'withdrawal-transaction-sent',
-    target: {
-      local: WITHDRAWAL_TRANSACTION_COMPLETION_PENDING_QUEUE_URL!,
-      deployedEnvironment: WITHDRAWAL_TRANSACTION_COMPLETION_PENDING_QUEUE_URL!,
-    },
-    payload: {
-      txid,
-      currency,
-    },
-  })
+  if (nativelyImplementedCoins.includes(currency)) {
+    await sendAsyncChangeMessage<WithdrawalCompletionPendingPayload>({
+      id: `withdrawal-completion-pending-${txid}`,
+      type: 'withdrawal-transaction-sent',
+      target: {
+        local: WITHDRAWAL_TRANSACTION_COMPLETION_PENDING_QUEUE_URL!,
+        deployedEnvironment: WITHDRAWAL_TRANSACTION_COMPLETION_PENDING_QUEUE_URL!,
+      },
+      payload: {
+        txid,
+        currency,
+      },
+    })
+  }
 }

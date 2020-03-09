@@ -8,7 +8,7 @@ import { CurrencyCode, Environment } from '@abx-types/reference-data'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { getEthScanTransactionsForAddress } from './etherscan/etherscan'
 import { EtherscanInternalTransaction, EtherscanTransaction, EthscanTransactionType } from './etherscan/interface'
-import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse } from '../../currency_gateway'
+import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse, ExchangeHoldingsTransfer } from '../../currency_gateway'
 import { CryptoAddress } from '../../api-provider/model'
 
 const testMnemonic = 'uncle salute dust cause embody wonder clump blur paddle hotel risk aim'
@@ -156,7 +156,7 @@ export class Ethereum implements OnChainCurrencyGateway {
     })
   }
 
-  public async transferFromExchangeHoldingsTo(toAddress: string, amount: number): Promise<TransactionResponse> {
+  public async transferFromExchangeHoldingsTo({ toAddress, amount }: ExchangeHoldingsTransfer): Promise<TransactionResponse> {
     const holdingPrivateKey = await this.getDecryptedHoldingsSecret(process.env.ETHEREUM_HOLDINGS_SECRET!, this.decryptedHoldingsSecret)
 
     const { utils } = this.web3

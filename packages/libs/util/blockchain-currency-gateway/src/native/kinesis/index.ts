@@ -24,7 +24,7 @@ import { decryptValue } from '@abx-utils/encryption'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { CurrencyCode, KinesisCurrencies } from '@abx-types/reference-data'
 import { KINESIS_NETWORK_CONFIG } from './kinesis_network_config'
-import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse } from '../../currency_gateway'
+import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse, ExchangeHoldingsTransfer } from '../../currency_gateway'
 import { CryptoAddress } from '../../api-provider/model'
 
 const logger = Logger.getInstance('currencies', 'kinesis_coin')
@@ -215,10 +215,10 @@ export class Kinesis implements OnChainCurrencyGateway {
   public async transferFromExchangeHoldingsToEmissionsAccount(amount: number) {
     const emissionKeypair = this.getEmissionKeypair()
 
-    return this.transferFromExchangeHoldingsTo(emissionKeypair.publicKey(), amount)
+    return this.transferFromExchangeHoldingsTo({ toAddress: emissionKeypair.publicKey(), amount })
   }
 
-  public async transferFromExchangeHoldingsTo(toAddress: string, amount: number) {
+  public async transferFromExchangeHoldingsTo({ toAddress, amount }: ExchangeHoldingsTransfer) {
     const holdingSecret = await this.getHoldingsSecret(this.ticker)
     const holdingSignerSecret = await this.getHoldingsSignerSecret(this.ticker)
     return this.transferTo({

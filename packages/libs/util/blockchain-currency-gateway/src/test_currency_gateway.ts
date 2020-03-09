@@ -2,7 +2,7 @@ import { CurrencyManager } from './currency_manager'
 import { Environment } from '@abx-types/reference-data'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
-import { DepositTransaction, OnChainCurrencyGateway } from './currency_gateway'
+import { DepositTransaction, OnChainCurrencyGateway, ExchangeHoldingsTransfer } from './currency_gateway'
 import { CryptoAddress } from './api-provider/model'
 
 export const TEST_CURRENCY_TICKER = 'TST' as CurrencyCode
@@ -78,9 +78,10 @@ export class TestCurrency implements OnChainCurrencyGateway {
     return this.balances[address]
   }
 
-  public async transferFromExchangeHoldingsTo(address: string) {
-    return this.transferTo(address)
+  public async transferFromExchangeHoldingsTo({ toAddress }: ExchangeHoldingsTransfer) {
+    return this.transferTo(toAddress)
   }
+
   kinesisManagesConfirmations() {
     return true
   }

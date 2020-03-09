@@ -1,4 +1,4 @@
-import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse } from '../../currency_gateway'
+import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse, ExchangeHoldingsTransfer } from '../../currency_gateway'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { RuntimeError } from '@abx-types/error'
@@ -95,10 +95,16 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
     })
   }
 
-  async transferFromExchangeHoldingsTo(toAddress: string, amount: number, transactionConfirmationWebhookUrl: string): Promise<TransactionResponse> {
+  async transferFromExchangeHoldingsTo({
+    toAddress,
+    amount,
+    memo,
+    transactionConfirmationWebhookUrl,
+    feeLimit,
+  }: ExchangeHoldingsTransfer): Promise<TransactionResponse> {
     const [holdingsPrivateKey, holdingsWif] = await Promise.all([
       decryptValue(process.env.KINESIS_BITCOIN_HOLDINGS_PRIVATE_KEY!),
-      decryptValue(process.env.KINESIS_BITCOIN_HOLDINGS_PRIVATE_KEY!),
+      decryptValue(process.env.KINESIS_BITCOIN_HOLDINGS_WIF!),
     ])
 
     return this.bitcoinBlockchainFacade.createTransaction({
@@ -109,7 +115,9 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
       },
       receiverAddress: toAddress,
       amount,
+      memo,
       webhookCallbackUrl: transactionConfirmationWebhookUrl,
+      feeLimit,
     })
   }
 

@@ -3,8 +3,8 @@ import { expect } from 'chai'
 import * as coreOperations from '../../../../core'
 import * as blockchainCurrencyGateway from '@abx-utils/blockchain-currency-gateway'
 import { CurrencyCode } from '@abx-types/reference-data'
-import * as marketDataClient from '@abx-service-clients/market-data'
 import { DepositAddressNewTransactionQueuePoller } from '../deposit-transaction-recording/DepositAddressNewTransactionQueuePoller'
+import { NewTransactionRecorder } from '../../core/deposit-transaction-recording/NewTransactionRecorder'
 
 describe('DepositAddressNewTransactionQueuePoller', () => {
   const depositAddressTransactionQueuePoller = new DepositAddressNewTransactionQueuePoller()
@@ -44,47 +44,20 @@ describe('DepositAddressNewTransactionQueuePoller', () => {
       expect(blockchainFacade.getTransaction.calledOnce).to.eql(false)
     })
 
-    it('should not process transaction when deposit request has already been persisted for that txid', async () => {
-      const depositRequest = {
-        id: 1,
-      } as any
-      sinon.stub(coreOperations, 'findDepositAddress').resolves(depositRequest)
-      sinon.stub(blockchainCurrencyGateway.BlockchainFacade, 'getInstance').returns(blockchainFacade)
-
-      blockchainFacade.getTransaction.resolves(transactionDetails)
-
-      sinon.stub(coreOperations, 'findMostRecentlyUpdatedDepositRequest').resolves(depositRequest)
-      const createNewDepositRequestStub = sinon.stub(coreOperations, 'createNewDepositRequest').resolves()
-
-      blockchainFacade.getTransaction.resolves(transactionDetails)
-
-      await depositAddressTransactionQueuePoller['processDepositAddressTransaction']({
-        currency: CurrencyCode.bitcoin,
-        address,
-        txid: transactionId,
-      } as any)
-
-      expect(createNewDepositRequestStub.calledOnce).to.eql(false)
-    })
-
     it('should process transaction when deposit address found', async () => {
       const depositAddress = {
         id: 1,
-      }
+      } as any
       const depositRequest = {
         id: 1,
       } as any
-      const fiatValueFor1Currency = 1
 
       sinon.stub(coreOperations, 'findDepositAddress').resolves(depositAddress)
-      sinon.stub(coreOperations, 'findMostRecentlyUpdatedDepositRequest').resolves()
       sinon.stub(blockchainCurrencyGateway.BlockchainFacade, 'getInstance').returns(blockchainFacade)
 
       blockchainFacade.getTransaction.resolves(transactionDetails)
-      const calculateRealTimeMidPriceForSymbolStub = sinon
-        .stub(marketDataClient, 'calculateRealTimeMidPriceForSymbol')
-        .resolves(fiatValueFor1Currency)
-      const createNewDepositRequestStub = sinon.stub(coreOperations, 'createNewDepositRequest').resolves(depositRequest)
+
+      const recordDepositTransactionStub = sinon.stub(NewTransactionRecorder.prototype, 'recordDepositTransaction').resolves(depositRequest)
 
       await depositAddressTransactionQueuePoller['processDepositAddressTransaction']({
         currency: CurrencyCode.bitcoin,
@@ -92,10 +65,9 @@ describe('DepositAddressNewTransactionQueuePoller', () => {
         txid: transactionId,
       } as any)
 
-      expect(calculateRealTimeMidPriceForSymbolStub.calledWith('BTC_USD')).to.eql(true)
-      expect(createNewDepositRequestStub.calledWith(transactionDetails, depositRequest, fiatValueFor1Currency)).to.eql(true)
-
-      expect(blockchainFacade.subscribeToTransactionConfirmationEvents.calledWith(transactionId, testDepositTransactionQueue)).to.eql(true)
+      expect(
+        recordDepositTransactionStub.calledWith({ currency: CurrencyCode.bitcoin, depositAddress, depositTransactionDetails: transactionDetails }),
+      )
     })
   })
 })

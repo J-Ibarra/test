@@ -1,10 +1,14 @@
-import { WithdrawalStatusChangeRequestType, FiatWithdrawalCreationRequest, AsyncWithdrawalStatusChangeRequest } from './async_change_model'
+import {
+  WithdrawalStatusChangeRequestType,
+  FiatWithdrawalCreationRequest,
+  AsyncWithdrawalStatusChangeRequest,
+  CryptoWithdrawalRequestWrapper,
+} from './async_change_model'
 import { sendAsyncChangeMessage } from '@abx-utils/async-message-publisher'
 import {
   WITHDRAWAL_STATUS_CHANGE_QUEUE_URL,
   localRedisWithdrawalChangeTopic,
   WITHDRAWAL_NEW_TRANSACTION_QUEUE_URL,
-  localRedisNewTransactionTopic,
 } from './async_endpoint_handler.constants'
 
 export function cancelFiatWithdrawal(adminRequestId: number) {
@@ -40,16 +44,13 @@ export function createFiatWithdrawal(fiatWithdrawalCreationParams: FiatWithdrawa
 }
 
 export function pushNewCryptoWithdrawalRequestForProcessing(withdrawalRequestId: number) {
-  return sendAsyncChangeMessage<AsyncWithdrawalStatusChangeRequest>({
+  return sendAsyncChangeMessage<CryptoWithdrawalRequestWrapper>({
     id: `pushNewCryptoWithdrawalRequestForProcessing-${withdrawalRequestId}`,
     type: WithdrawalStatusChangeRequestType.createCryptoWithdrawal,
     target: {
-      local: localRedisNewTransactionTopic,
+      local: WITHDRAWAL_NEW_TRANSACTION_QUEUE_URL!,
       deployedEnvironment: WITHDRAWAL_NEW_TRANSACTION_QUEUE_URL!,
     },
-    payload: {
-      type: WithdrawalStatusChangeRequestType.createCryptoWithdrawal,
-      payload: { id: withdrawalRequestId },
-    },
+    payload: { id: withdrawalRequestId },
   })
 }

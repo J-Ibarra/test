@@ -12,6 +12,7 @@ import { BalanceAsyncRequestType } from '@abx-service-clients/balance'
 import { SourceEventType } from '@abx-types/balance'
 import Decimal from 'decimal.js'
 import { completeCryptoWithdrawalWithSeparateFeeRequest } from '../../../core/withdrawal-completion/crypto/complete_withdrawal_with_fee_request'
+import { wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 
 describe('complete_withdrawal_with_fee_request', () => {
   const totalAmount = 12
@@ -48,7 +49,9 @@ describe('complete_withdrawal_with_fee_request', () => {
     const createCurrencyTransactionStub = sinon.stub(orderOperations, 'createCurrencyTransaction').resolves()
     const triggerMultipleBalanceChangesStub = sinon.stub(balanceOperations, 'triggerMultipleBalanceChanges').resolves()
 
-    await completeCryptoWithdrawalWithSeparateFeeRequest(withdrawalRequest, withdrawalRequest.feeRequest)
+    await wrapInTransaction(sequelize, null, async transaction => {
+      await completeCryptoWithdrawalWithSeparateFeeRequest(withdrawalRequest, withdrawalRequest.feeRequest, transaction)
+    })
 
     expect(updateWithdrawalRequestStub.getCall(0).args[0]).to.eql([withdrawalRequest.id!, feeRequest.id!])
     expect(updateWithdrawalRequestStub.getCall(0).args[1]).to.eql({

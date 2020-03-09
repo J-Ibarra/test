@@ -16,7 +16,7 @@ export async function up({ sequelize }: { sequelize: Sequelize }) {
 export async function down({ sequelize }: { sequelize: Sequelize }) {
   return sequelize.query(`
     ALTER TABLE public.deposit_address
-        DROP COLUMN "activated";
+        DROP COLUMN "transactionTrackingActivated";
 
     ALTER TABLE public.deposit_address
       DROP COLUMN "address";

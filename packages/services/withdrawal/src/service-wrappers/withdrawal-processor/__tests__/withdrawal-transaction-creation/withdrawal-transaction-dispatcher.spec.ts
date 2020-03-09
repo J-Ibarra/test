@@ -1,6 +1,7 @@
 import sinon from 'sinon'
 import { expect } from 'chai'
 
+import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import { dispatchWithdrawalTransaction } from '../../core/withdrawal-transaction-creation/withdrawal-transaction-dispatcher'
 import * as asyncMessagePublisherOperations from '@abx-utils/async-message-publisher'
 import { WITHDRAWAL_TRANSACTION_SENT_QUEUE_URL } from '@abx-service-clients/withdrawal'
@@ -16,6 +17,7 @@ describe('withdrawal-transaction-dispatcher', () => {
   const withdrawalRequestId = 1
 
   const transactionFee = 1
+  const withdrawalFeeAmount = 0.5
   const txHash = 'dacxv123das'
 
   beforeEach(() => {
@@ -30,6 +32,9 @@ describe('withdrawal-transaction-dispatcher', () => {
     const transferWithdrawalFundsForKinesisCurrencyStub = sinon
       .stub(kinesisCurrencyTransferrer, 'transferWithdrawalFundsForKinesisCurrency')
       .resolves({ txHash, transactionFee })
+    sinon.stub(referenceDataOperations, 'getWithdrawalConfigForCurrency').resolves({
+      feeAmount: withdrawalFeeAmount,
+    })
     const sendAsyncChangeMessageStub = sinon.stub(asyncMessagePublisherOperations, 'sendAsyncChangeMessage').resolves()
 
     await dispatchWithdrawalTransaction(withdrawalRequestId, withdrawalTargetAddress, withdrawalAmount, onChainCurrencyGateway, memo)
@@ -64,8 +69,21 @@ describe('withdrawal-transaction-dispatcher', () => {
     transferFromExchangeHoldingsToStub.resolves({ txHash, transactionFee })
     const sendAsyncChangeMessageStub = sinon.stub(asyncMessagePublisherOperations, 'sendAsyncChangeMessage').resolves()
 
+    sinon.stub(referenceDataOperations, 'getWithdrawalConfigForCurrency').resolves({
+      feeAmount: withdrawalFeeAmount,
+    })
+
     await dispatchWithdrawalTransaction(withdrawalRequestId, withdrawalTargetAddress, withdrawalAmount, onChainCurrencyGateway, memo)
 
+    expect(
+      onChainCurrencyGateway.transferFromExchangeHoldingsTo.calledWith({
+        toAddress: withdrawalTargetAddress,
+        amount: withdrawalAmount,
+        memo,
+        transactionConfirmationWebhookUrl: undefined,
+        feeLimit: withdrawalFeeAmount,
+      }),
+    ).to.eql(true)
     expect(
       sendAsyncChangeMessageStub.calledWith({
         id: `withdrawal-completion-pending-${txHash}`,

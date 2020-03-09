@@ -1,15 +1,20 @@
 import { WithdrawalCompletionPendingPayload } from './model'
-import { nativelyImplementedCoins } from '../withdrawal-transaction-creation/withdrawal-transaction-dispatcher'
 import { getOnChainCurrencyManagerForEnvironment } from '@abx-utils/blockchain-currency-gateway'
 import { findAllCurrencyCodes } from '@abx-service-clients/reference-data'
 import { Environment } from '@abx-types/reference-data'
 import { findWithdrawalRequestByTxHashWithFeeRequest } from '../../../../core'
 import { completeCryptoWithdrawal } from './crypto'
 import { Logger } from '@abx-utils/logging'
+import { nativelyImplementedCoins } from '../common'
+import { WithdrawalState } from '@abx-types/withdrawal'
+import { wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
+import { QueueConsumerOutput } from '@abx-utils/async-message-consumer'
 
 const logger = Logger.getInstance('order-data', 'withdrawal-completion')
 
-export async function completeWithdrawalRequest({ txid, currency }: WithdrawalCompletionPendingPayload) {
+export async function completeWithdrawalRequest({ txid, currency }: WithdrawalCompletionPendingPayload): Promise<void | QueueConsumerOutput> {
+  logger.debug(`Received withdrawal completion request for currency ${currency} and transaction ${txid}`)
+
   const allCurrencyCodes = await findAllCurrencyCodes()
   const currencyManager = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment, allCurrencyCodes)
 
@@ -21,16 +26,21 @@ export async function completeWithdrawalRequest({ txid, currency }: WithdrawalCo
     const transactionConfirmed = await onChainCurrencyGateway.checkConfirmationOfTransaction(txid)
 
     if (!transactionConfirmed) {
-      return
+      return { skipMessageDeletion: true }
     }
   }
 
-  const withdrawalRequestToComplete = await findWithdrawalRequestByTxHashWithFeeRequest(txid)
+  await wrapInTransaction(sequelize, null, async transaction => {
+    const withdrawalRequestToComplete = await findWithdrawalRequestByTxHashWithFeeRequest(txid, transaction)
 
-  if (!withdrawalRequestToComplete) {
-    logger.warn(`Attempted to complete withdrawal request with txid ${txid} that could not be found`)
-    return
-  }
+    if (!withdrawalRequestToComplete) {
+      logger.warn(`Attempted to complete withdrawal request with txid ${txid} that could not be found`)
+      return
+    } else if (withdrawalRequestToComplete.state !== WithdrawalState.holdingsTransactionCompleted) {
+      logger.warn(`Attempted to complete withdrawal request with txid ${txid} where the holdings transaction has not yet been recorded.`)
+      return { skipMessageDeletion: true }
+    }
 
-  await completeCryptoWithdrawal(withdrawalRequestToComplete, withdrawalRequestToComplete.feeRequest)
+    return completeCryptoWithdrawal(withdrawalRequestToComplete, transaction, withdrawalRequestToComplete.feeRequest)
+  })
 }
