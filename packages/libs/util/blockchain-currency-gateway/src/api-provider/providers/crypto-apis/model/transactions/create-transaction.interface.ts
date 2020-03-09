@@ -3,5 +3,8 @@ import { PayloadWrapper } from '..'
 export interface CreateTransactionResponse extends PayloadWrapper<CreateTransactionResponsePayload> {}
 
 export interface CreateTransactionResponsePayload {
-  hex: string
+  hex: string,
+  view_in_explorer?: string
 }
+
+

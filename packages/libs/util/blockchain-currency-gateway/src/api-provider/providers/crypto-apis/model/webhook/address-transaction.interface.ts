@@ -32,3 +32,34 @@ export interface IAddressTransactionEventPayload {
   address: string
   txid: string
 }
+
+// ETH
+
+export interface IAddressTransactionRequestEth {
+  callbackURL: string
+  address: string
+  confirmations: number
+}
+
+export interface IAddressTransactionResponseEth extends PayloadWrapper<IAddressTransactionEth> {}
+
+export interface IAddressTransactionEth {
+  uuid: string
+  event: EWebhookEvents.ADDRESS
+  confirmations: number
+  transaction: string
+  url: string
+  created: Date
+}
+
+export interface IAddressTransactionEventPayloadEth {
+  currency: CurrencyCode
+  network: ENetworkTypes
+  url: string
+  type: EWebhookEvents.ADDRESS
+  blockHeight: number
+  blockHash: string
+  confirmations: number
+  address: string
+  txid: string
+}

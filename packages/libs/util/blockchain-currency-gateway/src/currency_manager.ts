@@ -5,8 +5,6 @@ import { Ethereum, Kinesis, KVT } from './native'
 import { OnChainCurrencyGateway } from './currency_gateway'
 import { BitcoinOnChainCurrencyGatewayAdapter } from './api-provider/bitcoin/BitcoinOnChainCurrencyGatewayAdapter'
 
-import { TetherERC20GatewayAdapter } from './erc20-kit'
-
 export class CurrencyManager {
   protected currencies: { [ticker: string]: OnChainCurrencyGateway }
 
@@ -27,14 +25,15 @@ export class CurrencyManager {
     return this.getCurrencyFromTicker(ticker!)
   }
 
-  protected setupCurrencies(env: Environment, enabledCurrencies: CurrencyCode[]) {
+  protected setupCurrencies(env: Environment, enabledCurrencies: CurrencyCode[]) { 
     const currencies = {
       [CurrencyCode.ethereum]: new Ethereum(env),
       [CurrencyCode.kau]: new Kinesis(env, CurrencyCode.kau),
       [CurrencyCode.kag]: new Kinesis(env, CurrencyCode.kag),
+
+      
       [CurrencyCode.kvt]: new KVT(env),
       [CurrencyCode.bitcoin]: new BitcoinOnChainCurrencyGatewayAdapter(),
-      [CurrencyCode.tether]: new TetherERC20GatewayAdapter(env),
     }
 
     this.currencies = Object.entries(currencies)

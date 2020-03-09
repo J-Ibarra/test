@@ -5,3 +5,9 @@ export interface BroadcastTransactionResponse extends PayloadWrapper<BroadcastTr
 export interface BroadcastTransactionResponsePayload {
   txid: string
 }
+
+export interface BroadcastTransactionResponseEth extends PayloadWrapper<BroadcastTransactionResponsePayloadEth> {}
+
+export interface BroadcastTransactionResponsePayloadEth {
+  hex: string
+}

@@ -10,3 +10,17 @@ export interface ITransactionsFee {
   max_fee_per_byte: string
   unit: string
 }
+
+export interface IEthTransactionsFeeResponse extends PayloadWrapper<IEthTransactionsFee> {}
+export interface IEthTransactionsFee {
+  min: string
+  max: string
+  average: string
+  recommended: string
+  unit: string
+}
+
+export interface IEthTransactionsGasResponse extends PayloadWrapper<IEthTransactionsGas> {}
+export interface IEthTransactionsGas {
+  gasLimit: string
+}
