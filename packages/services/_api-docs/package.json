@@ -17,7 +17,6 @@
     "url": "git+https://github.com/bullioncapital/secondary-exchange-services.git"
   },
   "scripts": {
-    "start": "docker-compose up -d",
     "mergeSwagger": "node mergeSwagger.js",
     "convert": "widdershins --environment ./widdershins.config.json --summary swagger.json -o source/index.html.md",
     "clean:build": "rm -rf build",
