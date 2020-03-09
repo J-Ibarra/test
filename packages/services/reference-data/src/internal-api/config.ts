@@ -46,7 +46,7 @@ export function createConfigEndpointHandlers(): InternalRoute<any, any>[] {
     },
     {
       path: ConfigEndpoints.getWithdrawalConfigForCurrency,
-      handler: ({ currencyCode }) => getWithdrawalConfigForCurrency(currencyCode),
+      handler: request => getWithdrawalConfigForCurrency(request),
     },
     {
       path: ConfigEndpoints.getWithdrawalConfig,

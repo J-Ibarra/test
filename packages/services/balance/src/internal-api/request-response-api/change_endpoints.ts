@@ -20,7 +20,12 @@ export function createChangeEndpointHandlers(): InternalRoute<any, any>[] {
       path: RequestResponseBalanceMovementEndpoints.createPendingWithdrawal,
       handler: ({ pendingWithdrawalParams, pendingWithdrawalFeeParams }) => {
         return wrapInTransaction(sequelize, null, transaction => {
-          return Promise.all([
+          return !pendingWithdrawalFeeParams 
+          ? balanceMovementFacade.createPendingWithdrawal({
+            ...pendingWithdrawalParams,
+            t: transaction,
+          }) 
+          : Promise.all([
             balanceMovementFacade.createPendingWithdrawal({
               ...pendingWithdrawalParams,
               t: transaction,
@@ -29,7 +34,7 @@ export function createChangeEndpointHandlers(): InternalRoute<any, any>[] {
               ...pendingWithdrawalFeeParams,
               t: transaction,
             }),
-          ])
+          ]) as any
         })
       },
     },

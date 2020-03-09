@@ -110,7 +110,7 @@ describe('new_deposit_request_processor', () => {
       status: DepositRequestStatus.pendingCompletion,
     })
 
-    expect(transferToExchangeHoldingsFromMock.calledWith(decryptedPrivateKey, depositRequest.amount)).to.eql(true)
+    expect(transferToExchangeHoldingsFromMock.calledWith({ privateKey: decryptedPrivateKey }, depositRequest.amount)).to.eql(true)
     expect(pendingHoldingsTransferGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau)!.length).to.eql(0)
     expect(pendingCompletionGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau)![0].request).to.eql(depositRequest)
   })
@@ -151,7 +151,7 @@ describe('new_deposit_request_processor', () => {
       holdingsTxFee: 0,
       status: DepositRequestStatus.pendingCompletion,
     })
-    expect(transferToExchangeHoldingsFromMock.calledWith(decryptedPrivateKey, depositRequest.amount)).to.eql(false)
+    expect(transferToExchangeHoldingsFromMock.calledWith({ privateKey: decryptedPrivateKey }, depositRequest.amount)).to.eql(false)
     expect(pendingHoldingsTransferGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau)!.length).to.eql(0)
     expect(pendingCompletionGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau)![0].request).to.eql(depositRequest)
   })
@@ -177,7 +177,7 @@ describe('new_deposit_request_processor', () => {
         status: DepositRequestStatus.failedHoldingsTransaction,
       }),
     ).to.eql(true)
-    expect(transferToExchangeHoldingsFromMock.calledWith(decryptedPrivateKey, depositRequest.amount)).to.eql(true)
+    expect(transferToExchangeHoldingsFromMock.calledWith({ privateKey: decryptedPrivateKey }, depositRequest.amount)).to.eql(true)
     expect(pendingHoldingsTransferGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau)!.length).to.eql(0)
     expect(registerFailedRequestStub.calledOnceWith(CurrencyCode.kau, depositRequest)).to.eql(true)
   }).timeout(60_000)
@@ -213,7 +213,7 @@ describe('new_deposit_request_processor', () => {
       holdingsTxFee: Number(holdingsTxFee),
       status: DepositRequestStatus.pendingCompletion,
     })
-    expect(transferToExchangeHoldingsFromMock.calledWith(decryptedPrivateKey, depositRequest.amount)).to.eql(true)
+    expect(transferToExchangeHoldingsFromMock.calledWith({ privateKey: decryptedPrivateKey }, depositRequest.amount)).to.eql(true)
     expect(pendingHoldingsTransferGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau)!.length).to.eql(0)
     expect(pendingCompletionGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau)![0].request).to.eql(depositRequest)
 
@@ -253,7 +253,7 @@ describe('new_deposit_request_processor', () => {
       holdingsTxFee: Number(holdingsTxFee),
       status: DepositRequestStatus.pendingCompletion,
     })
-    expect(transferToExchangeHoldingsFromMock.calledWith(decryptedPrivateKey, depositRequest.amount)).to.eql(true)
+    expect(transferToExchangeHoldingsFromMock.calledWith({ privateKey: decryptedPrivateKey }, depositRequest.amount)).to.eql(true)
     expect(pendingHoldingsTransferGatekeeper[currencyToDepositRequests].get(CurrencyCode.ethereum)!.length).to.eql(0)
     expect(pendingCompletionGatekeeper[currencyToDepositRequests].get(CurrencyCode.ethereum)![0].request).to.eql(depositRequest)
 

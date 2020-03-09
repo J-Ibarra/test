@@ -60,7 +60,7 @@ export class WithdrawalsController extends Controller {
   public async getWithdrawalConfigs() {
     try {
       this.logger.debug(`Retrieving withdrawal fees for all currencies`)
-      return await getWithdrawalConfig()
+      return getWithdrawalConfig()
     } catch (error) {
       this.setStatus(error.status || 400)
       this.logger.error(`Retrieving withdrawal fees for all currencies errors: ${error.status || 400} - ${error.message}`)
@@ -76,7 +76,7 @@ export class WithdrawalsController extends Controller {
   public async getWithdrawalConfigForCurrency(currency: CurrencyCode) {
     try {
       this.logger.debug(`Retrieving withdrawal fees for ${currency}`)
-      return await getWithdrawalConfigForCurrency({ currencyCode: currency })
+      return getWithdrawalConfigForCurrency({ currencyCode: currency })
     } catch (error) {
       this.setStatus(error.status || 400)
       this.logger.error(`Retrieving withdrawal fees for ${currency} errors: ${error.status || 400} - ${error.message}`)

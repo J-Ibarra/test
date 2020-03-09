@@ -4,7 +4,7 @@
   "description": "This packages is used to bootstrap the exchange services locally",
   "scripts": {
     "start": "tsnd --inspect --respawn src/bootstrap.ts",
-    "start-api-debug:dev": "./dev-starter.ts",
+    "start-api-debug:dev": "./dev-starter.sh",
     "start-api-debug:e2e-local": "./e2e-local-starter.sh"
   },
   "dependencies": {

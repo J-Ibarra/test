@@ -46,7 +46,7 @@ export async function getWithdrawalConfig(): Promise<WithdrawalConfig> {
 }
 
 export async function getWithdrawalLimit(accountStatus: AccountStatus) {
-  const { limit } = await internalApiRequestDispatcher.fireRequestToInternalApi<{ limit: number }>(ConfigEndpoints.getWithdrawalConfig, {
+  const { limit } = await internalApiRequestDispatcher.fireRequestToInternalApi<{ limit: number }>(ConfigEndpoints.getWithdrawalLimit, {
     accountStatus,
   })
 
