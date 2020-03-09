@@ -249,8 +249,8 @@ p JSON.parse(result)
     "fee": 0,
     "id": 0,
     "globalTransactionId": "string",
-    "createdAt": "2020-03-09T12:20:44Z",
-    "updatedAt": "2020-03-09T12:20:44Z",
+    "createdAt": "2020-03-09T15:44:09Z",
+    "updatedAt": "2020-03-09T15:44:09Z",
     "tradingPlatformName": "string"
   }
 ]
@@ -554,8 +554,8 @@ p JSON.parse(result)
     "fee": 0,
     "id": 0,
     "globalTransactionId": "string",
-    "createdAt": "2020-03-09T12:20:44Z",
-    "updatedAt": "2020-03-09T12:20:44Z",
+    "createdAt": "2020-03-09T15:44:09Z",
+    "updatedAt": "2020-03-09T15:44:09Z",
     "tradingPlatformName": "string"
   }
 ]
@@ -650,7 +650,7 @@ $.ajax({
 const fetch = require('node-fetch');
 const inputBody = '{
   "status": "pending",
-  "updatedAt": "2020-03-09T12:20:44Z"
+  "updatedAt": "2020-03-09T15:44:09Z"
 }';
 const headers = {
   'Content-Type':'application/json',
@@ -711,7 +711,7 @@ p JSON.parse(result)
 ```json
 {
   "status": "pending",
-  "updatedAt": "2020-03-09T12:20:44Z"
+  "updatedAt": "2020-03-09T15:44:09Z"
 }
 ```
 
@@ -4790,7 +4790,7 @@ cookieAuth, None
 > Code samples
 
 ```http
-GET /api/market-data/ohlc?symbolId=string&timeFrame=1&fromDate=2020-03-09T12%3A20%3A44Z HTTP/1.1
+GET /api/market-data/ohlc?symbolId=string&timeFrame=1&fromDate=2020-03-09T15%3A44%3A09Z HTTP/1.1
 
 Accept: application/json
 
@@ -4805,7 +4805,7 @@ var headers = {
 $.ajax({
   url: '/api/market-data/ohlc',
   method: 'get',
-  data: '?symbolId=string&timeFrame=1&fromDate=2020-03-09T12%3A20%3A44Z',
+  data: '?symbolId=string&timeFrame=1&fromDate=2020-03-09T15%3A44%3A09Z',
   headers: headers,
   success: function(data) {
     console.log(JSON.stringify(data));
@@ -4822,7 +4822,7 @@ const headers = {
 
 };
 
-fetch('/api/market-data/ohlc?symbolId=string&timeFrame=1&fromDate=2020-03-09T12%3A20%3A44Z',
+fetch('/api/market-data/ohlc?symbolId=string&timeFrame=1&fromDate=2020-03-09T15%3A44%3A09Z',
 {
   method: 'GET',
 
@@ -4843,7 +4843,7 @@ headers = {
 }
 
 r = requests.get('/api/market-data/ohlc', params={
-  'symbolId': 'string',  'timeFrame': '1',  'fromDate': '2020-03-09T12:20:44Z'
+  'symbolId': 'string',  'timeFrame': '1',  'fromDate': '2020-03-09T15:44:09Z'
 }, headers = headers)
 
 print r.json()
@@ -7201,8 +7201,8 @@ cookieAuth, None
   "fee": 0,
   "id": 0,
   "globalTransactionId": "string",
-  "createdAt": "2020-03-09T12:20:44Z",
-  "updatedAt": "2020-03-09T12:20:44Z",
+  "createdAt": "2020-03-09T15:44:09Z",
+  "updatedAt": "2020-03-09T15:44:09Z",
   "tradingPlatformName": "string"
 }
 
@@ -7236,7 +7236,7 @@ cookieAuth, None
 ```json
 {
   "status": "pending",
-  "updatedAt": "2020-03-09T12:20:44Z"
+  "updatedAt": "2020-03-09T15:44:09Z"
 }
 
 ```
