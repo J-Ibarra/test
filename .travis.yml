@@ -47,5 +47,5 @@ jobs:
       script:
         - npm run bootstrap:production
         - npm run build
-        - npm run build:api-docs
+        - npm run build:docs
         - npm run push-api-docs-to-s3
