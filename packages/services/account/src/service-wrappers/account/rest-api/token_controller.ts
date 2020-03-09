@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post, Request, Response, Route, Security, SuccessResponse } from 'tsoa'
+import {Body, Controller, Delete, Get, Post, Request, Response, Route, Security, SuccessResponse, Tags} from 'tsoa'
 import { validateUserCredentials, JwtTokenHandler, createTokenForAccount, deactivateToken, findToken, findTokensForAccount } from '../../../core'
 import { ValidationError } from '@abx-types/error'
 import { OverloadedRequest } from '@abx-types/account'
@@ -13,6 +13,7 @@ export interface TokenRequest {
   password: string
 }
 
+@Tags('tokens')
 @Route('tokens')
 export class TokensController extends Controller {
   @Security('cookieAuth')

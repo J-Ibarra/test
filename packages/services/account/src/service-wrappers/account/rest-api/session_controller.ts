@@ -1,8 +1,8 @@
 import aws from 'aws-sdk'
 import { sign } from 'jsonwebtoken'
 import moment from 'moment'
-import { Body, Controller, Delete, Post, Request, Response, Route, Security, SuccessResponse } from 'tsoa'
-import { Environment, localAndTestEnvironments, getAwsRegionForEnvironment } from '@abx-types/reference-data'
+import { Body, Controller, Delete, Post, Request, Response, Route, Security, SuccessResponse, Tags } from 'tsoa'
+import { Environment, localAndTestEnvironments, localTestEnvironments } from '@abx-types/reference-data'
 import { createSessionForUser, isAccountSuspended, killSession, validateUserCredentials, authenticateMfa, hasMfaEnabled } from '../../../core'
 import { Logger } from '@abx-utils/logging'
 import { ValidationError } from '@abx-types/error'
@@ -53,6 +53,7 @@ async function getJwt() {
   })
 }
 
+@Tags('sessions')
 @Route('sessions')
 export class SessionsController extends Controller {
   @SuccessResponse('201', 'Created')
