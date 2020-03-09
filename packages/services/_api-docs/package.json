@@ -23,8 +23,8 @@
     "clean:build": "rm -rf build",
     "clean:swagger": "rm swagger.json",
     "clean": "npm run clean:build && npm run clean:swagger",
-    "build:static": "docker-compose run --rm slate bundle exec middleman build --clean",
-    "build:docs": "npm run start && npm run mergeSwagger && npm run convert && npm run build:static",
+    "build:static": "docker-compose run --rm app bundle exec middleman build --clean",
+    "build:docs": "npm run mergeSwagger && npm run convert && npm run build:static",
     "push-api-docs-to-s3": "aws s3 cp ./build/ s3://int-api.kinesis.money-docs/ --recursive"
   },
   "bugs": {

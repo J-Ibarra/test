@@ -16,4 +16,4 @@ VOLUME /usr/src/app
 
 EXPOSE 4567
 
-CMD ["bundle", "exec", "middleman", "build"]
+CMD ["bundle", "exec", "middleman", "server", "--watcher-force-polling"]
