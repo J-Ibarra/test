@@ -26,14 +26,6 @@ export default function depositAddressModel(sequelize: Sequelize.Sequelize) {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      address: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
-      encryptedWif: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
     },
     {
       tableName: 'deposit_address',

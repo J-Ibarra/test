@@ -372,6 +372,7 @@ export class Kinesis implements OnChainCurrencyGateway {
     if (ticker === CurrencyCode.kau) {
       return this.getDecryptedHoldingsSecret(process.env.KAU_HOLDINGS_SECRET!, this.decryptedKauHoldingsSecret)
     }
+
     return this.getDecryptedHoldingsSecret(process.env.KAG_HOLDINGS_SECRET!, this.decryptedKagHoldingsSecret)
   }
 
@@ -379,6 +380,7 @@ export class Kinesis implements OnChainCurrencyGateway {
     if (ticker === CurrencyCode.kau) {
       return this.getDecryptedHoldingsSecret(process.env.KAU_HOLDINGS_SIGNER_SECRET!, this.decryptedKauHoldingsSignerSecret)
     }
+
     return this.getDecryptedHoldingsSecret(process.env.KAG_HOLDINGS_SIGNER_SECRET!, this.decryptedKagHoldingsSignerSecret)
   }
 

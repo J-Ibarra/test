@@ -13,6 +13,8 @@ services:
   - docker
   - redis-server
   - postgresql
+env:
+  - DOCKER_COMPOSE_VERSION=1.4.2
 before_install:
   - sudo rm /usr/local/bin/docker-compose
   - curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-compose-`uname -s`-`uname -m` > docker-compose
@@ -42,3 +44,10 @@ jobs:
       if: branch = develop and type = push
       script:
         - ./_scripts/travis/travis-build-service-release.sh
+    - stage: 'Build api docs and push to s3'
+      if: branch = develop and type = push
+      script:
+        - npm run bootstrap:production
+        - npm run build
+        - npm run build:docs
+        - npm run push-api-docs-to-s3

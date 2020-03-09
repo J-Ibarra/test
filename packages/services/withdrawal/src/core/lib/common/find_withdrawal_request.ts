@@ -12,6 +12,28 @@ export async function findWithdrawalRequestById(id: number, transaction?: Transa
   return withdrawalRequest ? withdrawalRequest.get({ plain: true }) : null
 }
 
+export async function findWithdrawalRequestsByIds(ids: number[], transaction?: Transaction) {
+  const withdrawalRequests = await getModel<WithdrawalRequest>('withdrawalRequest').findAll({
+    where: {
+      id: { $in: ids }
+    },
+    transaction,
+  })
+
+  return withdrawalRequests.map(withdrawalRequestInstance => withdrawalRequestInstance.get())
+}
+
+export async function findWithdrawalRequestsForTransactionHashes(txHashes: string[], transaction?: Transaction) {
+  const withdrawalRequests = await getModel<WithdrawalRequest>('withdrawalRequest').findAll({
+    where: {
+      txHash: { $in: txHashes }
+    },
+    transaction,
+  })
+
+  return withdrawalRequests.map(withdrawalRequestInstance => withdrawalRequestInstance.get())
+}
+
 export async function findWithdrawalRequestByAdminRequestId(adminRequestId: number, transaction?: Transaction) {
   const withdrawalRequest = await getModel<WithdrawalRequest>('withdrawalRequest').find({
     where: { adminRequestId },

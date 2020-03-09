@@ -51,7 +51,17 @@ export async function validateWithdrawal(validationParams: WithdrawalValidationP
   }
 
   const boundaryForCurrency = await findBoundaryForCurrency(validationParams.currencyCode)
-  const validationResults = await Promise.all(validators.map(validate => validate({ ...validationParams, boundaryForCurrency })))
+  const validationResults = await Promise.all(validators.map(async validate => {
+    try {
+      const result = await validate({ ...validationParams, boundaryForCurrency })
+      return result
+    } catch (error) {
+      return {
+        isInvalid: true,
+        error: error.message
+      }
+    }
+  }))
   const failedValidations = validationResults.filter(({ isInvalid }) => isInvalid)
 
   if (failedValidations.length > 0) {

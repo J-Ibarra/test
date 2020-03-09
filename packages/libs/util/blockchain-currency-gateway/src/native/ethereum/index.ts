@@ -237,7 +237,7 @@ export class Ethereum implements OnChainCurrencyGateway {
     return currencySecret
   }
 
-  private apiToDepositTransaction = (t: Transaction): DepositTransaction => {
+  public apiToDepositTransaction = (t: Transaction): DepositTransaction => {
     return {
       ...t,
       txHash: t.hash,
@@ -368,5 +368,13 @@ export class Ethereum implements OnChainCurrencyGateway {
 
   private lastSeenTransactionsIncludedInBlock(lastSeenTransactionHashes: string[], blockTransactions: Transaction[]) {
     return !!lastSeenTransactionHashes && blockTransactions.some(({ hash }) => lastSeenTransactionHashes.includes(hash))
+  }
+
+  public async getLatestBlockNumber() {
+    return this.web3.eth.getBlockNumber()
+  }
+
+  public async getBlockData(blockNumber: number) {
+    return this.web3.eth.getBlock(blockNumber, true)
   }
 }

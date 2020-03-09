@@ -1,8 +1,8 @@
 import aws from 'aws-sdk'
 import { sign } from 'jsonwebtoken'
 import moment from 'moment'
-import { Body, Controller, Delete, Post, Request, Response, Route, Security, SuccessResponse } from 'tsoa'
-import { Environment, localAndTestEnvironments, localTestEnvironments } from '@abx-types/reference-data'
+import { Body, Controller, Delete, Post, Request, Response, Route, Security, SuccessResponse, Tags } from 'tsoa'
+import { Environment, localAndTestEnvironments, getAwsRegionForEnvironment } from '@abx-types/reference-data'
 import { createSessionForUser, isAccountSuspended, killSession, validateUserCredentials, authenticateMfa, hasMfaEnabled } from '../../../core'
 import { Logger } from '@abx-utils/logging'
 import { ValidationError } from '@abx-types/error'
@@ -19,6 +19,8 @@ export interface LoginRequest {
 }
 
 const environmentNameRecord = {
+  [Environment.e2eAws]: 'end-to-end',
+  [Environment.staging]: 'stg',
   [Environment.integration]: 'int',
   [Environment.uat]: 'uat',
   [Environment.production]: 'prod',
@@ -29,7 +31,7 @@ const logger = Logger.getInstance('api', 'SessionsController')
 async function getJwt() {
   const secretsManager = new aws.SecretsManager({
     apiVersion: '2017-10-17',
-    region: 'ap-southeast-2',
+    region: getAwsRegionForEnvironment(process.env.NODE_ENV as Environment),
   })
 
   return new Promise((resolve, reject) => {
@@ -51,6 +53,7 @@ async function getJwt() {
   })
 }
 
+@Tags('sessions')
 @Route('sessions')
 export class SessionsController extends Controller {
   @SuccessResponse('201', 'Created')
@@ -70,7 +73,7 @@ export class SessionsController extends Controller {
 
       const isMfaEnabledForUser = await hasMfaEnabled(user.id)
 
-      if (isMfaEnabledForUser && !localTestEnvironments.includes(process.env.NODE_ENV as Environment)) {
+      if (isMfaEnabledForUser && !localDev) {
         if (!mfaToken) {
           this.setStatus(403)
           return { message: 'MFA Required' }
@@ -99,7 +102,9 @@ export class SessionsController extends Controller {
 
       this.setHeader(
         'Set-Cookie',
-        `appSession=${sessionCookie}; ${localDev ? '' : 'Secure;'} HttpOnly; Path=/; SameSite=Strict; expires=${appSessionExpires};`,
+        `appSession=${sessionCookie}; ${localDev ? '' : 'Secure;'} HttpOnly; Path=/; ${
+          localDev ? '' : 'SameSite=Strict;'
+        } expires=${appSessionExpires};`,
       )
 
       return {

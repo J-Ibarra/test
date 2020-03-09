@@ -17,21 +17,14 @@ let cryptoCurrencies: Currency[] = []
 
 export async function generateNewDepositAddress(accountId: string, currency: OnChainCurrencyGateway) {
   const cryptoAddress = await currency.generateAddress()
-  // const publicKey = currency.getAddressFromPrivateKey(privateKey)
   const encryptedPrivateKey = await encryptValue(cryptoAddress.privateKey)
-  let encryptedWif
-  if (cryptoAddress.wif) {
-    encryptedWif = await encryptValue(cryptoAddress.wif)
-  }
 
   const currencyId = await currency.getId()
   return {
     accountId,
     currencyId,
     publicKey: cryptoAddress.publicKey,
-    address: cryptoAddress.address,
     encryptedPrivateKey,
-    encryptedWif,
   } as DepositAddress
 }
 
@@ -118,7 +111,7 @@ export async function createMissingDepositAddressesForAccount(
 
   const cryptoCurrenciesToGenerateAddressFor = cryptoCurrencies.filter(({ id }) => (currencyIdToDepositAddress[id] || []).length === 0)
 
-  logger.debug(`Currencies to generate: ${cryptoCurrenciesToGenerateAddressFor.join(', ')}`)
+  logger.debug(`Currencies to generate: ${cryptoCurrenciesToGenerateAddressFor.map(address => JSON.stringify(address)).join(', ')}`)
 
   return Promise.all(
     cryptoCurrenciesToGenerateAddressFor.map(({ code }) => {

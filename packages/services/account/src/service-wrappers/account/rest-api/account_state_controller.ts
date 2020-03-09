@@ -1,4 +1,4 @@
-import { Body, Controller, Patch, Route, Security } from 'tsoa'
+import { Body, Controller, Patch, Route, Security, Tags } from 'tsoa'
 
 import { AccountStatus } from '@abx-types/account'
 import { updateAccountStatus, updateSuspensionStatus } from '../../../core'
@@ -11,6 +11,7 @@ interface AccountSuspensionChangeRequest {
   suspended: boolean
 }
 
+@Tags('admin')
 @Route('/admin/accounts')
 export class AccountStateController extends Controller {
   @Security({

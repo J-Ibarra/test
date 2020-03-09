@@ -18,8 +18,9 @@
     "migrate-db": "npm run build && NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test NODE_PATH=dist node dist/migrations/index.js",
     "start": "ts-node-dev src/index.ts",
     "test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_PATH=dist ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts --require ../../../_test-setup/test_globals.js src/**/*.spec.ts --exit",
-    "build-image-latest": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-admin-fund-management:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-admin-fund-management:latest -f packages/services/admin-fund-management/Dockerfile .",
-    "push-image": "docker push $KINESIS_ECR_URL/kbe-services-admin-fund-management"
+    "build-image-latest": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-admin-fund-management:$JIRA_IMAGE_TAG -t $KINESIS_ECR_URL/kbe-services-admin-fund-management:latest -f packages/services/admin-fund-management/Dockerfile .",
+    "push-image": "docker push $KINESIS_ECR_URL/kbe-services-admin-fund-management",
+    "deploy-latest-integration": "aws ecs update-service --service kbe-int-admin-fund-management-service-v2 --cluster kbe-int-cluster --region ap-southeast-2"
   },
   "dependencies": {
     "@abx-service-clients/account": "^1.1.0",
@@ -55,7 +56,8 @@
     "request-ip": "2.1.3",
     "sequelize": "4.41.0",
     "tsoa": "2.3.81",
-    "@types/sequelize": "3.30.4"
+    "@types/sequelize": "3.30.4",
+    "lodash": "4.17.5"
   },
   "devDependencies": {
     "@abx-utils/account": "1.0.0",

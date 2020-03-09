@@ -19,7 +19,8 @@
   },
   "gitHead": "8a29dce4e9bfe143b1c40c7196d4b51ea0d72d8a",
   "dependencies": {
-    "newrelic": "4.10.0"
+    "newrelic": "4.10.0",
+    "lodash": "4.17.5"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",
