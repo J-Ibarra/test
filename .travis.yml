@@ -45,7 +45,7 @@ jobs:
     - stage: 'Build api docs and push to s3'
       if: branch = develop and type = push
       script:
-        - npm run bootstrap
+        - npm run bootstrap:production
         - npm run build
         - npm run build:api-docs
         - npm run push-api-docs-to-s3
