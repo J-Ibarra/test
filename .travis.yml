@@ -39,6 +39,6 @@ jobs:
         - npm run run-legacy-migrations:test
         - lerna run test --since develop --include-dependencies --exclude-dependents
     - stage: 'Build image and push to ECR'
-      if: branch = develop and type = push
+      if: (branch = develop OR branch =~ /^feature+/) AND type = push
       script:
         - ./_scripts/travis/travis-build-service-release.sh
