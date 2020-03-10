@@ -14,8 +14,8 @@ describe('HoldingsTransactionConfirmationQueuePoller', () => {
     it('should no complete request when deposit request not found', async () => {
       const transactionId = '1hsarca2134'
 
-      sinon.stub(coreOperations, 'findDepositRequestByHoldingsTransactionHash').resolves()
-      const completeDepositRequestStub = sinon.stub(DepositCompleter.prototype, 'completeDepositRequest').resolves()
+      sinon.stub(coreOperations, 'findDepositRequestsByHoldingsTransactionHash').resolves([])
+      const completeDepositRequestStub = sinon.stub(DepositCompleter.prototype, 'completeDepositRequests').resolves()
 
       await holdingsTransactionConfirmationQueuePoller['completeDepositRequest']({ currency: CurrencyCode.bitcoin, txid: transactionId } as any)
 
@@ -28,11 +28,11 @@ describe('HoldingsTransactionConfirmationQueuePoller', () => {
       const depositRequest = {
         id: 1,
       } as any
-      sinon.stub(coreOperations, 'findDepositRequestByHoldingsTransactionHash').resolves(depositRequest)
-      const completeDepositRequestStub = sinon.stub(DepositCompleter.prototype, 'completeDepositRequest').resolves()
+      sinon.stub(coreOperations, 'findDepositRequestsByHoldingsTransactionHash').resolves([depositRequest])
+      const completeDepositRequestStub = sinon.stub(DepositCompleter.prototype, 'completeDepositRequests').resolves()
       await holdingsTransactionConfirmationQueuePoller['completeDepositRequest']({ currency: CurrencyCode.bitcoin, txid: transactionId } as any)
 
-      expect(completeDepositRequestStub.calledWith(depositRequest)).to.eql(true)
+      expect(completeDepositRequestStub.calledWith([depositRequest])).to.eql(true)
     })
   })
 })

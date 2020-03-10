@@ -6,7 +6,7 @@ import { Currency, FiatCurrency } from '@abx-types/reference-data'
 import { WithdrawalRequest, WithdrawalRequestType, WithdrawalState } from '@abx-types/withdrawal'
 import * as helper from '../../lib'
 import { createWithdrawalRequest } from '../../lib'
-import { createAccountsAndWithdrawalFunctions, sortById } from '../initialisation_helper'
+import { createAccountsAndWithdrawalFunctions, sortById } from '../../../service-wrappers/withdrawal-api/__tests__/initialisation_helper'
 import { truncateTables } from '@abx-utils/db-connection-utils'
 
 const timeToFilterBy = 1000 * 60 * 60 * 24

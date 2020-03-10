@@ -1,9 +1,21 @@
 import { getQueuePoller } from '@abx-utils/async-message-consumer'
 import { IConfirmedTransactionEventPayload } from '@abx-utils/blockchain-currency-gateway'
-import { findDepositRequestByHoldingsTransactionHash } from '../../../../core'
+import { findDepositRequestsByHoldingsTransactionHash } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
 import { DepositCompleter } from './DepositCompleter'
+import { DEPOSIT_HOLDINGS_TRANSACTION_CONFIRMATION_QUEUE_URL } from '../constants'
+import { CurrencyCode } from '@abx-types/reference-data'
 
+export interface CompletionPendingTransactionDetails {
+  currency: CurrencyCode
+  txid: string
+}
+
+/**
+ * The final step of the deposit flow, messages are queued after the holdings transactions are created.
+ * The logic needs to make sure the right amount is credited to the user's available balance.
+ * Any pre-existing deposit requests with amount < minimum deposit amount are added up to the current one.
+ */
 export class HoldingsTransactionConfirmationQueuePoller {
   private readonly logger = Logger.getInstance('public-coin-deposit-processor', 'HoldingsTransactionConfirmationQueuePoller')
   private depositCompleter = new DepositCompleter()
@@ -12,20 +24,21 @@ export class HoldingsTransactionConfirmationQueuePoller {
     const queuePoller = getQueuePoller()
 
     queuePoller.subscribeToQueueMessages<IConfirmedTransactionEventPayload>(
-      process.env.DEPOSIT_HOLDINGS_TRANSACTION_CONFIRMATION_QUEUE__URL! || 'local-holdings-transactions-queue',
-      this.completeDepositRequest,
+      DEPOSIT_HOLDINGS_TRANSACTION_CONFIRMATION_QUEUE_URL,
+      this.completeDepositRequest.bind(this),
     )
   }
 
-  private async completeDepositRequest({ currency, txid }: IConfirmedTransactionEventPayload) {
-    this.logger.info(`Received a deposit transaction confirmation for currency ${currency} and transaction hash ${txid}`)
-    const depositRequest = await findDepositRequestByHoldingsTransactionHash(txid)
+  private async completeDepositRequest({ currency, txid }: CompletionPendingTransactionDetails) {
+    this.logger.info(`Received a deposit holdings transaction confirmation for currency ${currency} and transaction hash ${txid}`)
+    const depositRequests = await findDepositRequestsByHoldingsTransactionHash(txid)
 
-    if (!depositRequest) {
+    if (depositRequests.length === 0) {
       this.logger.warn(`Deposit request not found for holdings transaction ${txid}, not processing any further`)
       return
     }
 
-    return this.depositCompleter.completeDepositRequest(depositRequest)
+    await this.depositCompleter.completeDepositRequests(depositRequests)
+    this.logger.info(`Completed deposit requests ${JSON.stringify(depositRequests)}`)
   }
 }

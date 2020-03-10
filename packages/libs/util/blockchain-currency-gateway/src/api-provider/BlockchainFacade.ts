@@ -6,6 +6,15 @@ import { IAddressTransaction } from './providers/crypto-apis'
 
 /** The main mechanism for conducting blockchain operations. */
 export abstract class BlockchainFacade {
+  private static currencyFacades: Map<CurrencyCode, BlockchainFacade> = new Map()
+
+  /**
+   * Retrieves the available balance at a given address.
+   *
+   * @param address the address to retrieve the details for
+   */
+  abstract getAddressBalance(address: string): Promise<number>
+
   /**
    * Creates a new transaction and broadcasts it to the chain.
    *
@@ -18,8 +27,9 @@ export abstract class BlockchainFacade {
   /**
    * Retrieves the transaction details for a given hash
    * @param transactionHash transaction identifier
+   * @param targetAddress the transaction target address
    */
-  abstract getTransaction(transactionHash: string): Promise<Transaction>
+  abstract getTransaction(transactionHash: string, targetAddress: string): Promise<Transaction>
 
   /** Generates a new address. */
   abstract generateAddress(): Promise<CryptoAddress>
@@ -51,7 +61,7 @@ export abstract class BlockchainFacade {
    * @param transactionHash the transaction id/hash
    * @param callbackURL the callback URL to invoke on transaction confirmation
    */
-  abstract subscribeToTransactionConfirmationEvents(transactionHash: string, callbackURL: string): Promise<{ alreadyConfirmed: boolean }>
+  abstract subscribeToTransactionConfirmationEvents(transactionHash: string, callbackURL: string): Promise<void>
 
   /**
    * Returns the {@link BlockchainFacade} implementation instance based on the coin passed in.
@@ -59,7 +69,14 @@ export abstract class BlockchainFacade {
    */
   public static getInstance(currency: CurrencyCode) {
     if (currency === CurrencyCode.bitcoin) {
-      return new BitcoinBlockchainFacade()
+      let existingFacade = this.currencyFacades.get(currency)
+
+      if (!existingFacade) {
+        existingFacade = new BitcoinBlockchainFacade()
+        this.currencyFacades.set(currency, existingFacade)
+      }
+
+      return existingFacade
     }
 
     throw new Error(`Unsupported currency for BlockchainFacade ${currency}`)

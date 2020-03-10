@@ -4,7 +4,8 @@ import { DepositTransactionConfirmationQueuePoller } from '../holdings-transacti
 import * as coreOperations from '../../../../core'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { HoldingsTransactionDispatcher } from '../holdings-transaction-creation/HoldingsTransactionDispatcher'
-import { DepositRequestStatus } from '@abx-types/deposit'
+import * as asyncMessagePublisherOperations from '@abx-utils/async-message-publisher'
+import { DEPOSIT_HOLDINGS_TRANSACTION_CONFIRMATION_QUEUE_URL } from '../constants'
 
 describe('DepositTransactionConfirmationQueuePoller', () => {
   const depositTransactionConfirmationQueuePoller = new DepositTransactionConfirmationQueuePoller()
@@ -28,30 +29,91 @@ describe('DepositTransactionConfirmationQueuePoller', () => {
       expect(transferTransactionAmountToHoldingsWalletStub.calledOnce).to.eql(false)
     })
 
-    it('should transfer amount to holdings and update status to pendingHoldingsTransactionConfirmation', async () => {
+    it('should transfer amount to holdings and update status to pendingHoldingsTransactionConfirmation, no pre-existing requests', async () => {
       const depositRequest = {
         id: 1,
+        amount: 5,
       } as any
+      const holdingsTransactionHash = 'tx-hash-a'
 
+      sinon.stub(coreOperations, 'findDepositRequestsWithInsufficientAmount').resolves([])
       sinon.stub(coreOperations, 'findDepositRequestByDepositTransactionHash').resolves(depositRequest)
-      const updateDepositRequestStub = sinon.stub(coreOperations, 'updateDepositRequest').resolves(depositRequest)
-      const transferTransactionAmountToHoldingsWalletStub = sinon.stub(
-        HoldingsTransactionDispatcher.prototype,
-        'transferTransactionAmountToHoldingsWallet',
-      )
+      const transferTransactionAmountToHoldingsWalletStub = sinon
+        .stub(HoldingsTransactionDispatcher.prototype, 'transferTransactionAmountToHoldingsWallet')
+        .resolves(holdingsTransactionHash)
 
       const confirmedTransactionPayload = {
         txid: 'txid1',
         currency: CurrencyCode.bitcoin,
       } as any
 
+      const sendAsyncChangeMessageStub = sinon.stub(asyncMessagePublisherOperations, 'sendAsyncChangeMessage').resolves()
       await depositTransactionConfirmationQueuePoller['processDepositAddressTransaction'](confirmedTransactionPayload)
-      expect(transferTransactionAmountToHoldingsWalletStub.calledWith(CurrencyCode.bitcoin, confirmedTransactionPayload.txid, depositRequest)).to.eql(
-        true,
-      )
-      expect(updateDepositRequestStub.calledWith(depositRequest.id, { status: DepositRequestStatus.pendingHoldingsTransactionConfirmation })).to.eql(
-        true,
-      )
+      expect(transferTransactionAmountToHoldingsWalletStub.calledWith(CurrencyCode.bitcoin, depositRequest, [])).to.eql(true)
+
+      expect(
+        sendAsyncChangeMessageStub.calledWith({
+          type: 'holdings-transaction-sent',
+          target: {
+            local: DEPOSIT_HOLDINGS_TRANSACTION_CONFIRMATION_QUEUE_URL!,
+            deployedEnvironment: DEPOSIT_HOLDINGS_TRANSACTION_CONFIRMATION_QUEUE_URL!,
+          },
+          payload: {
+            txid: holdingsTransactionHash,
+            currency: confirmedTransactionPayload.currency,
+          },
+        }),
+      ).to.eql(true)
+    })
+
+    it('should transfer amount to holdings and update status to pendingHoldingsTransactionConfirmation, with pre-existing requests', async () => {
+      const depositRequest = {
+        id: 1,
+        amount: 5,
+      } as any
+      const holdingsTransactionHash = 'tx-hash-a'
+      const preExistingDepositTransactionAmount = 12
+      const preExistingDepositTransactionId = 2
+
+      sinon.stub(coreOperations, 'findDepositRequestsWithInsufficientAmount').resolves([
+        {
+          id: preExistingDepositTransactionId,
+          amount: preExistingDepositTransactionAmount,
+        },
+      ])
+      sinon.stub(coreOperations, 'findDepositRequestByDepositTransactionHash').resolves(depositRequest)
+      const transferTransactionAmountToHoldingsWalletStub = sinon
+        .stub(HoldingsTransactionDispatcher.prototype, 'transferTransactionAmountToHoldingsWallet')
+        .resolves(holdingsTransactionHash)
+
+      const confirmedTransactionPayload = {
+        txid: 'txid1',
+        currency: CurrencyCode.bitcoin,
+      } as any
+
+      const sendAsyncChangeMessageStub = sinon.stub(asyncMessagePublisherOperations, 'sendAsyncChangeMessage').resolves()
+      await depositTransactionConfirmationQueuePoller['processDepositAddressTransaction'](confirmedTransactionPayload)
+      expect(
+        transferTransactionAmountToHoldingsWalletStub.calledWith(
+          CurrencyCode.bitcoin,
+          { ...depositRequest, amount: depositRequest.amount + preExistingDepositTransactionAmount },
+          [preExistingDepositTransactionId],
+        ),
+      ).to.eql(true)
+
+      expect(
+        sendAsyncChangeMessageStub.calledWith({
+          type: 'holdings-transaction-sent',
+          target: {
+            local: DEPOSIT_HOLDINGS_TRANSACTION_CONFIRMATION_QUEUE_URL!,
+            deployedEnvironment: DEPOSIT_HOLDINGS_TRANSACTION_CONFIRMATION_QUEUE_URL!,
+          },
+          payload: {
+            txid: holdingsTransactionHash,
+            currency: confirmedTransactionPayload.currency,
+          },
+        }),
+      ).to.eql(true)
     })
   })
 })

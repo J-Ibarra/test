@@ -6,15 +6,16 @@ import { bootstrapMarketDataService } from '@abx/exchange-market-data-service'
 import { bootstrapReportsService } from '@abx/exchange-report-service'
 import { bootstrapNotificationService } from '@abx/exchange-notification-service'
 // import { bootstrapSchedulerService } from '@abx/exchange-scheduler-service'
+
 import {
   bootstrapKinesisAndEthCoinDepositProcessor,
   bootstrapThirdPartyCoinDepositProcessor,
-  bootstrapDepositEntryProcessor,
+  bootstrapDepositApi,
   bootstrapEthereumBlockFollowerProcessor,
   bootstrapKVTBlockFollowerProcessor,
 } from '@abx/exchange-deposit-service'
 
-import { bootstrapWithdrawalService } from '@abx/exchange-withdrawal-service'
+import { bootstrapWithdrawalApiService, bootstrapWithdrawalProcessorService } from '@abx/exchange-withdrawal-service'
 import { bootstrapOrderDataService, bootstrapOrderGatewayService, bootstrapWorkerService, bootstrapSettlementService } from '@abx/order-service'
 
 export async function startAllServices() {
@@ -30,11 +31,13 @@ export async function startAllServices() {
   await bootstrapReportsService()
   await bootstrapNotificationService()
   // await bootstrapSchedulerService()
-  await bootstrapWithdrawalService()
+
+  await bootstrapWithdrawalApiService()
+  await bootstrapWithdrawalProcessorService()
 
   // Deposit Services
   await bootstrapThirdPartyCoinDepositProcessor()
-  await bootstrapDepositEntryProcessor()
+  await bootstrapDepositApi()
   await bootstrapKinesisAndEthCoinDepositProcessor()
   await bootstrapEthereumBlockFollowerProcessor()
   await bootstrapKVTBlockFollowerProcessor()

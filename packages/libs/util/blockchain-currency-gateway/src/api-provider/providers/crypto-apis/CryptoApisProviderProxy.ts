@@ -129,8 +129,16 @@ export class CryptoApisProviderProxy {
     inputs,
     outputs,
     fee,
+    data,
   }: CryptoApiModel.IInitialTransactionDetails): Promise<CryptoApiModel.CreateTransactionResponsePayload> => {
-    return (await (this.caClientInteraction.BC[this.ticker] as CryptoApiModel.ICoin).transaction.createTransaction(inputs, outputs, fee)).payload
+    return (
+      await (this.caClientInteraction.BC[this.ticker] as CryptoApiModel.ICoin).transaction.createTransaction(
+        inputs,
+        outputs,
+        fee,
+        data ? { data } : undefined,
+      )
+    ).payload
   }
 
   /**

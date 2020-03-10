@@ -1,3 +1,3 @@
-import { bootstrapDepositEntryProcessor } from './service_starter'
+import { bootstrapDepositApi } from './service_starter'
 
-bootstrapDepositEntryProcessor()
+bootstrapDepositApi()

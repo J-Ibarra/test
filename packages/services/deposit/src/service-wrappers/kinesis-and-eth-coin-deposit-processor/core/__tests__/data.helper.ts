@@ -9,7 +9,7 @@ export const depositAddress: DepositAddress = {
   currencyId: 1,
   encryptedPrivateKey: 'encryptedPrivateKey',
   publicKey: 'publicKey',
-  activated: false,
+  transactionTrackingActivated: false,
 }
 
 export const depositRequest: DepositRequest = {

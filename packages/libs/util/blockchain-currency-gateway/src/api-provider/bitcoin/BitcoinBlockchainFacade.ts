@@ -26,21 +26,29 @@ export class BitcoinBlockchainFacade implements BlockchainFacade {
     this.bitcoinTransactionDispatcher = new BitcoinTransactionDispatcher(this.cryptoApiProviderProxy)
   }
 
+  async getAddressBalance(address: string): Promise<number> {
+    const addressDetails = await this.cryptoApiProviderProxy.getAddressDetails({ publicKey: address })
+
+    return Number(addressDetails.balance)
+  }
+
   createTransaction(params: CreateTransactionPayload): Promise<TransactionResponse> {
     this.LOGGER.debug(`Creating transaction of ${params.amount} from ${params.senderAddress.address} to ${params.receiverAddress}`)
 
     return this.bitcoinTransactionDispatcher.createTransaction(params)
   }
 
-  async getTransaction(transactionHash: string): Promise<Transaction> {
-    const { txid, txouts, txins, time } = await this.cryptoApiProviderProxy.getTransactionDetails({ txID: transactionHash })
+  async getTransaction(transactionHash: string, targetAddress: string): Promise<Transaction> {
+    const { txid, txouts, txins, time, confirmations } = await this.cryptoApiProviderProxy.getTransactionDetails({ txID: transactionHash })
+    const txOutForTargetAddress = txouts.find(({ addresses }) => addresses.includes(targetAddress))
 
     return {
       transactionHash: txid,
       receiverAddress: txouts[0].addresses[0],
       senderAddress: txins[0].addresses[0],
-      amount: Number(txins[0].amount),
+      amount: Number(txOutForTargetAddress ? txOutForTargetAddress!.amount : 0),
       time: time,
+      confirmations,
     }
   }
 
@@ -69,22 +77,24 @@ export class BitcoinBlockchainFacade implements BlockchainFacade {
     return address !== process.env.BTC_CONTRACT_ADDRESS
   }
 
-  async subscribeToTransactionConfirmationEvents(transactionHash: string, callbackURL: string): Promise<{ alreadyConfirmed: boolean }> {
-    const transactionConfirmation = await this.cryptoApiProviderProxy.createConfirmedTransactionEventSubscription({
-      callbackURL,
-      confirmations: Number(process.env.BTC_REQUIRED_TRANSACTION_CONFIRMATIONS),
-      transactionHash,
-    })
-
-    return {
-      alreadyConfirmed: transactionConfirmation.confirmations === Number(process.env.BTC_REQUIRED_TRANSACTION_CONFIRMATIONS),
+  async subscribeToTransactionConfirmationEvents(transactionHash: string, callbackURL: string): Promise<void> {
+    try {
+      await this.cryptoApiProviderProxy.createConfirmedTransactionEventSubscription({
+        callbackURL,
+        confirmations: Number(process.env.BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS),
+        transactionHash,
+      })
+    } catch (e) {
+      this.LOGGER.error(`Error ocurred when subscribing for transaction confirmations for ${transactionHash}`)
+      this.LOGGER.error(`${JSON.stringify(e)}`)
+      throw e
     }
   }
 
   subscribeToAddressTransactionEvents(publicKey: string, confirmations: number): Promise<IAddressTransaction> {
     return this.cryptoApiProviderProxy.createAddressTransactiontEventSubscription({
       address: publicKey,
-      callbackURL: `${process.env.API_URL}/webhooks/crypto/address-transactions`,
+      callbackURL: process.env.DEPOSIT_ADDRESS_UNCONFIRMED_TRANSACTION_CALLBACK_URL!,
       confirmations,
     })
   }

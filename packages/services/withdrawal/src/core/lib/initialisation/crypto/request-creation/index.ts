@@ -4,7 +4,7 @@ import { getTotalWithdrawalAmount } from '../../../../helper'
 import * as helper from '../../../../helper'
 import { InitialiseWithdrawalParams, CurrencyEnrichedWithdrawalRequest } from '@abx-types/withdrawal'
 import { createSingleWithdrawalRequest } from './no_fee_request_creator'
-import { createSeparateWithrawalFeeRequest } from './separate_fee_request_withdrawal_creator'
+import { createSeparateWithdrawalFeeRequest } from './separate_fee_request_withdrawal_creator'
 import { convertAmountToFiatCurrency } from '@abx-utils/fx-rate'
 
 export interface WithdrawalRequestCreationResult {
@@ -21,7 +21,7 @@ export async function createWithdrawalRequests(
   transaction: Transaction,
 ): Promise<WithdrawalRequestCreationResult> {
   if (initialiseWithdrawalParams.currencyCode !== withdrawalFeeCurrency.code) {
-    return createSeparateWithrawalFeeRequest(
+    return createSeparateWithdrawalFeeRequest(
       initialiseWithdrawalParams,
       preferredCurrencyCode,
       withdrawalFee,

@@ -15,5 +15,5 @@ export interface DepositAddress {
    * When an address is activated Kinesis is actively monitoring the address for new transactions
    * processing them as deposits.
    */
-  activated: boolean
+  transactionTrackingActivated?: boolean
 }

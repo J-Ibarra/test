@@ -1,0 +1,133 @@
+import { NewTransactionRecorder } from '../../core/deposit-transaction-recording/NewTransactionRecorder'
+import { CurrencyCode } from '@abx-types/reference-data'
+import * as coreOperations from '../../../../core'
+import sinon from 'sinon'
+import { expect } from 'chai'
+import * as marketDataOperations from '@abx-service-clients/market-data'
+import { DepositRequestStatus } from '@abx-types/deposit'
+import * as asyncMessagePublisherOperations from '@abx-utils/async-message-publisher'
+import * as blockchainGateway from '@abx-utils/blockchain-currency-gateway'
+import { DEPOSIT_CONFIRMED_TRANSACTION_QUEUE_URL } from '../constants'
+
+describe('NewTransactionRecorder:recordDepositTransaction', () => {
+  const newTransactionRecorder = new NewTransactionRecorder()
+  const depositTxHash = 'foo'
+  let newTransactionDetails = {
+    currency: CurrencyCode.bitcoin,
+    depositTransactionDetails: {
+      transactionHash: depositTxHash,
+      amount: 5,
+    },
+    depositAddress: {
+      id: 1,
+    },
+  } as any
+  let blockchainFacadeStub
+
+  beforeEach(() => {
+    blockchainFacadeStub = {
+      subscribeToTransactionConfirmationEvents: sinon.stub(),
+    } as any
+  })
+  afterEach(() => sinon.restore())
+
+  it('should not record transaction when deposit request already exists with that hash', async () => {
+    sinon.stub(coreOperations, 'findDepositRequestsWhereTransactionHashPresent').resolves([{ id: 1 }])
+    const createNewDepositRequestStub = sinon.stub(coreOperations, 'createNewDepositRequest')
+    await newTransactionRecorder.recordDepositTransaction(newTransactionDetails)
+
+    expect(createNewDepositRequestStub.calledOnce).to.eql(false)
+  })
+
+  it('should record transaction with insufficientAmount status when amount < minAmount for currency', async () => {
+    sinon.stub(coreOperations, 'findDepositRequestsWhereTransactionHashPresent').resolves([])
+    sinon.stub(coreOperations, 'getMinimumDepositAmountForCurrency').resolves(200)
+
+    const fiatValueForCryptoCurrency = 12
+    sinon.stub(marketDataOperations, 'calculateRealTimeMidPriceForSymbol').resolves(fiatValueForCryptoCurrency)
+
+    const sendAsyncChangeMessageStub = sinon.stub(asyncMessagePublisherOperations, 'sendAsyncChangeMessage').resolves()
+
+    const createNewDepositRequestStub = sinon.stub(coreOperations, 'createNewDepositRequest').resolves()
+    await newTransactionRecorder.recordDepositTransaction(newTransactionDetails)
+
+    expect(
+      createNewDepositRequestStub.calledWith(
+        newTransactionDetails.depositTransactionDetails,
+        newTransactionDetails.depositAddress,
+        fiatValueForCryptoCurrency,
+        DepositRequestStatus.insufficientAmount,
+      ),
+    ).to.eql(true)
+    expect(sendAsyncChangeMessageStub.calledOnce).to.eql(false)
+    expect(blockchainFacadeStub.subscribeToTransactionConfirmationEvents.calledOnce).to.eql(false)
+  })
+
+  it('should record transaction and subscribe for transaction confirmations', async () => {
+    sinon.stub(coreOperations, 'findDepositRequestsWhereTransactionHashPresent').resolves([])
+    sinon.stub(blockchainGateway.BlockchainFacade, 'getInstance').returns(blockchainFacadeStub)
+
+    const fiatValueForCryptoCurrency = 12
+    const confirmedTransactionCallbackUrl = 'foo'
+    process.env.DEPOSIT_CONFIRMED_TRANSACTION_CALLBACK_URL = confirmedTransactionCallbackUrl
+    sinon.stub(marketDataOperations, 'calculateRealTimeMidPriceForSymbol').resolves(fiatValueForCryptoCurrency)
+
+    const sendAsyncChangeMessageStub = sinon.stub(asyncMessagePublisherOperations, 'sendAsyncChangeMessage').resolves()
+
+    const createNewDepositRequestStub = sinon.stub(coreOperations, 'createNewDepositRequest').resolves()
+    await newTransactionRecorder.recordDepositTransaction(newTransactionDetails)
+
+    expect(
+      createNewDepositRequestStub.calledWith(
+        newTransactionDetails.depositTransactionDetails,
+        newTransactionDetails.depositAddress,
+        fiatValueForCryptoCurrency,
+      ),
+    ).to.eql(true)
+    expect(blockchainFacadeStub.subscribeToTransactionConfirmationEvents.calledWith(depositTxHash, confirmedTransactionCallbackUrl)).to.eql(true)
+    expect(sendAsyncChangeMessageStub.calledOnce).to.eql(false)
+  })
+
+  it('should record transaction and push confirmed transaction processing when confirmations === required confirmations', async () => {
+    sinon.stub(coreOperations, 'findDepositRequestsWhereTransactionHashPresent').resolves([])
+    sinon.stub(blockchainGateway.BlockchainFacade, 'getInstance').returns(blockchainFacadeStub)
+
+    const bitcoinConfirmationsRequired = 1
+    process.env.BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS = `${bitcoinConfirmationsRequired}`
+
+    const fiatValueForCryptoCurrency = 12
+    sinon.stub(marketDataOperations, 'calculateRealTimeMidPriceForSymbol').resolves(fiatValueForCryptoCurrency)
+
+    const sendAsyncChangeMessageStub = sinon.stub(asyncMessagePublisherOperations, 'sendAsyncChangeMessage').resolves()
+
+    const createNewDepositRequestStub = sinon.stub(coreOperations, 'createNewDepositRequest').resolves()
+    newTransactionDetails = {
+      ...newTransactionDetails,
+      depositTransactionDetails: { ...newTransactionDetails.depositTransactionDetails, confirmations: bitcoinConfirmationsRequired },
+    }
+
+    await newTransactionRecorder.recordDepositTransaction(newTransactionDetails)
+
+    expect(
+      createNewDepositRequestStub.calledWith(
+        newTransactionDetails.depositTransactionDetails,
+        newTransactionDetails.depositAddress,
+        fiatValueForCryptoCurrency,
+      ),
+    ).to.eql(true)
+    expect(blockchainFacadeStub.subscribeToTransactionConfirmationEvents.calledOnce).to.eql(false)
+    expect(
+      sendAsyncChangeMessageStub.calledWith({
+        type: `deposit-transaction-confirmed-${depositTxHash}`,
+        target: {
+          local: DEPOSIT_CONFIRMED_TRANSACTION_QUEUE_URL!,
+          deployedEnvironment: DEPOSIT_CONFIRMED_TRANSACTION_QUEUE_URL!,
+        },
+        payload: {
+          txid: depositTxHash,
+          currency: CurrencyCode.bitcoin,
+        },
+      }),
+    ).to.eql(true)
+  })
+})

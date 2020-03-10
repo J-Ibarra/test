@@ -6,15 +6,18 @@ import { EndpointInvocationUtils } from '../../../api-provider/providers/Endpoin
 import * as testUtils from './BitcoinTransactionDispatcher.utils'
 import * as asyncMessagePublisher from '@abx-utils/async-message-publisher'
 import * as bitcoin from 'bitcoinjs-lib'
+import { BitcoinTransactionFeeEstimator } from '../../../api-provider/bitcoin/BitcoinTransactionFeeEstimator'
+import { BitcoinTransactionCreationUtils } from '../../../api-provider/bitcoin/BitcoinTransactionCreationUtils'
+import { cryptoApiClient } from './BitcoinTransactionDispatcher.utils'
 
-describe.only('BitcoinTransactionDispatcher', () => {
+describe('BitcoinTransactionDispatcher', () => {
   let bitcoinTransactionDispatcher: BitcoinTransactionDispatcher
   let invokeEndpointWithProgressiveRetryStub
   const signedTransactionHex = 'signedTransactionHex'
 
   beforeEach(() => {
-    process.env.BITCOIN_CONFIRMATION_BLOCKS = `${testUtils.bitcoinConfirmationBlocks}`
-    bitcoinTransactionDispatcher = new BitcoinTransactionDispatcher(testUtils.cryptoApiClient as any)
+    process.env.BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS = `${testUtils.bitcoinConfirmationBlocks}`
+    bitcoinTransactionDispatcher = new BitcoinTransactionDispatcher(cryptoApiClient)
     invokeEndpointWithProgressiveRetryStub = sinon.stub(EndpointInvocationUtils, 'invokeEndpointWithProgressiveRetry')
 
     sinon.stub(bitcoin.TransactionBuilder.prototype, 'build').returns({
@@ -33,12 +36,8 @@ describe.only('BitcoinTransactionDispatcher', () => {
   })
 
   it('should create transaction and subscribe after calculating fee', async () => {
-    testUtils.getTransactionsFeeStub.resolves({
-      average: testUtils.average,
-      average_fee_per_byte: testUtils.average_fee_per_byte,
-    })
-
-    testUtils.getTransactionSizeStub.resolves({ tx_size_bytes: testUtils.tx_size_bytes })
+    const estimatedFee = 0.00002
+    const estimateTransactionFeeStub = sinon.stub(BitcoinTransactionFeeEstimator.prototype, 'estimateTransactionFee').resolves(estimatedFee)
     testUtils.createTransactionStub.resolves({ hex: testUtils.transactionHex })
     testUtils.broadcastTransactionStub.resolves({ txid: testUtils.transactionId })
 
@@ -52,34 +51,23 @@ describe.only('BitcoinTransactionDispatcher', () => {
     })
 
     const { txHash, transactionFee } = await bitcoinTransactionDispatcher.createTransaction(testUtils.createTransactionPayload)
-    const expectedFee = new Decimal(testUtils.tx_size_bytes)
-      .times(testUtils.average_fee_per_byte)
-      .toDP(8, Decimal.ROUND_DOWN)
+
+    const amountAfterFee = new Decimal(testUtils.createTransactionPayload.amount)
+      .minus(estimatedFee)
+      .toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
       .toNumber()
 
     expect(txHash).to.eql(testUtils.transactionId)
-    expect(transactionFee).to.eql(expectedFee)
+    expect(transactionFee).to.eql(estimatedFee)
 
-    expect(testUtils.getTransactionsFeeStub.calledOnce).to.eql(true)
     expect(testUtils.broadcastTransactionStub.calledWith(signedTransactionHex)).to.eql(true)
     expect(
-      testUtils.getTransactionSizeStub.calledWith({
-        inputs: [
-          {
-            address: testUtils.createTransactionPayload.senderAddress.address,
-            value: testUtils.withdrawalAmount,
-          },
-        ],
-        outputs: [
-          {
-            address: testUtils.createTransactionPayload.receiverAddress,
-            value: testUtils.withdrawalAmount,
-          },
-        ],
-        fee: {
-          address: testUtils.createTransactionPayload.senderAddress.address,
-          value: new Decimal(testUtils.average!).toDP(8, Decimal.ROUND_DOWN).toNumber(),
-        },
+      estimateTransactionFeeStub.calledWith({
+        senderAddress: testUtils.createTransactionPayload.senderAddress,
+        receiverAddress: testUtils.createTransactionPayload.receiverAddress,
+        amount: testUtils.createTransactionPayload.amount,
+        memo: testUtils.createTransactionPayload.memo,
+        feeLimit: testUtils.createTransactionPayload.feeLimit,
       }),
     ).to.eql(true)
     expect(
@@ -87,19 +75,20 @@ describe.only('BitcoinTransactionDispatcher', () => {
         inputs: [
           {
             address: testUtils.createTransactionPayload.senderAddress.address,
-            value: testUtils.withdrawalAmount,
+            value: amountAfterFee,
           },
         ],
         outputs: [
           {
             address: testUtils.createTransactionPayload.receiverAddress,
-            value: testUtils.withdrawalAmount,
+            value: amountAfterFee,
           },
         ],
         fee: {
           address: testUtils.createTransactionPayload.senderAddress.address,
-          value: expectedFee,
+          value: estimatedFee,
         },
+        data: testUtils.createTransactionPayload.memo,
       }),
     ).to.eql(true)
 
@@ -113,20 +102,8 @@ describe.only('BitcoinTransactionDispatcher', () => {
     ).to.eql(true)
   })
 
-  it('should fail and throw error when getTransactionsFee call fails', async () => {
-    testUtils.getTransactionSizeStub.throws('Foo')
-
-    try {
-      await bitcoinTransactionDispatcher.createTransaction(testUtils.createTransactionPayload)
-    } catch (e) {
-      expect(e.name).to.eql('ApiProviderError')
-      expect(testUtils.createTransactionStub.notCalled).to.eql(true)
-      expect(invokeEndpointWithProgressiveRetryStub.notCalled).to.eql(true)
-    }
-  })
-
-  it('should fail and throw error when getTransactionSizeStub call fails', async () => {
-    testUtils.getTransactionSizeStub.throws('Foo')
+  it('should fail and throw error when estimateTransactionFee call fails', async () => {
+    sinon.stub(BitcoinTransactionFeeEstimator.prototype, 'estimateTransactionFee').throws('Foo')
 
     try {
       await bitcoinTransactionDispatcher.createTransaction(testUtils.createTransactionPayload)
@@ -162,8 +139,7 @@ describe.only('BitcoinTransactionDispatcher', () => {
       average: testUtils.average,
       average_fee_per_byte: testUtils.average_fee_per_byte,
     })
-    testUtils.getTransactionSizeStub.resolves({ tx_size_bytes: testUtils.tx_size_bytes })
-    testUtils.createTransactionStub.resolves({ txid: testUtils.transactionId })
+    sinon.stub(BitcoinTransactionFeeEstimator.prototype, 'estimateTransactionFee').resolves(1)
     testUtils.createConfirmedTransactionEventSubscriptionStub.resolves()
 
     invokeEndpointWithProgressiveRetryStub.throws('Foo')

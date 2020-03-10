@@ -34,7 +34,7 @@ export default function depositAddressModel(sequelize: Sequelize.Sequelize) {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      activated: {
+      transactionTrackingActivated: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
       },
