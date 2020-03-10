@@ -3,7 +3,7 @@ import sinon from 'sinon'
 import { MemoryCache } from '@abx-utils/db-connection-utils'
 import { BitcoinTransactionFeeEstimator } from '../../../api-provider/bitcoin/BitcoinTransactionFeeEstimator'
 import * as testData from './test_data'
-import { BitcoinTransactionCreationUtil } from '../../../api-provider/bitcoin/BitcoinTransactionCreationUtil'
+import { BitcoinTransactionCreationUtils } from '../../../api-provider/bitcoin/BitcoinTransactionCreationUtils'
 import Decimal from 'decimal.js'
 
 describe('BitcoinTransactionFeeEstimator:estimateTransactionFee', () => {
@@ -48,12 +48,12 @@ describe('BitcoinTransactionFeeEstimator:estimateTransactionFee', () => {
     expect(cryptoApisProviderProxyStub.getTransactionsFee.calledOnce).to.eql(false)
     expect(
       getTransactionSizeStub.calledWith({
-        inputs: [BitcoinTransactionCreationUtil.createTransactionAddress(testData.senderAddress.address!, testData.txAmount)],
-        outputs: [BitcoinTransactionCreationUtil.createTransactionAddress(testData.receiverAddress, testData.txAmount)],
+        inputs: [BitcoinTransactionCreationUtils.createTransactionAddress(testData.senderAddress.address!, testData.txAmount)],
+        outputs: [BitcoinTransactionCreationUtils.createTransactionAddress(testData.receiverAddress, testData.txAmount)],
         fee: {
           address: testData.senderAddress.address!,
           value: new Decimal(testData.averageFeePerTransaction!)
-            .toDP(BitcoinTransactionCreationUtil.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
+            .toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
             .toNumber(),
         },
         data: testData.memo,
@@ -80,12 +80,12 @@ describe('BitcoinTransactionFeeEstimator:estimateTransactionFee', () => {
     expect(getTransactionsFeeStub.calledOnce).to.eql(true)
     expect(
       getTransactionSizeStub.calledWith({
-        inputs: [BitcoinTransactionCreationUtil.createTransactionAddress(testData.senderAddress.address!, testData.txAmount)],
-        outputs: [BitcoinTransactionCreationUtil.createTransactionAddress(testData.receiverAddress, testData.txAmount)],
+        inputs: [BitcoinTransactionCreationUtils.createTransactionAddress(testData.senderAddress.address!, testData.txAmount)],
+        outputs: [BitcoinTransactionCreationUtils.createTransactionAddress(testData.receiverAddress, testData.txAmount)],
         fee: {
           address: testData.senderAddress.address!,
           value: new Decimal(testData.averageFeePerTransaction!)
-            .toDP(BitcoinTransactionCreationUtil.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
+            .toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
             .toNumber(),
         },
         data: testData.memo,
@@ -114,12 +114,12 @@ describe('BitcoinTransactionFeeEstimator:estimateTransactionFee', () => {
     expect(getTransactionsFeeStub.calledOnce).to.eql(true)
     expect(
       getTransactionSizeStub.calledWith({
-        inputs: [BitcoinTransactionCreationUtil.createTransactionAddress(testData.senderAddress.address!, testData.txAmount)],
-        outputs: [BitcoinTransactionCreationUtil.createTransactionAddress(testData.receiverAddress, testData.txAmount)],
+        inputs: [BitcoinTransactionCreationUtils.createTransactionAddress(testData.senderAddress.address!, testData.txAmount)],
+        outputs: [BitcoinTransactionCreationUtils.createTransactionAddress(testData.receiverAddress, testData.txAmount)],
         fee: {
           address: testData.senderAddress.address!,
           value: new Decimal(testData.averageFeePerTransaction!)
-            .toDP(BitcoinTransactionCreationUtil.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
+            .toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
             .toNumber(),
         },
         data: testData.memo,
@@ -150,12 +150,12 @@ describe('BitcoinTransactionFeeEstimator:estimateTransactionFee', () => {
     expect(getTransactionsFeeStub.calledOnce).to.eql(true)
     expect(
       getTransactionSizeStub.calledWith({
-        inputs: [BitcoinTransactionCreationUtil.createTransactionAddress(testData.senderAddress.address!, txAmount)],
-        outputs: [BitcoinTransactionCreationUtil.createTransactionAddress(testData.receiverAddress, txAmount)],
+        inputs: [BitcoinTransactionCreationUtils.createTransactionAddress(testData.senderAddress.address!, txAmount)],
+        outputs: [BitcoinTransactionCreationUtils.createTransactionAddress(testData.receiverAddress, txAmount)],
         fee: {
           address: testData.senderAddress.address!,
           value: new Decimal(testData.averageFeePerTransaction!)
-            .toDP(BitcoinTransactionCreationUtil.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
+            .toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
             .toNumber(),
         },
         data: testData.memo,
