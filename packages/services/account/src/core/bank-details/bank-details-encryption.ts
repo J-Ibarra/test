@@ -1,5 +1,8 @@
 import { decryptValue, encryptValue } from '@abx-utils/encryption'
 import { PersonalBankDetails } from '@abx-types/account'
+import { Logger } from '@abx-utils/logging'
+
+const logger = Logger.getInstance('account', 'bar')
 
 export async function decryptBankDetails(bankDetails: PersonalBankDetails): Promise<PersonalBankDetails> {
   const decryptedBankFields = await Promise.all(
@@ -14,8 +17,11 @@ export async function decryptBankDetails(bankDetails: PersonalBankDetails): Prom
 }
 
 export async function encryptBankDetails(bankDetails: PersonalBankDetails): Promise<PersonalBankDetails> {
+  logger.info(`Bank details: ${JSON.stringify(bankDetails)}`)
   const encryptedBankFields = await Promise.all(
-    Object.keys(bankDetails).map(field => (field !== 'id' ? encryptValue(bankDetails[field]) : Promise.resolve(bankDetails.id))) as any,
+    Object.keys(bankDetails).map(field =>
+      field !== 'id' && bankDetails[field]!! ? encryptValue(bankDetails[field]) : Promise.resolve(bankDetails.id),
+    ) as any,
   )
 
   return Object.keys(bankDetails).reduce((encryptedDetails, key, idx) => {
