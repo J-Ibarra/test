@@ -3,12 +3,11 @@ const request = require('request')
 
 triggerApiDocGeneration()
 
-console.log(process.env.TRAVIS_ACCESS_TOKEN)
-
 async function triggerApiDocGeneration() {
   await new Promise(resolve => {
     request.post(
-      `https://api.travis-ci.com/repo/bullioncapital%2Fsecondary-exchange-services/requests`, {
+      `https://api.travis-ci.com/repo/bullioncapital%2Fsecondary-exchange-services/requests`,
+      {
         method: 'POST',
         body: JSON.stringify({
           request: {
