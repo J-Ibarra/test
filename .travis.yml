@@ -25,7 +25,6 @@ before_install:
   - aws configure set profile.kinesis.aws_secret_access_key $AWS_SECRET_ACCESS_KEY
   - aws configure set profile.kinesis.aws_access_key_id $AWS_ACCESS_KEY_ID
   - aws configure set profile.kinesis.region ap-southeast-2
-  - git fetch
   - gem install bundler --version '2.0.2'
 before_script:
   - psql -c 'create database kinesis_exchange;' -U postgres
@@ -33,7 +32,7 @@ before_script:
 jobs:
   include:
     - stage: test
-      if: tag IS blank and branch != develop #if it is a tag we don't want to run the tests, they would have run already
+      if: tag IS blank and branch != develop and branch != api-doc-generation #if it is a tag we don't want to run the tests, they would have run already
       script:
         - ./_scripts/travis/travis-build-branch-checkout.sh
         - npm link
