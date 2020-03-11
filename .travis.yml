@@ -26,6 +26,8 @@ before_install:
   - aws configure set profile.kinesis.aws_access_key_id $AWS_ACCESS_KEY_ID
   - aws configure set profile.kinesis.region ap-southeast-2
   - git fetch
+  - rvm install 3.1
+  - gem install bundler --version '2.0.2'
 before_script:
   - psql -c 'create database kinesis_exchange;' -U postgres
 
@@ -44,10 +46,12 @@ jobs:
       if: branch = develop and type = push
       script:
         - ./_scripts/travis/travis-build-service-release.sh
+        # - node ./_scripts/travis/api-generation-build-trigger.js
     - stage: 'Build api docs and push to s3'
-      if: branch = develop and type = push
+      if: branch = api-doc-generation
       script:
         - npm run bootstrap:production
         - npm run build
+        - cd packages/services/_api-docs
         - npm run build:docs
-        - npm run push-api-docs-to-s3
+        # - npm run push-api-docs-to-s3
