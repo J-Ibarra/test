@@ -38,6 +38,7 @@ jobs:
         - ./_scripts/travis/travis-build-branch-checkout.sh
         - npm link
         - npm run bootstrap
+        - lerna run build --scope @abx-utils/kbe-legacy-migrations --include-dependencies --exclude-dependents
         - lerna run build --since develop --include-dependencies --exclude-dependents
         - npm run run-legacy-migrations:test
         - lerna run test --since develop --include-dependencies --exclude-dependents
