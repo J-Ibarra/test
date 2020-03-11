@@ -20,7 +20,7 @@ export async function encryptBankDetails(bankDetails: PersonalBankDetails): Prom
   logger.info(`Bank details: ${JSON.stringify(bankDetails)}`)
   const encryptedBankFields = await Promise.all(
     Object.keys(bankDetails).map(field =>
-      field !== 'id' && bankDetails[field]!! ? encryptValue(bankDetails[field]) : Promise.resolve(bankDetails.id),
+      field !== 'id' && !!bankDetails[field] ? encryptValue(bankDetails[field]) : Promise.resolve(bankDetails.id),
     ) as any,
   )
 
