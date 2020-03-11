@@ -53,5 +53,6 @@ jobs:
         - npm run bootstrap:production
         - npm run build
         - cd packages/services/_api-docs
+        - bundle install
         - npm run build:docs
         # - npm run push-api-docs-to-s3
