@@ -1,13 +1,14 @@
 'use strict'
 const request = require('request')
 
-triggerE2eTests()
+triggerApiDocGeneration()
 
-async function triggerE2eTests() {
+console.log(process.env.TRAVIS_ACCESS_TOKEN)
+
+async function triggerApiDocGeneration() {
   await new Promise(resolve => {
     request.post(
-      `https://api.travis-ci.com/repo/bullioncapital%2Fsecondary-exchange-services/requests`,
-      {
+      `https://api.travis-ci.com/repo/bullioncapital%2Fsecondary-exchange-services/requests`, {
         method: 'POST',
         body: JSON.stringify({
           request: {
@@ -32,5 +33,5 @@ async function triggerE2eTests() {
     )
   })
 
-  console.log(`E2E tests triggered`)
+  console.log(`API Doc generation triggered`)
 }
