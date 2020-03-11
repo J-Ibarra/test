@@ -37,6 +37,7 @@ jobs:
         - npm run bootstrap
         - lerna run build --since develop --include-dependencies --exclude-dependents
         - npm run run-legacy-migrations:test
+        - npm run run-legacy:test
         - lerna run test --since develop --include-dependencies --exclude-dependents
     - stage: 'Build image and push to ECR'
       if: (branch = develop OR branch =~ /^feature+/) AND type = push
