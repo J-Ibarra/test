@@ -21,9 +21,6 @@ interface NewTransactionDetails {
 
 const logger = Logger.getInstance('public-coin-deposit-processor', 'NewTransactionRecorder')
 
-/**
- * Responsible for
- */
 export class NewTransactionRecorder {
   private DEFAULT_REQUIRED_DEPOSIT_TRANSACTION_CONFIRMATIONS = 1
 
@@ -50,11 +47,6 @@ export class NewTransactionRecorder {
     return existingDepositRequests.length === 0 && amount > 0
   }
 
-  /**
-   * Creates a deposit request entry for the deposit transaction details.
-   * In the case where the deposited amount is less than the defined minimum for the currency,
-   * a 'insufficientAmount' status is used for the new record and it is not processed any further.
-   */
   private async persistTransactionDetails(currency: CurrencyCode, depositTransactionDetails: Transaction, depositAddress: DepositAddress) {
     const providerFacade = BlockchainFacade.getInstance(currency)
     const fiatValueOfOneCryptoCurrency = await calculateRealTimeMidPriceForSymbol(`${currency}_${FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION}`)
@@ -75,7 +67,7 @@ export class NewTransactionRecorder {
     providerFacade: BlockchainFacade,
   ) {
     if (confirmations === this.getRequiredConfirmationsForDepositTransaction(currency)) {
-      await this.queueForHoldingsTransactionCreation(transactionHash, currency)
+      await this.queueForTransactionCreation(transactionHash, currency)
       logger.info(`Transaction ${transactionHash} already confirmed ${confirmations} times, pushing message to confirmed transaction queue`)
     } else {
       await providerFacade.subscribeToTransactionConfirmationEvents(transactionHash, process.env.DEPOSIT_CONFIRMED_TRANSACTION_CALLBACK_URL!)
@@ -83,7 +75,7 @@ export class NewTransactionRecorder {
     }
   }
 
-  private queueForHoldingsTransactionCreation(txid: string, currency: CurrencyCode) {
+  private queueForTransactionCreation(txid: string, currency: CurrencyCode) {
     return sendAsyncChangeMessage<ConfirmedDepositTransactionPayload>({
       type: `deposit-transaction-confirmed-${txid}`,
       target: {

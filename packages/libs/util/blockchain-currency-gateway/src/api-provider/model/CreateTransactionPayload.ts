@@ -16,4 +16,6 @@ export interface CreateTransactionPayload {
    * This is used mostly for withdrawals where we want to make sure kinesis remains profitable.
    */
   feeLimit?: number
+  /** The transaction confirmations for specify when creating the transaction confirmations webhook. */
+  transactionConfirmations?: number
 }

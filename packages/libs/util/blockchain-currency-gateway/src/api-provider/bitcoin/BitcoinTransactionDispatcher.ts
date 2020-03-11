@@ -11,7 +11,7 @@ import * as bitcoin from 'bitcoinjs-lib'
 import { mainnetEnvironments } from './BitcoinBlockchainFacade'
 import { Environment } from '@abx-types/reference-data'
 import { BitcoinTransactionFeeEstimator } from './BitcoinTransactionFeeEstimator'
-import { BitcoinTransactionCreationUtils } from './BitcoinTransactionCreationUtils'
+import { BitcoinTransactionCreationUtil } from './BitcoinTransactionCreationUtil'
 
 export class BitcoinTransactionDispatcher {
   private readonly LOGGER = Logger.getInstance('blockchain-currency-gateway', 'BitcoinBlockchainFacade')
@@ -37,6 +37,7 @@ export class BitcoinTransactionDispatcher {
     webhookRegistrationFailureUrl,
     memo,
     feeLimit,
+    transactionConfirmations,
   }: CreateTransactionPayload): Promise<TransactionResponse> {
     let estimatedTransactionFee
     try {
@@ -67,7 +68,7 @@ export class BitcoinTransactionDispatcher {
     }
 
     if (!!webhookCallbackUrl) {
-      await this.createTransactionConfirmationWebhook(transactionHash, webhookCallbackUrl, webhookRegistrationFailureUrl!)
+      await this.createTransactionConfirmationWebhook(transactionHash, webhookCallbackUrl, webhookRegistrationFailureUrl!, transactionConfirmations)
     }
 
     return {
@@ -85,12 +86,12 @@ export class BitcoinTransactionDispatcher {
   ): Promise<string> {
     let amountAfterFee = new Decimal(amount)
       .minus(fee)
-      .toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
+      .toDP(BitcoinTransactionCreationUtil.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
       .toNumber()
 
     const { hex: transactionHex } = await this.cryptoApisProviderProxy.createTransaction({
-      inputs: [BitcoinTransactionCreationUtils.createTransactionAddress(senderAddress.address!, amountAfterFee)],
-      outputs: [BitcoinTransactionCreationUtils.createTransactionAddress(receiverAddress, amountAfterFee)],
+      inputs: [BitcoinTransactionCreationUtil.createTransactionAddress(senderAddress.address!, amountAfterFee)],
+      outputs: [BitcoinTransactionCreationUtil.createTransactionAddress(receiverAddress, amountAfterFee)],
       fee: {
         address: senderAddress.address!,
         value: fee,
@@ -136,7 +137,12 @@ export class BitcoinTransactionDispatcher {
    * @param webhookCallbackUrl the URL where the webhook notification is pushed
    * @param webhookRegistrationFailureUrl the URL where a message is pushed if the confirmed transaction webhook registration fails
    */
-  private async createTransactionConfirmationWebhook(transactionHash: string, webhookCallbackUrl: string, webhookRegistrationFailureUrl: string) {
+  private async createTransactionConfirmationWebhook(
+    transactionHash: string,
+    webhookCallbackUrl: string,
+    webhookRegistrationFailureUrl: string,
+    transactionConfirmations?: number,
+  ) {
     try {
       const { confirmations, created } = await EndpointInvocationUtils.invokeEndpointWithProgressiveRetry<IConfirmedTransaction>({
         name: 'createConfirmedTransactionWebHook',
@@ -144,7 +150,7 @@ export class BitcoinTransactionDispatcher {
           this.cryptoApisProviderProxy.createConfirmedTransactionEventSubscription({
             callbackURL: webhookCallbackUrl,
             transactionHash,
-            confirmations: Number(process.env.BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS),
+            confirmations: transactionConfirmations || Number(process.env.BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS),
           }),
       })
 

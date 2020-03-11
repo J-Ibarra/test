@@ -7,7 +7,7 @@ import * as testUtils from './BitcoinTransactionDispatcher.utils'
 import * as asyncMessagePublisher from '@abx-utils/async-message-publisher'
 import * as bitcoin from 'bitcoinjs-lib'
 import { BitcoinTransactionFeeEstimator } from '../../../api-provider/bitcoin/BitcoinTransactionFeeEstimator'
-import { BitcoinTransactionCreationUtils } from '../../../api-provider/bitcoin/BitcoinTransactionCreationUtils'
+import { BitcoinTransactionCreationUtil } from '../../../api-provider/bitcoin/BitcoinTransactionCreationUtil'
 import { cryptoApiClient } from './BitcoinTransactionDispatcher.utils'
 
 describe('BitcoinTransactionDispatcher', () => {
@@ -54,7 +54,7 @@ describe('BitcoinTransactionDispatcher', () => {
 
     const amountAfterFee = new Decimal(testUtils.createTransactionPayload.amount)
       .minus(estimatedFee)
-      .toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
+      .toDP(BitcoinTransactionCreationUtil.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
       .toNumber()
 
     expect(txHash).to.eql(testUtils.transactionId)

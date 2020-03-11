@@ -50,7 +50,7 @@ export async function recordWithdrawalOnChainTransaction({
     )
 
     logger.debug(`Queuing request for completion ${withdrawalRequest.id}`)
-    return queueForCompletion(transactionHash, withdrawalCurrency.code)
+    return queueForCompletion(withdrawalRequest.txHash!, withdrawalCurrency.code)
   })
 }
 

@@ -27,5 +27,10 @@ RUN npm i -g ts-node-dev
 COPY packages/libs ./packages/libs
 COPY packages/services/deposit ./packages/services/deposit
 
-RUN npm run bootstrap:production
-RUN npm run build:deposit
+RUN lerna bootstrap
+RUN npm run build:eth-deposit-poller
+WORKDIR /sync/packages/services/deposit/src/service-wrappers/eth-deposit-poller
+
+EXPOSE 3116
+
+CMD ["ts-node-dev","--transpileOnly", "src/bootstrap.ts"]

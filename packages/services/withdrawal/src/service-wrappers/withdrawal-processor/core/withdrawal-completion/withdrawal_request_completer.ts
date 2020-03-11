@@ -25,7 +25,6 @@ export async function completeWithdrawalRequest({ txid, currency }: WithdrawalCo
     const onChainCurrencyGateway = currencyManager.getCurrencyFromTicker(currency)
     const transactionConfirmed = await onChainCurrencyGateway.checkConfirmationOfTransaction(txid)
 
-    // The message will be returned to the queue for a later attempt
     if (!transactionConfirmed) {
       return { skipMessageDeletion: true }
     }

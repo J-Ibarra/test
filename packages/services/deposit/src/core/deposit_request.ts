@@ -186,16 +186,17 @@ export async function getPersistedPendingDepositRequests(ids: number[], parentTr
   return depositInstances.map(req => req.get({ plain: true }))
 }
 
-export async function getDepositRequestsForAccount(accountId: string) {
-  const requests = await getModel<DepositRequest>('depositRequest').findAll({
+export async function getDepositRequestsForAccountAndCurrency(accountId: string, currencyId: number) {
+  const depositInstances = await getModel<DepositRequest>('depositRequest').findAll({
     include: [
       {
         model: getModel<DepositAddress>('depositAddress'),
-        where: { accountId },
+        where: { accountId, currencyId },
       },
     ],
   })
-  return requests.map(req => req.get())
+
+  return depositInstances.map(req => req.get({ plain: true }))
 }
 
 export async function findDepositRequestByDepositTransactionHash(txHash: string): Promise<DepositRequest | null> {

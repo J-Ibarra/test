@@ -16,11 +16,6 @@ export interface ConfirmedDepositTransactionPayload {
   txid: string
 }
 
-/**
- * The mechanism for handling confirmed deposit transactions.
- * This is step2 of the deposit flow where the deposit address -> kinesis holdings transaction is created.
- * After the transaction is created the deposit request would be ready for the final - completion step.
- */
 export class DepositTransactionConfirmationQueuePoller {
   private readonly logger = Logger.getInstance('public-coin-deposit-processor', 'DepositTransactionConfirmationQueuePoller')
 

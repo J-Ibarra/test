@@ -26,13 +26,13 @@
     "build-image-kinesis-and-eth-coin-deposit-processor": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-kinesis-and-eth-coin-deposit-processor:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-kinesis-and-eth-coin-deposit-processor:latest -f packages/services/deposit/src/service-wrappers/kinesis-and-eth-coin-deposit-processor/Dockerfile . && cd packages/services/deposit ",
     "build-image-third-party-coin-deposit-processor": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-third-party-coin-deposit-processor:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-third-party-coin-deposit-processor:latest -f packages/services/deposit/src/service-wrappers/third-party-coin-deposit-processor/Dockerfile . && cd packages/services/deposit ",
     "build-base-image": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-deposit-base -f packages/services/deposit/Dockerfile .",
-    "build-image-latest": "npm run build-base-image && npm run build-image-deposit-api && npm run build-image-eth-block-follower && npm run build-image-kvt-block-follower && npm run build-image-kinesis-and-eth-coin-deposit-processor && npm run build-image-third-party-coin-deposit-processor",
+    "build-image-latest": "npm run build-base-image && npm run build-image-deposit-api && npm run build-image-eth-block-follower && npm run build-image-kvt-block-follower && npm run build-image-deposit-api && npm run build-image-kinesis-and-eth-coin-deposit-processor && npm run build-image-third-party-coin-deposit-processor",
     "push-deposit-api-image": "docker push $KINESIS_ECR_URL/kbe-services-deposit-api",
     "push-eth-block-follower-image": "docker push $KINESIS_ECR_URL/kbe-services-ethereum-block-follower",
     "push-kvt-block-follower-image": "docker push $KINESIS_ECR_URL/kbe-services-kvt-block-follower",
     "push-kinesis-and-eth-coin-deposit-processor-image": "docker push $KINESIS_ECR_URL/kbe-services-kinesis-and-eth-coin-deposit-processor",
     "push-third-party-coin-deposit-processor-image": "docker push $KINESIS_ECR_URL/kbe-services-third-party-coin-deposit-processor",
-    "push-image": "npm run push-deposit-api-image && npm run push-eth-block-follower-image && npm run push-kvt-block-follower-image && push-kinesis-and-eth-coin-deposit-processor-image && npm run push-third-party-coin-deposit-processor-image"
+    "push-image": "npm run push-deposit-api-image && npm run push-eth-block-follower-image && npm run push-kvt-block-follower-image && push-kinesis-and-eth-coin-deposit-processor-image && push-third-party-coin-deposit-processor-image"
   },
   "dependencies": {
     "@abx-service-clients/account": "^1.1.0",
