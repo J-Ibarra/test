@@ -62,7 +62,7 @@ export function RegisterRoutes(app: express.Express) {
       const promise = controller.getAllBalancesForAccount.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
-  app.patch('/api/test-automation/balances',
+  app.post('/api/test-automation/balances',
     function(request: any, response: any, next: any) {
       const args = {
         undefined: { "in": "body", "required": true, "dataType": "any" },

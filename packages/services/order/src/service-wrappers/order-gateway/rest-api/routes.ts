@@ -1,6 +1,7 @@
 /* tslint:disable */
 import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute } from 'tsoa';
 import { OrderChangeController } from './order_change_controller';
+import { AdminOrderChangeController } from './admin_order_controller';
 import { expressAuthentication } from './middleware/authentication';
 import * as express from 'express';
 
@@ -48,6 +49,26 @@ export function RegisterRoutes(app: express.Express) {
       }
 
       const controller = new OrderChangeController();
+
+
+      const promise = controller.cancelOrder.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.delete('/api/admin/orders/:id',
+    authenticateMiddleware([{ "adminAuth": [] }]),
+    function(request: any, response: any, next: any) {
+      const args = {
+        id: { "in": "path", "name": "id", "required": true, "dataType": "double" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new AdminOrderChangeController();
 
 
       const promise = controller.cancelOrder.apply(controller, validatedArgs as any);

@@ -23,7 +23,7 @@ export async function triggerKVTBlockFollower(onChainCurrencyManager: CurrencyMa
   try {
     const { id: currencyId } = await findCurrencyForCode(CurrencyCode.kvt)
     const depositAddresses = await findKycOrEmailVerifiedDepositAddresses(currencyId)
-    const { lastBlockNumberProcessed } = await getBlockchainFollowerDetailsForCurrency(currencyId) as BlockchainFollowerDetails
+    const { lastBlockNumberProcessed } = (await getBlockchainFollowerDetailsForCurrency(currencyId)) as BlockchainFollowerDetails
 
     if (Number(lastBlockNumberProcessed) === 0 && !testEnvironments.includes(process.env.NODE_ENV as string)) {
       throw new Error('Waiting for lastProcessedBlockNumber to be updated from 0')
@@ -82,7 +82,7 @@ export async function handleKVTTransactions(
     return publicKeyToDepositAddress.has(event.returnValues.to)
       ? acc.concat({ event, depositAddress: publicKeyToDepositAddress.get(event.returnValues.to)! })
       : acc
-  }, [] as { event: EventLog, depositAddress: DepositAddress }[])
+  }, [] as { event: EventLog; depositAddress: DepositAddress }[])
 
   if (potentialDepositTransactions.length > 0) {
     logger.debug(`Found Potential Deposits: ${potentialDepositTransactions}`)

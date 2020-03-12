@@ -18,8 +18,9 @@
     "migrate-db": "npm run build && NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test NODE_PATH=dist node dist/migrations/index.js",
     "start": "ts-node-dev src/index.ts",
     "test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test NODE_PATH=dist ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts src/**/*.spec.ts --exit",
-    "build-image-latest": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-market-data:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-market-data:latest -f packages/services/market-data/Dockerfile . && cd packages/services/market-data ",
-    "push-image": "docker push $KINESIS_ECR_URL/kbe-services-market-data"
+    "build-image-latest": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-market-data:$JIRA_IMAGE_TAG -t $KINESIS_ECR_URL/kbe-services-market-data:latest -f packages/services/market-data/Dockerfile . && cd packages/services/market-data ",
+    "push-image": "docker push $KINESIS_ECR_URL/kbe-services-market-data",
+    "deploy-latest-integration": "aws ecs update-service --service kbe-int-market-data-service-v2 --cluster kbe-int-cluster --region ap-southeast-2"
   },
   "dependencies": {
     "@abx-service-clients/market-data": "^1.1.0",
@@ -46,7 +47,8 @@
     "sequelize": "4.41.0",
     "socket.io": "2.3.0",
     "tsoa": "2.3.81",
-    "@types/socket.io": "2.1.3"
+    "@types/socket.io": "2.1.3",
+    "lodash": "4.17.5"
   },
   "devDependencies": {
     "@abx-utils/account": "^1.1.0",

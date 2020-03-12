@@ -1,9 +1,9 @@
 import AWS from 'aws-sdk'
-import { Environment, localTestEnvironments } from '@abx-types/reference-data'
+import { Environment, localAndTestEnvironments } from '@abx-types/reference-data'
 
 const kms = new AWS.KMS({ region: 'ap-southeast-2' })
 
-const environmentsWithoutKMSEncryption = localTestEnvironments.concat(Environment.development)
+const environmentsWithoutKMSEncryption = localAndTestEnvironments
 
 export async function decryptValue(key: string) {
   // Dont decrypt when testing

@@ -1,0 +1,14 @@
+{
+  "language_tabs": [{ "http": "HTTP" }, { "javascript": "JavaScript" }, { "javascript--nodejs": "Node.JS" }, { "python": "Python" }, { "ruby": "Ruby" }],
+  "verbose": true,
+  "tagGroups": [
+    {
+      "title": "Account",
+      "tags": ["accounts"]
+    },
+    {
+      "title": "Auth",
+      "tags": ["session", "invoice-close", "invoice-delete"]
+    }
+  ]
+}

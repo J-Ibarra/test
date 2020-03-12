@@ -5,6 +5,7 @@ import { OverloadedRequest } from '@abx-types/account'
 import { findDepositAddressesForAccount, generateDepositAddressForAccount, addAddressEventListenerForAccount } from '../../../core'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { ValidationError } from '@abx-types/error'
+import { findCryptoCurrencies } from '@abx-service-clients/reference-data'
 
 @Route('/wallets')
 export class WalletsController extends Controller {
@@ -19,10 +20,15 @@ export class WalletsController extends Controller {
     try {
       this.logger.debug(`Fetching wallets for account: ${account!.id}`)
 
-      const wallets = await findDepositAddressesForAccount(account!.id)
+      const [wallets, cryptoCurrencies] = await Promise.all([findDepositAddressesForAccount(account!.id), findCryptoCurrencies()])
+      const currencyIdToCurrency = cryptoCurrencies.reduce((acc, { code, id }) => acc.set(id, code), new Map<number, string>())
+
       this.logger.debug(`Retrieved ${wallets.length} wallets for account ${account!.id}`)
 
-      return wallets
+      return wallets.map(wallet => ({
+        publicKey: wallet.publicKey,
+        currency: { id: wallet.currencyId, code: currencyIdToCurrency.get(wallet.currencyId) },
+      }))
     } catch (error) {
       this.logger.error(`Error fetching / creating new deposit addresses: ${error.message}`)
 

@@ -1,1 +1,1 @@
-# Contains the balance service
+# Contains the 'balance' service

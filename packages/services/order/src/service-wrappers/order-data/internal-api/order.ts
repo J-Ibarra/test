@@ -1,4 +1,11 @@
-import { findOrder, getOpenOrders, findOrderMatchTransaction, findOrderMatchTransactions, findTradeTransaction, createCurrencyTransaction } from '../../../core'
+import {
+  findOrder,
+  getOpenOrders,
+  findOrderMatchTransaction,
+  findOrderMatchTransactions,
+  findTradeTransaction,
+  createCurrencyTransaction,
+} from '../../../core'
 import { OrderDataEndpoints } from '@abx-service-clients/order'
 import { InternalRoute } from '@abx-utils/internal-api-tools'
 
@@ -22,7 +29,7 @@ export function createOrderQueryEndpointHandlers(): InternalRoute<any, any>[] {
     },
     {
       path: OrderDataEndpoints.findLastOrderMatchForSymbol,
-      handler: ({ symbolId }) => findOrderMatchTransactions({ where: { symbolId }, order: [['createdAt', 'DESC']], limit: 1 }),
+      handler: ({ symbolId }) => findOrderMatchTransaction({ where: { symbolId }, order: [['createdAt', 'DESC']], limit: 1 }),
     },
     {
       path: OrderDataEndpoints.findLastOrderMatchForSymbols,

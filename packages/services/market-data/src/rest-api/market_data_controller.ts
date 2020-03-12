@@ -1,9 +1,8 @@
 import { Controller, Get, Query, Route, Security } from 'tsoa'
 import { Logger } from '@abx-utils/logging'
-import { getApiCacheClient } from '@abx-utils/db-connection-utils'
 import { MarketDataTimeFrame, OHLCMarketData, SymbolMarketDataSnapshot } from '@abx-types/market-data'
 import { CurrencyCode } from '@abx-types/reference-data'
-import { MARKET_DATA_SNAPSHOT_CACHE_KEY, MarketDataFacade, CURRENCY_MARKET_DATA_SNAPSHOT_CACHE_KEY } from '../core'
+import { MarketDataFacade } from '../core'
 import { ApiErrorPayload } from '@abx-types/error'
 import { getOHLCMarketData } from '../core'
 import { wrapWithErrorHandling } from '@abx-utils/express-middleware'
@@ -28,12 +27,6 @@ export class MarketDataController extends Controller {
   public async getMarketDataSnapshotForAllCurrencies(): Promise<SymbolMarketDataSnapshot[] | ApiErrorPayload> {
     this.logger.info('Retrieving market data snapshot for all currency pairs.')
 
-    const cachedResponse: SymbolMarketDataSnapshot[] | false | null = await getApiCacheClient().getCache(MARKET_DATA_SNAPSHOT_CACHE_KEY)
-
-    if (cachedResponse) {
-      return cachedResponse
-    }
-
     return this.marketDataServiceInstance.getMarketDataSnapshotForAllSymbols()
   }
 
@@ -41,14 +34,6 @@ export class MarketDataController extends Controller {
   @Security('tokenAuth')
   @Get('/snapshots/{currency}')
   public async getMarketDataSnapshotForCurrency(currency: CurrencyCode): Promise<SymbolMarketDataSnapshot[] | ApiErrorPayload> {
-    const cachedResponse: SymbolMarketDataSnapshot[] | false | null = await getApiCacheClient().getCache(
-      `${CURRENCY_MARKET_DATA_SNAPSHOT_CACHE_KEY}-${currency}`,
-    )
-
-    if (cachedResponse) {
-      return cachedResponse
-    }
-
     return this.marketDataServiceInstance.getMarketDataSnapshotForCurrency(currency)
   }
 }
