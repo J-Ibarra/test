@@ -9,6 +9,7 @@ import { WITHDRAWAL_TRANSACTION_SENT_QUEUE_URL } from '@abx-service-clients/with
 import { getWithdrawalConfigForCurrency } from '@abx-service-clients/reference-data'
 
 const logger = Logger.getInstance('withdrawal', 'withdrawal-transaction-dispatcher')
+const DEFAULT_NUMBER_OF_CONFIRMATION_FOR_WITHDRAWAL = 1
 
 export async function dispatchWithdrawalTransaction(
   withdrawalRequestId: number,
@@ -21,7 +22,7 @@ export async function dispatchWithdrawalTransaction(
     logger.debug(`Creating on-chain transaction for withdrawal request ${withdrawalRequestId}`)
     const { txHash, transactionFee } = await transferFunds(withdrawalRequestId!, onChainCurrencyGateway, targetAddress, memo, amount)
 
-    await recordTransactionSent(withdrawalRequestId!, txHash, Number(transactionFee || 0))
+    await recordTransactionSent(onChainCurrencyGateway.ticker!, withdrawalRequestId!, txHash, Number(transactionFee || 0))
   } catch (e) {
     logger.error(`Unable to create withdrawal transaction for withdrawal request ${withdrawalRequestId}`)
     throw e
@@ -54,21 +55,26 @@ async function transferFunds(withdrawalRequestId: number, currencyGateway: OnCha
     memo,
     transactionConfirmationWebhookUrl: process.env.WITHDRAWAL_TRANSACTION_CONFIRMATION_CALLBACK_URL!,
     feeLimit: withdrawalConfig.feeAmount,
+    transactionConfirmations: DEFAULT_NUMBER_OF_CONFIRMATION_FOR_WITHDRAWAL,
   })
 }
 
-async function recordTransactionSent(withdrawalRequestId: number, txHash: string, transactionFee: number): Promise<void> {
-  await sendAsyncChangeMessage<WithdrawalTransactionSent>({
-    id: `withdrawal-transaction-sent-${withdrawalRequestId}`,
-    type: 'withdrawal-transaction-sent',
-    target: {
-      local: WITHDRAWAL_TRANSACTION_SENT_QUEUE_URL!,
-      deployedEnvironment: WITHDRAWAL_TRANSACTION_SENT_QUEUE_URL!,
-    },
-    payload: {
-      withdrawalRequestId: withdrawalRequestId,
-      transactionHash: txHash,
-      transactionFee,
-    },
-  })
+const nativelyImplementedCoins = [CurrencyCode.kag, CurrencyCode.kau, CurrencyCode.ethereum, CurrencyCode.ethereum]
+
+async function recordTransactionSent(currency: CurrencyCode, withdrawalRequestId: number, txHash: string, transactionFee: number): Promise<void> {
+  if (nativelyImplementedCoins.includes(currency)) {
+    await sendAsyncChangeMessage<WithdrawalTransactionSent>({
+      id: `withdrawal-transaction-sent-${withdrawalRequestId}`,
+      type: 'withdrawal-transaction-sent',
+      target: {
+        local: WITHDRAWAL_TRANSACTION_SENT_QUEUE_URL!,
+        deployedEnvironment: WITHDRAWAL_TRANSACTION_SENT_QUEUE_URL!,
+      },
+      payload: {
+        withdrawalRequestId: withdrawalRequestId,
+        transactionHash: txHash,
+        transactionFee,
+      },
+    })
+  }
 }

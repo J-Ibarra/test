@@ -27,8 +27,11 @@ export interface ExchangeHoldingsTransfer {
   toAddress: string
   amount: number
   memo?: string
-  transactionConfirmationWebhookUrl?: string
   feeLimit?: number
+  /** Defines if a transaction confirmation web-hook to the {@code callbackUrl} should be created. */
+  transactionConfirmationWebhookUrl?: string
+  /** The transaction confirmations for specify when creating the transaction confirmations webhook. */
+  transactionConfirmations?: number
 }
 
 export interface OnChainCurrencyGateway {

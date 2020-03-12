@@ -22,7 +22,7 @@ interface NewTransactionDetails {
 const logger = Logger.getInstance('public-coin-deposit-processor', 'NewTransactionRecorder')
 
 /**
- * Responsible for
+ * Responsible for processing potential new deposit request transactions.
  */
 export class NewTransactionRecorder {
   private DEFAULT_REQUIRED_DEPOSIT_TRANSACTION_CONFIRMATIONS = 1
