@@ -5,6 +5,11 @@ import { Logger } from '@abx-utils/logging'
 import { DEPOSIT_ADDRESS_UNCONFIRMED_TRANSACTION_QUEUE_URL } from '../constants'
 import { NewTransactionRecorder } from './NewTransactionRecorder'
 
+/**
+ * Handles the first step of the deposit processing flow where new unconfirmed transaction
+ * notifications are received. The transaction details are used to create a new `deposit_request` entry.
+ * The deposit request is then queued for holdings transaction creations (Step 2).
+ */
 export class DepositAddressNewTransactionQueuePoller {
   private readonly logger = Logger.getInstance('public-coin-deposit-processor', 'NewDepositTransactionQueuePoller')
   private readonly newTransactionRecorder = new NewTransactionRecorder()

@@ -11,6 +11,11 @@ export interface CompletionPendingTransactionDetails {
   txid: string
 }
 
+/**
+ * The final step of the deposit flow, messages are queued after the holdings transactions are created.
+ * The logic needs to make sure the right amount is credited to the user's available balance.
+ * Any pre-existing deposit requests with amount < minimum deposit amount are added up to the current one.
+ */
 export class HoldingsTransactionConfirmationQueuePoller {
   private readonly logger = Logger.getInstance('public-coin-deposit-processor', 'HoldingsTransactionConfirmationQueuePoller')
   private depositCompleter = new DepositCompleter()

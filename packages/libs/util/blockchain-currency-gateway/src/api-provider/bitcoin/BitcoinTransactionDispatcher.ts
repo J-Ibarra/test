@@ -11,7 +11,7 @@ import * as bitcoin from 'bitcoinjs-lib'
 import { mainnetEnvironments } from './BitcoinBlockchainFacade'
 import { Environment } from '@abx-types/reference-data'
 import { BitcoinTransactionFeeEstimator } from './BitcoinTransactionFeeEstimator'
-import { BitcoinTransactionCreationUtil } from './BitcoinTransactionCreationUtil'
+import { BitcoinTransactionCreationUtils } from './BitcoinTransactionCreationUtils'
 
 export class BitcoinTransactionDispatcher {
   private readonly LOGGER = Logger.getInstance('blockchain-currency-gateway', 'BitcoinBlockchainFacade')
@@ -86,12 +86,12 @@ export class BitcoinTransactionDispatcher {
   ): Promise<string> {
     let amountAfterFee = new Decimal(amount)
       .minus(fee)
-      .toDP(BitcoinTransactionCreationUtil.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
+      .toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
       .toNumber()
 
     const { hex: transactionHex } = await this.cryptoApisProviderProxy.createTransaction({
-      inputs: [BitcoinTransactionCreationUtil.createTransactionAddress(senderAddress.address!, amountAfterFee)],
-      outputs: [BitcoinTransactionCreationUtil.createTransactionAddress(receiverAddress, amountAfterFee)],
+      inputs: [BitcoinTransactionCreationUtils.createTransactionAddress(senderAddress.address!, amountAfterFee)],
+      outputs: [BitcoinTransactionCreationUtils.createTransactionAddress(receiverAddress, amountAfterFee)],
       fee: {
         address: senderAddress.address!,
         value: fee,

@@ -1,6 +1,6 @@
 import { MemoryCache } from '@abx-utils/db-connection-utils'
 import { CreateTransactionPayload } from '../model'
-import { BitcoinTransactionCreationUtil } from './BitcoinTransactionCreationUtil'
+import { BitcoinTransactionCreationUtils } from './BitcoinTransactionCreationUtils'
 import Decimal from 'decimal.js'
 import { CryptoApisProviderProxy } from '../providers'
 
@@ -54,18 +54,18 @@ export class BitcoinTransactionFeeEstimator {
     }
 
     const { tx_size_bytes } = await this.cryptoApisProviderProxy.getTransactionSize({
-      inputs: [BitcoinTransactionCreationUtil.createTransactionAddress(senderAddress.address!, amount)],
-      outputs: [BitcoinTransactionCreationUtil.createTransactionAddress(receiverAddress, amount)],
+      inputs: [BitcoinTransactionCreationUtils.createTransactionAddress(senderAddress.address!, amount)],
+      outputs: [BitcoinTransactionCreationUtils.createTransactionAddress(receiverAddress, amount)],
       fee: {
         address: senderAddress.address!,
-        value: new Decimal(averageFeePerTransaction!).toDP(BitcoinTransactionCreationUtil.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN).toNumber(),
+        value: new Decimal(averageFeePerTransaction!).toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN).toNumber(),
       },
       data: memo,
     })
 
     let estimatedMinimumTransactionFee = new Decimal(tx_size_bytes)
       .times(averageFeePerByte!)
-      .toDP(BitcoinTransactionCreationUtil.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
+      .toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
       .toNumber()
 
     if (!!feeLimit) {

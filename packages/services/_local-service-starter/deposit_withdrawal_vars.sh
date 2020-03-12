@@ -1,7 +1,8 @@
 # All the variables required for running deposits/withdrawals locally are listed here
 # These variables will allow connecting to and consuming transaction notification messages from SQS
-# ${ENV} in the URL path is to be replaced by the environment
-export CRYPTO_APIS_TOKEN='xxxxx'
+# ${ENV} in the URL path is to be replaced by the environment 
+# In the case of integration, ${ENV} should be replaced by 'integraiton' at the start of the CALLBACK urls and with 'int' in the QUEUE names 
+export CRYPTO_APIS_TOKEN='xxxxx' # Should be taken from LastPass
 export KINESIS_BITCOIN_HOLDINGS_WIF='cUh5AjG5LMpQjkdjs3y22h7duzBxTukJpHvkMLydBhFDiKnj7zhn'
 export KINESIS_BITCOIN_HOLDINGS_ADDRESS='n38x83CNLcKqNWAgKSzfdvfaEMAT4CiLr8'
 export KINESIS_BITCOIN_HOLDINGS_PRIVATE_KEY='d423a7abfa4752c3e99ba1e755356511f82887f73b40e0bedafef140993100e4'
