@@ -26,27 +26,36 @@ export async function getAccountTransactionHistory(accountId: string, selectedCu
     return acc.concat(formTradeTransactionToHistory(tradeTransaction, selectedCurrencyCode, allSymbols, Object.values(allCurrencyBoundaries)))
   }, [])
 
-  const depositAndWithdrawalTransactions = await createDepositAndWithdrawalTransactions(currencyTransactions, selectedCurrencyCode, allSymbols)
+  const depositAndWithdrawalTransactions = await createDepositAndWithdrawalTransactions(
+    accountId,
+    currencyTransactions,
+    selectedCurrencyCode,
+    allSymbols,
+  )
   const existingTransactionHistories = [...tradeTransactionsToHistory, ...depositAndWithdrawalTransactions].filter(Boolean)
 
   return orderBy(existingTransactionHistories, history => history.createdAt, ['desc'])
 }
 
 async function createDepositAndWithdrawalTransactions(
+  accountId: string,
   currencyTransactions: CurrencyTransaction[],
   selectedCurrencyCode: CurrencyCode,
   allSymbols: SymbolPair[],
 ) {
+  const symbolWithSelectedCurrency = allSymbols.find(({ base, quote }) => base.code === selectedCurrencyCode || quote.code === selectedCurrencyCode)
+  const selectedCurrencyId =
+    symbolWithSelectedCurrency!.base.code === selectedCurrencyCode ? symbolWithSelectedCurrency!.base.id! : symbolWithSelectedCurrency!.quote.id!
   const depositTransactionsToAdd = currencyTransactions.filter(({ direction }) => direction === TransactionDirection.deposit)
-  const withdrawalTransactionsToAdd = currencyTransactions.filter(({ direction }) => direction === TransactionDirection.withdrawal)
 
   const [depositTransactionHistoryItems, withdrawalRequestTransactionHistoryItems] = await Promise.all([
     buildDepositTransactionHistory(
+      accountId,
       selectedCurrencyCode,
       depositTransactionsToAdd,
       allSymbols.reduce((acc, { base, quote }) => acc.concat([base, quote]), [] as Currency[]),
     ),
-    buildWithdrawalTransactionHistory(withdrawalTransactionsToAdd, selectedCurrencyCode),
+    buildWithdrawalTransactionHistory(accountId, selectedCurrencyId, selectedCurrencyCode),
   ])
 
   return depositTransactionHistoryItems.concat(withdrawalRequestTransactionHistoryItems)

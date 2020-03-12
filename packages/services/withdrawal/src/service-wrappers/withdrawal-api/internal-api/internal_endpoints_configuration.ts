@@ -1,5 +1,13 @@
-import { WithdrawalApiEndpoints, findWithdrawalRequestsForTransactionHashes, findWithdrawalRequestsByIds } from '@abx-service-clients/withdrawal'
-import { findWithdrawalRequestById, getWithdrawalFee, getWithdrawalFees, findWithdrawalRequestByTxHash } from '../../../core'
+import { WithdrawalApiEndpoints } from '@abx-service-clients/withdrawal'
+import {
+  findWithdrawalRequestById,
+  findWithdrawalRequestsForTransactionHashes,
+  findWithdrawalRequests,
+  findWithdrawalRequestsByIds,
+  getWithdrawalFee,
+  getWithdrawalFees,
+  findWithdrawalRequestByTxHash,
+} from '../../../core'
 import { InternalRoute } from '@abx-utils/internal-api-tools'
 
 export function createRequestResponseEndpointHandlers(): InternalRoute<any, any>[] {
@@ -19,6 +27,10 @@ export function createRequestResponseEndpointHandlers(): InternalRoute<any, any>
     {
       path: WithdrawalApiEndpoints.findWithdrawalRequestsByIds,
       handler: ({ ids }) => findWithdrawalRequestsByIds(ids),
+    },
+    {
+      path: WithdrawalApiEndpoints.findAllWithdrawalRequestsForAccountAndCurrency,
+      handler: ({ accountId, currencyId }) => findWithdrawalRequests({ accountId, currencyId }),
     },
     {
       path: WithdrawalApiEndpoints.getWithdrawalFee,

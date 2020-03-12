@@ -23,6 +23,16 @@ export function findWithdrawalRequestsForTransactionHashes(txHashes: string[]): 
   )
 }
 
+export function findAllWithdrawalRequestsForAccountAndCurrency(accountId: string, currencyId: number): Promise<WithdrawalRequest[]> {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<WithdrawalRequest[]>(
+    WithdrawalApiEndpoints.findAllWithdrawalRequestsForAccountAndCurrency,
+    {
+      accountId,
+      currencyId,
+    },
+  )
+}
+
 export function findWithdrawalRequestById(id: number): Promise<WithdrawalRequest | null> {
   return internalApiRequestDispatcher.fireRequestToInternalApi<WithdrawalRequest | null>(WithdrawalApiEndpoints.findWithdrawalRequestById, { id })
 }
