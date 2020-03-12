@@ -17,6 +17,7 @@ import {
 
 import { bootstrapWithdrawalApiService, bootstrapWithdrawalProcessorService } from '@abx/exchange-withdrawal-service'
 import { bootstrapOrderDataService, bootstrapOrderGatewayService, bootstrapWorkerService, bootstrapSettlementService } from '@abx/order-service'
+import { bootstrapWebhookApiService } from './webhooks'
 
 export async function startAllServices() {
   await bootstrapReferenceDataService()
@@ -41,4 +42,6 @@ export async function startAllServices() {
   await bootstrapKinesisAndEthCoinDepositProcessor()
   await bootstrapEthereumBlockFollowerProcessor()
   await bootstrapKVTBlockFollowerProcessor()
+
+  await bootstrapWebhookApiService()
 }
