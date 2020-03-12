@@ -26,7 +26,7 @@ export async function runMigrations(templatesDir: string) {
       },
       migrations: {
         params: [sequelize.getQueryInterface(), Sequelize],
-        pattern: /\.js$/,
+        pattern: /\.ts$/,
         path: templatesDir,
       },
     })
