@@ -19,5 +19,10 @@ export interface Account {
   /** True when the account has been suspended. */
   suspended: boolean
   createdAt?: Date
+  updatedAt?: Date
   hasTriggeredKycCheck?: boolean
+}
+
+export interface AccountWithMfaStatus extends Account {
+  mfaEnabled?: boolean
 }
