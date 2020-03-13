@@ -12,11 +12,20 @@ import { sequelize, getModel, wrapInTransaction } from '@abx-utils/db-connection
 import { ValidationError } from '@abx-types/error'
 import { AccountPubSubTopics } from '@abx-service-clients/account'
 import { createEmail } from '@abx-service-clients/notification'
-// import { findCryptoCurrencies } from '@abx-service-clients/reference-data'
-import { Account, AccountStatus, AccountType, CreateAccountRequest, KycStatusChange, User, UserPublicView } from '@abx-types/account'
+import {
+  Account,
+  AccountWithMfaStatus,
+  AccountStatus,
+  AccountType,
+  CreateAccountRequest,
+  KycStatusChange,
+  User,
+  UserPublicView,
+} from '@abx-types/account'
 import { findSession } from './session'
 import { createAccountVerificationUrl, createUser, findUserByAccountId, findUserById, prepareWelcomeEmail, validateUserEmail } from '../users'
 import { cancelAllOrdersForAccount } from '@abx-service-clients/order'
+import { hasMfaEnabled } from '../mfa'
 const logger = Logger.getInstance('accounts-service', 'accounts')
 
 /**
@@ -269,4 +278,25 @@ export async function updateAccountStatus(id: string, status: AccountStatus): Pr
     where: { id },
     returning: true,
   })
+}
+
+export async function findAccountByIdWithMfaStatus(id: string, t?: Transaction): Promise<AccountWithMfaStatus> {
+  const { id: accountId, hin, type, status, suspended, hasTriggeredKycCheck, createdAt, updatedAt, users } = (await findAccountWithUserDetails(
+    { id },
+    t,
+  ))!
+
+  const mfaEnabled = await hasMfaEnabled(users![0].id)
+
+  return {
+    id: accountId,
+    type,
+    hin,
+    status,
+    suspended,
+    hasTriggeredKycCheck,
+    mfaEnabled,
+    createdAt,
+    updatedAt,
+  }
 }

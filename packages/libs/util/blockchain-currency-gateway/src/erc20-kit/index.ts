@@ -1,1 +1,1 @@
-export * from './Tether'
+export * from '../native/erc20/Tether'

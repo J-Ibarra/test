@@ -2,22 +2,37 @@ import { Transaction } from 'sequelize'
 import { getEnvironment, CurrencyCode, Currency } from '@abx-types/reference-data'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyManager, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
-import { getModel } from '@abx-utils/db-connection-utils'
+import { getModel, getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { ValidationError } from '@abx-types/error'
-import { findCryptoCurrencies, isFiatCurrency } from '@abx-service-clients/reference-data'
+import { findCryptoCurrencies, isFiatCurrency, findCurrencyForCode, findCurrencyForId } from '@abx-service-clients/reference-data'
 import { DepositAddress } from '@abx-types/deposit'
 import { encryptValue } from '@abx-utils/encryption'
 import { groupBy } from 'lodash'
 import { getAllKycVerifiedAccountIds } from '@abx-service-clients/account'
-import { IAddressTransaction } from '@abx-utils/blockchain-currency-gateway/src/api-provider/providers/crypto-apis'
+import { Account } from '@abx-types/account'
+import { DepositPubSubChannels } from '@abx-service-clients/deposit'
 
 const logger = Logger.getInstance('lib', 'deposit_address')
 const KYC_ACCOUNTS_CACHE_EXPIRY_10_MINUTES = 10 * 60 * 1000
 let cryptoCurrencies: Currency[] = []
 
 export async function generateNewDepositAddress(accountId: string, currency: OnChainCurrencyGateway) {
-  const cryptoAddress = await currency.generateAddress()
+  let cryptoAddress
+  try {
+    cryptoAddress = await currency.generateAddress()
+  } catch (e) {
+    logger.error(`Unable to generate crypto address for ${currency.ticker}`)
+    logger.error(JSON.stringify(e))
+
+    throw e
+  }
   const encryptedPrivateKey = await encryptValue(cryptoAddress.privateKey)
+
+  let encryptedWif
+  // Third party coins will have address and WIF
+  if (!!cryptoAddress.address) {
+    encryptedWif = await encryptValue(cryptoAddress.wif!)
+  }
 
   const currencyId = await currency.getId()
   return {
@@ -25,6 +40,9 @@ export async function generateNewDepositAddress(accountId: string, currency: OnC
     currencyId,
     publicKey: cryptoAddress.publicKey,
     encryptedPrivateKey,
+    address: cryptoAddress.address,
+    encryptedWif,
+    transactionTrackingActivated: false,
   } as DepositAddress
 }
 
@@ -34,6 +52,15 @@ export async function findDepositAddresses(query: Partial<DepositAddress>, trans
     transaction,
   })
   return depositAddresses.map(address => address.get())
+}
+
+export async function findDepositAddress(query: Partial<DepositAddress>, transaction?: Transaction): Promise<DepositAddress | null> {
+  const depositAddressInstance = await getModel<DepositAddress>('depositAddress').findOne({
+    where: query as any,
+    transaction,
+  })
+
+  return depositAddressInstance ? depositAddressInstance.get() : null
 }
 
 export async function findKycOrEmailVerifiedDepositAddresses(currencyId: number, transaction?: Transaction) {
@@ -50,7 +77,7 @@ export async function findKycOrEmailVerifiedDepositAddresses(currencyId: number,
 export async function findOrCreateDepositAddressesForAccount(accountId: string) {
   logger.debug(`Finding existing deposit addresses for account ${accountId}`)
 
-  const existingDepositAddresses = await findDepositAddressesForAccount(accountId, true)
+  const existingDepositAddresses = await findDepositAddressesForAccountWithCurrency(accountId)
   logger.debug(`Found existing deposit addresses for currency: ${existingDepositAddresses.map(({ currencyId }) => currencyId).join(',')}`)
 
   if (cryptoCurrencies.length === 0) {
@@ -62,7 +89,10 @@ export async function findOrCreateDepositAddressesForAccount(accountId: string) 
 
     logger.debug(`Created missing deposit addresses for currenciy ids: ${missingDepositAddresses.map(d => d.currencyId)}`)
 
-    return findDepositAddressesForAccount(accountId, true)
+    const epicurus = getEpicurusInstance()
+    epicurus.publish(DepositPubSubChannels.walletAddressesForNewAccountCreated, { accountId })
+
+    return findDepositAddressesForAccountWithCurrency(accountId)
   }
 
   return existingDepositAddresses
@@ -76,20 +106,37 @@ export async function findDepositAddressForId(id: number) {
   return !!depositAddress ? depositAddress.get() : null
 }
 
-export async function findDepositAddressesForAccount(accountId: string, includeCurrencyDetail: boolean = false) {
+export async function findDepositAddressesForAccount(accountId: string) {
   const depositAddresses = await getModel<DepositAddress>('depositAddress').findAll({
     where: { accountId },
   })
 
-  if (includeCurrencyDetail) {
-  }
-
   return depositAddresses.map(address => address.get({ plain: true }))
+}
+export async function findDepositAddressesForAccountWithCurrency(accountId: string): Promise<DepositAddress[]> {
+  const depositAddresses = await findDepositAddressesForAccount(accountId)
+  return Promise.all(
+    depositAddresses.map(
+      async (depositAddress): Promise<DepositAddress> => {
+        const { id, code } = await findCurrencyForId(depositAddress.currencyId)
+
+        return {
+          ...depositAddress,
+          currency: { id, code },
+        }
+      },
+    ),
+  )
 }
 
 export async function storeDepositAddress(address: DepositAddress) {
   const savedAddress = await getModel<DepositAddress>('depositAddress').create(address)
   return savedAddress.get()
+}
+
+export async function updateDepositAddress(address: DepositAddress) {
+  const [, [savedAddress]] = await getModel<DepositAddress>('depositAddress').update(address, { where: { id: address.id! }, returning: true })
+  return savedAddress && savedAddress.get()
 }
 
 export async function createMissingDepositAddressesForAccount(
@@ -130,44 +177,30 @@ export async function createNewDepositAddress(manager: CurrencyManager, accountI
   }
 
   const address = await generateNewDepositAddress(accountId, manager.getCurrencyFromTicker(currencyTicker))
+  logger.debug(`Generated address for account ${accountId} and currency ${currencyTicker}`)
+  logger.debug(`Address: ${JSON.stringify(address)}`)
+
   return storeDepositAddress(address)
 }
 
-export async function generateDepositAddressForAccount(accountId: string, currencyTicker: CurrencyCode): Promise<DepositAddress> {
-  const currencyAddressExists = (await findDepositAddressesForAccount(accountId, true)).find(
-    addressDetails => addressDetails.currency?.code === currencyTicker,
-  )
+export const findDepositAddressAndListenForEvents = async ({ id }: Account, currencyCode: CurrencyCode): Promise<DepositAddress> => {
+  const { id: currencyId } = await findCurrencyForCode(currencyCode)
+  const depositAddress = await findDepositAddress({ accountId: id, currencyId })
 
-  if (currencyAddressExists) {
-    return currencyAddressExists
+  if (!depositAddress) {
+    throw new ValidationError(`Deposit address does not exist for currency id: ${currencyId} and account id: ${id}`)
   }
 
-  logger.debug(`Generating crypto address for ${currencyTicker}`)
-
-  const manager = new CurrencyManager(getEnvironment(), [currencyTicker])
-
-  return generateNewDepositAddress(accountId, manager.getCurrencyFromTicker(currencyTicker))
-}
-
-export async function addAddressEventListenerForAccount(accountId: string, currencyTicker: CurrencyCode): Promise<IAddressTransaction> {
-  const allCryptoCurrencies = await findCryptoCurrencies()
-
-  const cryptoAddressOfInterest = allCryptoCurrencies.find(currency => currency.code === currencyTicker)
-
-  if (!cryptoAddressOfInterest) {
-    throw new ValidationError(`Crypto currency not valid: ${currencyTicker}`)
+  if (depositAddress.transactionTrackingActivated) {
+    logger.debug(`Deposit address transaction tracking already activated for currency id: ${currencyId} and account id: ${id}`)
+    return depositAddress
   }
 
-  const [addressDetails] = await findDepositAddresses({ currencyId: cryptoAddressOfInterest.id, accountId })
+  const manager = new CurrencyManager(getEnvironment(), [currencyCode])
 
-  if (!addressDetails) {
-    throw new ValidationError(`Currency address not not found: ${currencyTicker}`)
-  }
+  const successfulEventCreation = await manager.getCurrencyFromTicker(currencyCode).createAddressTransactionSubscription(depositAddress)
 
-  logger.debug(`Found address id to listen on : ${addressDetails.id}`)
+  const updatedDepositAddress = await updateDepositAddress({ ...depositAddress, transactionTrackingActivated: successfulEventCreation })
 
-  const manager = new CurrencyManager(getEnvironment(), [currencyTicker])
-
-  const currencyToInteractWith = manager.getCurrencyFromTicker(currencyTicker)
-  return currencyToInteractWith.addressEventListener(addressDetails.publicKey)
+  return updatedDepositAddress
 }

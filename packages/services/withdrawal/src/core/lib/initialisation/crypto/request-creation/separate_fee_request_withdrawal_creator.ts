@@ -4,8 +4,9 @@ import { Currency, FiatCurrency } from '@abx-types/reference-data'
 import { InitialiseWithdrawalParams, WithdrawalRequestType, WithdrawalState } from '@abx-types/withdrawal'
 import { createWithdrawalRequest } from '../../../common/create_withdrawal_request'
 import { findCurrencyForCode } from '@abx-service-clients/reference-data'
+import { updateWithdrawalRequest } from '../../../common/update_withdrawal_request'
 
-export async function createSeparateWithrawalFeeRequest(
+export async function createSeparateWithdrawalFeeRequest(
   initialiseWithdrawalParams: InitialiseWithdrawalParams,
   preferredCurrencyCode: FiatCurrency,
   withdrawalFee: number,
@@ -60,6 +61,8 @@ export async function createSeparateWithrawalFeeRequest(
     },
     t,
   )
+
+  updateWithdrawalRequest({ id: withdrawalAmountRequest.id, feeWithdrawalRequestId: withdrawalFeeRequest.id }, t)
 
   return {
     amountRequest: { ...withdrawalAmountRequest, currency: withdrawalRequestCurrency },

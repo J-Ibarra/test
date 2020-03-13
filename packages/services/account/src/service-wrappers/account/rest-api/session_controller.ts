@@ -7,6 +7,7 @@ import { createSessionForUser, isAccountSuspended, killSession, validateUserCred
 import { Logger } from '@abx-utils/logging'
 import { ValidationError } from '@abx-types/error'
 import { OverloadedRequest } from '@abx-types/account'
+import { createWalletAddressesForNewAccount } from '@abx-service-clients/deposit'
 
 const localDev = localAndTestEnvironments.includes(process.env.NODE_ENV as Environment)
 
@@ -71,22 +72,10 @@ export class SessionsController extends Controller {
         return { message: 'Account suspended' }
       }
 
-      const isMfaEnabledForUser = await hasMfaEnabled(user.id)
-
-      if (isMfaEnabledForUser && !localDev) {
-        if (!mfaToken) {
-          this.setStatus(403)
-          return { message: 'MFA Required' }
-        }
-
-        const isVerified = await authenticateMfa(user.id, mfaToken)
-        if (!isVerified) {
-          this.setStatus(400)
-          return { message: 'The token you have provided is invalid' }
-        }
+      const mfaCheckFailure = await this.checkMfa(user.id, mfaToken)
+      if (!!mfaCheckFailure) {
+        return mfaCheckFailure
       }
-
-      const { sessionCookie, user: updatedUser } = await createSessionForUser(user.id, DEFAULT_SESSION_EXPIRY)
 
       const ip = (request as any).clientIp
       let authToken: string = ''
@@ -95,6 +84,8 @@ export class SessionsController extends Controller {
         const jwt = await getJwt()
         authToken = sign({}, `${ip}-${jwt}`)
       }
+
+      const { sessionCookie, user: updatedUser } = await createSessionForUser(user.id, DEFAULT_SESSION_EXPIRY)
 
       const appSessionExpires: Date = moment()
         .add(DEFAULT_SESSION_EXPIRY, 'hours')
@@ -106,6 +97,8 @@ export class SessionsController extends Controller {
           localDev ? '' : 'SameSite=Strict;'
         } expires=${appSessionExpires};`,
       )
+
+      process.nextTick(() => createWalletAddressesForNewAccount(user.accountId))
 
       return {
         ...updatedUser,
@@ -135,5 +128,22 @@ export class SessionsController extends Controller {
       `appSession='; ${localDev ? '' : 'Secure;'} HttpOnly; Path=/; SameSite=Strict; expires=Thu, 01 Jan 1970 00:00:00 UTC;`,
     )
     this.setStatus(200)
+  }
+
+  private async checkMfa(userId: string, mfaToken?: string): Promise<void | { message: string }> {
+    const isMfaEnabledForUser = await hasMfaEnabled(userId)
+
+    if (isMfaEnabledForUser && !localDev) {
+      if (!mfaToken) {
+        this.setStatus(403)
+        return { message: 'MFA Required' }
+      }
+
+      const isVerified = await authenticateMfa(userId, mfaToken)
+      if (!isVerified) {
+        this.setStatus(400)
+        return { message: 'The token you have provided is invalid' }
+      }
+    }
   }
 }

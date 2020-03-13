@@ -4,7 +4,7 @@ import { BALANCE_REST_API_PORT } from '@abx-service-clients/balance'
 import { ADMIN_FUND_MANAGEMENT_REST_API_PORT } from '@abx-service-clients/admin-fund-management'
 import { MARKET_DATA_REST_API_PORT } from '@abx-service-clients/market-data'
 import { ORDER_DATA_API_PORT, ORDER_GATEWAY_API_PORT, SETTLEMENT_API_ROOT } from '@abx-service-clients/order'
-import { WITHDRAWAL_REST_API_PORT } from '@abx-service-clients/withdrawal'
+import { WITHDRAWAL_API_SERVICE_PORT } from '@abx-service-clients/withdrawal'
 import { DEPOSIT_API_PORT } from '@abx-service-clients/deposit'
 
 const accountRoutes = [
@@ -76,7 +76,7 @@ export const routesToPort: { routes: string[]; port: number }[] = [
   },
   {
     routes: withdrawalRoutes,
-    port: WITHDRAWAL_REST_API_PORT,
+    port: WITHDRAWAL_API_SERVICE_PORT,
   },
   {
     routes: referenceDataRoutes,

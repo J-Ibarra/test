@@ -53,7 +53,7 @@ export function createQueryEndpointHandlers(): InternalRoute<any, any>[] {
         } catch (e) {
           throw e
         }
-      }
+      },
     },
     {
       path: AccountQueryEndpoints.isAccountSuspended,

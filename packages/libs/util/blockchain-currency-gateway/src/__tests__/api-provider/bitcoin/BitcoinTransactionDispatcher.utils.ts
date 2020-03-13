@@ -16,6 +16,8 @@ export const createTransactionPayload = {
   },
   receiverAddress: '',
   amount: withdrawalAmount,
+  memo: 'foo',
+  feeLimit: 12,
   webhookCallbackUrl: 'webhookCallbackUrl',
   webhookRegistrationFailureUrl: 'webhookRegistrationFailureUrl',
 }
@@ -32,7 +34,7 @@ export const cryptoApiClient = {
   createTransaction: createTransactionStub,
   broadcastTransaction: broadcastTransactionStub,
   createConfirmedTransactionEventSubscription: createConfirmedTransactionEventSubscriptionStub,
-}
+} as any
 
 export function resetStubs() {
   getTransactionsFeeStub = sinon.stub()

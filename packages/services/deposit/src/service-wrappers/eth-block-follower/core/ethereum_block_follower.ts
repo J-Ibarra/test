@@ -7,10 +7,9 @@ import { BlockchainFollowerDetails, DepositAddress } from '@abx-types/deposit'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { findKycOrEmailVerifiedDepositAddresses, storeDepositRequests } from '../../../core'
 import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-data'
-import { FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION } from '../../deposit-processor/core/transaction-fetching-strategies/fetch_for_each_address'
 import { CurrencyCode, CurrencyBoundary } from '@abx-types/reference-data'
 import { findCurrencyForCode, findBoundaryForCurrency } from '@abx-service-clients/reference-data'
-import { convertTransactionToDepositRequest } from '../../deposit-processor/core/deposit_transactions_fetcher'
+import { FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION, convertTransactionToDepositRequest } from '../../../core'
 
 const ETHEREUM_BLOCK_DELAY = 12
 

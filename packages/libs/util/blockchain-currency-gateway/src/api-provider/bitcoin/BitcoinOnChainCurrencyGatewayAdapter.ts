@@ -1,14 +1,21 @@
-import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse } from '../../currency_gateway'
+import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse, ExchangeHoldingsTransfer } from '../../currency_gateway'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { RuntimeError } from '@abx-types/error'
 import { BitcoinBlockchainFacade } from './BitcoinBlockchainFacade'
 import { CryptoAddress } from '../model'
-import { IAddressTransaction } from '../providers/crypto-apis'
+import { DepositAddress } from '@abx-types/deposit'
+import { Logger } from '@abx-utils/logging'
+import { decryptValue } from '@abx-utils/encryption'
 
 /** Adapting the {@link BitcoinBlockchainFacade} to {@link OnChainCurrencyGateway} for backwards-compatibility. */
 export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGateway {
-  ticker: CurrencyCode.bitcoin
+  // Should use 0 when allowed by CRYPTO API
+  private readonly UNCONFIRMED_TRANSACTIONS = 1
+
+  ticker = CurrencyCode.bitcoin
+  logger = Logger.getInstance('blockchain-currency-gateway', 'BitcoinOnChainCurrencyGatewayAdapter')
+
   private bitcoinBlockchainFacade: BitcoinBlockchainFacade
 
   constructor() {
@@ -19,14 +26,30 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
     return getCurrencyId(this.ticker)
   }
 
-  async generateAddress(): Promise<CryptoAddress> {
+  generateAddress(): Promise<CryptoAddress> {
     return this.bitcoinBlockchainFacade.generateAddress()
   }
 
-  async addressEventListener(publicKey: string): Promise<IAddressTransaction> {
-    return this.bitcoinBlockchainFacade.addressEventListener(publicKey)
+  async createAddressTransactionSubscription(depositAddressDetails: DepositAddress): Promise<boolean> {
+    try {
+      if (!depositAddressDetails.address) {
+        this.logger.warn('Received deposit address details have no address field. Please consider that you are passing in the wrong currency asset.')
+        return false
+      }
+      if (depositAddressDetails.transactionTrackingActivated) {
+        this.logger.warn(`We have already activated transaction events for this address: ${depositAddressDetails.address}`)
+        return true
+      }
+      await this.bitcoinBlockchainFacade.subscribeToAddressTransactionEvents(depositAddressDetails.address, this.UNCONFIRMED_TRANSACTIONS)
+      this.logger.info(`Activated transaction events for this address: ${depositAddressDetails.address}`)
+      return true
+    } catch (e) {
+      this.logger.error(
+        `unexpected error thrown -  createAddressTransactionSubscription for address : ${depositAddressDetails.address}, err: ${e.message}`,
+      )
+      return false
+    }
   }
-
   // This returns a string due to JS floats
   balanceAt(address: string): Promise<number> {
     return this.bitcoinBlockchainFacade.balanceAt(address)
@@ -49,23 +72,52 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
   }
 
   checkConfirmationOfTransaction(): Promise<boolean> {
-    throw new RuntimeError('Unsupported operation checkConfirmationOfTransaction')
+    /**
+     * We trust the third party api's so we can just return true
+     */
+    return Promise.resolve(true)
   }
 
-  transferToExchangeHoldingsFrom(): Promise<TransactionResponse> {
-    throw new RuntimeError('Unsupported operation transferToExchangeHoldingsFrom')
+  kinesisManagesConfirmations(): boolean {
+    return false
   }
 
-  transferFromExchangeHoldingsTo(toAddress: string, amount: number, transactionConfirmationWebhookUrl: string): Promise<TransactionResponse> {
+  transferToExchangeHoldingsFrom(
+    fromAddress: CryptoAddress | Pick<CryptoAddress, 'privateKey'>,
+    amount: number,
+    transactionConfirmationWebhookUrl: string,
+  ): Promise<TransactionResponse> {
+    return this.bitcoinBlockchainFacade.createTransaction({
+      senderAddress: fromAddress as CryptoAddress,
+      receiverAddress: process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS!,
+      amount,
+      webhookCallbackUrl: transactionConfirmationWebhookUrl,
+    })
+  }
+
+  async transferFromExchangeHoldingsTo({
+    toAddress,
+    amount,
+    memo,
+    transactionConfirmationWebhookUrl,
+    feeLimit,
+  }: ExchangeHoldingsTransfer): Promise<TransactionResponse> {
+    const [holdingsPrivateKey, holdingsWif] = await Promise.all([
+      decryptValue(process.env.KINESIS_BITCOIN_HOLDINGS_PRIVATE_KEY!),
+      decryptValue(process.env.KINESIS_BITCOIN_HOLDINGS_WIF!),
+    ])
+
     return this.bitcoinBlockchainFacade.createTransaction({
       senderAddress: {
-        privateKey: process.env.KINESIS_BITCOIN_HOLDINGS_SECRET!,
+        privateKey: holdingsPrivateKey!,
         address: process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS!,
-        wif: process.env.KINESIS_BITCOIN_HOLDINGS_WIF!,
+        wif: holdingsWif,
       },
       receiverAddress: toAddress,
       amount,
+      memo,
       webhookCallbackUrl: transactionConfirmationWebhookUrl,
+      feeLimit,
     })
   }
 

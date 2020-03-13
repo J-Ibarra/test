@@ -5,7 +5,7 @@ import { CurrencyCode, FiatCurrency } from '@abx-types/reference-data'
 import { DepositAddress, DepositRequest, DepositRequestStatus } from '@abx-types/deposit'
 import { storeDepositAddress } from '../deposit_address'
 import { findDepositRequestById, getPendingDepositRequests, loadAllPendingDepositRequestsAboveMinimumAmount, storeDepositRequests } from '..'
-import { getMinimumDepositAmountForCurrency } from '../../service-wrappers/deposit-processor/core/framework/deposit_amount_validator'
+import { getMinimumDepositAmountForCurrency } from '../../core'
 import { truncateTables } from '@abx-utils/db-connection-utils'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
 
@@ -39,6 +39,7 @@ describe('Deposit Request module', () => {
       SAVED_TEST_DEPOSIT_ADDRESS = await storeDepositAddress({
         ...TEST_DEPOSIT_ADDRESS,
         accountId: SAVED_TEST_ACCOUNT_ID,
+        transactionTrackingActivated: false,
       })
     })
 
@@ -120,12 +121,14 @@ describe('Deposit Request module', () => {
         encryptedPrivateKey: TEST_PRIVATE_KEY,
         publicKey: TEST_ADDRESS,
         accountId: SAVED_TEST_ACCOUNT_ID,
+        transactionTrackingActivated: false,
       })
       SAVED_ETH_DEPOSIT_ADDRESS = await storeDepositAddress({
         currencyId: ethId,
         encryptedPrivateKey: TEST_PRIVATE_KEY,
         publicKey: TEST_ADDRESS,
         accountId: SAVED_TEST_ACCOUNT_ID,
+        transactionTrackingActivated: false,
       })
     })
 

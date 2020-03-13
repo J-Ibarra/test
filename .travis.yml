@@ -25,29 +25,34 @@ before_install:
   - aws configure set profile.kinesis.aws_secret_access_key $AWS_SECRET_ACCESS_KEY
   - aws configure set profile.kinesis.aws_access_key_id $AWS_ACCESS_KEY_ID
   - aws configure set profile.kinesis.region ap-southeast-2
-  - git fetch
+  - gem install bundler --version '2.0.2'
 before_script:
   - psql -c 'create database kinesis_exchange;' -U postgres
 
 jobs:
   include:
     - stage: test
-      if: tag IS blank and branch != develop #if it is a tag we don't want to run the tests, they would have run already
+      if: tag IS blank and branch != develop and branch != api-doc-generation #if it is a tag we don't want to run the tests, they would have run already
       script:
         - ./_scripts/travis/travis-build-branch-checkout.sh
         - npm link
         - npm run bootstrap
+        - lerna run build --scope @abx-utils/kbe-legacy-migrations --include-dependencies --exclude-dependents
         - lerna run build --since develop --include-dependencies --exclude-dependents
         - npm run run-legacy-migrations:test
+        - npm run run-migrations:test
         - lerna run test --since develop --include-dependencies --exclude-dependents
     - stage: 'Build image and push to ECR'
-      if: branch = develop and type = push
+      if: (branch = develop OR branch =~ /^feature+/) AND type = push
       script:
         - ./_scripts/travis/travis-build-service-release.sh
+        - node ./_scripts/travis/api-generation-build-trigger.js
     - stage: 'Build api docs and push to s3'
-      if: branch = develop and type = push
+      if: branch = api-doc-generation
       script:
         - npm run bootstrap:production
         - npm run build
+        - cd packages/services/_api-docs
+        - bundle install
         - npm run build:docs
         - npm run push-api-docs-to-s3

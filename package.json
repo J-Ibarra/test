@@ -20,6 +20,7 @@
     "build:services": "lerna run build --scope @abx/*",
     "build:docs": "lerna run build:docs",
     "run-legacy-migrations:test": "lerna run run-legacy-migrations-test",
+    "run-migrations:test": "lerna run run-migrations:test",
     "run-legacy-migrations:dev": "lerna run run-legacy-migrations-dev",
     "start-api-debug:dev": "lerna run start-api-debug:dev --stream",
     "start-api-debug:e2e": "lerna run start-api-debug:e2e-local --stream",
@@ -30,6 +31,7 @@
     "lerna": "^3.19.0",
     "mocha": "5.2.0",
     "prettier": "1.19.1",
-    "typescript": "3.7.2"
+    "typescript": "3.7.2",
+    "request": "2.88.0"
   }
 }

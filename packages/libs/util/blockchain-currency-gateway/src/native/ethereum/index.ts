@@ -8,10 +8,8 @@ import { CurrencyCode, Environment } from '@abx-types/reference-data'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { getEthScanTransactionsForAddress } from './etherscan/etherscan'
 import { EtherscanInternalTransaction, EtherscanTransaction, EthscanTransactionType } from './etherscan/interface'
-import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse } from '../../currency_gateway'
+import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse, ExchangeHoldingsTransfer } from '../../currency_gateway'
 import { CryptoAddress } from '../../api-provider/model'
-import { IAddressTransaction } from '../../api-provider/providers/crypto-apis'
-import { RuntimeError } from '@abx-types/error'
 
 const testMnemonic = 'uncle salute dust cause embody wonder clump blur paddle hotel risk aim'
 
@@ -63,9 +61,8 @@ export class Ethereum implements OnChainCurrencyGateway {
       publicKey,
     }
   }
-
-  addressEventListener(): Promise<IAddressTransaction> {
-    throw new RuntimeError('Unsupported operation addressEventListener')
+  public async createAddressTransactionSubscription(): Promise<boolean> {
+    return true
   }
 
   private generatePrivateKey() {
@@ -159,7 +156,7 @@ export class Ethereum implements OnChainCurrencyGateway {
     })
   }
 
-  public async transferFromExchangeHoldingsTo(toAddress: string, amount: number): Promise<TransactionResponse> {
+  public async transferFromExchangeHoldingsTo({ toAddress, amount }: ExchangeHoldingsTransfer): Promise<TransactionResponse> {
     const holdingPrivateKey = await this.getDecryptedHoldingsSecret(process.env.ETHEREUM_HOLDINGS_SECRET!, this.decryptedHoldingsSecret)
 
     const { utils } = this.web3
@@ -168,6 +165,10 @@ export class Ethereum implements OnChainCurrencyGateway {
     const gasPrice = new Decimal(gasPriceFromNode).add(additionalGas).toNumber()
 
     return this.transferTo({ amount, privateKey: holdingPrivateKey, toAddress, gasPrice })
+  }
+
+  public kinesisManagesConfirmations(): boolean {
+    return true
   }
 
   public async transferTo({ privateKey, amount, toAddress, gasPrice }): Promise<TransactionResponse> {

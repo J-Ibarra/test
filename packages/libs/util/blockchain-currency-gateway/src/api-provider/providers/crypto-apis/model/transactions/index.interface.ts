@@ -15,6 +15,7 @@ export interface ITransactions {
     inputs: { address: string; value: number }[],
     outputs: { address: string; value: number }[],
     fee: { address: string; value: number },
+    optData?: { data: string },
   ) => Promise<CreateTransactionResponse>
   sendTransaction: (signedTransactionHex: string) => Promise<BroadcastTransactionResponse>
 }

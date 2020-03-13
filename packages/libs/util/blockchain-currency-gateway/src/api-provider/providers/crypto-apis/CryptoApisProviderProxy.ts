@@ -87,7 +87,7 @@ export class CryptoApisProviderProxy {
   /**
    * Using a tx hash we can grab all the transaction details
    */
-  public getTransactionDetails = async ({ txID }: CryptoApiModel.ITransactionDetailsRequest): Promise<CryptoApiModel.ITransactionDetails> => {
+  public getTransactionDetails = async ({ txID }: CryptoApiModel.ITransactionDetailsRequest): Promise<CryptoApiModel.IBitcoinTransactionDetails> => {
     this.logger.debug(`Grabbing transaction details from txid: ${txID}`)
 
     return (await (this.caClientInteraction.BC[this.ticker] as CryptoApiModel.ICoin).transaction.getTransaction(txID)).payload
@@ -129,8 +129,16 @@ export class CryptoApisProviderProxy {
     inputs,
     outputs,
     fee,
+    data,
   }: CryptoApiModel.IInitialTransactionDetails): Promise<CryptoApiModel.CreateTransactionResponsePayload> => {
-    return (await (this.caClientInteraction.BC[this.ticker] as CryptoApiModel.ICoin).transaction.createTransaction(inputs, outputs, fee)).payload
+    return (
+      await (this.caClientInteraction.BC[this.ticker] as CryptoApiModel.ICoin).transaction.createTransaction(
+        inputs,
+        outputs,
+        fee,
+        data ? { data } : undefined,
+      )
+    ).payload
   }
 
   /**

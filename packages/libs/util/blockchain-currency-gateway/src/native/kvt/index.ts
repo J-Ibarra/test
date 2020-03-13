@@ -11,10 +11,8 @@ import { decryptValue } from '@abx-utils/encryption'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 import KinesisVelocityToken from './contracts/KinesisVelocityToken.json'
-import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse } from '../../currency_gateway.js'
+import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse, ExchangeHoldingsTransfer } from '../../currency_gateway.js'
 import { CryptoAddress } from '../../api-provider/model/index.js'
-import { RuntimeError } from '@abx-types/error'
-import { IAddressTransaction } from '../../api-provider/providers/crypto-apis/index.js'
 
 const testMnemonic = 'uncle salute dust cause embody wonder clump blur paddle hotel risk aim'
 
@@ -81,10 +79,9 @@ export class KVT implements OnChainCurrencyGateway {
     }
   }
 
-  addressEventListener(): Promise<IAddressTransaction> {
-    throw new RuntimeError('Unsupported operation addressEventListener')
+  public async createAddressTransactionSubscription(): Promise<boolean> {
+    return true
   }
-
   /**
    * Generate a private key
    * @return {string} - private key
@@ -193,10 +190,14 @@ export class KVT implements OnChainCurrencyGateway {
    * @param {string} toAddress
    * @param {number} amount
    */
-  public async transferFromExchangeHoldingsTo(toAddress: string, amount: number): Promise<TransactionResponse> {
+  public async transferFromExchangeHoldingsTo({ toAddress, amount }: ExchangeHoldingsTransfer): Promise<TransactionResponse> {
     const holdingPrivateKey = await this.getDecryptedHoldingsSecret(process.env.ETHEREUM_HOLDINGS_SECRET!, this.decryptedKVTHoldingsSecret)
 
     return this.transferTo({ amount, privateKey: holdingPrivateKey, toAddress })
+  }
+
+  public kinesisManagesConfirmations(): boolean {
+    return true
   }
 
   /**
@@ -300,7 +301,7 @@ export class KVT implements OnChainCurrencyGateway {
     return currencySecret
   }
 
-   /**
+  /**
    * Convert EventLog to DepositTransaction
    * @param {EventLog} event - EventLog return from contract
    */
@@ -311,7 +312,6 @@ export class KVT implements OnChainCurrencyGateway {
       amount: Number(event.returnValues.value),
     }
   }
-
 
   /**
    * Get all Transfer Event from contract that transfer token into address

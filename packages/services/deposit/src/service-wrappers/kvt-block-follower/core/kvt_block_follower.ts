@@ -4,11 +4,15 @@ import { findBoundaryForCurrency, findCurrencyForCode } from '@abx-service-clien
 import { CurrencyBoundary, CurrencyCode } from '@abx-types/reference-data'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyManager, KVT } from '@abx-utils/blockchain-currency-gateway'
-import { getBlockchainFollowerDetailsForCurrency, updateBlockchainFollowerDetailsForCurrency } from '../../../core'
+import {
+  getBlockchainFollowerDetailsForCurrency,
+  updateBlockchainFollowerDetailsForCurrency,
+  convertTransactionToDepositRequest,
+  FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION,
+} from '../../../core'
 import { BlockchainFollowerDetails, DepositAddress } from '@abx-types/deposit'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { findKycOrEmailVerifiedDepositAddresses, storeDepositRequests } from '../../../core'
-import { FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION, convertTransactionToDepositRequest } from '../../deposit-processor/core/deposit_transactions_fetcher'
 import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-data'
 
 const ETHEREUM_BLOCK_DELAY = 12

@@ -2,10 +2,8 @@ import { CurrencyManager } from './currency_manager'
 import { Environment } from '@abx-types/reference-data'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
-import { DepositTransaction, OnChainCurrencyGateway } from './currency_gateway'
+import { DepositTransaction, OnChainCurrencyGateway, ExchangeHoldingsTransfer } from './currency_gateway'
 import { CryptoAddress } from './api-provider/model'
-import { IAddressTransaction } from './api-provider/providers/crypto-apis'
-import { RuntimeError } from '@abx-types/error'
 
 export const TEST_CURRENCY_TICKER = 'TST' as CurrencyCode
 export const TEST_CURRENCY_ID = 1
@@ -80,10 +78,13 @@ export class TestCurrency implements OnChainCurrencyGateway {
     return this.balances[address]
   }
 
-  public async transferFromExchangeHoldingsTo(address: string) {
-    return this.transferTo(address)
+  public async transferFromExchangeHoldingsTo({ toAddress }: ExchangeHoldingsTransfer) {
+    return this.transferTo(toAddress)
   }
 
+  kinesisManagesConfirmations() {
+    return true
+  }
   public async transferTo(_) {
     return { txHash: 'test-transaction-hash' }
   }
@@ -97,8 +98,8 @@ export class TestCurrency implements OnChainCurrencyGateway {
     }
   }
 
-  addressEventListener(): Promise<IAddressTransaction> {
-    throw new RuntimeError('Unsupported operation addressEventListener')
+  public async createAddressTransactionSubscription(): Promise<boolean> {
+    return true
   }
 
   private generatePrivateKey() {
@@ -124,7 +125,7 @@ export class TestCurrency implements OnChainCurrencyGateway {
     return Promise.resolve(!!address && !address.includes('invalid'))
   }
 
-  public async validateAddressIsNotContractAddress(_: string): Promise<boolean> {
+  public async validateAddressIsNotContractAddress(): Promise<boolean> {
     return true
   }
 

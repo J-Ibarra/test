@@ -12,7 +12,8 @@
   "scripts": {
     "build": "npm run clean && npm run compile",
     "clean": "rm -rf ./dist",
-    "compile": "tsc -p tsconfig.build.json --skipLibCheck"
+    "compile": "tsc -p tsconfig.build.json --skipLibCheck",
+    "test": "ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts --require ../../../../_test-setup/test_globals.js src/**/*.spec.ts --exit"
   },
   "publishConfig": {
     "access": "restricted"
