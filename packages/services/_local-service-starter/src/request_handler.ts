@@ -8,8 +8,11 @@ export function pickRouteBasedForwarding(req: http.IncomingMessage, res, proxy):
 
   if (!!targetService) {
     return () => proxy.web(req, res, { target: `http://127.0.0.1:${targetService.port}` })
-  } else if (req.url!.startsWith('/api/orders')) {
-    if (req.url === '/api/orders' && (req.method === 'POST' || req.method === 'DELETE')) {
+  } else if (req.url!.startsWith('/api/orders') || req.url!.startsWith('/api/admin/orders')) {
+    if (
+      (req.url === '/api/orders' && (req.method === 'POST' || req.method === 'DELETE')) ||
+      (req.url!.startsWith('/api/admin/orders') && req.method === 'DELETE')
+    ) {
       return () => proxy.web(req, res, { target: `http://127.0.0.1:${ORDER_GATEWAY_API_PORT}` })
     }
 

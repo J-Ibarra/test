@@ -34,7 +34,7 @@ export class AdminRequestsController extends Controller {
   @Security('adminAuth')
   @Get('{accountHin}')
   public async getAdminRequestsForAccountHin(accountHin: string): Promise<AdminRequest[]> {
-    return findAllAdminRequestsForAccountHin(Number(accountHin))
+    return findAllAdminRequestsForAccountHin(accountHin)
   }
 
   @Security('adminAuth')

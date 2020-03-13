@@ -225,7 +225,9 @@ For each change that is pushed to develop branch (on PR merge) the CI flow publi
 
 ### That is why when merging PR it is best if the default commit message is edited and the ticket number is added to the commit message
 
-After the new images are pushed to ECR the [kbe-service-versions](https://github.com/bullioncapital/kbe-service-versions) repo should be used to promote the new ECR images to the required environments. (Documentations on how to use and how it works have been added to the repo README)
+Each push to develop(e.g. PR merge) triggers integration environment release of the changed services.
+
+In order to carry out deployment of specific services to UAT or any other environment [kbe-service-versions](https://github.com/bullioncapital/kbe-service-versions) repo should be used to promote the new ECR images. (Documentations on how to use and how it works have been added to the repo README)
 
 #### Coding methodology
 

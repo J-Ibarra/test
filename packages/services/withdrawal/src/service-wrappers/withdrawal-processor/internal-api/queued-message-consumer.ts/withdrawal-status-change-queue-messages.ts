@@ -4,7 +4,8 @@ import {
   AsyncWithdrawalStatusChangeRequest,
   FiatWithdrawalCancellationChangeRequest,
 } from '@abx-service-clients/withdrawal'
-import { findWithdrawalRequest, cancelWithdrawalRequest, createWithdrawalRequest } from '../../../../core'
+import { findWithdrawalRequest, cancelWithdrawalRequest, initialiseFiatWithdrawalRequest } from '../../../../core'
+import { WithdrawalState } from '@abx-types/withdrawal'
 
 const logger = Logger.getInstance('withdrawal', 'queue_message_consumer_withdrawal_status_change')
 
@@ -29,5 +30,5 @@ async function cancelFiatWithdrawal(request: AsyncWithdrawalStatusChangeRequest)
 
 async function createFiatWithdrawal(request: AsyncWithdrawalStatusChangeRequest) {
   logger.debug(`Processing request for fiat withdrawal request creation: ${JSON.stringify(request)}`)
-  await createWithdrawalRequest(request.payload as any)
+  await initialiseFiatWithdrawalRequest({ ...(request.payload as any), state: WithdrawalState.pending })
 }

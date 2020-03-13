@@ -14,7 +14,7 @@ export async function findAllAdminRequests(transaction?: Transaction): Promise<A
   })
 }
 
-export async function findAllAdminRequestsForAccountHin(accountHin: number, transaction?: Transaction): Promise<AdminRequest[]> {
+export async function findAllAdminRequestsForAccountHin(accountHin: string, transaction?: Transaction): Promise<AdminRequest[]> {
   return wrapInTransaction(sequelize, transaction, async t => {
     const requests = await getModel<AdminRequest>('admin_request').findAll({
       where: { hin: accountHin },

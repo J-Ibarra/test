@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post, Query, Request, Response, Route, Security, SuccessResponse } from 'tsoa'
+import { Body, Controller, Delete, Get, Post, Query, Request, Response, Route, Security, SuccessResponse, Tags } from 'tsoa'
 import { activateMfa, deactivateMfa, verifyMfa, MFA, findUserByEmail } from '../../../core'
 import { OverloadedRequest } from '@abx-types/account'
 
@@ -6,6 +6,7 @@ interface MfaStatusResponse {
   enabled: boolean
 }
 
+@Tags('accounts')
 @Route('mfa')
 export class MFAController extends Controller {
   @Get()

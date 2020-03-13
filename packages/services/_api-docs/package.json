@@ -1,0 +1,37 @@
+{
+  "name": "slate",
+  "version": "1.0.0",
+  "description": "Kinesis exchange slate documentation",
+  "author": "Jeff Teng <jeff.teng@abx.com>",
+  "homepage": "https://github.com/bullioncapital/secondary-exchange-services#readme",
+  "license": "ISC",
+  "main": "lib/slate.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bullioncapital/secondary-exchange-services.git"
+  },
+  "scripts": {
+    "start": "docker-compose up -d",
+    "mergeSwagger": "node mergeSwagger.js",
+    "convert": "widdershins --environment ./widdershins.config.json --summary swagger.json -o source/index.html.md",
+    "clean:build": "rm -rf build",
+    "clean:swagger": "rm swagger.json",
+    "clean": "npm run clean:build && npm run clean:swagger",
+    "build:static": "bundle exec middleman build",
+    "build:docs": "npm run mergeSwagger && npm run convert && npm run build:static",
+    "push-api-docs-to-s3": "aws s3 cp ./build/ s3://int-api.kinesis.money-docs/ --recursive"
+  },
+  "bugs": {
+    "url": "https://github.com/bullioncapital/secondary-exchange-services/issues"
+  },
+  "dependencies": {
+    "widdershins": "3.6.7",
+    "glob": "7.1.6"
+  }
+}

@@ -19,7 +19,7 @@ const withdrawalRequestCreated = 'exchange:withdrawal:withdrawalRequestCreated'
 const logger = Logger.getInstance('initialise_fiat_withdrawal_request', 'initialiseFiatWithdrawalRequest')
 
 export function initialiseFiatWithdrawalRequest(
-  { accountId, address, amount, currencyCode, memo, state, createdAt, transactionFee, transactionId, adminRequestId }: EnrichedInitialisationParams,
+  { accountId, amount, currencyCode, memo, state, createdAt, transactionFee, transactionId, adminRequestId }: EnrichedInitialisationParams,
   t?: Transaction,
 ): Promise<WithdrawalRequest> {
   const epicurus = getEpicurusInstance()
@@ -32,7 +32,7 @@ export function initialiseFiatWithdrawalRequest(
     const withdrawalRequest = await createWithdrawalRequest(
       {
         accountId,
-        address,
+        address: '',
         amount,
         currencyId: withdrawalCurrencyId,
         memo,

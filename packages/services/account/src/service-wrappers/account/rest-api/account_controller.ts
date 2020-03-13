@@ -1,8 +1,7 @@
-import { Body, Controller, Get, Patch, Post, Query, Request, Response, Route, Security, SuccessResponse } from 'tsoa'
+import { Body, Controller, Get, Patch, Post, Query, Request, Response, Route, Security, SuccessResponse, Tags } from 'tsoa'
 import {
   createAccountAndPrepareWelcomeEmail,
   createResetPasswordConfirmationEmailContent,
-  findAccountById,
   findAllUsersForHin,
   sendReferralCodeEmail,
   sendVerificationEmail,
@@ -12,8 +11,17 @@ import {
   changePassword,
   getKycVerifiedAccountDetails,
   recordKycCheckTriggered,
+  findAccountByIdWithMfaStatus,
 } from '../../../core'
-import { AccountType, CreateAccountRequest, PersonalBankDetails, UserPublicView } from '@abx-types/account'
+import {
+  Account,
+  AccountType,
+  CreateAccountRequest,
+  KycVerifiedAccountDetails,
+  PersonalBankDetails,
+  UserPublicView,
+  AccountWithMfaStatus,
+} from '@abx-types/account'
 import { Logger } from '@abx-utils/logging'
 import { ValidationError } from '@abx-types/error'
 import { OverloadedRequest } from '@abx-types/account'
@@ -29,6 +37,7 @@ export interface ChangePasswordRequest {
   newPassword: string
 }
 
+@Tags('accounts')
 @Route()
 export class AccountsController extends Controller {
   private logger = Logger.getInstance('api', 'AccountsController')
@@ -36,7 +45,7 @@ export class AccountsController extends Controller {
   @Security('cookieAuth')
   @Security('tokenAuth')
   @Get('accounts/bank-details')
-  public async getBankDetails(@Request() request: OverloadedRequest) {
+  public async getBankDetails(@Request() request: OverloadedRequest): Promise<PersonalBankDetails | null> {
     return getBankDetailsForAccount(request.account!.id)
   }
 
@@ -44,7 +53,7 @@ export class AccountsController extends Controller {
   @Security('cookieAuth')
   @Security('tokenAuth')
   @Post('accounts/bank-details')
-  public async saveBankDetails(@Request() { account }: OverloadedRequest, @Body() bankDetails: PersonalBankDetails) {
+  public async saveBankDetails(@Request() { account }: OverloadedRequest, @Body() bankDetails: PersonalBankDetails): Promise<PersonalBankDetails> {
     return saveBankDetails(account!.id, bankDetails)
   }
 
@@ -75,7 +84,7 @@ export class AccountsController extends Controller {
   @Security('cookieAuth')
   @Security('tokenAuth')
   @Get('accounts/kyc-details')
-  public async getKycUserDetails(@Request() { account }: OverloadedRequest) {
+  public async getKycUserDetails(@Request() { account }: OverloadedRequest): Promise<KycVerifiedAccountDetails> {
     return getKycVerifiedAccountDetails(account!.id)
   }
 
@@ -83,20 +92,20 @@ export class AccountsController extends Controller {
   @Security('tokenAuth')
   @Response('403', 'Unauthorized')
   @Get('accounts/{id}')
-  public async getAccount(@Request() request: OverloadedRequest, id: string) {
+  public async getAccount(@Request() request: OverloadedRequest, id: string): Promise<AccountWithMfaStatus | null | { message: string }> {
     if (request.account!.id !== id && request.account!.type !== AccountType.admin) {
       this.setStatus(403)
       return { message: 'Unauthorized' }
     }
 
-    return findAccountById(id)
+    return findAccountByIdWithMfaStatus(id)
   }
 
   @SuccessResponse('201', 'Created')
   @Response('409', 'Account email already taken')
   @Response('400', 'Invalid request body')
   @Post('accounts')
-  public async createIndividualAccount(@Body() requestBody: CreateAccountRequest) {
+  public async createIndividualAccount(@Body() requestBody: CreateAccountRequest): Promise<{ message: string; context?: string } | Account> {
     if (process.env.REGISTRATION_DISABLED) {
       return {
         message: 'Registrations are currently disabled',

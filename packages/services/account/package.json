@@ -18,13 +18,16 @@
     "migrate-db": "npm run build && NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test NODE_PATH=dist node dist/migrations/index.js",
     "test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_PATH=dist ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts --require ../../../_test-setup/test_globals.js src/**/*.spec.ts --exit",
     "test-account": "NEW_RELIC_NO_CONFIG_FILE=true NODE_PATH=dist ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts --require ../../../_test-setup/test_globals.js src/**/*.spec.ts --exit",
-    "build-image-account": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-account:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-account:latest -f packages/services/account/src/service-wrappers/account/Dockerfile . && cd packages/services/account",
-    "build-image-salesforce": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-salesforce-integration:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-salesforce-integration:latest -f packages/services/account/src/service-wrappers/salesforce/Dockerfile . && cd packages/services/account",
+    "build-image-account": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-account:$JIRA_IMAGE_TAG -t $KINESIS_ECR_URL/kbe-services-account:latest -f packages/services/account/src/service-wrappers/account/Dockerfile . && cd packages/services/account",
+    "build-image-salesforce": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-salesforce-reconciliation:$JIRA_IMAGE_TAG -t $KINESIS_ECR_URL/kbe-services-salesforce-reconciliation:latest -f packages/services/account/src/service-wrappers/salesforce/Dockerfile . && cd packages/services/account",
     "build-base-image": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-account-base:latest -f packages/services/account/Dockerfile . && cd packages/services/account",
     "build-image-latest": "npm run build-base-image && npm run build-image-account && npm run build-image-salesforce",
     "push-image-account": "docker push $KINESIS_ECR_URL/kbe-services-account",
-    "push-image-salesforce": "docker push $KINESIS_ECR_URL/kbe-services-salesforce-integration",
-    "push-image": "npm run push-image-account && npm run push-image-salesforce"
+    "push-image-salesforce": "docker push $KINESIS_ECR_URL/kbe-services-salesforce-reconciliation",
+    "push-image": "npm run push-image-account && npm run push-image-salesforce",
+    "deploy-latest-integration:account": "aws ecs update-service --service kbe-int-account-service-v2 --cluster kbe-int-cluster --region ap-southeast-2",
+    "deploy-latest-integration:salesforce-reconciliation": "aws ecs update-service --service kbe-int-salesforce-reconciliation-service-v2 --cluster kbe-int-cluster --region ap-southeast-2",
+    "deploy-latest-integration": "npm run deploy-latest-integration:account && npm run deploy-latest-integration:salesforce-reconciliation"
   },
   "dependencies": {
     "@abx-service-clients/account": "^1.1.0",
