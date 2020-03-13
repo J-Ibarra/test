@@ -6,10 +6,13 @@ export async function up({ sequelize }: { sequelize: Sequelize }) {
       ADD COLUMN "transactionTrackingActivated" boolean DEFAULT false NOT NULL;
   
     ALTER TABLE public.deposit_address
-      ADD COLUMN "address" character varying(100);
+      ADD COLUMN "address" character varying(255);
     
     ALTER TABLE public.deposit_address
-      ADD COLUMN "encryptedWif" character varying(255);
+      ADD COLUMN "encryptedWif" character varying(400);
+    
+    ALTER TABLE public.deposit_address
+      ALTER COLUMN "encryptedPrivateKey" TYPE character varying(400);
   `)
 }
 

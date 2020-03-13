@@ -17,7 +17,15 @@ const KYC_ACCOUNTS_CACHE_EXPIRY_10_MINUTES = 10 * 60 * 1000
 let cryptoCurrencies: Currency[] = []
 
 export async function generateNewDepositAddress(accountId: string, currency: OnChainCurrencyGateway) {
-  const cryptoAddress = await currency.generateAddress()
+  let cryptoAddress
+  try {
+    cryptoAddress = await currency.generateAddress()
+  } catch (e) {
+    logger.error(`Unable to generate crypto address for ${currency.ticker}`)
+    logger.error(JSON.stringify(e))
+
+    throw e
+  }
   const encryptedPrivateKey = await encryptValue(cryptoAddress.privateKey)
 
   let encryptedWif
@@ -169,8 +177,8 @@ export async function createNewDepositAddress(manager: CurrencyManager, accountI
   }
 
   const address = await generateNewDepositAddress(accountId, manager.getCurrencyFromTicker(currencyTicker))
-
   logger.debug(`Generated address for account ${accountId} and currency ${currencyTicker}`)
+  logger.debug(`Address: ${JSON.stringify(address)}`)
 
   return storeDepositAddress(address)
 }
