@@ -13,7 +13,7 @@
     "routes-gen": "tsoa routes",
     "clean": "rm -rf ./dist",
     "compile": "npm run clean && tsc -p tsconfig.build.json --skipLibCheck",
-    "run-migrations:dev": "npm run compile && NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=development NODE_PATH=dist node dist/migrations/index.js",
+    "run-migrations:dev": "NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=development tsnd src/migrations/index.ts",
     "run-migrations:test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test tsnd src/migrations/index.ts",
     "build-deposit-api": "npm run swagger-gen -- -c ./src/service-wrappers/deposit-api/tsoa.json && npm run routes-gen -- -c ./src/service-wrappers/deposit-api/tsoa.json",
     "build": "npm run clean && npm run build-deposit-api && tsc -p tsconfig.build.json --skipLibCheck",
