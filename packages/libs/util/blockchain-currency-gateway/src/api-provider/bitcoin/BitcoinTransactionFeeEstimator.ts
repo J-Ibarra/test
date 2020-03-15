@@ -8,6 +8,7 @@ export class BitcoinTransactionFeeEstimator {
   readonly AVERAGE_FEE_PER_BYTE_KEY = 'avg-fee-per-byte'
   readonly AVERAGE_FEE_PER_TRANSACTION_KEY = 'avg-fee-per-transaction'
   readonly MINIMUM_TRANSACTION_FEE_KEY = 'minimum-transaction-fee'
+  private readonly MAXIMUM_TX_FEE = 0.00005 // As per the business requirements required by operations
 
   private readonly CACHE_EXPIRY_IN_MILLIS = 1000 * 60 * 30
 
@@ -32,7 +33,7 @@ export class BitcoinTransactionFeeEstimator {
     receiverAddress,
     amount,
     memo,
-    feeLimit,
+    feeLimit = this.MAXIMUM_TX_FEE,
   }: Pick<CreateTransactionPayload, 'senderAddress' | 'receiverAddress' | 'amount' | 'memo' | 'feeLimit'>): Promise<number> {
     let averageFeePerByte = this.MEMORY_CACHE.get<string>(this.AVERAGE_FEE_PER_BYTE_KEY)
     let averageFeePerTransaction = this.MEMORY_CACHE.get<string>(this.AVERAGE_FEE_PER_TRANSACTION_KEY)
@@ -68,9 +69,7 @@ export class BitcoinTransactionFeeEstimator {
       .toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
       .toNumber()
 
-    if (!!feeLimit) {
-      estimatedMinimumTransactionFee = Math.min(estimatedMinimumTransactionFee, feeLimit)
-    }
+    estimatedMinimumTransactionFee = Math.min(estimatedMinimumTransactionFee, feeLimit)
 
     return estimatedMinimumTransactionFee > amount ? Number(minimumFee) : estimatedMinimumTransactionFee
   }

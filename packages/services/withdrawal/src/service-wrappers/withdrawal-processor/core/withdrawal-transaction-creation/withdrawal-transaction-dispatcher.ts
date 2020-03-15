@@ -6,7 +6,6 @@ import { wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { transferWithdrawalFundsForKinesisCurrency } from './kinesis_currency_transferrer'
 import { WITHDRAWAL_TRANSACTION_SENT_QUEUE_URL } from '@abx-service-clients/withdrawal'
-import { getWithdrawalConfigForCurrency } from '@abx-service-clients/reference-data'
 
 const logger = Logger.getInstance('withdrawal', 'withdrawal-transaction-dispatcher')
 const DEFAULT_NUMBER_OF_CONFIRMATION_FOR_WITHDRAWAL = 1
@@ -47,14 +46,11 @@ async function transferFunds(withdrawalRequestId: number, currencyGateway: OnCha
     })
   }
 
-  const withdrawalConfig = await getWithdrawalConfigForCurrency({ currencyCode: currencyGateway.ticker! })
-
   return currencyGateway.transferFromExchangeHoldingsTo({
     toAddress: address,
     amount,
     memo,
     transactionConfirmationWebhookUrl: process.env.WITHDRAWAL_TRANSACTION_CONFIRMATION_CALLBACK_URL!,
-    feeLimit: withdrawalConfig.feeAmount,
     transactionConfirmations: DEFAULT_NUMBER_OF_CONFIRMATION_FOR_WITHDRAWAL,
   })
 }
