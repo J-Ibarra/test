@@ -167,7 +167,8 @@ Scripts required for the setup are placed in `/_scripts`
 
 1. Run `docker-compose up -d`
 2. Run `npm run run-legacy-migrations:dev`
-3. Run `npm run start-api-debug`
+3. Run `npm run run-migrations:dev`
+4. Run `npm run start-api-debug`
 
 #### Branches
 

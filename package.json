@@ -21,6 +21,7 @@
     "build:docs": "lerna run build:docs",
     "run-legacy-migrations:test": "lerna run run-legacy-migrations-test",
     "run-migrations:test": "lerna run run-migrations:test",
+    "run-migrations:dev": "lerna run run-migrations:dev",
     "run-legacy-migrations:dev": "lerna run run-legacy-migrations-dev",
     "start-api-debug:dev": "lerna run start-api-debug:dev --stream",
     "start-api-debug:e2e": "lerna run start-api-debug:e2e-local --stream",
