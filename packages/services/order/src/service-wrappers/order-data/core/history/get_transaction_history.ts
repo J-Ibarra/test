@@ -1,4 +1,3 @@
-import { orderBy } from 'lodash'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode, Currency, SymbolPair } from '@abx-types/reference-data'
 import { TradeTransaction, TransactionDirection, CurrencyTransaction } from '@abx-types/order'
@@ -8,6 +7,7 @@ import { findCurrencyTransactionForAccountAndCurrency, findTradeTransactionForAc
 import { getAllCompleteSymbolDetails, getAllCurrencyBoundaries } from '@abx-service-clients/reference-data'
 import { buildDepositTransactionHistory } from './form_deposit_currency_transaction'
 import { buildWithdrawalTransactionHistory } from './form_withdrawal_currency_transaction'
+import moment from 'moment'
 
 const logger = Logger.getInstance('transaction', 'transaction_history')
 
@@ -29,7 +29,9 @@ export async function getAccountTransactionHistory(accountId: string, selectedCu
   const depositAndWithdrawalTransactions = await createDepositAndWithdrawalTransactions(currencyTransactions, selectedCurrencyCode, allSymbols)
   const existingTransactionHistories = [...tradeTransactionsToHistory, ...depositAndWithdrawalTransactions].filter(Boolean)
 
-  return orderBy(existingTransactionHistories, history => history.createdAt, ['desc'])
+  existingTransactionHistories.sort((transactionA, transactionB) => (moment(transactionA.createdAt).isBefore(transactionB.createdAt) ? 1 : -1))
+
+  return existingTransactionHistories
 }
 
 async function createDepositAndWithdrawalTransactions(
