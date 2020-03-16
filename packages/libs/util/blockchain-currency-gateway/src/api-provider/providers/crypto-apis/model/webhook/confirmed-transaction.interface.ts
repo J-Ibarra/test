@@ -29,33 +29,3 @@ export interface IConfirmedTransactionEventPayload {
   txid: string
   confirmations: number
 }
-
-//ETH
-
-export interface IConfirmedTransactionWebhookRequestEth {
-  callbackURL: string
-  transactionHash: string
-  confirmations: number
-}
-
-export interface IConfirmedTransactionWebhookResponseEth extends PayloadWrapper<IConfirmedTransactionEth> {}
-
-export interface IConfirmedTransactionEth {
-  uuid: string
-  event: EWebhookEvents.ADDRESS
-  confirmations: number
-  transaction: string
-  url: string
-  created: Date
-}
-
-export interface IConfirmedTransactionEventPayloadEth {
-  blockHeight: number
-  blockHash: string
-  currency: CurrencyCode
-  network: ENetworkTypes
-  url: string
-  type: EWebhookEvents.CONFIRMED_TX
-  txid: string
-  confirmations: number
-}

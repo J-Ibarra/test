@@ -5,13 +5,14 @@ import {
   createNewDepositRequest,
   getMinimumDepositAmountForCurrency,
 } from '../../../../core'
-import { Transaction, BlockchainFacade } from '@abx-utils/blockchain-currency-gateway'
-import { CurrencyCode } from '@abx-types/reference-data'
+import { Transaction, OnChainCurrencyGateway, getOnChainCurrencyManagerForEnvironment } from '@abx-utils/blockchain-currency-gateway'
+import { CurrencyCode, Environment } from '@abx-types/reference-data'
 import { DepositAddress, DepositRequestStatus } from '@abx-types/deposit'
 import { Logger } from '@abx-utils/logging'
 import { sendAsyncChangeMessage } from '@abx-utils/async-message-publisher'
 import { DEPOSIT_CONFIRMED_TRANSACTION_QUEUE_URL } from '../constants'
 import { ConfirmedDepositTransactionPayload } from '../holdings-transaction-creation/DepositTransactionConfirmationQueuePoller'
+import { findCryptoCurrencies } from '@abx-service-clients/reference-data'
 
 interface NewTransactionDetails {
   currency: CurrencyCode
@@ -56,7 +57,12 @@ export class NewTransactionRecorder {
    * a 'insufficientAmount' status is used for the new record and it is not processed any further.
    */
   private async persistTransactionDetails(currency: CurrencyCode, depositTransactionDetails: Transaction, depositAddress: DepositAddress) {
-    const providerFacade = BlockchainFacade.getInstance(currency)
+    const cryptoCurrencies = await findCryptoCurrencies()
+    const providerFacade = getOnChainCurrencyManagerForEnvironment(
+      process.env.NODE_ENV as Environment,
+      cryptoCurrencies.map(({ code }) => code),
+    )
+
     const fiatValueOfOneCryptoCurrency = await calculateRealTimeMidPriceForSymbol(`${currency}_${FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION}`)
     let depositAmountAboveMinimumForCurrency = getMinimumDepositAmountForCurrency(currency) <= depositTransactionDetails.amount
 
@@ -65,20 +71,20 @@ export class NewTransactionRecorder {
       await createNewDepositRequest(depositTransactionDetails, depositAddress, fiatValueOfOneCryptoCurrency, DepositRequestStatus.insufficientAmount)
     } else {
       await createNewDepositRequest(depositTransactionDetails, depositAddress, fiatValueOfOneCryptoCurrency)
-      await this.subscribeForDepositConfirmation(currency, depositTransactionDetails, providerFacade)
+      await this.subscribeForDepositConfirmation(currency, depositTransactionDetails, providerFacade.getCurrencyFromTicker(currency))
     }
   }
 
   private async subscribeForDepositConfirmation(
     currency: CurrencyCode,
     { transactionHash, confirmations }: Transaction,
-    providerFacade: BlockchainFacade,
+    onChainCurrencyGateway: OnChainCurrencyGateway,
   ) {
     if (confirmations === this.getRequiredConfirmationsForDepositTransaction(currency)) {
       await this.queueForHoldingsTransactionCreation(transactionHash, currency)
       logger.info(`Transaction ${transactionHash} already confirmed ${confirmations} times, pushing message to confirmed transaction queue`)
     } else {
-      await providerFacade.subscribeToTransactionConfirmationEvents(transactionHash, process.env.DEPOSIT_CONFIRMED_TRANSACTION_CALLBACK_URL!)
+      await onChainCurrencyGateway.subscribeToTransactionConfirmationEvents(transactionHash, process.env.DEPOSIT_CONFIRMED_TRANSACTION_CALLBACK_URL!)
       logger.info(`Subscribed for transaction confirmation events for deposit transaction ${transactionHash}`)
     }
   }

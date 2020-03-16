@@ -3,7 +3,7 @@ import { CurrencyCode } from '@abx-types/reference-data'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { RuntimeError } from '@abx-types/error'
 import { BitcoinBlockchainFacade } from './BitcoinBlockchainFacade'
-import { CryptoAddress } from '../model'
+import { CryptoAddress, Transaction } from '../model'
 import { DepositAddress } from '@abx-types/deposit'
 import { Logger } from '@abx-utils/logging'
 import { decryptValue } from '@abx-utils/encryption'
@@ -50,7 +50,15 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
       return false
     }
   }
-  // This returns a string due to JS floats
+
+  getTransaction(transactionHash: string, targetAddress: string): Promise<Transaction | null> {
+    return this.bitcoinBlockchainFacade.getTransaction(transactionHash, targetAddress)
+  }
+
+  subscribeToTransactionConfirmationEvents(transactionHash: string, callbackUrl: string) {
+    return this.bitcoinBlockchainFacade.subscribeToTransactionConfirmationEvents(transactionHash, callbackUrl)
+  }
+
   balanceAt(address: string): Promise<number> {
     return this.bitcoinBlockchainFacade.balanceAt(address)
   }

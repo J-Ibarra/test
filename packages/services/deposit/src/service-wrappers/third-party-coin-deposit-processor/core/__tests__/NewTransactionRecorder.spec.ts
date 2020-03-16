@@ -29,6 +29,7 @@ describe('NewTransactionRecorder:recordDepositTransaction', () => {
       subscribeToTransactionConfirmationEvents: sinon.stub(),
     } as any
   })
+
   afterEach(() => sinon.restore())
 
   it('should not record transaction when deposit request already exists with that hash', async () => {

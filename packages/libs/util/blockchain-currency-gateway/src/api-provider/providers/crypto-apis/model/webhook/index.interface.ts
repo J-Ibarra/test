@@ -1,6 +1,11 @@
-import { IConfirmedTransactionWebhookResponse, IAddressTransactionResponse, IAddressTransactionConfirmationsWebookResponse,IAddressTransactionResponseEth,IConfirmedTransactionWebhookResponseEth } from '../webhook'
+import {
+  IConfirmedTransactionWebhookResponse,
+  IAddressTokenTransactionResponse,
+  IAddressTransactionResponse,
+  IAddressTransactionConfirmationsWebookResponse,
+} from '../webhook'
 
-export interface IWebhooks {
+export interface IGenericWebhookOperations {
   createConfirmedTransactionWebHook: (
     callbackURL: string,
     transaction: string,
@@ -24,26 +29,6 @@ export interface IWebhooks {
   ) => Promise<IAddressTransactionConfirmationsWebookResponse>
 }
 
-export interface IEthWebhooks {
-  createConfirmedTransactionWebHook: (
-    callbackURL: string,
-    transaction: string,
-    confirmations: number,
-    optData?: any,
-    queryParams?: any,
-  ) => Promise<IConfirmedTransactionWebhookResponseEth>
-  createAddressTransactionWebHook: (
-    callbackURL: string,
-    address: string,
-    confirmations: number,
-    optData?: any,
-    queryParams?: any,
-  ) => Promise<IAddressTransactionResponseEth>
-  createTransactionConfirmationsWebHook: (
-    callbackURL: string,
-    address: string,
-    confirmations: number,
-    optData?: any,
-    queryParams?: any,
-  ) => Promise<IAddressTransactionConfirmationsWebookResponse>
+export interface IEthWebhookOperations extends IGenericWebhookOperations {
+  createTokenWebHook(callbackURL: string, address: string, confirmations: number): Promise<IAddressTokenTransactionResponse>
 }

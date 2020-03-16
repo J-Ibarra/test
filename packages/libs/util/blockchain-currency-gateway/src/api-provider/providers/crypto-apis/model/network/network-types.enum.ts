@@ -1,5 +1,5 @@
 export enum ENetworkTypes {
-  MAINNET = 'mainnet',
-  TESTNET = 'testnet',
-  ETH_TESTNET = 'ropsten'
+  BTC_MAINNET = 'MAINNET',
+  BTC_TESTNET = 'testnet',
+  ETH_TESTNET = 'ropsten',
 }

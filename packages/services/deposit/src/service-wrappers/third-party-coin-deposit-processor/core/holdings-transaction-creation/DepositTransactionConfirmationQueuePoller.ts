@@ -1,15 +1,16 @@
 import { getQueuePoller } from '@abx-utils/async-message-consumer'
-import { IConfirmedTransactionEventPayload } from '@abx-utils/blockchain-currency-gateway'
+import { IConfirmedTransactionEventPayload, getOnChainCurrencyManagerForEnvironment } from '@abx-utils/blockchain-currency-gateway'
 import { HoldingsTransactionDispatcher } from './HoldingsTransactionDispatcher'
 import { findDepositRequestByDepositTransactionHash, findDepositRequestsWithInsufficientAmount } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
 import { DEPOSIT_CONFIRMED_TRANSACTION_QUEUE_URL } from '../constants'
 import { sendAsyncChangeMessage } from '@abx-utils/async-message-publisher'
 import { DEPOSIT_HOLDINGS_TRANSACTION_CONFIRMATION_QUEUE_URL } from '../constants'
-import { CurrencyCode } from '@abx-types/reference-data'
+import { CurrencyCode, Environment } from '@abx-types/reference-data'
 import { CompletionPendingTransactionDetails } from '../deposit-completion/HoldingsTransactionConfirmationQueuePoller'
 import Decimal from 'decimal.js'
 import { DepositRequest } from '@abx-types/deposit'
+import { findCryptoCurrencies } from '@abx-service-clients/reference-data'
 
 export interface ConfirmedDepositTransactionPayload {
   currency: CurrencyCode
@@ -46,13 +47,19 @@ export class DepositTransactionConfirmationQueuePoller {
 
     const { totalAmount: totalAmountToTransfer, depositsRequestsWithInsufficientStatus } = await this.computeTotalAmountToTransfer(depositRequest)
 
+    const cryptoCurrencies = await findCryptoCurrencies()
+    const currencyManager = getOnChainCurrencyManagerForEnvironment(
+      process.env.NODE_ENV as Environment,
+      cryptoCurrencies.map(({ code }) => code),
+    )
+
     const holdingsTransactionHash = await this.holdingsTransactionDispatcher.transferTransactionAmountToHoldingsWallet(
-      currency,
       {
         ...depositRequest,
         amount: totalAmountToTransfer,
       },
       depositsRequestsWithInsufficientStatus,
+      currencyManager.getCurrencyFromTicker(currency),
     )
 
     if (holdingsTransactionHash) {

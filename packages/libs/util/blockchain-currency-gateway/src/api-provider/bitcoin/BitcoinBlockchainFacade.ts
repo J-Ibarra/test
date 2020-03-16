@@ -5,21 +5,22 @@ import { Logger } from '@abx-utils/logging'
 
 import { CreateTransactionPayload } from '../model/CreateTransactionPayload'
 import { BitcoinTransactionDispatcher } from './BitcoinTransactionDispatcher'
-import { CryptoApisProviderProxy, ENetworkTypes, IAddressTransaction } from '../providers/crypto-apis'
+import { ENetworkTypes, IAddressTransaction } from '../providers/crypto-apis'
 import { Transaction, CryptoAddress } from '../model'
+import { BtcCryptoApisProviderProxy } from '../providers/crypto-apis/BtcCryptoApisProviderProxy'
 
 export const mainnetEnvironments = [Environment.production]
 
 export class BitcoinBlockchainFacade implements BlockchainFacade {
   private readonly LOGGER = Logger.getInstance('blockchain-currency-gateway', 'BitcoinBlockchainFacade')
 
-  private cryptoApiProviderProxy: CryptoApisProviderProxy
+  private cryptoApiProviderProxy: BtcCryptoApisProviderProxy
   private bitcoinTransactionDispatcher: BitcoinTransactionDispatcher
 
   constructor() {
-    this.cryptoApiProviderProxy = new CryptoApisProviderProxy(
+    this.cryptoApiProviderProxy = new BtcCryptoApisProviderProxy(
       CurrencyCode.bitcoin,
-      mainnetEnvironments.includes(process.env.NODE_ENV as Environment) ? ENetworkTypes.MAINNET : ENetworkTypes.TESTNET,
+      mainnetEnvironments.includes(process.env.NODE_ENV as Environment) ? ENetworkTypes.BTC_MAINNET : ENetworkTypes.BTC_TESTNET,
       process.env.CRYPTO_APIS_TOKEN!,
     )
 
@@ -71,10 +72,6 @@ export class BitcoinBlockchainFacade implements BlockchainFacade {
       this.LOGGER.debug(`Unable to retrieve address details for address ${address}`)
       return false
     }
-  }
-
-  async validateAddressIsNotContractAddress(address: string): Promise<boolean> {
-    return address !== process.env.BTC_CONTRACT_ADDRESS
   }
 
   async subscribeToTransactionConfirmationEvents(transactionHash: string, callbackURL: string): Promise<void> {

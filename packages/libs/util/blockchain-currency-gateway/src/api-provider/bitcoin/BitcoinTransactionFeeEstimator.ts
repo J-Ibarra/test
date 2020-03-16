@@ -2,7 +2,7 @@ import { MemoryCache } from '@abx-utils/db-connection-utils'
 import { CreateTransactionPayload } from '../model'
 import { BitcoinTransactionCreationUtils } from './BitcoinTransactionCreationUtils'
 import Decimal from 'decimal.js'
-import { CryptoApisProviderProxy } from '../providers'
+import { BtcCryptoApisProviderProxy } from '../providers/crypto-apis/BtcCryptoApisProviderProxy'
 
 export class BitcoinTransactionFeeEstimator {
   readonly AVERAGE_FEE_PER_BYTE_KEY = 'avg-fee-per-byte'
@@ -11,7 +11,7 @@ export class BitcoinTransactionFeeEstimator {
 
   private readonly CACHE_EXPIRY_IN_MILLIS = 1000 * 60 * 30
 
-  constructor(private cryptoApisProviderProxy: CryptoApisProviderProxy, private MEMORY_CACHE = new MemoryCache()) {}
+  constructor(private cryptoApisProviderProxy: BtcCryptoApisProviderProxy, private MEMORY_CACHE = new MemoryCache()) {}
 
   /**
    * In order to estimate transaction fee we follow the 3-step workflow:

@@ -1,3 +1,4 @@
 export * from './model'
 export * from './CryptoApisProviderProxy'
-export * from './CryptoApisProviderProxyEth'
+export * from './BtcCryptoApisProviderProxy'
+export * from './EthCryptoApisProviderProxy'

@@ -65,6 +65,10 @@ export class Ethereum implements OnChainCurrencyGateway {
     return true
   }
 
+  public subscribeToTransactionConfirmationEvents(_transactionHash: string) {
+    return Promise.resolve()
+  }
+
   private generatePrivateKey() {
     const { privateKey } = this.web3.eth.accounts.create()
     return privateKey

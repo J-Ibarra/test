@@ -1,28 +1,18 @@
-import { INetworkGroups, ENetworkTypes, IAddresses, IWebhooks, ITransactions ,IEthAddresses, IEthTransactions, IERC_20Transaction ,IEthWebhooks} from '../../model'
+import { INetworkGroups, ENetworkTypes } from '../../model'
+import { IBtcTransactionOperations, IEthTransactionOperations } from '../transactions'
+import { IEthAddressOperations, IBtcAddressOperations, IErc20AddressOperations } from '../addresses'
+import { IGenericWebhookOperations, IEthWebhookOperations } from '../webhook'
 
-export interface ICoins {
-  ETH: IEth
-  BTC: ICoin
-  BCH: ICoin
-  LTC: ICoin
-  DOGE: ICoin
-  DASH: ICoin
-  USDT: ICoin
-}
+export type BtcCoin = ICoin<IBtcAddressOperations, IBtcTransactionOperations>
 
-export interface ICoin {
+export interface ICoin<T, K, V = IGenericWebhookOperations> {
   NETWORKS: INetworkGroups
   switchNetwork: (networkType: ENetworkTypes) => void
-  address: IAddresses
-  webhook: IWebhooks
-  transaction: ITransactions
+  address: T
+  webhook: V
+  transaction: K
 }
 
-export interface IEth {
-  NETWORKS: INetworkGroups
-  switchNetwork: (networkType: ENetworkTypes) => void
-  address: IEthAddresses
-  webhook: IEthWebhooks
-  transaction: IEthTransactions
-  token: IERC_20Transaction
+export interface EthCoin extends ICoin<IEthAddressOperations, IEthTransactionOperations, IEthWebhookOperations> {
+  token: IErc20AddressOperations
 }

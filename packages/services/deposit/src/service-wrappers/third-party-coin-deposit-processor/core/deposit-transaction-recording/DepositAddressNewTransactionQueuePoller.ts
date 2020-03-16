@@ -1,9 +1,11 @@
 import { getQueuePoller } from '@abx-utils/async-message-consumer'
-import { IAddressTransactionEventPayload, BlockchainFacade } from '@abx-utils/blockchain-currency-gateway'
+import { IAddressTransactionEventPayload, getOnChainCurrencyManagerForEnvironment } from '@abx-utils/blockchain-currency-gateway'
 import { findDepositAddress } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
 import { DEPOSIT_ADDRESS_UNCONFIRMED_TRANSACTION_QUEUE_URL } from '../constants'
 import { NewTransactionRecorder } from './NewTransactionRecorder'
+import { Environment } from '@abx-types/reference-data'
+import { findCryptoCurrencies } from '@abx-service-clients/reference-data'
 
 /**
  * Handles the first step of the deposit processing flow where new unconfirmed transaction
@@ -26,7 +28,11 @@ export class DepositAddressNewTransactionQueuePoller {
   private async processDepositAddressTransaction({ currency, address, txid }: IAddressTransactionEventPayload) {
     this.logger.info(`Received a new deposit transaction notification for currency ${currency} with address ${address}. Transaction ID: ${txid}`)
 
-    const providerFacade = BlockchainFacade.getInstance(currency)
+    const cryptoCurrencies = await findCryptoCurrencies()
+    const onChainCurrencyManager = getOnChainCurrencyManagerForEnvironment(
+      process.env.NODE_ENV as Environment,
+      cryptoCurrencies.map(({ code }) => code),
+    )
     const depositAddress = await findDepositAddress({ address })
 
     if (!depositAddress) {
@@ -34,7 +40,7 @@ export class DepositAddressNewTransactionQueuePoller {
       return
     }
 
-    const depositTransactionDetails = await providerFacade.getTransaction(txid, address)
+    const depositTransactionDetails = await onChainCurrencyManager.getCurrencyFromTicker(currency).getTransaction(txid, address)
 
     this.newTransactionRecorder.recordDepositTransaction({
       currency,

@@ -12,8 +12,9 @@ export abstract class BlockchainFacade {
    * Retrieves the available balance at a given address.
    *
    * @param address the address to retrieve the details for
+   * @param contract the ERC20 contract address
    */
-  abstract getAddressBalance(address: string): Promise<number>
+  abstract getAddressBalance(address: string, contract?: string): Promise<number>
 
   /**
    * Creates a new transaction and broadcasts it to the chain.
@@ -29,7 +30,7 @@ export abstract class BlockchainFacade {
    * @param transactionHash transaction identifier
    * @param targetAddress the transaction target address
    */
-  abstract getTransaction(transactionHash: string, targetAddress: string): Promise<Transaction>
+  abstract getTransaction(transactionHash: string, targetAddress: string): Promise<Transaction | null>
 
   /** Generates a new address. */
   abstract generateAddress(): Promise<CryptoAddress>
@@ -42,18 +43,6 @@ export abstract class BlockchainFacade {
    * @param address the address
    */
   abstract validateAddress(address: string): Promise<boolean>
-
-  /**
-   * Returns true when the address is no a contract address.
-   * @param address the address to validate
-   */
-  abstract validateAddressIsNotContractAddress(address: string): Promise<boolean>
-
-  /**
-   * Returns true when the address is no a contract address.
-   * @param address the address to validate
-   */
-  abstract validateAddressIsNotContractAddress(address: string): Promise<boolean>
 
   /**
    * Subscribes for transaction confirmation for a given transaction hash. The confirmation count is defined by the implementation.

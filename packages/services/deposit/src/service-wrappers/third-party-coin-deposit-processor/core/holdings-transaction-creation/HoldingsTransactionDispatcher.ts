@@ -2,8 +2,7 @@ import { DepositRequest, DepositRequestStatus, DepositAddress } from '@abx-types
 import { isAccountSuspended, findOrCreateKinesisRevenueAccount } from '@abx-service-clients/account'
 import { createPendingDeposit, createPendingWithdrawal } from '@abx-service-clients/balance'
 import { SourceEventType } from '@abx-types/balance'
-import { BlockchainFacade, TransactionResponse } from '@abx-utils/blockchain-currency-gateway'
-import { CurrencyCode } from '@abx-types/reference-data'
+import { TransactionResponse, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
 import { decryptValue } from '@abx-utils/encryption'
 import { updateDepositRequest, updateAllDepositRequests } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
@@ -21,16 +20,16 @@ export class HoldingsTransactionDispatcher {
    * @param param the deposit request
    */
   public async transferTransactionAmountToHoldingsWallet(
-    currency: CurrencyCode,
     { amount, id, depositAddress }: DepositRequest,
     joinedDepositRequestsWithInsufficientBalance: number[],
+    onChainCurrencyGateway: OnChainCurrencyGateway,
   ): Promise<string | undefined> {
     const accountIsSuspended = await isAccountSuspended(depositAddress.accountId)
 
     if (!accountIsSuspended) {
       const { txHash: holdingsTransactionHash, transactionFee: holdingsTransactionFee } = await this.createHoldingsTransaction(
         depositAddress,
-        currency,
+        onChainCurrencyGateway,
         amount,
       )
       this.logger.debug(`Created holdings transaction for request ${id}`)
@@ -65,22 +64,24 @@ export class HoldingsTransactionDispatcher {
     return
   }
 
-  private async createHoldingsTransaction(depositAddress: DepositAddress, currency: CurrencyCode, amount: number): Promise<TransactionResponse> {
+  private async createHoldingsTransaction(
+    depositAddress: DepositAddress,
+    onChainCurrencyManager: OnChainCurrencyGateway,
+    amount: number,
+  ): Promise<TransactionResponse> {
     const [decryptedPrivateKey, decryptedWif] = await Promise.all([
       decryptValue(depositAddress.encryptedPrivateKey),
       decryptValue(depositAddress.encryptedWif!),
     ])
 
-    const providerFacade = BlockchainFacade.getInstance(currency)
-    return providerFacade.createTransaction({
-      senderAddress: {
+    return onChainCurrencyManager.transferToExchangeHoldingsFrom(
+      {
         privateKey: decryptedPrivateKey!,
         wif: decryptedWif!,
         address: depositAddress.address!,
       },
-      receiverAddress: process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS!,
       amount,
-    })
+    )
   }
 
   private async coverFeeByKinesisRevenueAccount(transactionFee: number, depositRequestId: number, currencyId: number) {
