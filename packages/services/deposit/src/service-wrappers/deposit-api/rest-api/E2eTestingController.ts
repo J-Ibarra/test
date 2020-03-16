@@ -5,7 +5,7 @@ import { Logger } from '@abx-utils/logging'
 import { CurrencyCode, getEnvironment } from '@abx-types/reference-data'
 import { CurrencyManager, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
 
-const apiKey = '99fd56a51dcdf7e069402d68f605fad34d656301'
+const apiKey = '801c9ee2538cb40da9dbc03790894ea3431fb8ac'
 const caClient = new CryptoApis(apiKey)
 caClient.BC.ETH.switchNetwork(caClient.BC.ETH.NETWORKS.ROPSTEN)
 

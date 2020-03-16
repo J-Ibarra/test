@@ -24,7 +24,9 @@ export ETHERSCAN_API_DOMAIN_ROOT='ropsten'
 
 # npm install ngrok -g
 # ngrok http 12345 > /dev/null &
+kill $(ps aux | grep -i ngrok | awk '{print $2}')
 npm run start-ngrok:e2e-local
+sleep 2
 PROXY_URL=`curl --silent --show-error http://localhost:4040/api/tunnels | sed -nE 's/.*public_url":"https:..([^"]*).*/\1/p'`
 
 # All the variables required for running deposits/withdrawals locally are listed here
