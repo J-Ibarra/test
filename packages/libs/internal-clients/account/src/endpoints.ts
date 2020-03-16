@@ -9,6 +9,7 @@ export enum AccountQueryEndpoints {
   findOrCreateOperatorAccount = 'accounts/findOrCreateOperatorAccount',
   isAccountSuspended = 'accounts/isAccountSuspended',
   getAllKycVerifiedAccountIds = 'accounts/getAllKycVerifiedAccountIds',
+  getAllKycOrEmailVerifiedAccountIds = 'accounts/getAllKycOrEmailVerifiedAccountIds',
 }
 
 export enum AccountChangeEndpoints {

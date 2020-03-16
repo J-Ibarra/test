@@ -117,6 +117,14 @@ export async function findAllKycVerifiedAccountIds(): Promise<string[]> {
   return kycVerifiedAccountInstances.map(kycVerifiedAccountInstance => kycVerifiedAccountInstance.get().id)
 }
 
+export async function findAllKycOrEmailVerifiedAccountIds(): Promise<string[]> {
+  const kycVerifiedAccountInstances = await getModel<Account>('account').findAll({
+    where: { status: { $in: [AccountStatus.kycVerified, AccountStatus.emailVerified] } } as any,
+  })
+
+  return kycVerifiedAccountInstances.map(kycVerifiedAccountInstance => kycVerifiedAccountInstance.get().id)
+}
+
 export async function findAccountsByIdWithUserDetails(id: string[], t?: Transaction): Promise<Account[]> {
   return wrapInTransaction(sequelize, t, async tran => {
     const accountInstances = await getModel<Account>('account').findAll({
