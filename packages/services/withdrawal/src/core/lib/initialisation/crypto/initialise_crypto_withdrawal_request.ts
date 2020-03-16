@@ -8,12 +8,11 @@ import { getWithdrawalFee } from '../../../helper'
 import { InitialiseWithdrawalParams } from '@abx-types/withdrawal'
 import { updatePendingWithdrawerAndKinesisRevenueAccounts } from './balance-update'
 import { createWithdrawalRequests, WithdrawalRequestCreationResult } from './request-creation'
+import { WithdrawalPubSubChannels } from '@abx-service-clients/withdrawal'
 
 const preferredCurrencyCode = FiatCurrency.usd
 
 const logger = Logger.getInstance('initialise_crypto_withdrawal_request', 'initialiseCryptoWithdrawalRequest')
-
-const withdrawalRequestCreated = 'exchange:withdrawal:withdrawalRequestCreated'
 
 export function initialiseCryptoWithdrawalRequest(
   initialiseWithdrawalParams: InitialiseWithdrawalParams,
@@ -40,9 +39,9 @@ export function initialiseCryptoWithdrawalRequest(
       withdrawalFee,
     )
 
-    epicurus.publish(withdrawalRequestCreated, { withdrawalRequest: amountRequest })
+    epicurus.publish(WithdrawalPubSubChannels.withdrawalRequestCreated, { withdrawalRequest: amountRequest })
     if (!!feeRequest) {
-      epicurus.publish(withdrawalRequestCreated, { withdrawalRequest: feeRequest })
+      epicurus.publish(WithdrawalPubSubChannels.withdrawalRequestCreated, { withdrawalRequest: feeRequest })
     }
 
     logger.info(
