@@ -7,8 +7,10 @@ import { bootstrapInternalApi } from './internal-api'
 import { bootstrapRestApi } from './rest-api'
 import { DEPOSIT_API_PORT } from '@abx-service-clients/deposit'
 import { LogLevel, Logger } from '@abx-utils/logging'
+import { killProcessOnSignal } from '@abx-utils/internal-api-tools'
 
 export async function bootstrapDepositProcessor() {
+  killProcessOnSignal()
   Logger.configure((process.env.LOG_LEVEL as LogLevel) || LogLevel.debug)
 
   const pollingFrequency = await getExchangeDepositPollingFrequency()

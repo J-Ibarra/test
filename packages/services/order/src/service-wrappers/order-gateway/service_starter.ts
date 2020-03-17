@@ -5,8 +5,10 @@ import { runOrderDataMigrations } from '../../migrations/migration-runner'
 import { Environment } from '@abx-types/reference-data'
 import { ORDER_GATEWAY_API_PORT } from '@abx-service-clients/order'
 import { Logger, LogLevel } from '@abx-utils/logging'
+import { killProcessOnSignal } from '@abx-utils/internal-api-tools'
 
 export async function bootstrapOrderGatewayService() {
+  killProcessOnSignal()
   Logger.configure((process.env.LOG_LEVEL as LogLevel) || LogLevel.debug)
   await runOrderDataMigrations()
 
