@@ -9,7 +9,7 @@ import {
   marketOHLCReconciliationTasks,
   publishAccountKycCheck,
 } from './core'
-import { killProcessOnSignal } from 'libs/util/internal-api-tools/src'
+import { killProcessOnSignal } from '@abx-utils/internal-api-tools'
 
 const logger = Logger.getInstance('schedular', 'settle_order_match')
 
