@@ -11,7 +11,7 @@ export function findDepositAddressesForAccount(accountId: string): Promise<Depos
 }
 
 export function findDepositRequestById(id: number): Promise<DepositRequest | null> {
-  return internalApiRequestDispatcher.fireRequestToInternalApi<DepositRequest | null>(DepositQueryEndpoints.findDepositAddressesForAccount, { id })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<DepositRequest | null>(DepositQueryEndpoints.findDepositRequestById, { id })
 }
 
 export function findDepositRequestsByIds(ids: number[]): Promise<DepositRequest[]> {

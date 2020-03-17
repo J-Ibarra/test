@@ -81,9 +81,6 @@ export async function findDepositAddressesForAccount(accountId: string, includeC
     where: { accountId },
   })
 
-  if (includeCurrencyDetail) {
-  }
-
   return depositAddresses.map(address => address.get({ plain: true }))
 }
 
