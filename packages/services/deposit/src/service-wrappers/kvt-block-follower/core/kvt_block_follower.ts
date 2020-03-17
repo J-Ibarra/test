@@ -3,7 +3,7 @@ import { EventLog } from 'web3/types'
 import { findBoundaryForCurrency, findCurrencyForCode } from '@abx-service-clients/reference-data'
 import { CurrencyBoundary, CurrencyCode } from '@abx-types/reference-data'
 import { Logger } from '@abx-utils/logging'
-import { CurrencyManager, KVT } from '@abx-utils/blockchain-currency-gateway'
+import { CurrencyManager, KvtOnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
 import {
   getBlockchainFollowerDetailsForCurrency,
   updateBlockchainFollowerDetailsForCurrency,
@@ -22,7 +22,7 @@ const logger = Logger.getInstance('services', 'kvt_block_follower')
 const testEnvironments = ['test', 'development']
 
 export async function triggerKVTBlockFollower(onChainCurrencyManager: CurrencyManager) {
-  const kvt: KVT = (await onChainCurrencyManager.getCurrencyFromTicker(CurrencyCode.kvt)) as KVT
+  const kvt: KvtOnChainCurrencyGateway = (await onChainCurrencyManager.getCurrencyFromTicker(CurrencyCode.kvt)) as KvtOnChainCurrencyGateway
 
   try {
     const { id: currencyId } = await findCurrencyForCode(CurrencyCode.kvt)
@@ -77,7 +77,7 @@ export async function triggerKVTBlockFollower(onChainCurrencyManager: CurrencyMa
 export async function handleKVTTransactions(
   KVTEvents: EventLog[],
   publicKeyToDepositAddress: Map<string, DepositAddress>,
-  onChainCurrencyGateway: KVT,
+  onChainCurrencyGateway: KvtOnChainCurrencyGateway,
   fiatValueOfOneCryptoCurrency: number,
   currencyBoundary: CurrencyBoundary,
   t: Sequelize.Transaction,

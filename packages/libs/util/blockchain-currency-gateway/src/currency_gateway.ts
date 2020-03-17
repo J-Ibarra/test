@@ -1,5 +1,5 @@
 import { CurrencyCode, FiatCurrency } from '@abx-types/reference-data'
-import { CryptoAddress, Transaction } from './api-provider/model'
+import { CryptoAddress, Transaction } from './model'
 import { DepositAddress } from '@abx-types/deposit'
 
 export interface DepositTransaction {

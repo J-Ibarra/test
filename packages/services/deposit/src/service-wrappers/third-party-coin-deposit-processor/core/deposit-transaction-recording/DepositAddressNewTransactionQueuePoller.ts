@@ -42,10 +42,12 @@ export class DepositAddressNewTransactionQueuePoller {
 
     const depositTransactionDetails = await onChainCurrencyManager.getCurrencyFromTicker(currency).getTransaction(txid, address)
 
-    this.newTransactionRecorder.recordDepositTransaction({
-      currency,
-      depositAddress,
-      depositTransactionDetails,
-    })
+    if (!!depositTransactionDetails) {
+      this.newTransactionRecorder.recordDepositTransaction({
+        currency,
+        depositAddress,
+        depositTransactionDetails,
+      })
+    }
   }
 }

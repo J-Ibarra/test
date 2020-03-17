@@ -1,9 +1,12 @@
 import { Environment } from '@abx-types/reference-data'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { getCurrencyCode } from '@abx-service-clients/reference-data'
-import { Ethereum, Kinesis, KVT } from './native'
 import { OnChainCurrencyGateway } from './currency_gateway'
-import { BitcoinOnChainCurrencyGatewayAdapter } from './api-provider/bitcoin/BitcoinOnChainCurrencyGatewayAdapter'
+import { BitcoinOnChainCurrencyGatewayAdapter } from './bitcoin/BitcoinOnChainCurrencyGatewayAdapter'
+import { Ethereum } from './ethereum'
+import { Kinesis } from './kinesis'
+import { KvtOnChainCurrencyGateway } from './erc20-tokens/KvtOnChainCurrencyGateway'
+import { TetherOnChainCurrencyGateway } from './erc20-tokens/TetherOnChainCurrencyGateway'
 
 export class CurrencyManager {
   protected currencies: { [ticker: string]: OnChainCurrencyGateway }
@@ -25,15 +28,15 @@ export class CurrencyManager {
     return this.getCurrencyFromTicker(ticker!)
   }
 
-  protected setupCurrencies(env: Environment, enabledCurrencies: CurrencyCode[]) { 
+  protected setupCurrencies(env: Environment, enabledCurrencies: CurrencyCode[]) {
     const currencies = {
       [CurrencyCode.ethereum]: new Ethereum(env),
       [CurrencyCode.kau]: new Kinesis(env, CurrencyCode.kau),
       [CurrencyCode.kag]: new Kinesis(env, CurrencyCode.kag),
 
-      
-      [CurrencyCode.kvt]: new KVT(env),
       [CurrencyCode.bitcoin]: new BitcoinOnChainCurrencyGatewayAdapter(),
+      [CurrencyCode.kvt]: new KvtOnChainCurrencyGateway(env),
+      [CurrencyCode.tether]: new TetherOnChainCurrencyGateway(env),
     }
 
     this.currencies = Object.entries(currencies)
