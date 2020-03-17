@@ -10,7 +10,6 @@ import { CurrencyCode, Environment } from '@abx-types/reference-data'
 import { CompletionPendingTransactionDetails } from '../deposit-completion/HoldingsTransactionConfirmationQueuePoller'
 import Decimal from 'decimal.js'
 import { DepositRequest } from '@abx-types/deposit'
-import { findCryptoCurrencies } from '@abx-service-clients/reference-data'
 
 export interface ConfirmedDepositTransactionPayload {
   currency: CurrencyCode
@@ -47,11 +46,7 @@ export class DepositTransactionConfirmationQueuePoller {
 
     const { totalAmount: totalAmountToTransfer, depositsRequestsWithInsufficientStatus } = await this.computeTotalAmountToTransfer(depositRequest)
 
-    const cryptoCurrencies = await findCryptoCurrencies()
-    const currencyManager = getOnChainCurrencyManagerForEnvironment(
-      process.env.NODE_ENV as Environment,
-      cryptoCurrencies.map(({ code }) => code),
-    )
+    const currencyManager = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment, [currency])
 
     const holdingsTransactionHash = await this.holdingsTransactionDispatcher.transferTransactionAmountToHoldingsWallet(
       {

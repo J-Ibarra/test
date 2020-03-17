@@ -8,7 +8,7 @@ import * as express from 'express';
 
 const models: TsoaRoute.Models = {
     "CurrencyCode": {
-        "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USDT", "USD", "EUR", "GBP"],
+        "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USDT", "YEENUS", "USD", "EUR", "GBP"],
     },
     "WithdrawalRequestParams": {
         "properties": {
@@ -73,7 +73,7 @@ export function RegisterRoutes(app: express.Express) {
         authenticateMiddleware([{ "cookieAuth": [] }, { "tokenAuth": [] }]),
         function(request: any, response: any, next: any) {
             const args = {
-                currency: { "in": "path", "name": "currency", "required": true, "dataType": "enum", "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USDT", "USD", "EUR", "GBP"] },
+                currency: { "in": "path", "name": "currency", "required": true, "dataType": "enum", "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USDT", "YEENUS", "USD", "EUR", "GBP"] },
             };
 
             let validatedArgs: any[] = [];
@@ -93,7 +93,7 @@ export function RegisterRoutes(app: express.Express) {
         authenticateMiddleware([{ "cookieAuth": [] }]),
         function(request: any, response: any, next: any) {
             const args = {
-                code: { "in": "query", "name": "code", "required": true, "dataType": "enum", "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USDT", "USD", "EUR", "GBP"] },
+                code: { "in": "query", "name": "code", "required": true, "dataType": "enum", "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USDT", "YEENUS", "USD", "EUR", "GBP"] },
                 address: { "in": "query", "name": "address", "required": true, "dataType": "string" },
             };
 
@@ -114,7 +114,7 @@ export function RegisterRoutes(app: express.Express) {
         authenticateMiddleware([{ "cookieAuth": [] }, { "tokenAuth": [] }]),
         function(request: any, response: any, next: any) {
             const args = {
-                currencyCode: { "in": "path", "name": "currencyCode", "required": true, "dataType": "enum", "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USDT", "USD", "EUR", "GBP"] },
+                currencyCode: { "in": "path", "name": "currencyCode", "required": true, "dataType": "enum", "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USDT", "YEENUS", "USD", "EUR", "GBP"] },
                 request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
             };
 

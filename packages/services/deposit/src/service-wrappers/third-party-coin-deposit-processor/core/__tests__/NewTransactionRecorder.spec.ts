@@ -22,11 +22,16 @@ describe('NewTransactionRecorder:recordDepositTransaction', () => {
       id: 1,
     },
   } as any
-  let blockchainFacadeStub
+  let subscribeToTransactionConfirmationEventsStub
+  let onChainCurrencyManagerStub
 
   beforeEach(() => {
-    blockchainFacadeStub = {
-      subscribeToTransactionConfirmationEvents: sinon.stub(),
+    subscribeToTransactionConfirmationEventsStub = sinon.stub()
+
+    onChainCurrencyManagerStub = {
+      getCurrencyFromTicker: () => ({
+        subscribeToTransactionConfirmationEvents: subscribeToTransactionConfirmationEventsStub,
+      }),
     } as any
   })
 
@@ -61,12 +66,12 @@ describe('NewTransactionRecorder:recordDepositTransaction', () => {
       ),
     ).to.eql(true)
     expect(sendAsyncChangeMessageStub.calledOnce).to.eql(false)
-    expect(blockchainFacadeStub.subscribeToTransactionConfirmationEvents.calledOnce).to.eql(false)
+    expect(subscribeToTransactionConfirmationEventsStub.calledOnce).to.eql(false)
   })
 
   it('should record transaction and subscribe for transaction confirmations', async () => {
     sinon.stub(coreOperations, 'findDepositRequestsWhereTransactionHashPresent').resolves([])
-    sinon.stub(blockchainGateway.BlockchainFacade, 'getInstance').returns(blockchainFacadeStub)
+    sinon.stub(blockchainGateway, 'getOnChainCurrencyManagerForEnvironment').returns(onChainCurrencyManagerStub)
 
     const fiatValueForCryptoCurrency = 12
     const confirmedTransactionCallbackUrl = 'foo'
@@ -85,13 +90,13 @@ describe('NewTransactionRecorder:recordDepositTransaction', () => {
         fiatValueForCryptoCurrency,
       ),
     ).to.eql(true)
-    expect(blockchainFacadeStub.subscribeToTransactionConfirmationEvents.calledWith(depositTxHash, confirmedTransactionCallbackUrl)).to.eql(true)
+    expect(subscribeToTransactionConfirmationEventsStub.calledWith(depositTxHash, confirmedTransactionCallbackUrl)).to.eql(true)
     expect(sendAsyncChangeMessageStub.calledOnce).to.eql(false)
   })
 
   it('should record transaction and push confirmed transaction processing when confirmations === required confirmations', async () => {
     sinon.stub(coreOperations, 'findDepositRequestsWhereTransactionHashPresent').resolves([])
-    sinon.stub(blockchainGateway.BlockchainFacade, 'getInstance').returns(blockchainFacadeStub)
+    sinon.stub(blockchainGateway, 'getOnChainCurrencyManagerForEnvironment').returns(onChainCurrencyManagerStub)
 
     const bitcoinConfirmationsRequired = 1
     process.env.BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS = `${bitcoinConfirmationsRequired}`
@@ -116,7 +121,7 @@ describe('NewTransactionRecorder:recordDepositTransaction', () => {
         fiatValueForCryptoCurrency,
       ),
     ).to.eql(true)
-    expect(blockchainFacadeStub.subscribeToTransactionConfirmationEvents.calledOnce).to.eql(false)
+    expect(subscribeToTransactionConfirmationEventsStub.calledOnce).to.eql(false)
     expect(
       sendAsyncChangeMessageStub.calledWith({
         type: `deposit-transaction-confirmed-${depositTxHash}`,

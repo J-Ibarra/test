@@ -1,11 +1,14 @@
 import { getQueuePoller } from '@abx-utils/async-message-consumer'
-import { IAddressTransactionEventPayload, getOnChainCurrencyManagerForEnvironment } from '@abx-utils/blockchain-currency-gateway'
+import {
+  IAddressTransactionEventPayload,
+  getOnChainCurrencyManagerForEnvironment,
+  IAddressTokenTransactionEventPayload,
+} from '@abx-utils/blockchain-currency-gateway'
 import { findDepositAddress } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
 import { DEPOSIT_ADDRESS_UNCONFIRMED_TRANSACTION_QUEUE_URL } from '../constants'
 import { NewTransactionRecorder } from './NewTransactionRecorder'
-import { Environment } from '@abx-types/reference-data'
-import { findCryptoCurrencies } from '@abx-service-clients/reference-data'
+import { Environment, CurrencyCode } from '@abx-types/reference-data'
 
 /**
  * Handles the first step of the deposit processing flow where new unconfirmed transaction
@@ -21,18 +24,23 @@ export class DepositAddressNewTransactionQueuePoller {
 
     queuePoller.subscribeToQueueMessages<IAddressTransactionEventPayload>(
       DEPOSIT_ADDRESS_UNCONFIRMED_TRANSACTION_QUEUE_URL,
-      this.processDepositAddressTransaction.bind(this),
+      this.processNewDepositAddressTransaction.bind(this),
     )
   }
 
-  private async processDepositAddressTransaction({ currency, address, txid }: IAddressTransactionEventPayload) {
-    this.logger.info(`Received a new deposit transaction notification for currency ${currency} with address ${address}. Transaction ID: ${txid}`)
+  private processNewDepositAddressTransaction(payload: IAddressTransactionEventPayload | IAddressTokenTransactionEventPayload) {
+    // Checking if the transaction is an ECR20 token transaction
+    if (!!payload['token_symbol']) {
+      const tokenTransaction = payload as IAddressTokenTransactionEventPayload
+      return this.processDepositAddressTransaction(tokenTransaction.token_symbol as CurrencyCode, tokenTransaction.address, tokenTransaction.txHash)
+    }
 
-    const cryptoCurrencies = await findCryptoCurrencies()
-    const onChainCurrencyManager = getOnChainCurrencyManagerForEnvironment(
-      process.env.NODE_ENV as Environment,
-      cryptoCurrencies.map(({ code }) => code),
-    )
+    const coinTransaction = payload as IAddressTransactionEventPayload
+    return this.processDepositAddressTransaction(coinTransaction.currency, coinTransaction.address, coinTransaction.txid)
+  }
+
+  private async processDepositAddressTransaction(currency: CurrencyCode, address: string, txid: string) {
+    this.logger.info(`Received a new deposit transaction notification for currency ${currency} with address ${address}. Transaction ID: ${txid}`)
     const depositAddress = await findDepositAddress({ address })
 
     if (!depositAddress) {
@@ -40,6 +48,7 @@ export class DepositAddressNewTransactionQueuePoller {
       return
     }
 
+    const onChainCurrencyManager = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment, [currency])
     const depositTransactionDetails = await onChainCurrencyManager.getCurrencyFromTicker(currency).getTransaction(txid, address)
 
     if (!!depositTransactionDetails) {

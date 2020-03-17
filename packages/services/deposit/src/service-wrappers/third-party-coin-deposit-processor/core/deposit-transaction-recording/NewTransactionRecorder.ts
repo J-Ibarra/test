@@ -12,7 +12,6 @@ import { Logger } from '@abx-utils/logging'
 import { sendAsyncChangeMessage } from '@abx-utils/async-message-publisher'
 import { DEPOSIT_CONFIRMED_TRANSACTION_QUEUE_URL } from '../constants'
 import { ConfirmedDepositTransactionPayload } from '../holdings-transaction-creation/DepositTransactionConfirmationQueuePoller'
-import { findCryptoCurrencies } from '@abx-service-clients/reference-data'
 
 interface NewTransactionDetails {
   currency: CurrencyCode
@@ -57,11 +56,7 @@ export class NewTransactionRecorder {
    * a 'insufficientAmount' status is used for the new record and it is not processed any further.
    */
   private async persistTransactionDetails(currency: CurrencyCode, depositTransactionDetails: Transaction, depositAddress: DepositAddress) {
-    const cryptoCurrencies = await findCryptoCurrencies()
-    const providerFacade = getOnChainCurrencyManagerForEnvironment(
-      process.env.NODE_ENV as Environment,
-      cryptoCurrencies.map(({ code }) => code),
-    )
+    const onChainCurrencyManager = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment, [currency])
 
     const fiatValueOfOneCryptoCurrency = await calculateRealTimeMidPriceForSymbol(`${currency}_${FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION}`)
     let depositAmountAboveMinimumForCurrency = getMinimumDepositAmountForCurrency(currency) <= depositTransactionDetails.amount
@@ -71,7 +66,7 @@ export class NewTransactionRecorder {
       await createNewDepositRequest(depositTransactionDetails, depositAddress, fiatValueOfOneCryptoCurrency, DepositRequestStatus.insufficientAmount)
     } else {
       await createNewDepositRequest(depositTransactionDetails, depositAddress, fiatValueOfOneCryptoCurrency)
-      await this.subscribeForDepositConfirmation(currency, depositTransactionDetails, providerFacade.getCurrencyFromTicker(currency))
+      await this.subscribeForDepositConfirmation(currency, depositTransactionDetails, onChainCurrencyManager.getCurrencyFromTicker(currency))
     }
   }
 

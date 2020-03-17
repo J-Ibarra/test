@@ -6,7 +6,7 @@ import { OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
 import { Logger } from '@abx-utils/logging'
 
 const logger = Logger.getInstance('withdrawal-processor', 'kinesis_revenue_transaction_fee_reconciler')
-const currencyToCoverOnChainFeeFor = [CurrencyCode.ethereum, CurrencyCode.kvt, CurrencyCode.bitcoin]
+const currencyToCoverOnChainFeeFor = [CurrencyCode.ethereum, CurrencyCode.kvt, CurrencyCode.tether, CurrencyCode.bitcoin]
 
 /**
  * Prior to transferring the funds we reserve the total withdrawal amount

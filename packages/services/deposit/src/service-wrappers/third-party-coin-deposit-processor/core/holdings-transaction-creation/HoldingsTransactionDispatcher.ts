@@ -6,6 +6,8 @@ import { TransactionResponse, OnChainCurrencyGateway } from '@abx-utils/blockcha
 import { decryptValue } from '@abx-utils/encryption'
 import { updateDepositRequest, updateAllDepositRequests } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
+import { CurrencyCode } from '@abx-types/reference-data'
+import { getDepositTransactionFeeCurrencyId } from '../utils'
 
 export class HoldingsTransactionDispatcher {
   private readonly logger = Logger.getInstance('public-coin-deposit-processor', 'HoldingsTransactionDispatcher')
@@ -41,7 +43,7 @@ export class HoldingsTransactionDispatcher {
         sourceEventType: SourceEventType.currencyDepositRequest,
       })
 
-      await this.coverFeeByKinesisRevenueAccount(Number(holdingsTransactionFee), id!, depositAddress.currencyId)
+      await this.coverFeeByKinesisRevenueAccount(Number(holdingsTransactionFee), id!, depositAddress.currencyId, onChainCurrencyGateway.ticker!)
       this.logger.debug(`Created pending deposit balance for deposit request${id}`)
 
       await Promise.all([
@@ -84,14 +86,16 @@ export class HoldingsTransactionDispatcher {
     )
   }
 
-  private async coverFeeByKinesisRevenueAccount(transactionFee: number, depositRequestId: number, currencyId: number) {
+  /** Covers the on-chain transaction fee, deducting it from the kinesis revenue account. */
+  private async coverFeeByKinesisRevenueAccount(transactionFee: number, depositRequestId: number, currencyId: number, currencyCode: CurrencyCode) {
     const kinesisRevenueAccount = await findOrCreateKinesisRevenueAccount()
+    const transactionFeeCurrencyId = await getDepositTransactionFeeCurrencyId(currencyId, currencyCode)
 
     await createPendingWithdrawal({
       pendingWithdrawalParams: {
         accountId: kinesisRevenueAccount.id,
         amount: transactionFee,
-        currencyId,
+        currencyId: transactionFeeCurrencyId,
         sourceEventId: depositRequestId!,
         sourceEventType: SourceEventType.currencyDeposit,
       },

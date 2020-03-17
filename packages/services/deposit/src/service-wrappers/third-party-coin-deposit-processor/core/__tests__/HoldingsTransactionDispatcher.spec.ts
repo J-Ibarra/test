@@ -1,29 +1,31 @@
 import sinon from 'sinon'
 import { expect } from 'chai'
 import { HoldingsTransactionDispatcher } from '../holdings-transaction-creation/HoldingsTransactionDispatcher'
-import { CurrencyCode } from '@abx-types/reference-data'
 import * as accountClientOperations from '@abx-service-clients/account'
 import * as balanceOperations from '@abx-service-clients/balance'
-import * as blockchainCurrencyGateway from '@abx-utils/blockchain-currency-gateway'
 import { SourceEventType } from '@abx-types/balance'
 import * as depositRequestOperations from '../../../../core'
 import { DepositRequestStatus } from '@abx-types/deposit'
+import * as utilsStub from '../utils'
 
 describe('HoldingsTransactionDispatcher', () => {
   const holdingsTransactionDispatcher = new HoldingsTransactionDispatcher()
-  const currency = CurrencyCode.bitcoin
+  const currencyId = 2
   const transactionHash = 'txHash'
   const testKinesisRevenueAccount = {
     id: 'foo-bar-1',
   } as any
-
+  const transferToExchangeHoldingsFromStub = sinon.stub()
+  const onChainCurrencyGatewayStub = {
+    transferToExchangeHoldingsFrom: transferToExchangeHoldingsFromStub,
+  } as any
   const depositRequest = {
     id: 1,
     amount: 5,
     depositAddress: {
       id: 1,
       accountId: 'accc-id-1',
-      currencyId: 2,
+      currencyId,
       encryptedPrivateKey: '10',
       encryptedWif: '12',
       address: 'addr',
@@ -40,11 +42,11 @@ describe('HoldingsTransactionDispatcher', () => {
   afterEach(() => sinon.restore())
 
   describe('transferTransactionAmountToHoldingsWallet', () => {
-    it('should not create holdings transaction', async () => {
+    it('should not create holdings transaction when account suspended', async () => {
       sinon.stub(accountClientOperations, 'isAccountSuspended').resolves(true)
       const createPendingDepositStub = sinon.stub(balanceOperations, 'createPendingDeposit').resolves()
 
-      await holdingsTransactionDispatcher.transferTransactionAmountToHoldingsWallet(currency, depositRequest, [])
+      await holdingsTransactionDispatcher.transferTransactionAmountToHoldingsWallet(depositRequest, [], onChainCurrencyGatewayStub)
 
       expect(createPendingDepositStub.calledOnce).to.eql(false)
     })
@@ -54,19 +56,18 @@ describe('HoldingsTransactionDispatcher', () => {
 
       sinon.stub(accountClientOperations, 'isAccountSuspended').resolves(false)
       sinon.stub(accountClientOperations, 'findOrCreateKinesisRevenueAccount').resolves(testKinesisRevenueAccount)
+      sinon.stub(utilsStub, 'getDepositTransactionFeeCurrencyId').resolves(currencyId)
       const createPendingWithdrawalStub = sinon.stub(balanceOperations, 'createPendingWithdrawal').resolves()
 
       const createPendingDepositStub = sinon.stub(balanceOperations, 'createPendingDeposit').resolves()
-      const createTransactionStub = sinon.stub().resolves({
+      transferToExchangeHoldingsFromStub.resolves({
         txHash: transactionHash,
         transactionFee,
       })
-      sinon.stub(blockchainCurrencyGateway.BlockchainFacade, 'getInstance').returns({
-        createTransaction: createTransactionStub,
-      } as any)
+
       const depositRequestOperationsStub = sinon.stub(depositRequestOperations, 'updateDepositRequest').resolves()
 
-      await holdingsTransactionDispatcher.transferTransactionAmountToHoldingsWallet(currency, depositRequest, [])
+      await holdingsTransactionDispatcher.transferTransactionAmountToHoldingsWallet(depositRequest, [], onChainCurrencyGatewayStub)
 
       expect(
         createPendingDepositStub.calledWith({
@@ -79,15 +80,14 @@ describe('HoldingsTransactionDispatcher', () => {
       ).to.eql(true)
 
       expect(
-        createTransactionStub.calledWith({
-          senderAddress: {
+        transferToExchangeHoldingsFromStub.calledWith(
+          {
             privateKey: depositRequest.depositAddress.encryptedPrivateKey!,
             wif: depositRequest.depositAddress.encryptedWif!,
             address: depositRequest.depositAddress.address!,
           },
-          receiverAddress: process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS!,
-          amount: depositRequest.amount,
-        }),
+          depositRequest.amount,
+        ),
       ).to.eql(true)
 
       expect(
@@ -103,7 +103,7 @@ describe('HoldingsTransactionDispatcher', () => {
           pendingWithdrawalParams: {
             accountId: testKinesisRevenueAccount.id,
             amount: Number(transactionFee),
-            currencyId: depositRequest.depositAddress.currencyId,
+            currencyId,
             sourceEventId: depositRequest.id!,
             sourceEventType: SourceEventType.currencyDeposit,
           },
@@ -113,25 +113,24 @@ describe('HoldingsTransactionDispatcher', () => {
 
     it('should create holdings transaction when account not suspended, with joined requests', async () => {
       const transactionFee = '21'
+      const transactionCurrencyId = 1
 
+      sinon.stub(utilsStub, 'getDepositTransactionFeeCurrencyId').resolves(transactionCurrencyId)
       sinon.stub(accountClientOperations, 'isAccountSuspended').resolves(false)
       sinon.stub(accountClientOperations, 'findOrCreateKinesisRevenueAccount').resolves(testKinesisRevenueAccount)
       const createPendingWithdrawalStub = sinon.stub(balanceOperations, 'createPendingWithdrawal').resolves()
 
       const createPendingDepositStub = sinon.stub(balanceOperations, 'createPendingDeposit').resolves()
-      const createTransactionStub = sinon.stub().resolves({
+      transferToExchangeHoldingsFromStub.resolves({
         txHash: transactionHash,
         transactionFee,
       })
-      sinon.stub(blockchainCurrencyGateway.BlockchainFacade, 'getInstance').returns({
-        createTransaction: createTransactionStub,
-      } as any)
       const depositRequestUpdateStub = sinon.stub(depositRequestOperations, 'updateDepositRequest').resolves()
       const updateAllDepositRequestsStub = sinon.stub(depositRequestOperations, 'updateAllDepositRequests').resolves()
 
       const joinedRequestIds = [1, 2]
 
-      await holdingsTransactionDispatcher.transferTransactionAmountToHoldingsWallet(currency, depositRequest, joinedRequestIds)
+      await holdingsTransactionDispatcher.transferTransactionAmountToHoldingsWallet(depositRequest, joinedRequestIds, onChainCurrencyGatewayStub)
 
       expect(
         createPendingDepositStub.calledWith({
@@ -144,15 +143,14 @@ describe('HoldingsTransactionDispatcher', () => {
       ).to.eql(true)
 
       expect(
-        createTransactionStub.calledWith({
-          senderAddress: {
+        transferToExchangeHoldingsFromStub.calledWith(
+          {
             privateKey: depositRequest.depositAddress.encryptedPrivateKey!,
             wif: depositRequest.depositAddress.encryptedWif!,
             address: depositRequest.depositAddress.address!,
           },
-          receiverAddress: process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS!,
-          amount: depositRequest.amount,
-        }),
+          depositRequest.amount,
+        ),
       ).to.eql(true)
 
       expect(
@@ -174,7 +172,7 @@ describe('HoldingsTransactionDispatcher', () => {
           pendingWithdrawalParams: {
             accountId: testKinesisRevenueAccount.id,
             amount: Number(transactionFee),
-            currencyId: depositRequest.depositAddress.currencyId,
+            currencyId: transactionCurrencyId,
             sourceEventId: depositRequest.id!,
             sourceEventType: SourceEventType.currencyDeposit,
           },

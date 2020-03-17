@@ -32,7 +32,6 @@ export function initialiseFiatWithdrawalRequest(
     const withdrawalRequest = await createWithdrawalRequest(
       {
         accountId,
-        address: '',
         amount,
         currencyId: withdrawalCurrencyId,
         memo,

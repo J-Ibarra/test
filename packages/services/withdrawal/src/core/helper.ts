@@ -40,7 +40,7 @@ export async function getTotalWithdrawalAmount(amount: number, currencyCode: Cur
 }
 
 const isKauKag = currencyCode => [CurrencyCode.kau, CurrencyCode.kag].includes(currencyCode)
-const isKVT = currencyCode => [CurrencyCode.kvt].includes(currencyCode)
+const isEcr20Token = currencyCode => [CurrencyCode.kvt, CurrencyCode.tether].includes(currencyCode)
 
 export async function getWithdrawalFee(
   currencyCode: CurrencyCode,
@@ -57,7 +57,7 @@ export async function getWithdrawalFee(
     }
   }
 
-  const feeCurrencyCode = isKVT(currencyCode) ? CurrencyCode.ethereum : currencyCode
+  const feeCurrencyCode = isEcr20Token(currencyCode) ? CurrencyCode.ethereum : currencyCode
   const currencyBoundary = await findBoundaryForCurrency(feeCurrencyCode)
   const truncateToCurrencyDP = truncateCurrencyDecimals(currencyBoundary) as any
 

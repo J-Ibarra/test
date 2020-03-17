@@ -4,6 +4,8 @@ import * as orderOperations from '@abx-service-clients/order'
 import * as balanceOperations from '@abx-service-clients/balance'
 import * as referenceData from '@abx-service-clients/reference-data'
 import * as accountClientOperations from '@abx-service-clients/account'
+import * as utilsStub from '../utils'
+
 import { expect } from 'chai'
 import sinon from 'sinon'
 import { TransactionDirection } from '@abx-types/order'
@@ -34,7 +36,10 @@ describe('DepositCompleter', () => {
 
   describe('completeDepositRequest:single-request', () => {
     it('should create transaction, confirm pending deposit balance and send confirmation email', async () => {
+      const feeCurrencyId = 2
       const sendDepositConfirmEmailStub = sinon.stub(depositCoreOperations, 'sendDepositConfirmEmail').resolves({ code: CurrencyCode.bitcoin })
+
+      sinon.stub(utilsStub, 'getDepositTransactionFeeCurrencyId').resolves(feeCurrencyId)
 
       await depositCompleter.completeDepositRequests([testData.depositRequest])
 
@@ -68,7 +73,7 @@ describe('DepositCompleter', () => {
             payload: {
               accountId: testData.testKinesisRevenueAccount.id,
               amount: testData.holdingsTransactionFee,
-              currencyId: testData.depositRequest.depositAddress.currencyId,
+              currencyId: feeCurrencyId,
               sourceEventId: testData.depositRequest.id,
               sourceEventType: SourceEventType.currencyDeposit,
             },
@@ -90,12 +95,15 @@ describe('DepositCompleter', () => {
     it('should create transaction, confirm pending deposit balance and send confirmation email', async () => {
       const sendDepositConfirmEmailStub = sinon.stub(depositCoreOperations, 'sendDepositConfirmEmail').resolves({ code: CurrencyCode.bitcoin })
       const preExistingDepositRequestAmount = 0.00002
+      const feeCurrencyId = 3
 
       const preExistingDepositRequest = {
         id: -1,
         amount: preExistingDepositRequestAmount,
         depositAddress: testData.depositRequest.depositAddress,
       }
+      sinon.stub(utilsStub, 'getDepositTransactionFeeCurrencyId').resolves(feeCurrencyId)
+
       await depositCompleter.completeDepositRequests([preExistingDepositRequest, testData.depositRequest])
 
       expect(updateDepositRequestStub.getCall(0).args[0]).to.eql([preExistingDepositRequest.id, testData.depositRequest.id])
@@ -128,7 +136,7 @@ describe('DepositCompleter', () => {
             payload: {
               accountId: testData.testKinesisRevenueAccount.id,
               amount: testData.holdingsTransactionFee,
-              currencyId: testData.depositRequest.depositAddress.currencyId,
+              currencyId: feeCurrencyId,
               sourceEventId: testData.depositRequest.id,
               sourceEventType: SourceEventType.currencyDeposit,
             },

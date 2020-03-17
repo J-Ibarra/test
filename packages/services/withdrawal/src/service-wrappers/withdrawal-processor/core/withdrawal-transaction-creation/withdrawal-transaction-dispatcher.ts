@@ -9,7 +9,7 @@ import { WITHDRAWAL_TRANSACTION_SENT_QUEUE_URL } from '@abx-service-clients/with
 import { getWithdrawalConfigForCurrency } from '@abx-service-clients/reference-data'
 
 const logger = Logger.getInstance('withdrawal', 'withdrawal-transaction-dispatcher')
-const DEFAULT_NUMBER_OF_CONFIRMATION_FOR_WITHDRAWAL = 1
+export const DEFAULT_NUMBER_OF_CONFIRMATION_FOR_WITHDRAWAL = 1
 
 export async function dispatchWithdrawalTransaction(
   withdrawalRequestId: number,

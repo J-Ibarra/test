@@ -1,4 +1,5 @@
 import { Sequelize } from 'sequelize'
+import { createDefaultFeeTiersForSymbol } from './utils/utils'
 
 const btcSymbols = [
   ['BTC_KAU', 8, 2, 2, 0.3, 19],
@@ -18,14 +19,16 @@ export async function up({ sequelize }: { sequelize: Sequelize }) {
     )
     .join(' ')
 
+  const usdtPairDefaultFeeTiers = btcSymbols.map(([symbolId]) => createDefaultFeeTiersForSymbol(`'${symbolId}'`)).join(' ')
+
   return sequelize.query(`
-  
-  INSERT INTO currency(code, "createdAt", "updatedAt", "isEnabled", "symbolSortPriority", "currencyOrderPriority")
-  values ('BTC', now(), now(), FALSE, 8, 8);
+  INSERT INTO currency(id, code, "createdAt", "updatedAt", "isEnabled", "symbolSortPriority", "currencyOrderPriority")
+  values (8, 'BTC', now(), now(), FALSE, 8, 8);
   
   ${btcPairDefaultSymbols}
-  
-  `)
+
+  ${usdtPairDefaultFeeTiers}
+    `)
 }
 
 export async function down({ sequelize }: { sequelize: Sequelize }) {

@@ -6,9 +6,19 @@ import { CurrencyCode } from '@abx-types/reference-data'
 import { HoldingsTransactionDispatcher } from '../holdings-transaction-creation/HoldingsTransactionDispatcher'
 import * as asyncMessagePublisherOperations from '@abx-utils/async-message-publisher'
 import { DEPOSIT_HOLDINGS_TRANSACTION_CONFIRMATION_QUEUE_URL } from '../constants'
+import * as blockchainOperations from '@abx-utils/blockchain-currency-gateway'
 
 describe('DepositTransactionConfirmationQueuePoller', () => {
   const depositTransactionConfirmationQueuePoller = new DepositTransactionConfirmationQueuePoller()
+  let onChainCurrencyManagerStub
+  const onChainCurrencyGateway = {} as any
+
+  beforeEach(() => {
+    onChainCurrencyManagerStub = {
+      getCurrencyFromTicker: sinon.stub().returns(onChainCurrencyGateway),
+    } as any
+    sinon.stub(blockchainOperations, 'getOnChainCurrencyManagerForEnvironment').returns(onChainCurrencyManagerStub)
+  })
 
   afterEach(() => sinon.restore())
 
@@ -49,7 +59,7 @@ describe('DepositTransactionConfirmationQueuePoller', () => {
 
       const sendAsyncChangeMessageStub = sinon.stub(asyncMessagePublisherOperations, 'sendAsyncChangeMessage').resolves()
       await depositTransactionConfirmationQueuePoller['processDepositAddressTransaction'](confirmedTransactionPayload)
-      expect(transferTransactionAmountToHoldingsWalletStub.calledWith(CurrencyCode.bitcoin, depositRequest, [])).to.eql(true)
+      expect(transferTransactionAmountToHoldingsWalletStub.calledWith(depositRequest, [], onChainCurrencyGateway)).to.eql(true)
 
       expect(
         sendAsyncChangeMessageStub.calledWith({
@@ -95,9 +105,9 @@ describe('DepositTransactionConfirmationQueuePoller', () => {
       await depositTransactionConfirmationQueuePoller['processDepositAddressTransaction'](confirmedTransactionPayload)
       expect(
         transferTransactionAmountToHoldingsWalletStub.calledWith(
-          CurrencyCode.bitcoin,
           { ...depositRequest, amount: depositRequest.amount + preExistingDepositTransactionAmount },
           [preExistingDepositTransactionId],
+          onChainCurrencyGateway,
         ),
       ).to.eql(true)
 
