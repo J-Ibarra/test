@@ -71,4 +71,14 @@ export const KINESIS_NETWORK_CONFIG = {
       url: 'https://kag-mainnet.kinesisgroup.io',
     },
   },
+  [Environment.staging]: {
+    [CurrencyCode.kau]: {
+      passphrase: 'Kinesis UAT',
+      url: 'https://kau-testnet.kinesisgroup.io',
+    },
+    [CurrencyCode.kag]: {
+      passphrase: 'Kinesis KAG UAT',
+      url: 'https://kag-testnet.kinesisgroup.io',
+    },
+  },
 }

@@ -43,8 +43,8 @@ export async function buildDepositTransactionHistory(
         selectedCurrencyCode,
         allCurrencies,
         holdingWallets.some(holdingWallet => holdingWallet.publicKey === depositRequest.from)
-          ? null
-          : head(txHashToWithdrawalRequest[depositRequest.depositTxHash])!,
+          ? head(txHashToWithdrawalRequest[depositRequest.depositTxHash] || [])!
+          : null,
       )
     }),
   )
@@ -105,7 +105,6 @@ interface Result {
 
 const resultOfSenderExist = async (senderRequest: WithdrawalRequest | undefined, selectedCurrencyId: number): Promise<Result> => {
   const senderAddresses = await findDepositAddressesForAccount(senderRequest!.accountId)
-
   const senderAddress = senderAddresses.find(req => req.currencyId === selectedCurrencyId)!.publicKey
 
   const title = `${senderAddress.substring(0, 7)}...${senderAddress.substring(senderAddress.length - 4)}`

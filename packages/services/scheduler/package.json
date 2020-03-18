@@ -26,6 +26,7 @@
     "@abx-types/market-data": "^1.1.0",
     "@abx-utils/db-connection-utils": "^1.1.0",
     "@abx-utils/logging": "^1.1.0",
+    "@abx-utils/internal-api-tools": "^1.1.0",
     "body-parser": "1.18.3",
     "cookie-parser": "1.4.3",
     "cron": "1.1.0",

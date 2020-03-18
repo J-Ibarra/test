@@ -2,7 +2,6 @@ import { Body, Controller, Get, Patch, Post, Query, Request, Response, Route, Se
 import {
   createAccountAndPrepareWelcomeEmail,
   createResetPasswordConfirmationEmailContent,
-  findAccountById,
   findAllUsersForHin,
   sendReferralCodeEmail,
   sendVerificationEmail,
@@ -12,8 +11,17 @@ import {
   changePassword,
   getKycVerifiedAccountDetails,
   recordKycCheckTriggered,
+  findAccountByIdWithMfaStatus,
 } from '../../../core'
-import { Account, AccountType, CreateAccountRequest, KycVerifiedAccountDetails, PersonalBankDetails, UserPublicView } from '@abx-types/account'
+import {
+  Account,
+  AccountType,
+  CreateAccountRequest,
+  KycVerifiedAccountDetails,
+  PersonalBankDetails,
+  UserPublicView,
+  AccountWithMfaStatus,
+} from '@abx-types/account'
 import { Logger } from '@abx-utils/logging'
 import { ValidationError } from '@abx-types/error'
 import { OverloadedRequest } from '@abx-types/account'
@@ -84,13 +92,13 @@ export class AccountsController extends Controller {
   @Security('tokenAuth')
   @Response('403', 'Unauthorized')
   @Get('accounts/{id}')
-  public async getAccount(@Request() request: OverloadedRequest, id: string): Promise<Account | null | { message: string }> {
+  public async getAccount(@Request() request: OverloadedRequest, id: string): Promise<AccountWithMfaStatus | null | { message: string }> {
     if (request.account!.id !== id && request.account!.type !== AccountType.admin) {
       this.setStatus(403)
       return { message: 'Unauthorized' }
     }
 
-    return findAccountById(id)
+    return findAccountByIdWithMfaStatus(id)
   }
 
   @SuccessResponse('201', 'Created')

@@ -10,6 +10,7 @@ export enum AccountQueryEndpoints {
   isAccountSuspended = 'accounts/isAccountSuspended',
   getAllKycVerifiedAccountIds = 'accounts/getAllKycVerifiedAccountIds',
   getKycVerifiedAccountDetails = 'accounts/getKycVerifiedAccountDetails',
+  getAllKycOrEmailVerifiedAccountIds = 'accounts/getAllKycOrEmailVerifiedAccountIds',
 }
 
 export enum AccountChangeEndpoints {

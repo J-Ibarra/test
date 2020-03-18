@@ -44,6 +44,9 @@ export const KVT_CONFIG = {
   [Environment.production]: {
     url: `https://mainnet.infura.io/v3/${process.env.KVT_INFURA_PROJECT_ID}`,
   },
+  [Environment.staging]: {
+    url: `https://ropsten.infura.io/v3/${process.env.KVT_INFURA_PROJECT_ID}`,
+  },
 }
 
 const logger = Logger.getInstance('currencies', 'kvt')
@@ -300,7 +303,7 @@ export class KVT implements OnChainCurrencyGateway {
     return currencySecret
   }
 
-   /**
+  /**
    * Convert EventLog to DepositTransaction
    * @param {EventLog} event - EventLog return from contract
    */
@@ -311,7 +314,6 @@ export class KVT implements OnChainCurrencyGateway {
       amount: Number(event.returnValues.value),
     }
   }
-
 
   /**
    * Get all Transfer Event from contract that transfer token into address

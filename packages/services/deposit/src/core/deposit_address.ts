@@ -8,11 +8,11 @@ import { findCryptoCurrencies, isFiatCurrency } from '@abx-service-clients/refer
 import { DepositAddress } from '@abx-types/deposit'
 import { encryptValue } from '@abx-utils/encryption'
 import { groupBy } from 'lodash'
-import { getAllKycVerifiedAccountIds } from '@abx-service-clients/account'
+import { getAllKycOrEmailVerifiedAccountIds } from '@abx-service-clients/account'
 import { IAddressTransaction } from '@abx-utils/blockchain-currency-gateway/src/api-provider/providers/crypto-apis'
 
 const logger = Logger.getInstance('lib', 'deposit_address')
-const KYC_ACCOUNTS_CACHE_EXPIRY_10_MINUTES = 10 * 60 * 1000
+const KYC_ACCOUNTS_CACHE_EXPIRY_3_MINUTES_IN_SECONDS = 3 * 60
 let cryptoCurrencies: Currency[] = []
 
 export async function generateNewDepositAddress(accountId: string, currency: OnChainCurrencyGateway) {
@@ -37,14 +37,14 @@ export async function findDepositAddresses(query: Partial<DepositAddress>, trans
 }
 
 export async function findKycOrEmailVerifiedDepositAddresses(currencyId: number, transaction?: Transaction) {
-  const kycVefifiedAccounts = await getAllKycVerifiedAccountIds(KYC_ACCOUNTS_CACHE_EXPIRY_10_MINUTES)
+  const kycVerifiedAccounts = await getAllKycOrEmailVerifiedAccountIds(KYC_ACCOUNTS_CACHE_EXPIRY_3_MINUTES_IN_SECONDS)
   const depositAddressInstances = await getModel<DepositAddress>('depositAddress').findAll({
     where: { currencyId },
     transaction,
   })
   const depositAddresses = depositAddressInstances.map(depositAddressInstance => depositAddressInstance.get())
 
-  return depositAddresses.filter(({ accountId }) => kycVefifiedAccounts.has(accountId))
+  return depositAddresses.filter(({ accountId }) => kycVerifiedAccounts.has(accountId))
 }
 
 export async function findOrCreateDepositAddressesForAccount(accountId: string) {
@@ -80,9 +80,6 @@ export async function findDepositAddressesForAccount(accountId: string, includeC
   const depositAddresses = await getModel<DepositAddress>('depositAddress').findAll({
     where: { accountId },
   })
-
-  if (includeCurrencyDetail) {
-  }
 
   return depositAddresses.map(address => address.get({ plain: true }))
 }
