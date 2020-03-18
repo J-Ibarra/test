@@ -49,8 +49,7 @@ export async function recordWithdrawalOnChainTransaction({
       withdrawalRequest.feeRequest,
     )
 
-    logger.debug(`Queuing request for completion ${withdrawalRequest.id}`)
-    return queueForCompletion(transactionHash, withdrawalCurrency.code)
+    return queueForCompletion(withdrawalRequest.id!, transactionHash, withdrawalCurrency.code)
   })
 }
 
@@ -94,8 +93,10 @@ async function updateRequestStatuses(
   ])
 }
 
-async function queueForCompletion(txid: string, currency: CurrencyCode) {
+async function queueForCompletion(withdrawalRequestId: number, txid: string, currency: CurrencyCode) {
   if (nativelyImplementedCoins.includes(currency)) {
+    logger.debug(`Queuing request for completion ${withdrawalRequestId}`)
+
     await sendAsyncChangeMessage<WithdrawalCompletionPendingPayload>({
       id: `withdrawal-completion-pending-${txid}`,
       type: 'withdrawal-transaction-sent',

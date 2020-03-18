@@ -3,7 +3,7 @@ import { Sequelize } from 'sequelize'
 export async function up({ sequelize }: { sequelize: Sequelize }) {
   return sequelize.query(`
   INSERT INTO public.boundary("currencyId", "currencyCode", "minAmount", "maxDecimals", "createdAt", "updatedAt")
-  values (8, 'BTC', 0.00000001, 8, now(), now());
+  values (8, 'BTC', 0.00000005, 8, now(), now());
     `)
 }
 

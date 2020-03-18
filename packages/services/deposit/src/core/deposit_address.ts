@@ -8,12 +8,12 @@ import { findCryptoCurrencies, isFiatCurrency, findCurrencyForCode, findCurrency
 import { DepositAddress } from '@abx-types/deposit'
 import { encryptValue } from '@abx-utils/encryption'
 import { groupBy } from 'lodash'
-import { getAllKycVerifiedAccountIds } from '@abx-service-clients/account'
 import { Account } from '@abx-types/account'
 import { DepositPubSubChannels } from '@abx-service-clients/deposit'
+import { getAllKycOrEmailVerifiedAccountIds } from '@abx-service-clients/account'
 
 const logger = Logger.getInstance('lib', 'deposit_address')
-const KYC_ACCOUNTS_CACHE_EXPIRY_10_MINUTES = 10 * 60 * 1000
+const KYC_ACCOUNTS_CACHE_EXPIRY_3_MINUTES_IN_SECONDS = 3 * 60
 let cryptoCurrencies: Currency[] = []
 
 export async function generateNewDepositAddress(accountId: string, currency: OnChainCurrencyGateway) {
@@ -64,14 +64,14 @@ export async function findDepositAddress(query: Partial<DepositAddress>, transac
 }
 
 export async function findKycOrEmailVerifiedDepositAddresses(currencyId: number, transaction?: Transaction) {
-  const kycVefifiedAccounts = await getAllKycVerifiedAccountIds(KYC_ACCOUNTS_CACHE_EXPIRY_10_MINUTES)
+  const kycVerifiedAccounts = await getAllKycOrEmailVerifiedAccountIds(KYC_ACCOUNTS_CACHE_EXPIRY_3_MINUTES_IN_SECONDS)
   const depositAddressInstances = await getModel<DepositAddress>('depositAddress').findAll({
     where: { currencyId },
     transaction,
   })
   const depositAddresses = depositAddressInstances.map(depositAddressInstance => depositAddressInstance.get())
 
-  return depositAddresses.filter(({ accountId }) => kycVefifiedAccounts.has(accountId))
+  return depositAddresses.filter(({ accountId }) => kycVerifiedAccounts.has(accountId))
 }
 
 export async function findOrCreateDepositAddressesForAccount(accountId: string) {

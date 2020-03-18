@@ -1,7 +1,7 @@
 import AWS from 'aws-sdk'
-import { Environment, localAndTestEnvironments } from '@abx-types/reference-data'
+import { Environment, localAndTestEnvironments, getAwsRegionForEnvironment, getEnvironment } from '@abx-types/reference-data'
 
-const kms = new AWS.KMS({ region: 'ap-southeast-2' })
+const kms = new AWS.KMS({ region: getAwsRegionForEnvironment(getEnvironment()) })
 
 const environmentsWithoutKMSEncryption = localAndTestEnvironments
 

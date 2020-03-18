@@ -213,7 +213,9 @@ export class Kinesis implements OnChainCurrencyGateway {
     try {
       receipt = await server.submitTransaction(transaction)
     } catch (e) {
-      logger.error(`Submitting transaction from ${keypair.publicKey} to ${toAddress}, failed`)
+      logger.error(`Submitting transaction from ${keypair.publicKey} to exchange holdings ${toAddress}, failed`)
+      logger.error(`Error result codes: ${JSON.stringify(e.data.extras.result_codes)}`)
+
       throw e
     }
 

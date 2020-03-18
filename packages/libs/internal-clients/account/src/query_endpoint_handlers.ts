@@ -67,6 +67,23 @@ export async function findOrCreateOperatorAccount(): Promise<Account> {
  *
  * @param cacheExpiryInSeconds the cache expiry in seconds
  */
+export async function getAllKycOrEmailVerifiedAccountIds(cacheExpiryInSeconds?: number): Promise<Set<string>> {
+  let kycOrEmailVerifiedAccountIds: string[] = await returnCachedValueOrRetrieveFromSource<string[]>(
+    AccountQueryEndpoints.getAllKycOrEmailVerifiedAccountIds,
+    'getAllKycOrEmailVerifiedAccountIds',
+    cacheExpiryInSeconds || 0,
+  )
+
+  return new Set<string>(kycOrEmailVerifiedAccountIds)
+}
+
+/**
+ * Retrieves the IDs of all KYC verified accounts.
+ * Since this is an expensive operations, a {@code cacheExpiryInSeconds} can be used if we want to cache the
+ * result in memory for x number of seconds.
+ *
+ * @param cacheExpiryInSeconds the cache expiry in seconds
+ */
 export async function getAllKycVerifiedAccountIds(cacheExpiryInSeconds?: number): Promise<Set<string>> {
   let kycVerifiedAccountIds: string[] = []
   if (!!cacheExpiryInSeconds) {

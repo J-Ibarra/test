@@ -1,16 +1,17 @@
 import { get } from 'lodash'
-import { Account, SalesforceReferenceTable } from '@abx-types/account'
+import { SalesforceReferenceTable } from '@abx-types/account'
 import * as SalesforceAccount from '../../../../core/salesforce/object-access-gateways/account_gateway'
 import * as SalesforcePlatformCredential from '../../../../core/salesforce/object-access-gateways/platform_credential_gateway'
 import { Logger } from '@abx-utils/logging'
 import { getModel } from '@abx-utils/db-connection-utils'
-import { getSalesforceClient, createLinkedAddress } from '../../../../core'
+import { getSalesforceClient, createLinkedAddress, findAccountWithUserDetails } from '../../../../core'
 import { findDepositAddressesForAccount } from '@abx-service-clients/deposit'
 
 const logger = Logger.getInstance('salesforce', 'accountCreatedHandler')
 
-export async function accountCreatedRecorder(account: Account) {
+export async function accountCreatedRecorder({ accountId }: { accountId: string }) {
   const client = await getSalesforceClient()
+  const account = (await findAccountWithUserDetails({ id: accountId }))!
   const accountUser = account.users![0]!
 
   logger.debug(`Creating new or linking existing Salesforce account for ${accountUser.email}`)
