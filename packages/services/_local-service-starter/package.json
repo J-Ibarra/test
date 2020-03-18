@@ -4,8 +4,10 @@
   "description": "This packages is used to bootstrap the exchange services locally",
   "scripts": {
     "start": "tsnd --inspect --respawn src/bootstrap.ts",
-    "start-api-debug:dev": "./dev-starter.sh",
-    "start-api-debug:e2e-local": "./e2e-local-starter.sh"
+    "start-api-debug:dev": "./dev-starter.ts",
+    "start-api-debug:e2e-local": "./e2e-local-starter.sh",
+    "start-api-debug-debit-card:dev": "./dev-starter-debit-card.ts",
+    "start-api-debug-debit-card:e2e-local": "./e2e-local-starter-debit-card.sh"
   },
   "dependencies": {
     "@abx-service-clients/reference-data": "^1.1.0",

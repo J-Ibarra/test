@@ -15,3 +15,14 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=kinesis_exchange
+  debit-card-postgres:
+    image: postgres:9.6
+    container_name: debit-card-postgres
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    ports:
+      - '5433:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=db

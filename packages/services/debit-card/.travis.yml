@@ -1,0 +1,74 @@
+language: node_js
+node_js:
+  - '10.13'
+addons:
+  apt:
+    packages:
+      - docker-ce
+  hosts:
+    - 127.0.0.1 redis
+    - 127.0.0.1 local.kinesisgroup.io
+  postgresql: '9.6'
+services:
+  - docker
+  - redis-server
+  - postgresql
+before_install:
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+  - pip install --user awscli
+  - export PATH=$PATH:$HOME/.local/bin
+  - aws configure set profile.kinesis.aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+  - aws configure set profile.kinesis.aws_access_key_id $AWS_ACCESS_KEY_ID
+  - aws configure set profile.kinesis.region ap-southeast-2
+before_script:
+  - psql -c 'create database debit_card_db_test;' -U postgres
+  - cd contis-notification-recording-lambda
+  - npm install
+  - cd ..
+
+jobs:
+  include:
+    - stage: test
+      script:
+        - npm run test
+        - npm run build
+        - npm run test:integration:ci
+    - stage: 'Build and deploy Integration'
+      if: branch = integration and type = push
+      env:
+        - ENVIRONMENT=int
+        - LAMBDA_NAME=arn:aws:lambda:ap-southeast-2:884998542479:function:int-kbe-contis-notification-recorder
+      script:
+        - docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $AWS_ECS_INT_REPOSITORY_ADDRESS:$TRAVIS_COMMIT -t $AWS_ECS_INT_REPOSITORY_ADDRESS:latest .
+        - eval $(aws ecr get-login --region ap-southeast-2 --no-include-email)
+        - docker push $AWS_ECS_INT_REPOSITORY_ADDRESS
+        - aws ecs update-service --service kbe-$ENVIRONMENT-debit-cards-service --cluster kbe-$ENVIRONMENT-cluster --region $AWS_REGION --force-new-deployment
+        - cd contis-notification-recording-lambda
+        - ./deploy-lambda.sh
+    - stage: 'Build and deploy UAT'
+      if: branch = master and type = push
+      env:
+        - ENVIRONMENT=uat
+        - LAMBDA_NAME=arn:aws:lambda:ap-southeast-2:884998542479:function:uat-kbe-contis-notification-recorder
+      script:
+        - docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $AWS_ECS_UAT_REPOSITORY_ADDRESS:$TRAVIS_COMMIT -t $AWS_ECS_UAT_REPOSITORY_ADDRESS:latest .
+        - eval $(aws ecr get-login --region ap-southeast-2 --no-include-email)
+        - docker push $AWS_ECS_UAT_REPOSITORY_ADDRESS
+        - aws ecs update-service --service kbe-$ENVIRONMENT-debit-cards-service --cluster kbe-$ENVIRONMENT-cluster --region $AWS_REGION --force-new-deployment
+        - cd contis-notification-recording-lambda
+        - ./deploy-lambda.sh
+    - stage: 'Build and deploy PROD'
+      if: tag =~ /^v.+/
+      env:
+        - ENVIRONMENT=prod
+        - LAMBDA_NAME=arn:aws:lambda:ap-southeast-2:884998542479:function:prod-kbe-contis-notification-recorder
+      script:
+        - docker build --build-arg FA_TOKEN=$FA_TOKEN --build-arg NPM_TOKEN=$NPM_TOKEN -t $AWS_ECS_PROD_REPOSITORY_ADDRESS:$TRAVIS_COMMIT -t $AWS_ECS_PROD_REPOSITORY_ADDRESS:latest .
+        - eval $(aws ecr get-login --region ap-southeast-2 --no-include-email)
+        - docker push $AWS_ECS_PROD_REPOSITORY_ADDRESS
+        - aws ecs update-service --service kbe-$ENVIRONMENT-debit-cards-service --cluster kbe-$ENVIRONMENT-cluster --region $AWS_REGION --force-new-deployment
+        - cd contis-notification-recording-lambda
+        - ./deploy-lambda.sh

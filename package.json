@@ -12,6 +12,7 @@
     "build:scheduler": "lerna run build --scope @abx/exchange-scheduler-service --include-dependencies",
     "build:withdrawal": "lerna run build --scope @abx/exchange-withdrawal-service --include-dependencies",
     "build:notification": "lerna run build --scope @abx/exchange-notification-service --include-dependencies",
+    "build:debit-card": "lerna run build --scope @abx/order-service --include-dependencies",
     "build:order": "lerna run build --scope @abx/order-service --include-dependencies",
     "build:market-data": "lerna run build --scope @abx/exchange-market-data-service --include-dependencies",
     "build:deposit": "lerna run build --scope @abx/exchange-deposit-service --include-dependencies",
@@ -23,6 +24,8 @@
     "run-legacy-migrations:dev": "lerna run run-legacy-migrations-dev",
     "start-api-debug:dev": "lerna run start-api-debug:dev --stream",
     "start-api-debug:e2e": "lerna run start-api-debug:e2e-local --stream",
+    "start-api-debug-debit-card:dev": "npm start-api-debug:dev run lerna run start-api-debug-debit-card:dev --stream",
+    "start-api-debug-debit-card:e2e": "start-api-debug:e2e lerna run start-api-debug-debit-card:e2e-local --stream",
     "push-api-docs-to-s3": "lerna run push-api-docs-to-s3"
   },
   "devDependencies": {

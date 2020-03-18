@@ -13,7 +13,7 @@ import {
 } from '../../../core'
 import { AccountQueryEndpoints } from '@abx-service-clients/account'
 import { InternalRoute } from '@abx-utils/internal-api-tools'
-import { User, Account } from '@abx-types/account'
+import { User, Account, KycVerifiedAccountDetails } from '@abx-types/account'
 
 export function createQueryEndpointHandlers(): InternalRoute<any, any>[] {
   return [
