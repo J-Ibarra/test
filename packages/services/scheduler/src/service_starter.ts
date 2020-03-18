@@ -9,10 +9,12 @@ import {
   marketOHLCReconciliationTasks,
   publishAccountKycCheck,
 } from './core'
+import { killProcessOnSignal } from '@abx-utils/internal-api-tools'
 
 const logger = Logger.getInstance('schedular', 'settle_order_match')
 
 export async function bootstrapSchedulerService() {
+  killProcessOnSignal()
   Logger.configure((process.env.LOG_LEVEL as LogLevel) || LogLevel.debug)
 
   const tasks = [

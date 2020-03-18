@@ -7,6 +7,7 @@ import { handleOrderUpdated } from './core/handle_order_updated'
 import { configureWorker } from './core'
 import { settleOrderMatch } from '@abx-service-clients/order'
 import { runOrderDataMigrations } from '../../migrations/migration-runner'
+import { killProcessOnSignal } from '@abx-utils/internal-api-tools'
 
 const logger = Logger.getInstance('contract_exchange', 'bootstrap')
 export const noBody = {
@@ -15,6 +16,7 @@ export const noBody = {
 }
 
 export async function bootstrapWorkerService() {
+  killProcessOnSignal()
   Logger.configure((process.env.LOG_LEVEL as LogLevel) || LogLevel.debug)
   await runOrderDataMigrations()
 

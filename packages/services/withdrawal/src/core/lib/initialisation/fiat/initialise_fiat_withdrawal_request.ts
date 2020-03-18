@@ -11,10 +11,9 @@ import { EnrichedInitialisationParams, WithdrawalRequest, WithdrawalRequestType 
 import { createWithdrawalRequest } from '../../common/create_withdrawal_request'
 import { findCurrencyForCode } from '@abx-service-clients/reference-data'
 import { convertAmountToFiatCurrency } from '@abx-utils/fx-rate'
+import { WithdrawalPubSubChannels } from '@abx-service-clients/withdrawal'
 
 const preferredCurrencyCode = FiatCurrency.usd
-
-const withdrawalRequestCreated = 'exchange:withdrawal:withdrawalRequestCreated'
 
 const logger = Logger.getInstance('initialise_fiat_withdrawal_request', 'initialiseFiatWithdrawalRequest')
 
@@ -47,7 +46,7 @@ export function initialiseFiatWithdrawalRequest(
       transaction,
     )
 
-    epicurus.publish(withdrawalRequestCreated, {
+    epicurus.publish(WithdrawalPubSubChannels.withdrawalRequestCreated, {
       withdrawalRequest: {
         ...withdrawalRequest,
         transactionFee,

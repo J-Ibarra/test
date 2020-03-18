@@ -31,22 +31,17 @@ export async function buildDepositTransactionHistory(
   const depositCurrency = allCurrencies.find(({ code }) => code === selectedCurrencyCode)!
   const allDepositRequestsForAccount = await findDepositRequestsForAccountAndCurrency(accountId, depositCurrency.id)
 
-  const depositRequestIdToTransaction = groupBy(depositTransactions, 'requestId')
-
   const withdrawalRequests = await findWithdrawalRequestsForTransactionHashes(allDepositRequestsForAccount.map(({ depositTxHash }) => depositTxHash))
   const txHashToWithdrawalRequest = groupBy(withdrawalRequests, 'txHash')
 
   return Promise.all(
     allDepositRequestsForAccount.map(depositRequest => {
-      const depositTransaction = head(depositRequestIdToTransaction[depositRequest.id!])!
-
       return formCryptoDepositHistoryItem(
         depositRequest,
         depositCurrency,
         holdingWallets.some(holdingWallet => holdingWallet.publicKey === depositRequest.from)
-          ? null
-          : head(txHashToWithdrawalRequest[depositRequest.depositTxHash])!,
-        depositTransaction,
+          ? head(txHashToWithdrawalRequest[depositRequest.depositTxHash] || [])!
+          : null,
       )
     }),
   )
@@ -107,7 +102,6 @@ interface Result {
 
 const resultOfSenderExist = async (senderRequest: WithdrawalRequest | undefined, selectedCurrencyId: number): Promise<Result> => {
   const senderAddresses = await findDepositAddressesForAccount(senderRequest!.accountId)
-
   const senderAddress = senderAddresses.find(req => req.currencyId === selectedCurrencyId)!.publicKey
 
   const title = `${senderAddress.substring(0, 7)}...${senderAddress.substring(senderAddress.length - 4)}`

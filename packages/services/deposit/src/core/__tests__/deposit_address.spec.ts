@@ -118,7 +118,7 @@ describe('Deposit Address module', () => {
       publicKey: 'pk2',
       transactionTrackingActivated: false,
     })
-    sinon.stub(accountOperations, 'getAllKycVerifiedAccountIds').resolves(new Set([kycVerifiedAccount.id, kycVerifiedAccount2.id]))
+    sinon.stub(accountOperations, 'getAllKycOrEmailVerifiedAccountIds').resolves(new Set([kycVerifiedAccount.id, kycVerifiedAccount2.id]))
 
     const addresses = await findKycOrEmailVerifiedDepositAddresses(ethereumCurrencyId)
     addresses.forEach(({ currencyId: addressCurrencyId }) => expect(addressCurrencyId).to.eql(ethereumCurrencyId))

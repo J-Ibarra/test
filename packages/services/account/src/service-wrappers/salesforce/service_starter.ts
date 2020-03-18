@@ -9,8 +9,10 @@ import { AccountPubSubTopics } from '@abx-service-clients/account'
 import { WithdrawalPubSubChannels } from '@abx-service-clients/withdrawal'
 import { DepositPubSubChannels } from '@abx-service-clients/deposit'
 import { Logger, LogLevel } from '@abx-utils/logging'
+import { killProcessOnSignal } from '@abx-utils/internal-api-tools'
 
 export async function bootstrapSalesforceService() {
+  killProcessOnSignal()
   Logger.configure((process.env.LOG_LEVEL as LogLevel) || LogLevel.debug)
 
   const epicurus = getEpicurusInstance()
