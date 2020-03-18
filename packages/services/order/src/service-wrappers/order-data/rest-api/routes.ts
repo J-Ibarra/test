@@ -7,6 +7,7 @@ import { AdminOrdersController } from './orders_admin_controller';
 import { TransactionHistoryController } from './transaction_history_controller';
 import { DepthController } from './depth_controller';
 import { E2eTestingDataSetupController } from './e2e-testing/E2eTestingDataSetupController';
+import { FeePoolsController } from './fee_pools_controller';
 import { expressAuthentication } from './middleware/authentication';
 import * as express from 'express';
 
@@ -82,6 +83,15 @@ const models: TsoaRoute.Models = {
             "feeCurrency": { "dataType": "string", "required": true },
             "filled": { "dataType": "double", "required": true },
             "status": { "ref": "OrderStatus", "required": true },
+        },
+    },
+    "CurrencyCode": {
+        "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USD", "EUR", "GBP"],
+    },
+    "FeePool": {
+        "properties": {
+            "code": { "ref": "CurrencyCode", "required": true },
+            "pool": { "dataType": "double", "required": true },
         },
     },
 };
@@ -449,6 +459,43 @@ export function RegisterRoutes(app: express.Express) {
 
 
             const promise = controller.runAccountSetupScript.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.get('/api/fee-pools',
+        function(request: any, response: any, next: any) {
+            const args = {
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new FeePoolsController();
+
+
+            const promise = controller.getFeePools.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.get('/api/fee-pools/:currencyCode',
+        function(request: any, response: any, next: any) {
+            const args = {
+                currencyCode: { "in": "path", "name": "currencyCode", "required": true, "dataType": "string" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new FeePoolsController();
+
+
+            const promise = controller.getFeePool.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
 
