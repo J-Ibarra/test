@@ -24,6 +24,10 @@ const tradeAccumulationRepository = TradeAccumulationRepository.getInstance()
  * @returns the fee rate
  */
 export async function getFeeRateForAccount({ accountId, symbolId }: AccountFeeTiersRequest, transaction?: Transaction): Promise<number | undefined> {
+  if (!accountId && !symbolId) {
+    return 0
+  }
+
   const feeTiers: FeeTier[] = await getFeeTiers(accountId, symbolId, transaction)
   const accountMonthlyTradeAccumulation = await tradeAccumulationRepository.getMonthlyTradeAccumulationForAccount(accountId, new Date(), transaction)
 
