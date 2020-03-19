@@ -14,7 +14,7 @@ export async function convertAmountToFiatCurrency(currencyCode: CurrencyCode, fi
   if (currencyCode === CurrencyCode.euro) {
     const usdForOneEur = await getQuoteFor(SupportedFxPair.EUR_USD)
     const convertedValue = usdForOneEur.times(amount)
-    return truncateCurrencyValue({ currencyCode: fiatCurrencyCode as any, value: convertedValue })
+    return truncateCurrencyValue({ currencyCode: fiatCurrencyCode as any, value: convertedValue.toNumber() })
   } else {
     return convertAndTruncateCurrencyValue(new Decimal(amount), currencyCode, fiatCurrencyCode as any)
   }
