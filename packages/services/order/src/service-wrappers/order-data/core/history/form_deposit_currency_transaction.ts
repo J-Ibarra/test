@@ -16,12 +16,14 @@ export async function buildDepositTransactionHistory(
 ): Promise<TransactionHistory[]> {
   if (isFiatCurrency(selectedCurrencyCode)) {
     const adminRequests: AdminRequest[] = await findAdminRequests(depositTransactions.map(({ requestId }) => requestId!))
-    const adminRequestIdToDescription =
-      adminRequests.reduce((acc, adminRequest) => (acc[adminRequest.id] = adminRequest.description), {} as Record<number, string | undefined>) || {}
+    const adminRequestIdToDescription = adminRequests.reduce(
+      (acc, adminRequest) => acc.set(adminRequest.id, adminRequest.description),
+      new Map<number, string | undefined>(),
+    )
 
     return Promise.all(
       depositTransactions.map(depositTransaction =>
-        formFiatDepositHistoryItem(depositTransaction, selectedCurrencyCode, adminRequestIdToDescription[depositTransaction.requestId!]),
+        formFiatDepositHistoryItem(depositTransaction, selectedCurrencyCode, adminRequestIdToDescription.get(depositTransaction.requestId!)),
       ),
     )
   }
