@@ -106,10 +106,10 @@ async function calculateLatestFeeCurrencyUsdPrice(executionFee: number, symbol: 
   } else if (symbol.fee.code === CurrencyCode.gbp) {
     latestFeeCurrencyUsdPrice = await getQuoteFor(SupportedFxPair.GBP_USD)
   } else {
-    latestFeeCurrencyUsdPrice = feeCurrencyToUsdMidPrice
+    latestFeeCurrencyUsdPrice = new Decimal(feeCurrencyToUsdMidPrice)
   }
 
   logger.debug(`Retrieved USD value for 1 ${symbol.fee.code}: ${latestFeeCurrencyUsdPrice}`)
   logger.debug(`Execution Fee: ${executionFee}`)
-  return new Decimal(executionFee).times(latestFeeCurrencyUsdPrice)
+  return latestFeeCurrencyUsdPrice.times(executionFee)
 }

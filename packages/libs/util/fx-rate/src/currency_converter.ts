@@ -13,7 +13,7 @@ export async function convertAmountToFiatCurrency(currencyCode: CurrencyCode, fi
 
   if (currencyCode === CurrencyCode.euro) {
     const usdForOneEur = await getQuoteFor(SupportedFxPair.EUR_USD)
-    const convertedValue = new Decimal(amount).times(usdForOneEur).toNumber()
+    const convertedValue = usdForOneEur.times(amount)
     return truncateCurrencyValue({ currencyCode: fiatCurrencyCode as any, value: convertedValue })
   } else {
     return convertAndTruncateCurrencyValue(new Decimal(amount), currencyCode, fiatCurrencyCode as any)
@@ -33,9 +33,7 @@ export async function convertAndTruncateCurrencyValue(
 
   const midPrice = (await calculateRealTimeMidPriceForSymbol(targetSymbol.id)) || 1
   const convertedValue =
-    targetSymbol.quote.code === toCurrencyCode
-      ? tradeAmount.times(midPrice).toNumber()
-      : tradeAmount.dividedBy(midPrice).toNumber()
+    targetSymbol.quote.code === toCurrencyCode ? tradeAmount.times(midPrice).toNumber() : tradeAmount.dividedBy(midPrice).toNumber()
 
   return truncateCurrencyValue({ currencyCode: toCurrencyCode, value: convertedValue })
 }
