@@ -50,7 +50,7 @@ export async function findKycOrEmailVerifiedDepositAddresses(currencyId: number,
 export async function findOrCreateDepositAddressesForAccount(accountId: string) {
   logger.debug(`Finding existing deposit addresses for account ${accountId}`)
 
-  const existingDepositAddresses = await findDepositAddressesForAccount(accountId, true)
+  const existingDepositAddresses = await findDepositAddressesForAccount(accountId)
   logger.debug(`Found existing deposit addresses for currency: ${existingDepositAddresses.map(({ currencyId }) => currencyId).join(',')}`)
 
   if (cryptoCurrencies.length === 0) {
@@ -62,7 +62,7 @@ export async function findOrCreateDepositAddressesForAccount(accountId: string) 
 
     logger.debug(`Created missing deposit addresses for currenciy ids: ${missingDepositAddresses.map(d => d.currencyId)}`)
 
-    return findDepositAddressesForAccount(accountId, true)
+    return findDepositAddressesForAccount(accountId)
   }
 
   return existingDepositAddresses
@@ -76,7 +76,7 @@ export async function findDepositAddressForId(id: number) {
   return !!depositAddress ? depositAddress.get() : null
 }
 
-export async function findDepositAddressesForAccount(accountId: string, includeCurrencyDetail: boolean = false) {
+export async function findDepositAddressesForAccount(accountId: string) {
   const depositAddresses = await getModel<DepositAddress>('depositAddress').findAll({
     where: { accountId },
   })
@@ -131,7 +131,7 @@ export async function createNewDepositAddress(manager: CurrencyManager, accountI
 }
 
 export async function generateDepositAddressForAccount(accountId: string, currencyTicker: CurrencyCode): Promise<DepositAddress> {
-  const currencyAddressExists = (await findDepositAddressesForAccount(accountId, true)).find(
+  const currencyAddressExists = (await findDepositAddressesForAccount(accountId)).find(
     addressDetails => addressDetails.currency?.code === currencyTicker,
   )
 
