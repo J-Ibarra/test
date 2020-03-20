@@ -7,7 +7,7 @@ import moment from 'moment'
 
 import { getAggregateDepth } from './utils'
 import { getAllSymbolPairSummaries } from '@abx-service-clients/reference-data'
-import { SymbolPairStateFilter } from 'libs/model/reference-data/src'
+import { SymbolPairStateFilter } from '@abx-types/reference-data'
 
 /**
  * Defines a facade which can be used to retrieve a depth aggregation {@link  DepthItem} for buys and sell orders for different symbols.
