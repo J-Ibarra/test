@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js'
 
-import { CurrencyCode, FiatCurrency } from '@abx-types/reference-data'
+import { CurrencyCode, FiatCurrency, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { getQuoteFor } from './fx_rate_provider'
 import { SupportedFxPair } from '@abx-types/order'
 import { truncateCurrencyValue, getAllSymbolsIncludingCurrency } from '@abx-service-clients/reference-data'
@@ -25,7 +25,7 @@ export async function convertAndTruncateCurrencyValue(
   tradeCurrencyCode: CurrencyCode,
   toCurrencyCode: CurrencyCode,
 ): Promise<string> {
-  const allSymbols = await getAllSymbolsIncludingCurrency(tradeCurrencyCode)
+  const allSymbols = await getAllSymbolsIncludingCurrency(tradeCurrencyCode, SymbolPairStateFilter.all)
   const targetSymbol = allSymbols.find(symbol => symbol.base.code === toCurrencyCode || symbol.quote.code === toCurrencyCode)
   if (!targetSymbol) {
     return '0'
