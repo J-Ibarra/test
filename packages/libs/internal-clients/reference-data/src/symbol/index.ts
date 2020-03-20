@@ -15,8 +15,8 @@ export async function getAllSymbolPairSummaries(state: SymbolPairStateFilter = S
   return completeSymbolDetails.map(transformToSummary)
 }
 
-export async function getAllSymbolsIncludingCurrency(currencyCode: CurrencyCode): Promise<SymbolPair[]> {
-  return (await fetchSymbolsIfInMemoryCacheExpired()).reduce(
+export async function getAllSymbolsIncludingCurrency(currencyCode: CurrencyCode, state?: SymbolPairStateFilter): Promise<SymbolPair[]> {
+  return (await fetchSymbolsIfInMemoryCacheExpired(state)).reduce(
     (symbols, symbol) => (symbol.base.code === currencyCode || symbol.quote.code === currencyCode ? symbols.concat(symbol) : symbols),
     [] as SymbolPair[],
   )
