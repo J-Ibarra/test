@@ -22,12 +22,12 @@ const models: TsoaRoute.Models = {
     },
   },
   "SupportedFeatureFlags": {
-    "enums": ["debit_card"],
+    "enums": ["debit_card", "BTC"],
   },
   "FeatureFlag": {
     "properties": {
       "name": { "ref": "SupportedFeatureFlags", "required": true },
-      "enabled": { "dataType": "boolean", "required": true },
+      "enabled": { "dataType": "object", "required": true },
     },
   },
   "SymbolPairApiResponse": {
@@ -65,6 +65,7 @@ export function RegisterRoutes(app: express.Express) {
   app.get('/api/currencies',
     function(request: any, response: any, next: any) {
       const args = {
+        request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
       };
 
       let validatedArgs: any[] = [];
@@ -102,6 +103,7 @@ export function RegisterRoutes(app: express.Express) {
   app.get('/api/symbols',
     function(request: any, response: any, next: any) {
       const args = {
+        request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
         includeOrderRange: { "in": "query", "name": "includeOrderRange", "dataType": "boolean" },
       };
 
