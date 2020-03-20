@@ -7,6 +7,7 @@ import moment from 'moment'
 
 import { getAggregateDepth } from './utils'
 import { getAllSymbolPairSummaries } from '@abx-service-clients/reference-data'
+import { SymbolPairStateFilter } from 'libs/model/reference-data/src'
 
 /**
  * Defines a facade which can be used to retrieve a depth aggregation {@link  DepthItem} for buys and sell orders for different symbols.
@@ -32,7 +33,7 @@ export class DepthCacheFacade {
 
   public static async createDepthCacheForAllSymbols() {
     if (!this.depthCacheForAllSymbols) {
-      const symbols = await getAllSymbolPairSummaries()
+      const symbols = await getAllSymbolPairSummaries(SymbolPairStateFilter.all)
 
       this.depthCacheForAllSymbols = new DepthCacheFacade({ symbolIds: symbols.map(({ id }) => id), depthCache: {} })
     }
