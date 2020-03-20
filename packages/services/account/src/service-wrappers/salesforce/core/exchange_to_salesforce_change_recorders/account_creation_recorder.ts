@@ -6,6 +6,8 @@ import { Logger } from '@abx-utils/logging'
 import { getModel } from '@abx-utils/db-connection-utils'
 import { getSalesforceClient, createLinkedAddress, findAccountWithUserDetails } from '../../../../core'
 import { findDepositAddressesForAccount } from '@abx-service-clients/deposit'
+import { findAllCurrencies } from '@abx-service-clients/reference-data'
+import { Currency } from '@abx-types/reference-data'
 
 const logger = Logger.getInstance('salesforce', 'accountCreatedHandler')
 
@@ -30,33 +32,26 @@ export async function accountCreatedRecorder({ accountId }: { accountId: string 
       `Found referrerSalesforcePlatformCredentialId: ${referrerSalesforcePlatformCredentialId} for account user's referrer ${accountUser.referredBy}`,
     )
 
-    const platformCredentialResponse = await SalesforcePlatformCredential.createPlatformCredential(
-      client,
-      !!referrerSalesforcePlatformCredentialId
-        ? {
-            account,
-            user: accountUser,
-            salesforceAccountId: salesforceAccount.id,
-            referrerSalesforcePlatformCredentialId,
-          }
-        : {
-            account,
-            user: accountUser,
-            salesforceAccountId: salesforceAccount.id,
-          },
-    )
+    const platformCredentialResponse = await SalesforcePlatformCredential.createPlatformCredential(client, {
+      account,
+      user: accountUser,
+      salesforceAccountId: salesforceAccount.id,
+      referrerSalesforcePlatformCredentialId,
+    })
     logger.debug(`PlatformCredential Created ${JSON.stringify(platformCredentialResponse)}`)
 
     const [salesforceReference, depositAddresses] = await Promise.all([
       createSalesforceReferenceForAccount(account.id, salesforceAccount.id, platformCredentialResponse.id),
       findDepositAddressesForAccount(account.id),
     ])
+    const currencies = await findAllCurrencies()
+    const currencyIdToCurrency = currencies.reduce((acc, currency) => acc.set(currency.id, currency), new Map<number, Currency>())
 
     const linkedAddressResponse = await Promise.all(
       depositAddresses.map(depositAddress =>
         createLinkedAddress(client, {
           salesforceReference,
-          depositAddress,
+          depositAddress: { ...depositAddress, currency: currencyIdToCurrency.get(depositAddress.currencyId) },
         }),
       ),
     )
