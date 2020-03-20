@@ -30,12 +30,21 @@ export async function accountCreatedRecorder({ accountId }: { accountId: string 
       `Found referrerSalesforcePlatformCredentialId: ${referrerSalesforcePlatformCredentialId} for account user's referrer ${accountUser.referredBy}`,
     )
 
-    const platformCredentialResponse = await SalesforcePlatformCredential.createPlatformCredential(client, {
-      account,
-      user: accountUser,
-      salesforceAccountId: salesforceAccount.id,
-      referrerSalesforcePlatformCredentialId,
-    })
+    const platformCredentialResponse = await SalesforcePlatformCredential.createPlatformCredential(
+      client,
+      !!referrerSalesforcePlatformCredentialId
+        ? {
+            account,
+            user: accountUser,
+            salesforceAccountId: salesforceAccount.id,
+            referrerSalesforcePlatformCredentialId,
+          }
+        : {
+            account,
+            user: accountUser,
+            salesforceAccountId: salesforceAccount.id,
+          },
+    )
     logger.debug(`PlatformCredential Created ${JSON.stringify(platformCredentialResponse)}`)
 
     const [salesforceReference, depositAddresses] = await Promise.all([
