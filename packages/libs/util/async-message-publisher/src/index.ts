@@ -66,6 +66,7 @@ function queueChangeInSQS<T>({ target, payload, type, id }: AsyncMessage<T>): Pr
           reject(err)
         }
 
+        logger.info(`Successfully placed message with id ${id}`)
         resolve()
       },
     )
