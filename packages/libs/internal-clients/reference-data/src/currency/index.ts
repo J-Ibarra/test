@@ -1,4 +1,4 @@
-import { Currency, CurrencyCode } from '@abx-types/reference-data'
+import { Currency, CurrencyCode, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { CurrencyEndpoints } from './endpoints'
 import { isCryptoCurrency } from '../utils'
 import { InternalApiRequestDispatcher } from '@abx-utils/internal-api-tools'
@@ -18,8 +18,8 @@ export async function findCryptoCurrencies(): Promise<Currency[]> {
   return allCurrencies.filter(({ code }) => isCryptoCurrency(code))
 }
 
-export async function findCurrencyForCodes(currencyCodes: CurrencyCode[]): Promise<Currency[]> {
-  const allCurrencies = await findAllCurrencies()
+export async function findCurrencyForCodes(currencyCodes: CurrencyCode[], state?: SymbolPairStateFilter): Promise<Currency[]> {
+  const allCurrencies = await findAllCurrencies(state)
 
   return currencyCodes.map(currencyCode => allCurrencies.find(({ code }) => currencyCode === code)!)
 }
@@ -50,8 +50,8 @@ export async function getCurrencyCode(currencyId: number) {
   return currency && currency.code
 }
 
-export async function findAllCurrencies(): Promise<Currency[]> {
-  return internalApiRequestDispatcher.fireRequestToInternalApi<Currency[]>(CurrencyEndpoints.getAllCurrencies)
+export async function findAllCurrencies(state: SymbolPairStateFilter = SymbolPairStateFilter.enabled): Promise<Currency[]> {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<Currency[]>(CurrencyEndpoints.getAllCurrencies, { state })
 }
 
 export * from './endpoints'

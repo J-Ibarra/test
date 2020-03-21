@@ -660,7 +660,7 @@ export function RegisterRoutes(app: express.Express) {
       const promise = controller.activateUser.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
-  app.patch('/api/test-automation/accounts/accounts/type',
+  app.patch('/api/test-automation/accounts/type',
     function(request: any, response: any, next: any) {
       const args = {
         undefined: { "in": "body", "required": true, "ref": "AccountTypeUpdateRequest" },
