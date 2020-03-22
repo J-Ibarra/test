@@ -417,6 +417,7 @@ export function RegisterRoutes(app: express.Express) {
   app.post('/api/test-automation/orders/data-reset',
     function(request: any, response: any, next: any) {
       const args = {
+        undefined: { "in": "body", "required": true, "dataType": "any" },
       };
 
       let validatedArgs: any[] = [];
