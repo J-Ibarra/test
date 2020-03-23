@@ -2,6 +2,7 @@
 import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute } from 'tsoa'
 import { VaultController } from './vault_controller'
 import { WalletsController } from './wallet_controller'
+import { E2eTestingController } from './E2eTestingController'
 import { expressAuthentication } from './middleware/authentication'
 import * as express from 'express'
 
@@ -106,6 +107,81 @@ export function RegisterRoutes(app: express.Express) {
     const controller = new WalletsController()
 
     const promise = controller.retrieveKinesisBankDetails.apply(controller, validatedArgs as any)
+    promiseHandler(controller, promise, response, next)
+  })
+  app.post('/api/test-automation/deposit/transaction/eth', function(request: any, response: any, next: any) {
+    const args = {
+      undefined: { in: 'body', required: true, dataType: 'any' },
+    }
+
+    let validatedArgs: any[] = []
+    try {
+      validatedArgs = getValidatedArgs(args, request)
+    } catch (err) {
+      return next(err)
+    }
+
+    const controller = new E2eTestingController()
+
+    const promise = controller.createTransactionETH.apply(controller, validatedArgs as any)
+    promiseHandler(controller, promise, response, next)
+  })
+  app.post('/api/test-automation/deposit/transaction/btc', function(request: any, response: any, next: any) {
+    const args = {
+      undefined: { in: 'body', required: true, dataType: 'any' },
+    }
+
+    let validatedArgs: any[] = []
+    try {
+      validatedArgs = getValidatedArgs(args, request)
+    } catch (err) {
+      return next(err)
+    }
+
+    const controller = new E2eTestingController()
+
+    const promise = controller.createTransactionBTC.apply(controller, validatedArgs as any)
+    promiseHandler(controller, promise, response, next)
+  })
+  app.post('/api/test-automation/deposit/transaction', function(request: any, response: any, next: any) {
+    const args = {
+      undefined: { in: 'body', required: true, dataType: 'any' },
+    }
+
+    let validatedArgs: any[] = []
+    try {
+      validatedArgs = getValidatedArgs(args, request)
+    } catch (err) {
+      return next(err)
+    }
+
+    const controller = new E2eTestingController()
+
+    const promise = controller.createTransaction.apply(controller, validatedArgs as any)
+    promiseHandler(controller, promise, response, next)
+  })
+  app.get('/api/test-automation/deposit/address/:email/:currencyCode', function(request: any, response: any, next: any) {
+    const args = {
+      email: { in: 'path', name: 'email', required: true, dataType: 'string' },
+      currencyCode: {
+        in: 'path',
+        name: 'currencyCode',
+        required: true,
+        dataType: 'enum',
+        enums: ['ETH', 'KAU', 'KAG', 'KVT', 'BTC', 'USD', 'EUR', 'GBP'],
+      },
+    }
+
+    let validatedArgs: any[] = []
+    try {
+      validatedArgs = getValidatedArgs(args, request)
+    } catch (err) {
+      return next(err)
+    }
+
+    const controller = new E2eTestingController()
+
+    const promise = controller.getDepositAddress.apply(controller, validatedArgs as any)
     promiseHandler(controller, promise, response, next)
   })
 
