@@ -12,10 +12,13 @@ export function findBalance(currency: CurrencyCode, accountId: string): Promise<
 }
 
 export async function findCurrencyAvailableBalances(currencies: CurrencyCode[], accountId: string): Promise<Record<CurrencyCode, number>> {
-  const res = await internalApiRequestDispatcher.fireRequestToInternalApi<Record<CurrencyCode, number>>(BalanceRetrievalEndpoints.findCurrencyAvailableBalances, {
-    currencies,
-    accountId,
-  })
+  const res = await internalApiRequestDispatcher.fireRequestToInternalApi<Record<CurrencyCode, number>>(
+    BalanceRetrievalEndpoints.findCurrencyAvailableBalances,
+    {
+      currencies,
+      accountId,
+    },
+  )
   return res
 }
 
@@ -23,9 +26,9 @@ export function findAllBalancesForAccount(accountId: string): Promise<Balance[]>
   return internalApiRequestDispatcher.fireRequestToInternalApi<Balance[]>(BalanceRetrievalEndpoints.findAllBalancesForAccount, { accountId })
 }
 
-export function findRawBalances(currency: CurrencyCode, accountId: string): Promise<RawBalance[]> {
+export function findRawBalances(currencyId: number, accountId: string): Promise<RawBalance[]> {
   return internalApiRequestDispatcher.fireRequestToInternalApi<RawBalance[]>(BalanceRetrievalEndpoints.findRawBalances, {
-    currency,
+    currencyId,
     accountId,
   })
 }

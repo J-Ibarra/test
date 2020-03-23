@@ -18,7 +18,7 @@ export async function kauConversion(currencyCode: CurrencyCode, amount: number):
 
   if (currencyCode === CurrencyCode.euro) {
     const usdForOneEur = await getQuoteFor(SupportedFxPair.EUR_USD)
-    const amountInUsd = new Decimal(amount).times(usdForOneEur)
+    const amountInUsd = usdForOneEur.times(amount)
     return convertAndTruncateCurrencyValue(amountInUsd, CurrencyCode.usd, CurrencyCode.kau)
   } else {
     return convertAndTruncateCurrencyValue(new Decimal(amount), currencyCode, CurrencyCode.kau)

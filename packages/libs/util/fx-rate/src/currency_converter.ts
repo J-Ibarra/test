@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js'
 
-import { CurrencyCode, FiatCurrency } from '@abx-types/reference-data'
+import { CurrencyCode, FiatCurrency, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { getQuoteFor } from './fx_rate_provider'
 import { SupportedFxPair } from '@abx-types/order'
 import { truncateCurrencyValue, getAllSymbolsIncludingCurrency } from '@abx-service-clients/reference-data'
@@ -13,8 +13,8 @@ export async function convertAmountToFiatCurrency(currencyCode: CurrencyCode, fi
 
   if (currencyCode === CurrencyCode.euro) {
     const usdForOneEur = await getQuoteFor(SupportedFxPair.EUR_USD)
-    const convertedValue = new Decimal(amount).times(usdForOneEur).toNumber()
-    return truncateCurrencyValue({ currencyCode: fiatCurrencyCode as any, value: convertedValue })
+    const convertedValue = usdForOneEur.times(amount)
+    return truncateCurrencyValue({ currencyCode: fiatCurrencyCode as any, value: convertedValue.toNumber() })
   } else {
     return convertAndTruncateCurrencyValue(new Decimal(amount), currencyCode, fiatCurrencyCode as any)
   }
@@ -25,7 +25,7 @@ export async function convertAndTruncateCurrencyValue(
   tradeCurrencyCode: CurrencyCode,
   toCurrencyCode: CurrencyCode,
 ): Promise<string> {
-  const allSymbols = await getAllSymbolsIncludingCurrency(tradeCurrencyCode)
+  const allSymbols = await getAllSymbolsIncludingCurrency(tradeCurrencyCode, SymbolPairStateFilter.all)
   const targetSymbol = allSymbols.find(symbol => symbol.base.code === toCurrencyCode || symbol.quote.code === toCurrencyCode)
   if (!targetSymbol) {
     return '0'
@@ -33,9 +33,7 @@ export async function convertAndTruncateCurrencyValue(
 
   const midPrice = (await calculateRealTimeMidPriceForSymbol(targetSymbol.id)) || 1
   const convertedValue =
-    targetSymbol.quote.code === toCurrencyCode
-      ? tradeAmount.times(midPrice).toNumber()
-      : tradeAmount.dividedBy(midPrice).toNumber()
+    targetSymbol.quote.code === toCurrencyCode ? tradeAmount.times(midPrice).toNumber() : tradeAmount.dividedBy(midPrice).toNumber()
 
   return truncateCurrencyValue({ currencyCode: toCurrencyCode, value: convertedValue })
 }

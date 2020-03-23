@@ -48,6 +48,8 @@ export function sendAsyncChangeMessage<T>(message: AsyncMessage<T>): Promise<voi
  * @param param the message contents
  */
 function queueChangeInSQS<T>({ target, payload, type, id }: AsyncMessage<T>): Promise<void> {
+  logger.debug(`Queuing message with id ${id} on ${target.deployedEnvironment || target.local}`)
+
   return new Promise((resolve, reject) => {
     sqs.sendMessage(
       !!id
@@ -61,12 +63,13 @@ function queueChangeInSQS<T>({ target, payload, type, id }: AsyncMessage<T>): Pr
             QueueUrl: target.deployedEnvironment,
             MessageBody: JSON.stringify(payload),
           },
-      err => {
+      (err, data) => {
         if (!!err) {
           logger.error(`Error encountered while trying to place ${type} message on queue ${target.deployedEnvironment}: ${JSON.stringify(err)}`)
           reject(err)
         }
 
+        logger.debug(`Successfully placed message with id ${id}, ${JSON.stringify(data)}`)
         resolve()
       },
     )

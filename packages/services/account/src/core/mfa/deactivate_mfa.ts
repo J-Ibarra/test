@@ -27,8 +27,8 @@ export async function deactivateMfa(userId: string, token: string): Promise<void
   }
 
   await updateUser({
-    mfaSecret: undefined,
-    mfaTempSecret: undefined,
+    mfaSecret: null,
+    mfaTempSecret: null,
     id: userId,
-  })
+  } as any)
 }

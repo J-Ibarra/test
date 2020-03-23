@@ -22,8 +22,6 @@ export KVT_INFURA_PROJECT_ID='c2ea3bc13d094d3a824322a7628f4882'
 export KVT_FEE_HOLDINGS_SECRET='B7AFD4671093505A4C1197099270F77532DF63959676824E88B91C86688C8CFA'
 export ETHERSCAN_API_DOMAIN_ROOT='ropsten'
 
-# npm install ngrok -g
-# ngrok http 12345 > /dev/null &
 kill $(ps aux | grep -i ngrok | awk '{print $2}')
 npm run start-ngrok:e2e-local
 sleep 2
