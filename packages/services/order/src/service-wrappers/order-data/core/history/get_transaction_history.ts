@@ -1,19 +1,19 @@
-import { orderBy } from 'lodash'
 import { Logger } from '@abx-utils/logging'
-import { CurrencyCode, Currency, SymbolPair } from '@abx-types/reference-data'
+import { CurrencyCode, Currency } from '@abx-types/reference-data'
 import { TradeTransaction, TransactionDirection, CurrencyTransaction } from '@abx-types/order'
 import { TransactionHistory } from './model'
 import { formTradeTransactionToHistory } from './'
 import { findCurrencyTransactionForAccountAndCurrency, findTradeTransactionForAccountAndSymbols } from '../../../../core'
-import { getAllCompleteSymbolDetails, getAllCurrencyBoundaries } from '@abx-service-clients/reference-data'
+import { getAllCompleteSymbolDetails, getAllCurrencyBoundaries, findAllCurrencies } from '@abx-service-clients/reference-data'
 import { buildDepositTransactionHistory } from './form_deposit_currency_transaction'
 import { buildWithdrawalTransactionHistory } from './form_withdrawal_currency_transaction'
+import moment from 'moment'
 
 const logger = Logger.getInstance('transaction', 'transaction_history')
 
 export async function getAccountTransactionHistory(accountId: string, selectedCurrencyCode: CurrencyCode): Promise<TransactionHistory[]> {
   logger.debug(`Creating transaction history for ${accountId}`)
-  const allSymbols = await getAllCompleteSymbolDetails()
+  const [allSymbols, allCurrencies] = await Promise.all([getAllCompleteSymbolDetails(), findAllCurrencies()])
   const allCurrencyBoundaries = await getAllCurrencyBoundaries()
   const selectedSymbols = allSymbols.filter(symbol => symbol.base.code === selectedCurrencyCode || symbol.quote.code === selectedCurrencyCode)
 
@@ -30,32 +30,27 @@ export async function getAccountTransactionHistory(accountId: string, selectedCu
     accountId,
     currencyTransactions,
     selectedCurrencyCode,
-    allSymbols,
+    allCurrencies,
   )
   const existingTransactionHistories = [...tradeTransactionsToHistory, ...depositAndWithdrawalTransactions].filter(Boolean)
 
-  return orderBy(existingTransactionHistories, history => history.createdAt, ['desc'])
+  existingTransactionHistories.sort((transactionA, transactionB) => (moment(transactionA.createdAt).isBefore(transactionB.createdAt) ? 1 : -1))
+
+  return existingTransactionHistories
 }
 
 async function createDepositAndWithdrawalTransactions(
   accountId: string,
   currencyTransactions: CurrencyTransaction[],
   selectedCurrencyCode: CurrencyCode,
-  allSymbols: SymbolPair[],
+  allCurrencies: Currency[],
 ) {
-  const symbolWithSelectedCurrency = allSymbols.find(({ base, quote }) => base.code === selectedCurrencyCode || quote.code === selectedCurrencyCode)
-  const selectedCurrencyId =
-    symbolWithSelectedCurrency!.base.code === selectedCurrencyCode ? symbolWithSelectedCurrency!.base.id! : symbolWithSelectedCurrency!.quote.id!
+  const selectedCurrency = allCurrencies.find(({ code }) => code === selectedCurrencyCode)
   const depositTransactionsToAdd = currencyTransactions.filter(({ direction }) => direction === TransactionDirection.deposit)
 
   const [depositTransactionHistoryItems, withdrawalRequestTransactionHistoryItems] = await Promise.all([
-    buildDepositTransactionHistory(
-      accountId,
-      selectedCurrencyCode,
-      depositTransactionsToAdd,
-      allSymbols.reduce((acc, { base, quote }) => acc.concat([base, quote]), [] as Currency[]),
-    ),
-    buildWithdrawalTransactionHistory(accountId, selectedCurrencyId, selectedCurrencyCode),
+    buildDepositTransactionHistory(accountId, selectedCurrencyCode, depositTransactionsToAdd, allCurrencies),
+    buildWithdrawalTransactionHistory(accountId, selectedCurrency!.id, selectedCurrencyCode),
   ])
 
   return depositTransactionHistoryItems.concat(withdrawalRequestTransactionHistoryItems)

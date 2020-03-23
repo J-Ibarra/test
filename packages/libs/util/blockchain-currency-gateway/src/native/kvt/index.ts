@@ -42,6 +42,9 @@ export const KVT_CONFIG = {
   [Environment.production]: {
     url: `https://mainnet.infura.io/v3/${process.env.KVT_INFURA_PROJECT_ID}`,
   },
+  [Environment.staging]: {
+    url: `https://ropsten.infura.io/v3/${process.env.KVT_INFURA_PROJECT_ID}`,
+  },
 }
 
 const logger = Logger.getInstance('currencies', 'kvt')

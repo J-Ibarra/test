@@ -67,11 +67,11 @@ export async function cleanOldMidPrices(): Promise<void> {
 }
 
 export async function reconcileOHCLMarketData(timeFrame: MarketDataTimeFrame): Promise<void> {
-  return internalApiRequestDispatcher.fireRequestToInternalApi<void>(MarketDataEndpoints.cleanOldMidPrices, { timeFrame })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<void>(MarketDataEndpoints.reconcileOHCLMarketData, { timeFrame })
 }
 
 export async function getMidPricesForSymbol(request: MidPricesForSymbolRequest): Promise<DepthMidPrice[]> {
-  return internalApiRequestDispatcher.fireRequestToInternalApi<DepthMidPrice[]>(MarketDataEndpoints.cleanOldMidPrices, { ...request })
+  return internalApiRequestDispatcher.fireRequestToInternalApi<DepthMidPrice[]>(MarketDataEndpoints.getMidPricesForSymbol, { ...request })
 }
 
 export * from './endpoints'
