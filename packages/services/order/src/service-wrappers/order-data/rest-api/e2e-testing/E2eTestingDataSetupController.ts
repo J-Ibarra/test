@@ -7,17 +7,9 @@ import { findUsersByEmail, createAccount } from '@abx-service-clients/account'
 import { AccountSetupOrderDetails } from './model'
 import { setupAccountBalances } from '@abx-service-clients/balance'
 import { placeOrder } from '@abx-service-clients/order'
+import { findTradeTransactions } from '../../../../core'
 
 export const orderTestAccountEmails = ['order-user-1@abx.com', 'order-user-2@abx.com']
-const tablesToTruncate = [
-  'balance_adjustment',
-  'stored_reports',
-  'monthly_trade_accumulation',
-  'ohlc_market_data',
-  'depth_mid_price',
-  'order_match_transaction',
-  'trade_transaction',
-]
 
 @Route('test-automation')
 export class E2eTestingDataSetupController {
@@ -36,10 +28,22 @@ export class E2eTestingDataSetupController {
   }
 
   private async truncateOrderData(email: string) {
-    await sequelize.query(`TRUNCATE ${tablesToTruncate.map(table => `"${table}"`).join(', ')} RESTART IDENTITY CASCADE;`)
-
     const [user] = await findUsersByEmail([email.toLowerCase()])
 
+    const { rows: tradeTransactions } = await findTradeTransactions({ where: { accountId: user.accountId } })
+    await sequelize.query(`DELETE FROM "monthly_trade_accumulation" where "accountId"='${user.accountId}'`)
+
+    if (tradeTransactions.length > 0) {
+      await sequelize.query(
+        `DELETE FROM "trade_transaction" where "id" in (${tradeTransactions
+          .map(({ id, counterTradeTransactionId }) => `'${id}', '${counterTradeTransactionId}'`)
+          .join(',')})`,
+      )
+    }
+
+    await sequelize.query(`DELETE FROM "order_match_transaction" WHERE "sellAccountId"='${user.accountId}' OR "buyAccountId"='${user.accountId}'`)
+
+    await sequelize.query(`DELETE FROM "balance_adjustment" WHERE "balanceId" in (SELECT id from "balance" where "accountId"='${user.accountId}')`)
     await sequelize.query(`DELETE FROM "order" where "accountId"='${user.accountId}'`)
   }
 
