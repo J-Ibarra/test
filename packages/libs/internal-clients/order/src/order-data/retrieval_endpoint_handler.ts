@@ -16,7 +16,7 @@ export function findLastOrderMatchForSymbol(symbolId: string): Promise<OrderMatc
 }
 
 export function findLastOrderMatchForSymbols(symbolIds: string[]): Promise<Map<string, OrderMatch | null>> {
-  return internalApiRequestDispatcher.fireRequestToInternalApi<Map<string, OrderMatch | null>>(OrderDataEndpoints.findLastOrderMatchForSymbol, {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<Map<string, OrderMatch | null>>(OrderDataEndpoints.findLastOrderMatchForSymbols, {
     symbolIds,
   })
 }
