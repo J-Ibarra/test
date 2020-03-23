@@ -77,7 +77,7 @@ export async function findKycOrEmailVerifiedDepositAddresses(currencyId: number,
 export async function findOrCreateDepositAddressesForAccount(accountId: string) {
   logger.debug(`Finding existing deposit addresses for account ${accountId}`)
 
-  const existingDepositAddresses = await findDepositAddressesForAccountWithCurrency(accountId)
+  const existingDepositAddresses = await findDepositAddressesForAccount(accountId)
   logger.debug(`Found existing deposit addresses for currency: ${existingDepositAddresses.map(({ currencyId }) => currencyId).join(',')}`)
 
   if (cryptoCurrencies.length === 0) {
@@ -89,10 +89,7 @@ export async function findOrCreateDepositAddressesForAccount(accountId: string) 
 
     logger.debug(`Created missing deposit addresses for currenciy ids: ${missingDepositAddresses.map(d => d.currencyId)}`)
 
-    const epicurus = getEpicurusInstance()
-    epicurus.publish(DepositPubSubChannels.walletAddressesForNewAccountCreated, { accountId })
-
-    return findDepositAddressesForAccountWithCurrency(accountId)
+    return findDepositAddressesForAccount(accountId)
   }
 
   return existingDepositAddresses

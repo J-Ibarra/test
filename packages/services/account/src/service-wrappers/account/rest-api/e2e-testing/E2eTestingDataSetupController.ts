@@ -12,7 +12,7 @@ caClient.BC.ETH.switchNetwork(caClient.BC.ETH.NETWORKS.ROPSTEN)
 
 @Route('test-automation/accounts')
 export class E2eTestingDataSetupController {
-  @Patch('/accounts/type')
+  @Patch('/type')
   public async updateAccountType(@Body() { email, type }: AccountTypeUpdateRequest): Promise<void> {
     const user = await findUserByEmail(email.toLocaleLowerCase())
     await updateAccount(user!.accountId, { type })

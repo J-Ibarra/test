@@ -8,15 +8,15 @@ import { AccountSetupOrderDetails } from './model'
 import { setupAccountBalances } from '@abx-service-clients/balance'
 import { placeOrder } from '@abx-service-clients/order'
 
-export const orderTestAccountEmails = ['Order-user-1@abx.com', 'Order-user-1@abx.com']
+export const orderTestAccountEmails = ['order-user-1@abx.com', 'order-user-2@abx.com']
 const tablesToTruncate = [
-  'order',
   'balance_adjustment',
   'stored_reports',
   'monthly_trade_accumulation',
   'ohlc_market_data',
   'depth_mid_price',
   'order_match_transaction',
+  'trade_transaction',
 ]
 
 @Route('test-automation')
@@ -24,25 +24,23 @@ export class E2eTestingDataSetupController {
   private logger = Logger.getInstance('api', 'E2eTestDataCleanerController')
 
   @Post('/orders/data-reset')
-  public async resetOrderData(): Promise<void> {
+  public async resetOrderData(@Body() { email }): Promise<void> {
     this.logger.info('Resetting order data.')
     await getCacheClient().flush()
     await getModel<OrderQueueStatus>('orderQueueStatus').update({ processing: false, lastProcessed: new Date() } as any, {
       where: {},
     })
     this.logger.info('Truncating order data.')
-    await this.truncateOrderData()
+    await this.truncateOrderData(email)
     this.logger.info('Truncated order data.')
   }
 
-  private async truncateOrderData() {
+  private async truncateOrderData(email: string) {
     await sequelize.query(`TRUNCATE ${tablesToTruncate.map(table => `"${table}"`).join(', ')} RESTART IDENTITY CASCADE;`)
 
-    const accounts = await findUsersByEmail(orderTestAccountEmails)
+    const [user] = await findUsersByEmail([email.toLowerCase()])
 
-    if (accounts.length > 0) {
-      await sequelize.query(`DELETE FROM trade_transaction where "accountId" in (${accounts.map(({ accountId }) => `"${accountId}"`).join(',')})`)
-    }
+    await sequelize.query(`DELETE FROM "order" where "accountId"='${user.accountId}'`)
   }
 
   @Post('/orders/account-setup-scripts')

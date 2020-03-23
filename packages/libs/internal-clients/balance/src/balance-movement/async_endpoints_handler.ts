@@ -33,7 +33,7 @@ export function triggerMultipleBalanceChanges(changes: BalanceChangeAsyncRequest
 
 export function releaseReserve(payload: BasicBalanceAsyncRequestPayload) {
   return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
-    id: `releaseReserve-${payload.sourceEventId}`,
+    id: `releaseReserve-${payload.sourceEventId}-${payload.sourceEventType}`,
     type: 'releaseReserve',
     target: {
       local: localRedisBalanceChangeTopic,

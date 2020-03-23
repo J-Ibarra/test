@@ -1,27 +1,35 @@
 import moment from 'moment'
 import { Transaction, WhereOptions } from 'sequelize'
 import { getModel } from '@abx-utils/db-connection-utils'
-import { Currency, SymbolPair } from '@abx-types/reference-data'
+import { Currency, SymbolPair, SymbolPairStateFilter } from '@abx-types/reference-data'
+import { GetAllSymbolsRequestPayload } from './find_symbols'
 
 let lastCache: Date = new Date()
 let symbols: SymbolPair[] = []
 
-export async function fetchAllSymbols(transaction?: Transaction): Promise<SymbolPair[]> {
+export async function fetchAllSymbols(
+  { state, transaction }: GetAllSymbolsRequestPayload = { state: SymbolPairStateFilter.enabled },
+): Promise<SymbolPair[]> {
+  let stateToFilter = state || SymbolPairStateFilter.enabled
+
   if (symbols.length > 0 && moment().diff(lastCache, 'minute') < 5) {
-    return symbols
+    return filterSymbols(stateToFilter)
   }
 
   symbols = await findSymbols(transaction)
   lastCache = new Date()
 
-  return symbols
+  return filterSymbols(stateToFilter)
 }
 
-async function findSymbols(transaction): Promise<SymbolPair[]> {
+function filterSymbols(state: SymbolPairStateFilter) {
+  return state === SymbolPairStateFilter.all
+    ? symbols
+    : symbols.filter(({ isEnabled }) => (state === SymbolPairStateFilter.disabled ? isEnabled === false : isEnabled === true))
+}
+
+async function findSymbols(transaction?: Transaction): Promise<SymbolPair[]> {
   const allSymbols = await getModel<SymbolPair>('symbol').findAll({
-    where: {
-      isEnabled: true,
-    },
     transaction,
     include: [createCurrencyIncludeOption('quote'), createCurrencyIncludeOption('base'), createCurrencyIncludeOption('fee')],
   })

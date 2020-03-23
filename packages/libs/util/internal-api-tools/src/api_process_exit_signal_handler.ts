@@ -12,4 +12,10 @@ export function killProcessOnSignal() {
     logger.warn('Contract exchange received SIGTERM')
     process.exit(0)
   })
+
+  process.on('uncaughtException', err => {
+    logger.error('Handling uncaught exception.')
+    logger.error(JSON.stringify(err))
+    process.exit(1)
+  })
 }
