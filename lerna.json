@@ -5,5 +5,13 @@
     "packages/libs/model/*",
     "packages/libs/util/*"
   ],
+  "command": {
+    "build": {
+      "ignore": "@abx/debit-card"
+    },
+    "bootstrap": {
+      "ignore": "@abx/debit-card"
+    }
+  },
   "version": "independent"
 }
