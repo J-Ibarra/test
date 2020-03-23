@@ -2,7 +2,10 @@ import sinon from 'sinon'
 import { expect } from 'chai'
 
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
-import { dispatchWithdrawalTransaction } from '../../core/withdrawal-transaction-creation/withdrawal-transaction-dispatcher'
+import {
+  dispatchWithdrawalTransaction,
+  DEFAULT_NUMBER_OF_CONFIRMATION_FOR_WITHDRAWAL,
+} from '../../core/withdrawal-transaction-creation/withdrawal-transaction-dispatcher'
 import * as asyncMessagePublisherOperations from '@abx-utils/async-message-publisher'
 import { WITHDRAWAL_TRANSACTION_SENT_QUEUE_URL } from '@abx-service-clients/withdrawal'
 import { CurrencyCode } from '@abx-types/reference-data'
@@ -81,6 +84,7 @@ describe('withdrawal-transaction-dispatcher', () => {
         amount: withdrawalAmount,
         memo,
         transactionConfirmationWebhookUrl: undefined,
+        transactionConfirmations: DEFAULT_NUMBER_OF_CONFIRMATION_FOR_WITHDRAWAL,
       }),
     ).to.eql(true)
     expect(
