@@ -2,6 +2,7 @@
 import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute } from 'tsoa';
 import { AccountSummaryController } from './account_summary_controller';
 import { AdminRequestsController } from './admin_requests_controller';
+import { E2eTestingController } from './E2eTestingController';
 import { expressAuthentication } from './middleware/authentication';
 import * as express from 'express';
 
@@ -46,6 +47,19 @@ const models: TsoaRoute.Models = {
       "description": { "dataType": "string" },
       "asset": { "ref": "CurrencyCode", "required": true },
       "amount": { "dataType": "double", "required": true },
+      "fee": { "dataType": "double" },
+    },
+  },
+  "CreateAdminRequestParams": {
+    "properties": {
+      "client": { "dataType": "string", "required": true },
+      "hin": { "dataType": "string", "required": true },
+      "type": { "ref": "AdminRequestType", "required": true },
+      "description": { "dataType": "string" },
+      "asset": { "ref": "CurrencyCode", "required": true },
+      "amount": { "dataType": "double", "required": true },
+      "admin": { "dataType": "string", "required": true },
+      "status": { "ref": "AdminRequestStatus", "required": true },
       "fee": { "dataType": "double" },
     },
   },
@@ -153,6 +167,25 @@ export function RegisterRoutes(app: express.Express) {
 
 
       const promise = controller.createAdminRequest.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.post('/api/test-automation/admin/fund-management/admin-request',
+    function(request: any, response: any, next: any) {
+      const args = {
+        adminRequest: { "in": "body", "name": "adminRequest", "required": true, "ref": "CreateAdminRequestParams" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new E2eTestingController();
+
+
+      const promise = controller.saveAdminRequest.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
 
