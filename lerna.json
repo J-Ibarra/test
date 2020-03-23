@@ -6,7 +6,7 @@
     "packages/libs/util/*"
   ],
   "command": {
-    "build": {
+    "run": {
       "ignore": "@abx/debit-card"
     },
     "bootstrap": {
