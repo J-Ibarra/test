@@ -7,10 +7,10 @@ export const dbConfig = {
     host: process.env.EXCHANGE_DB_HOST || 'postgres',
     port: process.env.EXCHANGE_DB_PORT || 6432,
     pool: {
-      max: 20,
+      max: 100,
       min: 5,
       idle: 20000,
-      acquire: 20000,
+      acquire: 120000,
     },
   },
   redisDb: {
