@@ -38,7 +38,7 @@ export function createOrderQueryEndpointHandlers(): InternalRoute<any, any>[] {
     },
     {
       path: OrderDataEndpoints.findLastOrderMatchForSymbols,
-      handler: ({ symbolIds }) => findOrderMatchTransactions({ where: { symbolId: { $in: symbolIds } }, order: [['createdAt', 'DESC']], limit: 1 }),
+      handler: ({ symbolIds }) => findOrderMatchTransactions({ where: { symbolId: { $in: symbolIds } }, order: [['createdAt', 'DESC']] }),
     },
     {
       path: OrderDataEndpoints.findTradeTransaction,
