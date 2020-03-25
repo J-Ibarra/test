@@ -1,6 +1,7 @@
 import bluebird from 'bluebird'
 import moment from 'moment'
 import redis from 'redis'
+import { e2eTestingEnvironments, Environment } from '@abx-types/reference-data'
 import { Logger } from '@abx-utils/logging'
 import { RedisGateway } from './redis-gateway'
 
@@ -25,6 +26,10 @@ export class APIRedisGateway extends RedisGateway {
    * @param ttl The time-to-live for the cached item in SECONDS
    */
   public setCache<T>(key: string, value: T, ttl: number = 300): Promise<boolean> {
+    if (e2eTestingEnvironments.includes(process.env.NODE_ENV as Environment)) {
+      return Promise.resolve(true)
+    }
+
     const cacheKey: string = this.getKey(key)
 
     const storedValue: IAPICacheEntry<T> = {
