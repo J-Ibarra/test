@@ -4,7 +4,6 @@ import {
   findOrderMatchTransaction,
   findOrderMatchTransactions,
   findTradeTransaction,
-  createCurrencyTransaction,
   findLastOrderMatchForSymbol,
 } from '../../../core'
 import { OrderDataEndpoints } from '@abx-service-clients/order'
@@ -43,10 +42,6 @@ export function createOrderQueryEndpointHandlers(): InternalRoute<any, any>[] {
     {
       path: OrderDataEndpoints.findTradeTransaction,
       handler: ({ id }) => findTradeTransaction({ where: { id } }),
-    },
-    {
-      path: OrderDataEndpoints.createCurrencyTransaction,
-      handler: currencyTx => createCurrencyTransaction(currencyTx),
     },
   ]
 }
