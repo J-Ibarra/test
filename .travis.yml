@@ -35,77 +35,41 @@ before_script:
 
 jobs:
   include:
-    #The following scripts trigger parallel test runs for the different functional areas
+    #The following scripts trigger parallel test runs for the different functional areas, grouped in pairs
     # !!!! ONLY FOR THE SERVICES WHERE THERE WERE CHANGES
-    - script: lerna run test --scope @abx/exchange-deposit-service --since develop --include-dependencies
+    - script: lerna run test --scope '{@abx/exchange-deposit-service,@abx/exchange-reference-data-service}' --since develop --include-dependencies
       if: tag IS blank and branch != develop
-      name: Build & Test Deposit Functional Area
-    - script: lerna run test --scope @abx/exchange-withdrawal-service --since develop --include-dependencies
+      name: Build & Test Deposit and Reference Data Functional Areas
+    - script: lerna run test --scope '{@abx/exchange-withdrawal-service,@abx/exchange-balance-service}' --since develop --include-dependencies
       if: tag IS blank and branch != develop
-      name: Build & Test Withdrawal Functional Area
-    - script: lerna run test --scope @abx/exchange-balance-service --since develop --include-dependencies
+      name: Build & Test Withdrawal and Balance Functional Areas
+    - script: lerna run test --scope '{@abx/exchange-scheduler-service,@abx/exchange-reports-service,@abx/exchange-account-data-service}' --since develop --include-dependencies
       if: tag IS blank and branch != develop
-      name: Build & Test Balance Functional Area
-    - script: lerna run test --scope @abx/exchange-reference-data-service --since develop --include-dependencies
+      name: Build & Test Scheduler, Reports and Account Functional Areas
+    - script: lerna run test --scope '{@abx/exchange-notification-service,@abx/admin-fund-management-service}' --since develop --include-dependencies
       if: tag IS blank and branch != develop
-      name: Build & Test Reference Data Functional Area
-    - script: lerna run test --scope @abx/exchange-reports-service --since develop --include-dependencies
+      name: Build & Test Notification and Admin Fund Management Functional Areas
+    - script: lerna run test --scope '{@abx/order-service,@abx/exchange-market-data-service}' --since develop --include-dependencies
       if: tag IS blank and branch != develop
-      name: Build & Test Reports Data Functional Area
-    - script: lerna run test --scope @abx/exchange-scheduler-service --since develop --include-dependencies
-      if: tag IS blank and branch != develop
-      name: Build & Test Scheduler Data Functional Area
-    - script: lerna run test --scope @abx/exchange-notification-service --since develop --include-dependencies
-      if: tag IS blank and branch != develop
-      name: Build & Test Notification Data Functional Area
-    - script: lerna run test --scope @abx/admin-fund-management-service --since develop --include-dependencies
-      if: tag IS blank and branch != develop
-      name: Build & Test Admin Fund Management Functional Area
-    - script: lerna run test --scope @abx/order-service --since develop --include-dependencies
-      if: tag IS blank and branch != develop
-      name: Build & Test Order Data Functional Area
-    - script: lerna run test --scope @abx/exchange-market-data-service --since develop --include-dependencies
-      if: tag IS blank and branch != develop
-      name: Build & Test Market Data Functional Area
-    - script: lerna run test --scope @abx/exchange-account-data-service --since develop --include-dependencies
-      if: tag IS blank and branch != develop
-      name: Build & Test Account Functional Area
+      name: Build & Test Order and Market Data Functional Areas
 
       #The following scripts trigger parallel image build for the different functional areas
       # !!!! ONLY FOR THE SERVICES WHERE THERE WERE CHANGES
-    - script: ./_scripts/travis/travis-build-service-release.sh @abx/exchange-balance-service
+    - script: ./_scripts/travis/travis-build-service-release.sh '{@abx/exchange-balance-service,@abx/exchange-reference-data-service}'
       if: branch = develop and type = push
-      name: 'Build Balance image and push to ECR'
-    - script: ./_scripts/travis/travis-build-service-release.sh @abx/exchange-reference-data-service
+      name: 'Build Balance and Reference Data image and push to ECR'
+    - script: ./_scripts/travis/travis-build-service-release.sh '{@abx/exchange-report-service,@abx/exchange-scheduler-service,@abx/exchange-account-data-service}'
       if: branch = develop and type = push
-      name: 'Build Reference Data image and push to ECR'
-    - script: ./_scripts/travis/travis-build-service-release.sh @abx/exchange-report-service
+      name: 'Build Reports, Scheduler and Account  images and push to ECR'
+    - script: ./_scripts/travis/travis-build-service-release.sh '{@abx/exchange-withdrawal-service,@abx/exchange-notification-service}'
       if: branch = develop and type = push
-      name: 'Build Reports image and push to ECR'
-    - script: ./_scripts/travis/travis-build-service-release.sh @abx/exchange-scheduler-service
+      name: 'Build Withdrawal and Notification image and push to ECR'
+    - script: ./_scripts/travis/travis-build-service-release.sh '{@abx/order-service,@abx/exchange-market-data-service}'
       if: branch = develop and type = push
-      name: 'Build Scheduler image and push to ECR'
-    - script: ./_scripts/travis/travis-build-service-release.sh @abx/exchange-withdrawal-service
+      name: 'Build Order and Market Data images and push to ECR'
+    - script: ./_scripts/travis/travis-build-service-release.sh '{@abx/exchange-deposit-service,@abx/admin-fund-management-service}'
       if: branch = develop and type = push
-      name: 'Build Withdrawal image and push to ECR'
-    - script: ./_scripts/travis/travis-build-service-release.sh @abx/exchange-notification-service
-      if: branch = develop and type = push
-      name: 'Build Notification image and push to ECR'
-    - script: ./_scripts/travis/travis-build-service-release.sh @abx/order-service
-      if: branch = develop and type = push
-      name: 'Build Order image and push to ECR'
-    - script: ./_scripts/travis/travis-build-service-release.sh @abx/exchange-market-data-service
-      if: branch = develop and type = push
-      name: 'Build Market Data image and push to ECR'
-    - script: ./_scripts/travis/travis-build-service-release.sh @abx/exchange-deposit-service
-      if: branch = develop and type = push
-      name: 'Build Deposit image and push to ECR'
-    - script: ./_scripts/travis/travis-build-service-release.sh @abx/admin-fund-management-service
-      if: branch = develop and type = push
-      name: 'Build admin fund management image and push to ECR'
-    - script: ./_scripts/travis/travis-build-service-release.sh @abx/exchange-account-data-service
-      if: branch = develop and type = push
-      name: 'Build Account image and push to ECR'
+      name: 'Build Deposit and Fund Admin image and push to ECR'
 
     # Triggered after a push to develop branch, generating the latest API documentation
     - script:
