@@ -35,8 +35,8 @@ before_script:
 
 jobs:
   include:
-      #The following scripts trigger parallel test runs for the different functional areas
-      # !!!! ONLY FOR THE SERVICES WHERE THERE WERE CHANGES
+    #The following scripts trigger parallel test runs for the different functional areas
+    # !!!! ONLY FOR THE SERVICES WHERE THERE WERE CHANGES
     - script: lerna run test --scope @abx/exchange-deposit-service --since develop --include-dependencies
       if: tag IS blank and branch != develop
       name: Build & Test Deposit Functional Area
@@ -70,7 +70,7 @@ jobs:
     - script: lerna run test --scope @abx/exchange-account-data-service --since develop --include-dependencies
       if: tag IS blank and branch != develop
       name: Build & Test Account Functional Area
-    
+
       #The following scripts trigger parallel image build for the different functional areas
       # !!!! ONLY FOR THE SERVICES WHERE THERE WERE CHANGES
     - script: ./_scripts/travis/travis-build-service-release.sh @abx/exchange-balance-service
@@ -109,11 +109,11 @@ jobs:
 
     # Triggered after a push to develop branch, generating the latest API documentation
     - script:
-      - npm run bootstrap:production
-      - npm run build
-      - cd packages/services/_api-docs
-      - bundle install
-      - npm run build:docs
-      - npm run push-api-docs-to-s3
-    if: branch = develop and type = push
-    name: 'Build latest api docs and push to s3'
+        - npm run bootstrap:production
+        - npm run build
+        - cd packages/services/_api-docs
+        - bundle install
+        - npm run build:docs
+        - npm run push-api-docs-to-s3
+      if: branch = develop and type = push
+      name: 'Build latest api docs and push to s3'
