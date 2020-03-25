@@ -1,4 +1,7 @@
 #!/bin/bash
+
+./_scripts/travis/travis-build-branch-checkout.sh
+
 npm link
 npm run bootstrap
 
