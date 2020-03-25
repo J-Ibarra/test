@@ -8,10 +8,10 @@ const logger = Logger.getInstance('order-data', 'queue_driven_api_handler')
 export function bootstrapQueueDrivenApi() {
   const queuePoller = getQueuePoller()
 
-  queuePoller.subscribeToQueueMessages(CREATE_CURRENCY_TRANSACTION_QUEUE, createCurrencyTransaction)
+  queuePoller.subscribeToQueueMessages(CREATE_CURRENCY_TRANSACTION_QUEUE, createCurrencyTransactionIfNotCreatedAlready)
 }
 
-async function createCurrencyTransaction(createCurrencyTransactionRequest: CurrencyTransactionCreationRequest) {
+async function createCurrencyTransactionIfNotCreatedAlready(createCurrencyTransactionRequest: CurrencyTransactionCreationRequest) {
   const { count: alreadyExistingCurrencyTransactions } = await findCurrencyTransactions({
     where: {
       requestId: createCurrencyTransactionRequest.requestId,
