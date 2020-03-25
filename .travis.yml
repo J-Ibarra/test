@@ -28,28 +28,24 @@ before_install:
   - gem install bundler --version '2.0.2'
 before_script:
   - psql -c 'create database kinesis_exchange;' -U postgres
-  - npm link
-  - npm run bootstrap
-  - lerna run build --scope @abx-utils/kbe-legacy-migrations --include-dependencies --exclude-dependents
-  - npm run run-legacy-migrations:test
 
 jobs:
   include:
     #The following scripts trigger parallel test runs for the different functional areas, grouped in pairs
     # !!!! ONLY FOR THE SERVICES WHERE THERE WERE CHANGES
-    - script: lerna run test --scope '{@abx/exchange-deposit-service,@abx/exchange-reference-data-service}' --since develop --include-dependencies
+    - script: ./_scripts/travis/travis-build-test-execution.sh '{@abx/exchange-deposit-service,@abx/exchange-reference-data-service}'
       if: tag IS blank and branch != develop
       name: Build & Test Deposit and Reference Data Functional Areas
-    - script: lerna run test --scope '{@abx/exchange-withdrawal-service,@abx/exchange-balance-service}' --since develop --include-dependencies
+    - script: ./_scripts/travis/travis-build-test-execution.sh '{@abx/exchange-withdrawal-service,@abx/exchange-balance-service}'
       if: tag IS blank and branch != develop
       name: Build & Test Withdrawal and Balance Functional Areas
-    - script: lerna run test --scope '{@abx/exchange-scheduler-service,@abx/exchange-reports-service,@abx/exchange-account-data-service}' --since develop --include-dependencies
+    - script: ./_scripts/travis/travis-build-test-execution.sh '{@abx/exchange-scheduler-service,@abx/exchange-reports-service,@abx/exchange-account-data-service}'
       if: tag IS blank and branch != develop
       name: Build & Test Scheduler, Reports and Account Functional Areas
-    - script: lerna run test --scope '{@abx/exchange-notification-service,@abx/admin-fund-management-service}' --since develop --include-dependencies
+    - script: /_scripts/travis/travis-build-test-execution.sh '{@abx/exchange-notification-service,@abx/admin-fund-management-service}'
       if: tag IS blank and branch != develop
       name: Build & Test Notification and Admin Fund Management Functional Areas
-    - script: lerna run test --scope '{@abx/order-service,@abx/exchange-market-data-service}' --since develop --include-dependencies
+    - script: /_scripts/travis/travis-build-test-execution.sh '{@abx/order-service,@abx/exchange-market-data-service}'
       if: tag IS blank and branch != develop
       name: Build & Test Order and Market Data Functional Areas
 

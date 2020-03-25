@@ -1,0 +1,9 @@
+#!/bin/bash
+npm link
+npm run bootstrap
+
+# Run legacy migrations to get DB in good shape for tests
+lerna run build --scope @abx-utils/kbe-legacy-migrations --include-dependencies --exclude-dependents
+npm run run-legacy-migrations:test
+
+lerna run test --scope $1 --since develop --include-dependencies
