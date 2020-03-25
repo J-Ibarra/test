@@ -20,6 +20,7 @@
   "gitHead": "8a29dce4e9bfe143b1c40c7196d4b51ea0d72d8a",
   "dependencies": {
     "@abx-types/error": "^1.1.0",
+    "@abx-types/reference-data": "^1.1.0",
     "@abx-utils/logging": "^1.1.0",
     "bluebird": "3.3.5",
     "epicurus-node": "0.3.0",

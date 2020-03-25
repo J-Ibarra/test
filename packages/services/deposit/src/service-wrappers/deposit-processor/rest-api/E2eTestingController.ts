@@ -8,8 +8,9 @@ import { findDepositAddressesForAccount } from '@abx-service-clients/deposit'
 import { findCurrencyForCode } from '@abx-service-clients/reference-data'
 import { wrapInTransaction, getModel, sequelize } from '@abx-utils/db-connection-utils'
 import { User } from '@abx-types/account'
+import { VaultAddress } from '@abx-types/deposit'
 
-const apiKey = '99fd56a51dcdf7e069402d68f605fad34d656301'
+const apiKey = '801c9ee2538cb40da9dbc03790894ea3431fb8ac'
 const caClient = new CryptoApis(apiKey)
 caClient.BC.ETH.switchNetwork(caClient.BC.ETH.NETWORKS.ROPSTEN)
 
@@ -73,6 +74,11 @@ export class E2eTestingController {
     }
 
     return Promise.resolve(depositAddressesForCurrency[0] as string)
+  }
+
+  @Post('/vault-address/remove')
+  public async removeVaultAddress(@Body() { publicKey }): Promise<void> {
+    await getModel<VaultAddress>('vaultAddress').destroy({ where: { publicKey }, force: true})
   }
 
   private async findAccount(email: string): Promise<Account | null> {
