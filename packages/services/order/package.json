@@ -39,7 +39,7 @@
     "deploy-latest-integration:order-gateway": "aws ecs update-service --service kbe-int-order-gateway-service-v2 --cluster kbe-int-cluster --region ap-southeast-2",
     "deploy-latest-integration:order-settlement": "aws ecs update-service --service kbe-int-order-settlement-service-v2 --cluster kbe-int-cluster --region ap-southeast-2",
     "deploy-latest-integration:order-matcher": "aws ecs update-service --service kbe-int-order-matcher-service-v2 --cluster kbe-int-cluster --region ap-southeast-2",
-    "deploy-latest-integration": "npm run deploy-latest-integration:order-data && deploy-latest-integration:order-gateway && deploy-latest-integration:order-settlement && deploy-latest-integration:order-matcher"
+    "deploy-latest-integration": "npm run deploy-latest-integration:order-data && npm run deploy-latest-integration:order-gateway && npm run deploy-latest-integration:order-settlement && npm run deploy-latest-integration:order-matcher"
   },
   "dependencies": {
     "@abx-service-clients/account": "^1.1.0",

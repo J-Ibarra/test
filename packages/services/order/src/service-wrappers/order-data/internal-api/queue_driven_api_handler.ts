@@ -14,6 +14,7 @@ export function bootstrapQueueDrivenApi() {
 async function createCurrencyTransactionIfNotCreatedAlready(createCurrencyTransactionRequest: CurrencyTransactionCreationRequest) {
   const { count: alreadyExistingCurrencyTransactions } = await findCurrencyTransactions({
     where: {
+      direction: createCurrencyTransactionRequest.direction,
       requestId: createCurrencyTransactionRequest.requestId,
     },
   })
