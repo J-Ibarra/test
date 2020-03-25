@@ -188,6 +188,25 @@ export function RegisterRoutes(app: express.Express) {
       const promise = controller.saveAdminRequest.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
+  app.delete('/api/test-automation/admin/fund-management/admin-request/:email',
+    function(request: any, response: any, next: any) {
+      const args = {
+        email: { "in": "path", "name": "email", "required": true, "dataType": "string" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new E2eTestingController();
+
+
+      const promise = controller.deleteAllAdminRequest.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
 
   function authenticateMiddleware(security: TsoaRoute.Security[] = []) {
     return (request: any, _response: any, next: any) => {
