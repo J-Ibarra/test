@@ -151,4 +151,11 @@ export interface CacheGateway {
    * @returns {Promise<number>} Promise object resolves with the number of clients that received the message
    */
   publish<T>(channel: string, message: T): Promise<number>
+
+  /**
+   * Deletes the value stored at a specific key.
+   *ß
+   * @param key the key to delete the value at
+   */
+  delete(key: string)
 }

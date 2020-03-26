@@ -9,7 +9,4 @@ export enum OrderDataEndpoints {
   findOrderMatches = 'orders/findOrderMatches',
 
   findTradeTransaction = 'orders/findTradeTransaction',
-
-  /** Creation endpoints. */
-  createCurrencyTransaction = 'orders/createCurrencyTransaction',
 }

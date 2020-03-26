@@ -31,7 +31,7 @@
     "newrelic": "4.10.0",
     "rate-limit-redis": "1.6.0",
     "tsoa": "2.3.81",
-    "sequelize": "4.41.0",
+    "sequelize": "4.44.1",
     "express": "4.16.4",
     "lodash": "4.17.5"
   },
