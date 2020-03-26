@@ -8,8 +8,6 @@ import { Logger } from '@abx-utils/logging'
 import { ValidationError } from '@abx-types/error'
 import { OverloadedRequest } from '@abx-types/account'
 
-const localDev = localAndTestEnvironments.includes(process.env.NODE_ENV as Environment)
-
 const DEFAULT_SESSION_EXPIRY = 12
 
 export interface LoginRequest {
@@ -73,7 +71,7 @@ export class SessionsController extends Controller {
 
       const isMfaEnabledForUser = await hasMfaEnabled(user.id)
 
-      if (isMfaEnabledForUser && !localDev) {
+      if (isMfaEnabledForUser && !this.isLocalDev()) {
         if (!mfaToken) {
           this.setStatus(403)
           return { message: 'MFA Required' }
@@ -102,8 +100,8 @@ export class SessionsController extends Controller {
 
       this.setHeader(
         'Set-Cookie',
-        `appSession=${sessionCookie}; ${localDev ? '' : 'Secure;'} HttpOnly; Path=/; ${
-          localDev ? '' : 'SameSite=Strict;'
+        `appSession=${sessionCookie}; ${this.isLocalDev() ? '' : 'Secure;'} HttpOnly; Path=/; ${
+          this.isLocalDev() ? '' : 'SameSite=Strict;'
         } expires=${appSessionExpires};`,
       )
 
@@ -132,8 +130,12 @@ export class SessionsController extends Controller {
 
     this.setHeader(
       'Set-Cookie',
-      `appSession='; ${localDev ? '' : 'Secure;'} HttpOnly; Path=/; SameSite=Strict; expires=Thu, 01 Jan 1970 00:00:00 UTC;`,
+      `appSession='; ${this.isLocalDev() ? '' : 'Secure;'} HttpOnly; Path=/; SameSite=Strict; expires=Thu, 01 Jan 1970 00:00:00 UTC;`,
     )
     this.setStatus(200)
+  }
+
+  private isLocalDev() {
+    return localAndTestEnvironments.includes(process.env.NODE_ENV as Environment)
   }
 }
