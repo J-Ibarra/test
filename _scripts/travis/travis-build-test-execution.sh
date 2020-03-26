@@ -9,4 +9,5 @@ npm run bootstrap
 lerna run build --scope @abx-utils/kbe-legacy-migrations --include-dependencies --exclude-dependents
 npm run run-legacy-migrations:test
 
+lerna run build --scope $1 --since develop --include-dependencies
 lerna run test --scope $1 --since develop --include-dependencies
