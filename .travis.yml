@@ -42,10 +42,10 @@ jobs:
     - script: ./_scripts/travis/travis-build-test-execution.sh '{@abx/exchange-scheduler-service,@abx/exchange-reports-service,@abx/exchange-account-data-service}'
       if: tag IS blank and branch != develop
       name: Build & Test Scheduler, Reports and Account Functional Areas
-    - script: /_scripts/travis/travis-build-test-execution.sh '{@abx/exchange-notification-service,@abx/admin-fund-management-service}'
+    - script: ./_scripts/travis/travis-build-test-execution.sh '{@abx/exchange-notification-service,@abx/admin-fund-management-service}'
       if: tag IS blank and branch != develop
       name: Build & Test Notification and Admin Fund Management Functional Areas
-    - script: /_scripts/travis/travis-build-test-execution.sh '{@abx/order-service,@abx/exchange-market-data-service}'
+    - script: ./_scripts/travis/travis-build-test-execution.sh '{@abx/order-service,@abx/exchange-market-data-service}'
       if: tag IS blank and branch != develop
       name: Build & Test Order and Market Data Functional Areas
 
