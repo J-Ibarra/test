@@ -3,7 +3,7 @@ import { getCacheClient } from '@abx-utils/db-connection-utils'
 import { Order, OrderDirection } from '@abx-types/order'
 import { SymbolDepth } from '@abx-types/order'
 
-const depthPrefix = 'exchange:symbol:depth:'
+export const depthPrefix = 'exchange:symbol:depth:'
 const parseExpiryDate = (order: Order): Order => ({
   ...order,
   expiryDate: order.expiryDate ? new Date(order.expiryDate) : undefined,

@@ -87,4 +87,8 @@ export class RedisGateway implements CacheGateway {
   public publish<T>(channel: string, message: T): Promise<number> {
     return this.redisClient.publishAsync(channel, JSON.stringify(message))
   }
+
+  public delete(key: string) {
+    return this.redisClient.delAsync(key)
+  }
 }
