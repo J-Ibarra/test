@@ -1,4 +1,4 @@
-import { Route, Post, Body } from 'tsoa'
+import { Route, Post, Body, Hidden } from 'tsoa'
 import moment from 'moment'
 import { Logger } from '@abx-utils/logging'
 import { getCacheClient, getModel, sequelize } from '@abx-utils/db-connection-utils'
@@ -17,6 +17,7 @@ export class E2eTestingDataSetupController {
   private logger = Logger.getInstance('api', 'E2eTestDataCleanerController')
 
   @Post('/orders/data-reset')
+  @Hidden()
   public async resetOrderData(@Body() { email, symbolId }): Promise<void> {
     this.logger.info('Resetting order data.')
     await getCacheClient().delete(`${depthPrefix}${symbolId}`)

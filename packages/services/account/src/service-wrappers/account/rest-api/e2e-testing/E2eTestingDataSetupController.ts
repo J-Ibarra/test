@@ -1,4 +1,4 @@
-import { Route, Body, Patch, Get } from 'tsoa'
+import { Route, Body, Patch, Get, Hidden } from 'tsoa'
 import { findUserByEmail, updateAccount, updateUser } from '../../../../core'
 import { AccountTypeUpdateRequest, AccountStatusUpdateRequest } from './model'
 import { getModel, getEpicurusInstance } from '@abx-utils/db-connection-utils'
@@ -12,12 +12,14 @@ caClient.BC.ETH.switchNetwork(caClient.BC.ETH.NETWORKS.ROPSTEN)
 @Route('test-automation/accounts')
 export class E2eTestingDataSetupController {
   @Patch('/type')
+  @Hidden()
   public async updateAccountType(@Body() { email, type }: AccountTypeUpdateRequest): Promise<void> {
     const user = await findUserByEmail(email.toLocaleLowerCase())
     await updateAccount(user!.accountId, { type })
   }
 
   @Patch('/account-status')
+  @Hidden()
   public async updateAccountStatus(@Body() { email, status, enableMfa, hasTriggeredKycCheck, suspended }: AccountStatusUpdateRequest): Promise<void> {
     const user = await findUserByEmail(email.toLocaleLowerCase())
     await getModel<Partial<Account>>('account').update(
