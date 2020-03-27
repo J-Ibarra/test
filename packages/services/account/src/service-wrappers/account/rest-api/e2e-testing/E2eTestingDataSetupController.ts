@@ -18,12 +18,13 @@ export class E2eTestingDataSetupController {
   }
 
   @Patch('/account-status')
-  public async updateAccountStatus(@Body() { email, status, enableMfa, hasTriggeredKycCheck }: AccountStatusUpdateRequest): Promise<void> {
+  public async updateAccountStatus(@Body() { email, status, enableMfa, hasTriggeredKycCheck, suspended }: AccountStatusUpdateRequest): Promise<void> {
     const user = await findUserByEmail(email.toLocaleLowerCase())
     await getModel<Partial<Account>>('account').update(
       {
         status,
         hasTriggeredKycCheck,
+        suspended,
       } as any,
       {
         where: { id: user!.accountId },
