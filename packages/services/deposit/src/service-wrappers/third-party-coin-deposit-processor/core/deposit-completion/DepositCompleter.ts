@@ -34,7 +34,7 @@ export class DepositCompleter {
 
       const totalAmount = depositRequests.reduce((acc, { amount }) => new Decimal(acc).plus(amount), new Decimal(0)).toNumber()
 
-      const [, currencyTransaction] = await Promise.all([
+      await Promise.all([
         updateAllDepositRequests(
           depositRequests.map(({ id }) => id!),
           { status: DepositRequestStatus.completed },
@@ -54,7 +54,6 @@ export class DepositCompleter {
         depositAddress,
         totalAmount,
         depositRequestWhereHoldingsFeeWasRecorded.holdingsTxFee!,
-        currencyTransaction.id!,
       )
 
       const { code } = await findCurrencyForId(depositAddress.currencyId)
@@ -62,13 +61,7 @@ export class DepositCompleter {
     })
   }
 
-  private async triggerBalanceUpdates(
-    depositRequestId: number,
-    depositAddress: DepositAddress,
-    amount: number,
-    holdingsTxFee: number,
-    currencyTransactionId: number,
-  ) {
+  private async triggerBalanceUpdates(depositRequestId: number, depositAddress: DepositAddress, amount: number, holdingsTxFee: number) {
     const kinesisRevenueAccount = await findOrCreateKinesisRevenueAccount()
 
     return triggerMultipleBalanceChanges([
@@ -78,7 +71,7 @@ export class DepositCompleter {
           accountId: depositAddress.accountId,
           amount,
           currencyId: depositAddress.currencyId,
-          sourceEventId: currencyTransactionId!,
+          sourceEventId: depositRequestId!,
           sourceEventType: SourceEventType.currencyDeposit,
         },
       },
