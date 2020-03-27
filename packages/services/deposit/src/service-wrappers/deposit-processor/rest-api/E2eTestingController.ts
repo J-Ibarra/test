@@ -16,10 +16,7 @@ caClient.BC.ETH.switchNetwork(caClient.BC.ETH.NETWORKS.ROPSTEN)
 @Route('test-automation/deposit')
 export class E2eTestingController {
   private logger = Logger.getInstance('api', 'E2eTestingController')
-  private currencyManager = new CurrencyManager(
-    getEnvironment(),
-    [CurrencyCode.kau, CurrencyCode.kag, CurrencyCode.kvt]
-  )
+  private currencyManager = new CurrencyManager(getEnvironment(), [CurrencyCode.kau, CurrencyCode.kag, CurrencyCode.kvt])
 
   @Post('/transaction/eth')
   public async createTransactionETH(@Body() { fromAddress, toAddress, value, privateKey }): Promise<void> {
@@ -27,23 +24,15 @@ export class E2eTestingController {
     const gasPrice = 21000000000
     const gasLimit = 21000
 
-    return caClient.BC.ETH.transaction.newTransactionWithPrivateKey(
-      fromAddress,
-      toAddress,
-      privateKey,
-      value,
-      gasPrice,
-      gasLimit
-    )
+    return caClient.BC.ETH.transaction.newTransactionWithPrivateKey(fromAddress, toAddress, privateKey, value, gasPrice, gasLimit)
   }
 
   @Post('/transaction')
   public async createTransaction(@Body() { currencyCode, privateKey, value, toAddress, signerKey }): Promise<void> {
-    
     this.logger.info(`Creating new ${currencyCode} transaction.`)
 
     const currency: OnChainCurrencyGateway = this.currencyManager.getCurrencyFromTicker(currencyCode)
-    
+
     const pK = await (currency as Kinesis)['getAddressFromPrivateKey'](privateKey)
     this.logger.info(pK)
 
@@ -51,7 +40,7 @@ export class E2eTestingController {
       privateKey,
       amount: value,
       toAddress,
-      signerKey
+      signerKey,
     })
   }
 
@@ -64,9 +53,7 @@ export class E2eTestingController {
 
     const depositAddresses = await findDepositAddressesForAccount((account as Account).id)
     const currency = await findCurrencyForCode(currencyCode)
-    const depositAddressesForCurrency = depositAddresses
-      .filter(d => d.currencyId === currency.id)
-      .map(d => d.publicKey)
+    const depositAddressesForCurrency = depositAddresses.filter(d => d.currencyId === currency.id).map(d => d.publicKey)
 
     if (depositAddressesForCurrency.length > 1) {
       throw new Error(`The user ${email} has more that 1 deposit address for ${currencyCode}`)
@@ -77,7 +64,7 @@ export class E2eTestingController {
 
   @Post('/vault-address/remove')
   public async removeVaultAddress(@Body() { publicKey }): Promise<void> {
-    await getModel<VaultAddress>('vaultAddress').destroy({ where: { publicKey }, force: true})
+    await getModel<VaultAddress>('vaultAddress').destroy({ where: { publicKey }, force: true })
   }
 
   private async findAccount(email: string): Promise<Account | null> {
@@ -89,9 +76,9 @@ export class E2eTestingController {
             model: getModel<User>('user'),
             as: 'users',
             where: {
-              email
-            }
-          }
+              email,
+            },
+          },
         ],
       })
 
