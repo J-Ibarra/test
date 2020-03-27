@@ -6,8 +6,7 @@ import { AccountStatus, SalesforceReferenceTable, KycStatusChange } from '@abx-t
 import { AccountPubSubTopics } from '@abx-service-clients/account'
 import CryptoApis from 'cryptoapis.io'
 
-const apiKey = '99fd56a51dcdf7e069402d68f605fad34d656301'
-const caClient = new CryptoApis(apiKey)
+const caClient = new CryptoApis(process.env.CRYPTO_APIS_TOKEN!)
 caClient.BC.ETH.switchNetwork(caClient.BC.ETH.NETWORKS.ROPSTEN)
 
 @Route('test-automation/accounts')
@@ -19,12 +18,13 @@ export class E2eTestingDataSetupController {
   }
 
   @Patch('/account-status')
-  public async updateAccountStatus(@Body() { email, status, enableMfa, hasTriggeredKycCheck }: AccountStatusUpdateRequest): Promise<void> {
+  public async updateAccountStatus(@Body() { email, status, enableMfa, hasTriggeredKycCheck, suspended }: AccountStatusUpdateRequest): Promise<void> {
     const user = await findUserByEmail(email.toLocaleLowerCase())
     await getModel<Partial<Account>>('account').update(
       {
         status,
         hasTriggeredKycCheck,
+        suspended,
       } as any,
       {
         where: { id: user!.accountId },

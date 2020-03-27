@@ -17,6 +17,7 @@ import { RegisterRoutes } from './routes'
 
 import './account_summary_controller'
 import './admin_requests_controller'
+import './E2eTestingController'
 
 import { OverloadedRequest } from '@abx-types/account'
 import { ADMIN_FUND_MANAGEMENT_REST_API_PORT } from '@abx-service-clients/admin-fund-management'

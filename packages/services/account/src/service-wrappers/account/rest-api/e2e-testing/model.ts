@@ -11,4 +11,5 @@ export interface AccountStatusUpdateRequest {
   // When set to true, mfa verified needs to be set for account
   enableMfa?: boolean
   hasTriggeredKycCheck?: boolean
+  suspended?: boolean
 }

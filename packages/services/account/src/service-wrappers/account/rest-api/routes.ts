@@ -152,6 +152,7 @@ const models: TsoaRoute.Models = {
       "status": { "ref": "AccountStatus", "required": true },
       "enableMfa": { "dataType": "boolean" },
       "hasTriggeredKycCheck": { "dataType": "boolean" },
+      "suspended": { "dataType": "boolean" },
     },
   },
 };
