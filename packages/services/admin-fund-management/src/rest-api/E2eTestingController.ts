@@ -1,7 +1,7 @@
-import { Route, Body, Post } from 'tsoa'
+import { Route, Body, Post, Delete } from 'tsoa'
 import { Logger } from '@abx-utils/logging'
 import { CreateAdminRequestParams, AdminRequest } from '@abx-service-clients/admin-fund-management'
-import { saveAdminRequest } from '../core'
+import { saveAdminRequest, deleteAllRequestsByEmail } from '../core'
 
 @Route('test-automation/admin/fund-management')
 export class E2eTestingController {
@@ -12,5 +12,12 @@ export class E2eTestingController {
     this.logger.info('Creating new admin request.')
 
     return saveAdminRequest(adminRequest)
+  }
+
+  @Delete('/admin-request/{email}')
+  public async deleteAllAdminRequest(email: string): Promise<void> {
+    this.logger.info('Creating new admin request.')
+
+    return deleteAllRequestsByEmail(email)
   }
 }
