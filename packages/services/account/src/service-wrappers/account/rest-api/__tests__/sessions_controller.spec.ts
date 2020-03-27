@@ -30,6 +30,7 @@ describe('api:sessions', () => {
   })
 
   it('does not allow a user to log in if their account has been suspended', async () => {
+    process.env.NODE_ENV = 'test-2'
     const { cookie: adminCookie, account, email } = await createAccountAndSession(AccountType.admin)
 
     await request(app)

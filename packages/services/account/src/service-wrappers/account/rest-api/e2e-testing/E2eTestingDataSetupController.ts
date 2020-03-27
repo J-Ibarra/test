@@ -54,4 +54,9 @@ export class E2eTestingDataSetupController {
   public async getAddressDetailsByPublicKey(publicKey: string): Promise<any> {
     return caClient.BC.ETH.address.getInfo(publicKey)
   }
+
+  @Get('/nonce/{publicKey}')
+  public async getNonce(publicKey: string): Promise<any> {
+    return caClient.BC.ETH.address.getAddressNonce(publicKey)
+  }
 }
