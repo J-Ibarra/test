@@ -6,8 +6,7 @@ import { AccountStatus, SalesforceReferenceTable, KycStatusChange } from '@abx-t
 import { AccountPubSubTopics } from '@abx-service-clients/account'
 import CryptoApis from 'cryptoapis.io'
 
-const apiKey = '99fd56a51dcdf7e069402d68f605fad34d656301'
-const caClient = new CryptoApis(apiKey)
+const caClient = new CryptoApis(process.env.CRYPTO_APIS_TOKEN!)
 caClient.BC.ETH.switchNetwork(caClient.BC.ETH.NETWORKS.ROPSTEN)
 
 @Route('test-automation/accounts')

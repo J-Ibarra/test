@@ -10,8 +10,7 @@ import { wrapInTransaction, getModel, sequelize } from '@abx-utils/db-connection
 import { User } from '@abx-types/account'
 import { VaultAddress } from '@abx-types/deposit'
 
-const apiKey = '801c9ee2538cb40da9dbc03790894ea3431fb8ac'
-const caClient = new CryptoApis(apiKey)
+const caClient = new CryptoApis(process.env.CRYPTO_APIS_TOKEN!)
 caClient.BC.ETH.switchNetwork(caClient.BC.ETH.NETWORKS.ROPSTEN)
 
 @Route('test-automation/deposit')
