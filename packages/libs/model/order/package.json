@@ -38,7 +38,7 @@
     "@abx-types/depth-cache": "^1.1.0",
     "@abx-types/reference-data": "^1.1.0",
     "decimal.js": "10.2.0",
-    "sequelize": "4.41.0"
+    "sequelize": "4.44.1"
   },
   "gitHead": "8a29dce4e9bfe143b1c40c7196d4b51ea0d72d8a"
 }

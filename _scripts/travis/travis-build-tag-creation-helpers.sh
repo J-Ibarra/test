@@ -1,3 +1,4 @@
+#!/bin/bash
 # strindex $a $b returns the index where $b can be first found in $a, or -1 if it can't be found
 strindex() { 
   x="${1%%$2*}"

@@ -3,7 +3,7 @@ import moment from 'moment-timezone'
 
 import { OrderDirection, OrderType } from '@abx-types/order'
 import { EmailAttachment, EmailAttachmentType, EmailOrderStatus, EmailTemplates } from '@abx-types/notification'
-import { createTradeConfirmationEmail } from '../lib/trade_confirmation/create_trade_confirmation_email'
+import { createTradeConfirmationEmail } from '../../handler/trade-confirmation-email/create_trade_confirmation_email'
 
 describe('createTradeConfirmationEmail', () => {
   const users = [

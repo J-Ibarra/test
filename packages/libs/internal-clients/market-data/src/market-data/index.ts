@@ -50,7 +50,7 @@ export async function calculateRealTimeMidPriceForSymbols(symbolIds: string[]): 
 function calculateMidPriceOrUseLatestMatchPrice(
   symbolId: string,
   symbolsWithoutDepth: string[],
-  latestOrderMatchesForSymbols: Map<string, OrderMatch | null>,
+  latestOrderMatchesForSymbols: Record<string, OrderMatch | null>,
   currencyDepthForSymbol: DepthCacheSymbol,
 ): number {
   const symbolWithoutDepthIndex = symbolsWithoutDepth.indexOf(symbolId)
