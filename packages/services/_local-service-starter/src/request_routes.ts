@@ -29,7 +29,7 @@ const referenceDataRoutes = [
   '/api/symbols/apply-threshold',
 ]
 const balanceRoutes = ['/internal-api/balances', '/api/balances', '/api/test-automation/balances']
-const adminFundManagementRoutes = ['/internal-api/admin-fund-management', '/api/admin/fund-management']
+const adminFundManagementRoutes = ['/internal-api/admin-fund-management', '/api/admin/fund-management', '/api/test-automation/admin/fund-management']
 const marketDataRoutes = ['/internal-api/market-data', '/api/market-data', '/api/mid-price', '/notifications/market-data-v2']
 const orderDataRoutes = [
   '/internal-api/orders',
