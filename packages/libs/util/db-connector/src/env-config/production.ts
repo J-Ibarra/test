@@ -10,7 +10,7 @@ export const dbConfig = {
       max: process.env.DB_POOL_CONNECTIONS_MAX,
       min: process.env.DB_POOL_CONNECTIONS_MIN,
       idle: 10000,
-      acquire: 20000,
+      acquire: process.env.DB_POOL_CONNECTIONS_ACQUIRE || 40000,
     },
   },
   redisDb: {

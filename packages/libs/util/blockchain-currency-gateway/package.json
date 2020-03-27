@@ -38,7 +38,7 @@
     "jsonwebtoken": "8.5.1",
     "moment": "2.22.2",
     "node-uuid": "1.4.7",
-    "sequelize": "4.41.0",
+    "sequelize": "4.44.1",
     "web3": "1.2.1",
     "@types/web3": "1.0.14",
     "lodash": "4.17.5"

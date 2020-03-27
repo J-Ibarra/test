@@ -28,7 +28,7 @@ export async function completePendingDeposit(request: DepositRequest, transactio
     confirmedRequest.depositAddress = addressForDeposit!
   }
 
-  const [, currencyTransaction] = await Promise.all([
+  await Promise.all([
     updateDepositRequest(confirmedRequest.id!, { status: DepositRequestStatus.completed }, transaction).then(() =>
       logger.debug(
         `Confirmed Deposit Request ${confirmedRequest.id} for ${confirmedRequest.amount} at address: ${confirmedRequest.depositAddress.publicKey}`,
@@ -40,20 +40,20 @@ export async function completePendingDeposit(request: DepositRequest, transactio
       currencyId: confirmedRequest.depositAddress.currencyId,
       direction: TransactionDirection.deposit,
       requestId: confirmedRequest.id!,
-    }).then(depositCurrencyTransaction => {
+    }).then(() => {
       logger.debug(
-        `Completed Currency Transaction for deposit request ${confirmedRequest.id} of ${confirmedRequest.amount} at address: ${confirmedRequest.depositAddress.publicKey}`,
+        `Queued currency transaction for deposit request ${confirmedRequest.id} of ${confirmedRequest.amount} at address: ${confirmedRequest.depositAddress.publicKey} for creation`,
       )
 
-      return depositCurrencyTransaction
+      return
     }),
   ])
 
   await confirmPendingDeposit({
-    accountId: currencyTransaction.accountId,
-    amount: currencyTransaction.amount,
-    currencyId: currencyTransaction.currencyId,
-    sourceEventId: currencyTransaction.id!,
+    accountId: confirmedRequest.depositAddress.accountId,
+    amount: confirmedRequest.amount,
+    currencyId: confirmedRequest.depositAddress.currencyId,
+    sourceEventId: confirmedRequest.id!,
     sourceEventType: SourceEventType.currencyDeposit,
   })
 

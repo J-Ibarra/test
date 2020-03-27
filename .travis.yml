@@ -31,27 +31,49 @@ before_script:
 
 jobs:
   include:
-    - stage: test
-      if: tag IS blank and branch != develop and branch != api-doc-generation #if it is a tag we don't want to run the tests, they would have run already
-      script:
-        - ./_scripts/travis/travis-build-branch-checkout.sh
-        - npm link
-        - npm run bootstrap
-        - lerna run build --scope @abx-utils/kbe-legacy-migrations --include-dependencies --exclude-dependents
-        - lerna run build --since develop --include-dependencies --exclude-dependents
-        - npm run run-legacy-migrations:test
-        - lerna run test --since develop --include-dependencies --exclude-dependents
-    - stage: 'Build image and push to ECR'
+    #The following scripts trigger parallel test runs for the different functional areas, grouped in pairs
+    # !!!! ONLY FOR THE SERVICES WHERE THERE WERE CHANGES
+    - script: ./_scripts/travis/travis-build-test-execution.sh '{@abx/exchange-deposit-service,@abx/exchange-reference-data-service}'
+      if: tag IS blank and branch != develop
+      name: Build & Test Deposit and Reference Data Functional Areas
+    - script: ./_scripts/travis/travis-build-test-execution.sh '{@abx/exchange-withdrawal-service,@abx/exchange-balance-service}'
+      if: tag IS blank and branch != develop
+      name: Build & Test Withdrawal and Balance Functional Areas
+    - script: ./_scripts/travis/travis-build-test-execution.sh '{@abx/exchange-scheduler-service,@abx/exchange-reports-service,@abx/exchange-account-data-service}'
+      if: tag IS blank and branch != develop
+      name: Build & Test Scheduler, Reports and Account Functional Areas
+    - script: ./_scripts/travis/travis-build-test-execution.sh '{@abx/exchange-notification-service,@abx/admin-fund-management-service}'
+      if: tag IS blank and branch != develop
+      name: Build & Test Notification and Admin Fund Management Functional Areas
+    - script: ./_scripts/travis/travis-build-test-execution.sh '{@abx/order-service,@abx/exchange-market-data-service}'
+      if: tag IS blank and branch != develop
+      name: Build & Test Order and Market Data Functional Areas
+
+      #The following scripts trigger parallel image build for the different functional areas
+      # !!!! ONLY FOR THE SERVICES WHERE THERE WERE CHANGES
+    - script: ./_scripts/travis/travis-build-service-release.sh '{@abx/exchange-balance-service,@abx/exchange-reference-data-service}'
       if: branch = develop and type = push
-      script:
-        - ./_scripts/travis/travis-build-service-release.sh
-        - node ./_scripts/travis/api-generation-build-trigger.js
-    - stage: 'Build api docs and push to s3'
-      if: branch = api-doc-generation
-      script:
+      name: 'Build Balance and Reference Data image and push to ECR'
+    - script: ./_scripts/travis/travis-build-service-release.sh '{@abx/exchange-report-service,@abx/exchange-scheduler-service,@abx/exchange-account-data-service}'
+      if: branch = develop and type = push
+      name: 'Build Reports, Scheduler and Account  images and push to ECR'
+    - script: ./_scripts/travis/travis-build-service-release.sh '{@abx/exchange-withdrawal-service,@abx/exchange-notification-service}'
+      if: branch = develop and type = push
+      name: 'Build Withdrawal and Notification image and push to ECR'
+    - script: ./_scripts/travis/travis-build-service-release.sh '{@abx/order-service,@abx/exchange-market-data-service}'
+      if: branch = develop and type = push
+      name: 'Build Order and Market Data images and push to ECR'
+    - script: ./_scripts/travis/travis-build-service-release.sh '{@abx/exchange-deposit-service,@abx/admin-fund-management-service}'
+      if: branch = develop and type = push
+      name: 'Build Deposit and Fund Admin image and push to ECR'
+
+    # Triggered after a push to develop branch, generating the latest API documentation
+    - script:
         - npm run bootstrap:production
         - npm run build
         - cd packages/services/_api-docs
         - bundle install
         - npm run build:docs
         - npm run push-api-docs-to-s3
+      if: branch = develop and type = push
+      name: 'Build latest api docs and push to s3'
