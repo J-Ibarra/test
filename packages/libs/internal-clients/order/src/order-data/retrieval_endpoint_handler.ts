@@ -15,10 +15,12 @@ export function findLastOrderMatchForSymbol(symbolId: string): Promise<OrderMatc
   return internalApiRequestDispatcher.fireRequestToInternalApi<OrderMatch | null>(OrderDataEndpoints.findLastOrderMatchForSymbol, { symbolId })
 }
 
-export function findLastOrderMatchForSymbols(symbolIds: string[]): Promise<Map<string, OrderMatch | null>> {
-  return internalApiRequestDispatcher.fireRequestToInternalApi<Map<string, OrderMatch | null>>(OrderDataEndpoints.findLastOrderMatchForSymbol, {
+export async function findLastOrderMatchForSymbols(symbolIds: string[]): Promise<Record<string, OrderMatch | null>> {
+  const orderMatches = await internalApiRequestDispatcher.fireRequestToInternalApi<OrderMatch[]>(OrderDataEndpoints.findLastOrderMatchForSymbols, {
     symbolIds,
   })
+
+  return orderMatches.reduce((acc, orderMatch) => ({ ...acc, [orderMatch.symbolId]: orderMatch }), {})
 }
 
 export function findOrderMatch(criteria: FindOptions): Promise<OrderMatch> {

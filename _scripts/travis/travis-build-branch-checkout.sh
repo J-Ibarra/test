@@ -1,3 +1,4 @@
+#!/bin/bash
 # Keep track of where Travis put us.
 # We are on a detached head, and we need to be able to go back to it.
 build_head=$(git rev-parse HEAD)

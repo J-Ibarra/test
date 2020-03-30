@@ -16,7 +16,8 @@
     "build": "npm run clean && npm run compile",
     "clean": "rm -rf ./dist",
     "compile": "npm run build-order-data && npm run build-order-gateway && tsc -p tsconfig.build.json --skipLibCheck",
-    "migrate-db": "npm run build && NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test NODE_PATH=dist node dist/migrations/index.js",
+    "run-migrations:dev": "NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=development tsnd src/migrations/index.ts",
+    "run-migrations:test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test tsnd src/migrations/index.ts",
     "start-local:worker": "NODE_ENV=dev ts-node-dev src/service-wrappers/worker/bootstrap.ts > ../../../_logs/worker.logs",
     "start-local:order-data": "NODE_ENV=dev ts-node-dev src/service-wrappers/order-data/bootstrap.ts > ../../../_logs/order-data.logs",
     "start-local:order-gateway": "NODE_ENV=dev ts-node-dev src/service-wrappers/order-gateway/bootstrap.ts > ../../../_logs/order-gateway.logs",
@@ -39,7 +40,7 @@
     "deploy-latest-integration:order-gateway": "aws ecs update-service --service kbe-int-order-gateway-service-v2 --cluster kbe-int-cluster --region ap-southeast-2",
     "deploy-latest-integration:order-settlement": "aws ecs update-service --service kbe-int-order-settlement-service-v2 --cluster kbe-int-cluster --region ap-southeast-2",
     "deploy-latest-integration:order-matcher": "aws ecs update-service --service kbe-int-order-matcher-service-v2 --cluster kbe-int-cluster --region ap-southeast-2",
-    "deploy-latest-integration": "npm run deploy-latest-integration:order-data && deploy-latest-integration:order-gateway && deploy-latest-integration:order-settlement && deploy-latest-integration:order-matcher"
+    "deploy-latest-integration": "npm run deploy-latest-integration:order-data && npm run deploy-latest-integration:order-gateway && npm run deploy-latest-integration:order-settlement && npm run deploy-latest-integration:order-matcher"
   },
   "dependencies": {
     "@abx-service-clients/account": "^1.1.0",
@@ -52,6 +53,7 @@
     "@abx-service-clients/reference-data": "^1.1.0",
     "@abx-service-clients/report": "^1.1.0",
     "@abx-service-clients/withdrawal": "^1.1.0",
+    "@abx-utils/async-message-consumer": "^1.1.0",
     "@abx-types/account": "^1.1.0",
     "@abx-types/balance": "^1.1.0",
     "@abx-types/deposit": "^1.1.0",
@@ -77,7 +79,7 @@
     "newrelic": "4.10.0",
     "node-uuid": "1.4.7",
     "request-ip": "2.1.3",
-    "sequelize": "4.41.0",
+    "sequelize": "4.44.1",
     "tsoa": "2.3.81",
     "@types/sequelize": "3.30.4",
     "lodash": "4.17.5"

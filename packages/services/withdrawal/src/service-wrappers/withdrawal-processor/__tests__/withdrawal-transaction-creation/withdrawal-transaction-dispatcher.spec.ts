@@ -84,7 +84,6 @@ describe('withdrawal-transaction-dispatcher', () => {
         amount: withdrawalAmount,
         memo,
         transactionConfirmationWebhookUrl: undefined,
-        feeLimit: withdrawalFeeAmount,
         transactionConfirmations: DEFAULT_NUMBER_OF_CONFIRMATION_FOR_WITHDRAWAL,
       }),
     ).to.eql(true)

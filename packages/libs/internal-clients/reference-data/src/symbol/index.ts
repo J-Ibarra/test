@@ -1,5 +1,5 @@
 import { SymbolEndpoints } from './endpoints'
-import { CurrencyCode, SymbolPair, SymbolPairSummary } from '@abx-types/reference-data'
+import { CurrencyCode, SymbolPair, SymbolPairSummary, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { InternalApiRequestDispatcher } from '@abx-utils/internal-api-tools'
 import { REFERENCE_DATA_REST_API_PORT } from '../boundaries'
 
@@ -9,14 +9,14 @@ export function getAllCompleteSymbolDetails(): Promise<SymbolPair[]> {
   return fetchSymbolsIfInMemoryCacheExpired()
 }
 
-export async function getAllSymbolPairSummaries(): Promise<SymbolPairSummary[]> {
-  const completeSymbolDetails = await getAllCompleteSymbolDetails()
+export async function getAllSymbolPairSummaries(state: SymbolPairStateFilter = SymbolPairStateFilter.enabled): Promise<SymbolPairSummary[]> {
+  const completeSymbolDetails = await fetchSymbolsIfInMemoryCacheExpired(state)
 
   return completeSymbolDetails.map(transformToSummary)
 }
 
-export async function getAllSymbolsIncludingCurrency(currencyCode: CurrencyCode): Promise<SymbolPair[]> {
-  return (await fetchSymbolsIfInMemoryCacheExpired()).reduce(
+export async function getAllSymbolsIncludingCurrency(currencyCode: CurrencyCode, state?: SymbolPairStateFilter): Promise<SymbolPair[]> {
+  return (await fetchSymbolsIfInMemoryCacheExpired(state)).reduce(
     (symbols, symbol) => (symbol.base.code === currencyCode || symbol.quote.code === currencyCode ? symbols.concat(symbol) : symbols),
     [] as SymbolPair[],
   )
@@ -32,8 +32,8 @@ export async function getSymbolPairSummary(id: string): Promise<SymbolPairSummar
   return transformToSummary(symbol)
 }
 
-export async function getSymbolsForQuoteCurrency(quoteCurrencyCode: CurrencyCode): Promise<SymbolPair[]> {
-  return (await fetchSymbolsIfInMemoryCacheExpired()).reduce(
+export async function getSymbolsForQuoteCurrency(quoteCurrencyCode: CurrencyCode, state?: SymbolPairStateFilter): Promise<SymbolPair[]> {
+  return (await fetchSymbolsIfInMemoryCacheExpired(state)).reduce(
     (symbols, symbol) => (symbol.quote.code === quoteCurrencyCode ? symbols.concat(symbol) : symbols),
     [] as SymbolPair[],
   )
@@ -61,8 +61,8 @@ export function transformToSummary({ id, base, quote, fee, orderRange, sortOrder
   }
 }
 
-function fetchSymbolsIfInMemoryCacheExpired(): Promise<SymbolPair[]> {
-  return internalApiRequestDispatcher.fireRequestToInternalApi<SymbolPair[]>(SymbolEndpoints.getAllCompleteSymbolDetails)
+function fetchSymbolsIfInMemoryCacheExpired(state: SymbolPairStateFilter = SymbolPairStateFilter.enabled): Promise<SymbolPair[]> {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<SymbolPair[]>(SymbolEndpoints.getAllCompleteSymbolDetails, { state })
 }
 
 export * from './endpoints'

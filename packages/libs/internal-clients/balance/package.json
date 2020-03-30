@@ -25,7 +25,7 @@
     "@abx-utils/async-message-publisher": "^1.1.0",
     "@abx-utils/internal-api-tools": "^1.1.0",
     "@abx-utils/logging": "^1.1.0",
-    "sequelize": "4.41.0"
+    "sequelize": "4.44.1"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",

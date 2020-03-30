@@ -5,7 +5,7 @@ import { Logger } from '@abx-utils/logging'
 import { getApiCacheClient } from '@abx-utils/db-connection-utils'
 import { calculateRealTimeMidPriceForSymbols } from '@abx-service-clients/market-data'
 import { getCurrencyId, getSymbolsForQuoteCurrency } from '@abx-service-clients/reference-data'
-import { CurrencyCode } from '@abx-types/reference-data'
+import { CurrencyCode, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { SupportedFxPair } from '@abx-types/order'
 import { getQuoteFor } from '@abx-utils/fx-rate'
 import { Balance, CompleteBalanceDetails, PreferredCurrencyEnrichedBalance } from '@abx-types/balance'
@@ -48,7 +48,7 @@ export class BalanceRetrievalFacade {
 
     const balances = await this.balanceRetrievalService.findAllBalancesForAccount(accountId)
     // This would fetch the preferred currency for the user once it is added to the user model, hardcoding to USD for now
-    const allSymbolsWithPreferredCurrencyAsQuote = await getSymbolsForQuoteCurrency(CurrencyCode.usd)
+    const allSymbolsWithPreferredCurrencyAsQuote = await getSymbolsForQuoteCurrency(CurrencyCode.usd, SymbolPairStateFilter.all)
 
     const preferredCurrencyQuotePairMidPrices = await calculateRealTimeMidPriceForSymbols(allSymbolsWithPreferredCurrencyAsQuote.map(({ id }) => id))
 

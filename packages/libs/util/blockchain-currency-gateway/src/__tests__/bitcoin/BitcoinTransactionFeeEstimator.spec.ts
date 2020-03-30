@@ -127,40 +127,4 @@ describe('BitcoinTransactionFeeEstimator:estimateTransactionFee', () => {
     ).to.eql(true)
     expect(estimatedFee).to.eql(feeLimit)
   })
-
-  it('should use minimum fee when calculated transaction fee >= amount and no fee limit defined', async () => {
-    const minTransactionFee = 0.001
-
-    const getTransactionsFeeStub = cryptoApisProviderProxyStub.getTransactionsFee.resolves({
-      average: testData.averageFeePerTransaction,
-      average_fee_per_byte: 12,
-      min: minTransactionFee,
-    })
-
-    const getTransactionSizeStub = cryptoApisProviderProxyStub.getTransactionSize.resolves({ tx_size_bytes: 20000 })
-
-    const txAmount = 0.003
-    const estimatedFee = await bitcoinTransactionFeeEstimator.estimateTransactionFee({
-      senderAddress: testData.senderAddress,
-      receiverAddress: testData.receiverAddress,
-      amount: txAmount,
-      memo: testData.memo,
-    })
-
-    expect(getTransactionsFeeStub.calledOnce).to.eql(true)
-    expect(
-      getTransactionSizeStub.calledWith({
-        inputs: [BitcoinTransactionCreationUtils.createTransactionAddress(testData.senderAddress.address!, txAmount)],
-        outputs: [BitcoinTransactionCreationUtils.createTransactionAddress(testData.receiverAddress, txAmount)],
-        fee: {
-          address: testData.senderAddress.address!,
-          value: new Decimal(testData.averageFeePerTransaction!)
-            .toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
-            .toNumber(),
-        },
-        data: testData.memo,
-      }),
-    ).to.eql(true)
-    expect(estimatedFee).to.eql(minTransactionFee)
-  })
 })

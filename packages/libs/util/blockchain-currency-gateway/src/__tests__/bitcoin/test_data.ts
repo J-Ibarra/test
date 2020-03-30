@@ -1,4 +1,4 @@
-export const averageFeePerByte = 0.0001
+export const averageFeePerByte = 0.00000001
 export const averageFeePerTransaction = 1
 export const transactionSizeBytes = 11
 

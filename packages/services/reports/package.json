@@ -17,7 +17,7 @@
     "test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_PATH=dist ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts src/**/*.spec.ts --exit",
     "build-image-latest": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-reports:$JIRA_IMAGE_TAG -t $KINESIS_ECR_URL/kbe-services-reports:latest -f packages/services/reports/Dockerfile . && cd packages/services/reports ",
     "push-image": "docker push $KINESIS_ECR_URL/kbe-services-reports",
-    "deploy-latest-integration": "aws ecs update-service --service kbe-int-report-service-v2 --cluster kbe-int-cluster --region ap-southeast-2"
+    "deploy-latest-integration": "aws ecs update-service --service kbe-int-reports-service-v2 --cluster kbe-int-cluster --region ap-southeast-2"
   },
   "dependencies": {
     "@abx-service-clients/account": "^1.1.0",
@@ -47,7 +47,7 @@
     "method-override": "2.3.10",
     "moment": "2.22.2",
     "request-ip": "2.1.3",
-    "sequelize": "4.41.0",
+    "sequelize": "4.44.1",
     "tsoa": "2.3.81"
   },
   "devDependencies": {

@@ -20,7 +20,7 @@ export async function up({ sequelize }: { sequelize: Sequelize }) {
     )
     .join(' ')
 
-  const usdtPairDefaultFeeTiers = btcSymbols.map(([symbolId]) => createDefaultFeeTiersForSymbol(`'${symbolId}'`)).join(' ')
+  const btcPairDefaultFeeTiers = btcSymbols.map(([symbolId]) => createDefaultFeeTiersForSymbol(`'${symbolId}'`)).join(' ')
 
   return sequelize.query(`
   INSERT INTO currency(id, code, "createdAt", "updatedAt", "isEnabled", "symbolSortPriority", "currencyOrderPriority")
@@ -28,7 +28,7 @@ export async function up({ sequelize }: { sequelize: Sequelize }) {
   
   ${btcPairDefaultSymbols}
 
-  ${usdtPairDefaultFeeTiers}
+  ${btcPairDefaultFeeTiers}
     `)
 }
 

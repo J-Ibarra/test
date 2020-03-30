@@ -11,17 +11,36 @@ import { DepositPubSubChannels } from '@abx-service-clients/deposit'
 import { Logger, LogLevel } from '@abx-utils/logging'
 import { killProcessOnSignal } from '@abx-utils/internal-api-tools'
 
+const logger = Logger.getInstance('salesforce', 'service_starter')
+
 export async function bootstrapSalesforceService() {
   killProcessOnSignal()
   Logger.configure((process.env.LOG_LEVEL as LogLevel) || LogLevel.debug)
 
   const epicurus = getEpicurusInstance()
-  epicurus.subscribe(AccountPubSubTopics.accountVerified, accountVerifiedRecorder)
-  epicurus.subscribe(AccountPubSubTopics.accountKycCheck, accountKycChangePoller)
+  epicurus.subscribe(AccountPubSubTopics.accountVerified, request => wrapInTryCatch('accountVerifiedRecorder', accountVerifiedRecorder, request))
+  epicurus.subscribe(AccountPubSubTopics.accountKycCheck, request => wrapInTryCatch('accountKycChangePoller', accountKycChangePoller, request))
 
-  epicurus.subscribe(WithdrawalPubSubChannels.withdrawalRequestCreated, withdrawalRequestRecorder)
-  epicurus.subscribe(WithdrawalPubSubChannels.withdrawalRequestUpdated, fiatWithdrawalRequestUpdater)
+  epicurus.subscribe(WithdrawalPubSubChannels.withdrawalRequestCreated, request =>
+    wrapInTryCatch('withdrawalRequestRecorder', withdrawalRequestRecorder, request),
+  )
+  epicurus.subscribe(WithdrawalPubSubChannels.withdrawalRequestUpdated, request =>
+    wrapInTryCatch('fiatWithdrawalRequestUpdater', fiatWithdrawalRequestUpdater, request),
+  )
 
-  epicurus.subscribe(DepositPubSubChannels.depositRequestCreated, depositRequestRecorder)
-  epicurus.subscribe(DepositPubSubChannels.walletAddressesForNewAccountCreated, accountCreatedRecorder)
+  epicurus.subscribe(DepositPubSubChannels.depositRequestCreated, request =>
+    wrapInTryCatch('depositRequestRecorder', depositRequestRecorder, request),
+  )
+  epicurus.subscribe(DepositPubSubChannels.walletAddressesForNewAccountCreated, request =>
+    wrapInTryCatch('accountCreatedRecorder', accountCreatedRecorder, request),
+  )
+}
+
+function wrapInTryCatch(handlerLabel, handlerFn, request) {
+  try {
+    handlerFn(request)
+  } catch (e) {
+    logger.error(`Error ocurred while executing ${handlerLabel} with payload ${JSON.stringify(request)}`)
+    logger.error(JSON.stringify(e))
+  }
 }

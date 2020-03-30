@@ -5,10 +5,11 @@ import Decimal from 'decimal.js'
 import { BtcCryptoApisProviderProxy } from '../api-provider/crypto-apis/BtcCryptoApisProviderProxy'
 
 export class BitcoinTransactionFeeEstimator {
+  public static MAXIMUM_TX_FEE = 0.00005 // As per the business requirements required by operations
+
   readonly AVERAGE_FEE_PER_BYTE_KEY = 'avg-fee-per-byte'
   readonly AVERAGE_FEE_PER_TRANSACTION_KEY = 'avg-fee-per-transaction'
   readonly MINIMUM_TRANSACTION_FEE_KEY = 'minimum-transaction-fee'
-  private readonly MAXIMUM_TX_FEE = 0.00005 // As per the business requirements required by operations
 
   private readonly CACHE_EXPIRY_IN_MILLIS = 1000 * 60 * 30
 
@@ -33,25 +34,21 @@ export class BitcoinTransactionFeeEstimator {
     receiverAddress,
     amount,
     memo,
-    feeLimit = this.MAXIMUM_TX_FEE,
+    feeLimit = BitcoinTransactionFeeEstimator.MAXIMUM_TX_FEE,
   }: Pick<CreateTransactionPayload, 'senderAddress' | 'receiverAddress' | 'amount' | 'memo' | 'feeLimit'>): Promise<number> {
     let averageFeePerByte = this.MEMORY_CACHE.get<string>(this.AVERAGE_FEE_PER_BYTE_KEY)
     let averageFeePerTransaction = this.MEMORY_CACHE.get<string>(this.AVERAGE_FEE_PER_TRANSACTION_KEY)
-    let minimumFee = this.MEMORY_CACHE.get<string>(this.AVERAGE_FEE_PER_TRANSACTION_KEY)
 
     if (!averageFeePerByte) {
       const {
         average: latestAverageFeePerTransaction,
         average_fee_per_byte: latestMinimumFeePerByte,
-        min: latestMinimumFee,
       } = await this.cryptoApisProviderProxy.getTransactionsFee()
       this.MEMORY_CACHE.set({ key: this.AVERAGE_FEE_PER_BYTE_KEY, ttl: this.CACHE_EXPIRY_IN_MILLIS, val: latestMinimumFeePerByte })
       this.MEMORY_CACHE.set({ key: this.AVERAGE_FEE_PER_TRANSACTION_KEY, ttl: this.CACHE_EXPIRY_IN_MILLIS, val: latestAverageFeePerTransaction })
-      this.MEMORY_CACHE.set({ key: this.MINIMUM_TRANSACTION_FEE_KEY, ttl: this.CACHE_EXPIRY_IN_MILLIS, val: latestMinimumFee })
 
       averageFeePerByte = latestMinimumFeePerByte
       averageFeePerTransaction = latestAverageFeePerTransaction
-      minimumFee = latestMinimumFee
     }
 
     const { tx_size_bytes } = await this.cryptoApisProviderProxy.getTransactionSize({
@@ -69,8 +66,6 @@ export class BitcoinTransactionFeeEstimator {
       .toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
       .toNumber()
 
-    estimatedMinimumTransactionFee = Math.min(estimatedMinimumTransactionFee, feeLimit)
-
-    return estimatedMinimumTransactionFee > amount ? Number(minimumFee) : estimatedMinimumTransactionFee
+    return Math.min(estimatedMinimumTransactionFee, feeLimit)
   }
 }

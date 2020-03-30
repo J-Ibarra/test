@@ -6,6 +6,9 @@ import { setLastExecutedPrice } from '../../../core/order-match/last_executed_pr
 import { OrderSettlementGateway } from './order_settlement_gateway'
 import { OrderPubSubChannels } from '@abx-service-clients/order'
 import { sendTradeConfirmationEmail } from './handler/trade-confirmation-email'
+import { allMatchesSettledExceptForCurrentOne, balanceAdjustmentsCreatedForAllPreviousTradeTransactions } from './handler/shared.utils'
+import { getCompleteSymbolDetails } from '@abx-service-clients/reference-data'
+import { Transaction } from 'sequelize'
 
 const logger = Logger.getInstance('settlement', 'settle_order_match')
 
@@ -67,6 +70,14 @@ export async function runSettlementLogic(rawOrderMatch: UsdMidPriceEnrichedOrder
     if (!orderMatch) {
       logger.warn(`Settlement: Could not find order match - Restarting Operation:  orderMatchId: ${rawOrderMatch.id} `)
       return unlockAccountsAndTriggerSettlement(rawOrderMatch)
+    }
+
+    const balanceUpdatesCompletedForAllOtherOrderMatches = await balanceAdjustmentsCreatedForAllOtherOrderMatches(orderMatch, transaction)
+    if (!balanceUpdatesCompletedForAllOtherOrderMatches) {
+      logger.warn(
+        `Could not settle order match ${rawOrderMatch} because not all balance adjustments for previous matches for the same order were created`,
+      )
+      return unlockAccountsAndTriggerSettlement(rawOrderMatch)
     } else if (orderMatch.status === OrderMatchStatus.settled) {
       return
     }
@@ -91,16 +102,33 @@ export async function runSettlementLogic(rawOrderMatch: UsdMidPriceEnrichedOrder
   })
 }
 
-function unlockAccountsAndTriggerSettlement({ buyAccountId, sellAccountId, symbolId }: OrderMatch) {
+function unlockAccountsAndTriggerSettlement({ buyAccountId, sellAccountId, symbolId, id }: OrderMatch) {
   const orderMatches = orderMatchQueue[symbolId] || []
-  const orderMatchIndex: number = orderMatches.findIndex(order => order.buyAccountId === buyAccountId && order.sellAccountId === sellAccountId)
+  const orderMatchIndex: number = orderMatches.findIndex(
+    order => order.buyAccountId === buyAccountId && order.sellAccountId === sellAccountId && order.id === id,
+  )
   const orderMatchArr = orderMatches.splice(orderMatchIndex, 1)
 
   if (orderMatchArr.length) {
     const orderMatch = orderMatchArr[0]
     logger.debug(`Moving order for [SYMBOL: ${symbolId}, BUYER: ${buyAccountId}, SELLER: ${sellAccountId}] to back of settlement queue`)
-    orderMatches.push(orderMatch)
-  }
 
-  return setTimeout(() => settleOrderMatchForPair(symbolId), 10)
+    setTimeout(() => orderMatchQueue[symbolId].push(orderMatch), 1000)
+  }
+}
+
+async function balanceAdjustmentsCreatedForAllOtherOrderMatches(rawOrderMatch: OrderMatch, transaction: Transaction) {
+  const allOderMatchesSettledExceptForCurrentOne = await allMatchesSettledExceptForCurrentOne(
+    rawOrderMatch.id!,
+    rawOrderMatch.buyOrderId,
+    transaction,
+  )
+  const symbolDetails = await getCompleteSymbolDetails(rawOrderMatch.symbolId)
+  const balanceAdjustmentsCreatedForAllOrderMatches = await balanceAdjustmentsCreatedForAllPreviousTradeTransactions(
+    rawOrderMatch.buyOrderId,
+    rawOrderMatch.buyAccountId,
+    symbolDetails.quote.id,
+  )
+
+  return !allOderMatchesSettledExceptForCurrentOne || (allOderMatchesSettledExceptForCurrentOne && balanceAdjustmentsCreatedForAllOrderMatches)
 }

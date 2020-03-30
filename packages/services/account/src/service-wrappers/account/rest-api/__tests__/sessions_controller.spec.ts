@@ -12,7 +12,7 @@ import * as orderClientOperations from '@abx-service-clients/order'
 import { ACCOUNT_REST_API_PORT } from '@abx-service-clients/account'
 import * as depositOperations from '@abx-service-clients/deposit'
 
-describe('api:sessions', () => {
+describe.only('api:sessions', () => {
   let app
 
   beforeEach(async () => {
@@ -31,6 +31,7 @@ describe('api:sessions', () => {
   })
 
   it('does not allow a user to log in if their account has been suspended', async () => {
+    process.env.NODE_ENV = 'test-2'
     const { cookie: adminCookie, account, email } = await createAccountAndSession(AccountType.admin)
 
     await request(app)

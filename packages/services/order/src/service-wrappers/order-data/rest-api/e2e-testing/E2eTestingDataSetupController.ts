@@ -1,4 +1,4 @@
-import { Route, Post, Body } from 'tsoa'
+import { Route, Post, Body, Hidden } from 'tsoa'
 import moment from 'moment'
 import { Logger } from '@abx-utils/logging'
 import { getCacheClient, getModel, sequelize } from '@abx-utils/db-connection-utils'
@@ -7,41 +7,54 @@ import { findUsersByEmail, createAccount } from '@abx-service-clients/account'
 import { AccountSetupOrderDetails } from './model'
 import { setupAccountBalances } from '@abx-service-clients/balance'
 import { placeOrder } from '@abx-service-clients/order'
+import { findTradeTransactions } from '../../../../core'
+import { depthPrefix } from '../../../order-matcher/core/order-match-handling/depth/redis'
 
-export const orderTestAccountEmails = ['Order-user-1@abx.com', 'Order-user-1@abx.com']
-const tablesToTruncate = [
-  'order',
-  'balance_adjustment',
-  'stored_reports',
-  'monthly_trade_accumulation',
-  'ohlc_market_data',
-  'depth_mid_price',
-  'order_match_transaction',
-]
+export const orderTestAccountEmails = ['order-user-1@abx.com', 'order-user-2@abx.com']
 
 @Route('test-automation')
 export class E2eTestingDataSetupController {
   private logger = Logger.getInstance('api', 'E2eTestDataCleanerController')
 
   @Post('/orders/data-reset')
-  public async resetOrderData(): Promise<void> {
-    this.logger.info('Resetting order data.')
-    await getCacheClient().flush()
+  @Hidden()
+  public async resetOrderData(@Body() { email, symbolId }): Promise<void> {
+    this.logger.info(`Resetting order data for ${email} and ${symbolId}`)
+    await getCacheClient().delete(`${depthPrefix}${symbolId}`)
     await getModel<OrderQueueStatus>('orderQueueStatus').update({ processing: false, lastProcessed: new Date() } as any, {
-      where: {},
+      where: {
+        symbolId,
+      },
     })
-    this.logger.info('Truncating order data.')
-    await this.truncateOrderData()
-    this.logger.info('Truncated order data.')
+    await this.truncateOrderData(email, symbolId)
+    this.logger.info(`Successfully cleaned order data for ${email} and ${symbolId}`)
   }
 
-  private async truncateOrderData() {
-    await sequelize.query(`TRUNCATE ${tablesToTruncate.map(table => `"${table}"`).join(', ')} RESTART IDENTITY CASCADE;`)
+  private async truncateOrderData(email: string, symbolId: string) {
+    try {
+      const [user] = await findUsersByEmail([email.toLowerCase()])
 
-    const accounts = await findUsersByEmail(orderTestAccountEmails)
+      const { rows: tradeTransactions } = await findTradeTransactions({ where: { accountId: user.accountId } })
+      await sequelize.query(`DELETE FROM "monthly_trade_accumulation" where "accountId"='${user.accountId}'`)
 
-    if (accounts.length > 0) {
-      await sequelize.query(`DELETE FROM trade_transaction where "accountId" in (${accounts.map(({ accountId }) => `"${accountId}"`).join(',')})`)
+      if (tradeTransactions.length > 0) {
+        await sequelize.query(
+          `DELETE FROM "trade_transaction" where "id" in (${tradeTransactions
+            .map(({ id, counterTradeTransactionId }) => `'${id}', '${counterTradeTransactionId}'`)
+            .join(',')})`,
+        )
+      }
+
+      await sequelize.query(`DELETE FROM "order_match_transaction" WHERE "sellAccountId"='${user.accountId}' OR "buyAccountId"='${user.accountId}'`)
+      this.logger.info(`Delete order match transactions for ${email} and ${symbolId}`)
+
+      await sequelize.query(`DELETE FROM "balance_adjustment" WHERE "balanceId" in (SELECT id from "balance" where "accountId"='${user.accountId}')`)
+      this.logger.info(`Delete order match transactions for ${email} and ${symbolId}`)
+
+      await sequelize.query(`DELETE FROM "order" where "accountId"='${user.accountId}'`)
+      this.logger.info(`Delete orders for ${email} and ${symbolId}`)
+    } catch (e) {
+      console.log(e)
     }
   }
 

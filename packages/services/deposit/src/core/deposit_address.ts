@@ -2,14 +2,13 @@ import { Transaction } from 'sequelize'
 import { getEnvironment, CurrencyCode, Currency } from '@abx-types/reference-data'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyManager, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
-import { getModel, getEpicurusInstance } from '@abx-utils/db-connection-utils'
+import { getModel } from '@abx-utils/db-connection-utils'
 import { ValidationError } from '@abx-types/error'
 import { findCryptoCurrencies, isFiatCurrency, findCurrencyForCode, findCurrencyForId } from '@abx-service-clients/reference-data'
 import { DepositAddress } from '@abx-types/deposit'
 import { encryptValue } from '@abx-utils/encryption'
 import { groupBy } from 'lodash'
 import { Account } from '@abx-types/account'
-import { DepositPubSubChannels } from '@abx-service-clients/deposit'
 import { getAllKycOrEmailVerifiedAccountIds } from '@abx-service-clients/account'
 
 const logger = Logger.getInstance('lib', 'deposit_address')
@@ -77,7 +76,7 @@ export async function findKycOrEmailVerifiedDepositAddresses(currencyId: number,
 export async function findOrCreateDepositAddressesForAccount(accountId: string) {
   logger.debug(`Finding existing deposit addresses for account ${accountId}`)
 
-  const existingDepositAddresses = await findDepositAddressesForAccountWithCurrency(accountId)
+  const existingDepositAddresses = await findDepositAddressesForAccount(accountId)
   logger.debug(`Found existing deposit addresses for currency: ${existingDepositAddresses.map(({ currencyId }) => currencyId).join(',')}`)
 
   if (cryptoCurrencies.length === 0) {
@@ -89,10 +88,7 @@ export async function findOrCreateDepositAddressesForAccount(accountId: string) 
 
     logger.debug(`Created missing deposit addresses for currenciy ids: ${missingDepositAddresses.map(d => d.currencyId)}`)
 
-    const epicurus = getEpicurusInstance()
-    epicurus.publish(DepositPubSubChannels.walletAddressesForNewAccountCreated, { accountId })
-
-    return findDepositAddressesForAccountWithCurrency(accountId)
+    return findDepositAddressesForAccount(accountId)
   }
 
   return existingDepositAddresses

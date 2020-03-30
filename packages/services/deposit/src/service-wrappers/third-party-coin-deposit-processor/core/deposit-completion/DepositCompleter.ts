@@ -10,7 +10,6 @@ import { wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 import { findOrCreateKinesisRevenueAccount } from '@abx-service-clients/account'
 import Decimal from 'decimal.js'
 import { getDepositTransactionFeeCurrencyId } from '../utils'
-import { CurrencyCode } from '@abx-types/reference-data'
 
 export class DepositCompleter {
   private readonly logger = Logger.getInstance('third-party-coin-deposit-processor', 'DepositCompleter')
@@ -35,9 +34,9 @@ export class DepositCompleter {
       const depositRequestWhereHoldingsFeeWasRecorded = depositRequests.find(({ holdingsTxFee }) => !!holdingsTxFee)!
 
       const totalAmount = depositRequests.reduce((acc, { amount }) => new Decimal(acc).plus(amount), new Decimal(0)).toNumber()
-      const { code } = await findCurrencyForId(depositAddress.currencyId)
+      const depositCurrency = await findCurrencyForId(depositAddress.currencyId)
 
-      const [, currencyTransaction] = await Promise.all([
+      await Promise.all([
         updateAllDepositRequests(
           depositRequests.map(({ id }) => id!),
           { status: DepositRequestStatus.completed },
@@ -54,27 +53,18 @@ export class DepositCompleter {
 
       await this.triggerBalanceUpdates(
         depositRequestWhereHoldingsFeeWasRecorded.id!,
-        depositAddress,
+        { ...depositAddress, currency: depositCurrency },
         totalAmount,
         depositRequestWhereHoldingsFeeWasRecorded.holdingsTxFee!,
-        currencyTransaction.id!,
-        code,
       )
 
-      return sendDepositConfirmEmail(depositAddress.accountId, totalAmount, code)
+      return sendDepositConfirmEmail(depositAddress.accountId, totalAmount, depositCurrency.code)
     })
   }
 
-  private async triggerBalanceUpdates(
-    depositRequestId: number,
-    { currencyId, accountId }: DepositAddress,
-    amount: number,
-    holdingsTxFee: number,
-    currencyTransactionId: number,
-    depositCurrencyCode: CurrencyCode,
-  ) {
+  private async triggerBalanceUpdates(depositRequestId: number, { accountId, currency }: DepositAddress, amount: number, holdingsTxFee: number) {
     const kinesisRevenueAccount = await findOrCreateKinesisRevenueAccount()
-    const transactionFeeCurrencyId = await getDepositTransactionFeeCurrencyId(currencyId, depositCurrencyCode)
+    const transactionFeeCurrencyId = await getDepositTransactionFeeCurrencyId(currency!.id, currency!.code)
 
     return triggerMultipleBalanceChanges([
       {
@@ -82,8 +72,8 @@ export class DepositCompleter {
         payload: {
           accountId,
           amount,
-          currencyId,
-          sourceEventId: currencyTransactionId!,
+          currencyId: currency!.id,
+          sourceEventId: depositRequestId!,
           sourceEventType: SourceEventType.currencyDeposit,
         },
       },
