@@ -1,5 +1,5 @@
 import { getModel } from '@abx-utils/db-connection-utils'
-import { Currency, CurrencyCode } from '@abx-types/reference-data'
+import { Currency, CurrencyCode, FeatureFlag } from '@abx-types/reference-data'
 import { isCryptoCurrency } from '@abx-service-clients/reference-data'
 import { getFeatureFlags } from '../config'
 import { isBoolean } from 'util'
@@ -9,22 +9,25 @@ export async function findCurrenciesByAccountId(accountId: string): Promise<Curr
   const allCurrencies = await fetchAllCurrencies()
   const featureFlags = await getFeatureFlags()
 
-  return allCurrencies.filter((currency) => {
+  return allCurrencies.filter((currency) => isAccountEligibleForCurrency(accountId, currency.code, featureFlags))
+}
+
+function isAccountEligibleForCurrency(accountId: string, 
+  currency: CurrencyCode, featureFlags: FeatureFlag[]) : boolean {
     // if the currency code exists in the feature flag
     const featureFlagForCurrency = featureFlags
-      .find(flag => flag.name.toString() === currency.code.toString())
+    .find(flag => flag.name.toString() === currency.toString())
     if (!!featureFlagForCurrency) {
-      // either the enabled value is boolean or
-      // we check if enabled array contains the current accountId
-      return isBoolean(featureFlagForCurrency.enabled) ? 
-        featureFlagForCurrency.enabled :
-        featureFlagForCurrency.enabled
-          .some(enabledAccount => enabledAccount === accountId)
+    // either the enabled value is boolean or
+    // we check if enabled array contains the current accountId
+    return isBoolean(featureFlagForCurrency.enabled) ? 
+      featureFlagForCurrency.enabled :
+      featureFlagForCurrency.enabled
+        .some(enabledAccount => enabledAccount === accountId)
     }
 
     return true
-  })
-}
+  }
 
 export async function findAllCurrencyCodes(): Promise<CurrencyCode[]> {
   const currencies = await fetchAllCurrencies()

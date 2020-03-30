@@ -9,7 +9,7 @@ import { updateOrCreateExchangeConfig } from '../../core'
 import * as symbols from '../../core/symbols/symbol_in_memory_cache'
 import * as currencies from '../../core/symbols/currency_in_memory_cache'
 import { updateCurrencyEnabledStatus, updateSymbolsForCurrencyWithStatus } from '../test_utils'
-const rewire = require("rewire")
+import rewire from 'rewire'
 const symbolsCache = rewire('../../core/symbols/symbol_in_memory_cache')
 
 describe('api:symbols', () => {

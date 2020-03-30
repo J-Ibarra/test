@@ -5,7 +5,7 @@ import { CurrencyCode } from '@abx-types/reference-data'
 import { getAllCompleteSymbolDetails, getAllSymbolsIncludingCurrency, getSymbolsForQuoteCurrency, getSymbolWithCurrencyPair } from '../../core'
 import * as currencies from '../../core/symbols/currency_in_memory_cache'
 import * as symbols from '../../core/symbols/symbol_in_memory_cache'
-const rewire = require("rewire")
+import rewire from 'rewire'
 const symbolsCache = rewire('../../core/symbols/symbol_in_memory_cache')
 
 describe('find_symbols', () => {

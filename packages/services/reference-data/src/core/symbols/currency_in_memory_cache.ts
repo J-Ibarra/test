@@ -1,15 +1,22 @@
 import { isEmpty } from 'lodash'
-import { getModel } from '@abx-utils/db-connection-utils'
+import { getModel, MemoryCache } from '@abx-utils/db-connection-utils'
 import { Currency, CurrencyCode } from '@abx-types/reference-data'
 
-let currencyInMemoryCache: Currency[] = []
+const memoryCache = MemoryCache.getInstance()
+const CURRENCIES_KEY = 'exchange:currencies'
 
 export async function fetchAllCurrencies(): Promise<Currency[]> {
-  if (isEmpty(currencyInMemoryCache)) {
-    currencyInMemoryCache = await findCurrencies()
+  let cachedCurrencies = memoryCache.get<Currency[]>(CURRENCIES_KEY)
+  if (isEmpty(cachedCurrencies)) {
+    cachedCurrencies = await findCurrencies()
+    memoryCache.set<Currency[]>({
+      key: CURRENCIES_KEY,
+      ttl: 10_000,
+      val: cachedCurrencies
+    })
   }
 
-  return currencyInMemoryCache
+  return cachedCurrencies!
 }
 
 export async function findCurrencies(): Promise<Currency[]> {
@@ -20,9 +27,19 @@ export async function findCurrencies(): Promise<Currency[]> {
 }
 
 export async function addCurrencyToCache(currency: Currency): Promise<void> {
-  currencyInMemoryCache = currencyInMemoryCache.concat(currency)
+  const currencies = memoryCache.get<Currency[]>(CURRENCIES_KEY) || []
+  memoryCache.set<Currency[]>({
+    key: CURRENCIES_KEY,
+    ttl: 10_000,
+    val: currencies.concat([currency])
+  })
 }
 
 export async function deleteCurrencyFromCache(code: CurrencyCode): Promise<void> {
-  currencyInMemoryCache = currencyInMemoryCache.filter(({ code: persistedCurrencyCode }) => persistedCurrencyCode !== code)
+  const currencies = memoryCache.get<Currency[]>(CURRENCIES_KEY) || []
+  memoryCache.set<Currency[]>({
+    key: CURRENCIES_KEY,
+    ttl: 10_000,
+    val: currencies.filter(({ code: persistedCurrencyCode }) => persistedCurrencyCode !== code)
+  })
 }
