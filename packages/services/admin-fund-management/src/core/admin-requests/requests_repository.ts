@@ -2,6 +2,7 @@ import { Transaction } from 'sequelize'
 import { sequelize, getModel, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { AdminRequest, CreateAdminRequestParams } from '@abx-service-clients/admin-fund-management'
 import { getNextGlobalTransactionId } from '../models/global_transaction_id'
+import { findUsersByEmail, findAccountById } from '@abx-service-clients/account'
 
 export async function findAllAdminRequests(transaction?: Transaction): Promise<AdminRequest[]> {
   return wrapInTransaction(sequelize, transaction, async t => {
@@ -69,6 +70,24 @@ export async function saveAdminRequest(adminRequest: CreateAdminRequestParams, t
       })
 
       return createdAdminRequest.get()
+    } catch (e) {
+      console.log(JSON.stringify(e))
+      throw e
+    }
+  })
+}
+
+export async function deleteAllRequestsByEmail(email: string, transaction?: Transaction): Promise<void> {
+  return wrapInTransaction(sequelize, transaction, async t => {
+    try {
+      const [user] = await findUsersByEmail([email.toLowerCase()])
+
+      const userAccount = await findAccountById(user.accountId)
+
+      await getModel<AdminRequest>('admin_request').destroy({ where: { hin: userAccount?.hin! } }), {
+        transaction: t,
+      }
+
     } catch (e) {
       console.log(JSON.stringify(e))
       throw e

@@ -1,4 +1,4 @@
-import { Route, Post, Body } from 'tsoa'
+import { Route, Post, Body, Hidden } from 'tsoa'
 import moment from 'moment'
 import { Logger } from '@abx-utils/logging'
 import { getCacheClient, getModel, sequelize } from '@abx-utils/db-connection-utils'
@@ -17,20 +17,20 @@ export class E2eTestingDataSetupController {
   private logger = Logger.getInstance('api', 'E2eTestDataCleanerController')
 
   @Post('/orders/data-reset')
+  @Hidden()
   public async resetOrderData(@Body() { email, symbolId }): Promise<void> {
-    this.logger.info('Resetting order data.')
+    this.logger.info(`Resetting order data for ${email} and ${symbolId}`)
     await getCacheClient().delete(`${depthPrefix}${symbolId}`)
     await getModel<OrderQueueStatus>('orderQueueStatus').update({ processing: false, lastProcessed: new Date() } as any, {
       where: {
         symbolId,
       },
     })
-    this.logger.info('Truncating order data.')
-    await this.truncateOrderData(email)
-    this.logger.info('Truncated order data.')
+    await this.truncateOrderData(email, symbolId)
+    this.logger.info(`Successfully cleaned order data for ${email} and ${symbolId}`)
   }
 
-  private async truncateOrderData(email: string) {
+  private async truncateOrderData(email: string, symbolId: string) {
     try {
       const [user] = await findUsersByEmail([email.toLowerCase()])
 
@@ -46,9 +46,13 @@ export class E2eTestingDataSetupController {
       }
 
       await sequelize.query(`DELETE FROM "order_match_transaction" WHERE "sellAccountId"='${user.accountId}' OR "buyAccountId"='${user.accountId}'`)
+      this.logger.info(`Delete order match transactions for ${email} and ${symbolId}`)
 
       await sequelize.query(`DELETE FROM "balance_adjustment" WHERE "balanceId" in (SELECT id from "balance" where "accountId"='${user.accountId}')`)
+      this.logger.info(`Delete order match transactions for ${email} and ${symbolId}`)
+
       await sequelize.query(`DELETE FROM "order" where "accountId"='${user.accountId}'`)
+      this.logger.info(`Delete orders for ${email} and ${symbolId}`)
     } catch (e) {
       console.log(e)
     }

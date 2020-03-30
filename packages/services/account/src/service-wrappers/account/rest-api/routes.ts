@@ -152,6 +152,7 @@ const models: TsoaRoute.Models = {
       "status": { "ref": "AccountStatus", "required": true },
       "enableMfa": { "dataType": "boolean" },
       "hasTriggeredKycCheck": { "dataType": "boolean" },
+      "suspended": { "dataType": "boolean" },
     },
   },
 };
@@ -715,6 +716,25 @@ export function RegisterRoutes(app: express.Express) {
 
 
       const promise = controller.getAddressDetailsByPublicKey.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.get('/api/test-automation/accounts/nonce/:publicKey',
+    function(request: any, response: any, next: any) {
+      const args = {
+        publicKey: { "in": "path", "name": "publicKey", "required": true, "dataType": "string" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new E2eTestingDataSetupController();
+
+
+      const promise = controller.getNonce.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
 

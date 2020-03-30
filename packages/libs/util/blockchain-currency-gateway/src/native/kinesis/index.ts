@@ -252,6 +252,7 @@ export class Kinesis implements OnChainCurrencyGateway {
       }
     } catch (e) {
       logger.error(`An error has occurred while submitting a transaction: ${JSON.stringify(e.data)}`)
+      logger.error(`Error result codes: ${JSON.stringify(e.data.extras.result_codes)}`)
       throw e
     }
   }

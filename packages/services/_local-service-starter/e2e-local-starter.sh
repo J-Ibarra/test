@@ -22,10 +22,30 @@ export KVT_INFURA_PROJECT_ID='c2ea3bc13d094d3a824322a7628f4882'
 export KVT_FEE_HOLDINGS_SECRET='B7AFD4671093505A4C1197099270F77532DF63959676824E88B91C86688C8CFA'
 export ETHERSCAN_API_DOMAIN_ROOT='ropsten'
 
-kill $(ps aux | grep -i ngrok | awk '{print $2}')
-npm run start-ngrok:e2e-local
-sleep 2
-PROXY_URL=`curl --silent --show-error http://localhost:4040/api/tunnels | sed -nE 's/.*public_url":"https:..([^"]*).*/\1/p'`
+export ENV=integration
+export API_PORT=3031
+export EXCHANGE_DB_HOST=localhost
+export EXCHANGE_DB_PORT=6432
+export EXCHANGE_DB_USERNAME=postgres
+export EXCHANGE_DB_NAME=kinesis_exchange
+export EXCHANGE_DB_PASSWORD=postgres
+export DEBIT_CARD_DB_HOST=localhost
+export DEBIT_CARD_DB_PORT=5433
+export DEBIT_CARD_DB_USERNAME=postgres
+export DEBIT_CARD_DB_NAME=db
+export DEBIT_CARD_DB_PASSWORD=postgres
+export REDIS_HOST=localhost
+export REDIS_PORT=7379
+export UI_DOMAIN='localhost:1234'
+export LOG_LEVEL=debug
+export COOKIE_KEY='7yH*clwZeD0Pq&WPSYE*Q!1x9HafSs@X'
+export COOKIE_IV='67Jo*Jip5C8m6P%n'
+export JWT_SECRET=foo
+export CONTIS_USERNAME=KINEUR_beta
+export CONTIS_PASSWORD=myaqcd34
+export CONTIS_API_ROOT=https://sandboxapi.contis.com
+export CONTIS_CARD_ORDER_FEE=5
+export CONTIS_CARD_ORDER_VALIDATION_SLA=5
 
 # All the variables required for running deposits/withdrawals locally are listed here
 # These variables will allow connecting to and consuming transaction notification messages from SQS
@@ -48,5 +68,10 @@ export DEPOSIT_HOLDINGS_TRANSACTION_CONFIRMATION_CALLBACK_URL="https://$PROXY_UR
 # export WITHDRAWAL_TRANSACTION_SENT_QUEUE_URL='https://sqs.ap-southeast-2.amazonaws.com/884998542479/int-kbe-withdrawal-transaction-sent.fifo'
 # export WITHDRAWAL_TRANSACTION_COMPLETION_PENDING_QUEUE_URL='https://sqs.ap-southeast-2.amazonaws.com/884998542479/int-kbe-withdrawal-transaction-completion-pending'
 export WITHDRAWAL_TRANSACTION_CONFIRMATION_CALLBACK_URL="https://$PROXY_URL/api/webhooks/crypto/withdrawals/confirmations"
+
+kill $(ps aux | grep -i ngrok | awk '{print $2}')
+npm run start-ngrok:e2e-local
+sleep 2
+PROXY_URL=`curl --silent --show-error http://localhost:4040/api/tunnels | sed -nE 's/.*public_url":"https:..([^"]*).*/\1/p'`
 
 npm run start

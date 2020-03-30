@@ -194,6 +194,25 @@ export function RegisterRoutes(app: express.Express) {
       const promise = controller.getDepositAddress.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
+  app.post('/api/test-automation/deposit/vault-address/remove',
+    function(request: any, response: any, next: any) {
+      const args = {
+        undefined: { "in": "body", "required": true, "dataType": "any" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new E2eTestingController();
+
+
+      const promise = controller.removeVaultAddress.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
 
   function authenticateMiddleware(security: TsoaRoute.Security[] = []) {
     return (request: any, _response: any, next: any) => {
