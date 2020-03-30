@@ -27,6 +27,7 @@ export class WalletsController extends Controller {
       return wallets.map(wallet => ({
         publicKey: wallet.address || wallet.publicKey,
         currency: { id: wallet.currencyId, code: currencyIdToCurrency.get(wallet.currencyId) },
+        transactionTrackingActivated: wallet.transactionTrackingActivated!,
       }))
     } catch (error) {
       this.logger.error(`Error fetching / creating new deposit addresses: ${error.message}`)
