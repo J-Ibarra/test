@@ -57,11 +57,21 @@ const formResult = (
   const directionIsSell = tradeTransaction.direction === OrderDirection.sell
   const feeIsTakenFromBase = tradeSymbol.base.code === tradeSymbol.fee.code
 
-  const fee = new Decimal(tradeTransaction.fee).toDP(feeCurrencyBoundary.maxDecimals, Decimal.ROUND_DOWN).toNumber()
-
   const { tradeAmount, preferredCurrencyAmount } = selectedCurrencyIsBase
-    ? calculateTradeAndPreferredCurrencyAmountsForBaseCurrency(feeIsTakenFromBase, directionIsSell, fee, tradeSymbol, tradeTransaction)
-    : calculateTradeAndPreferredCurrencyAmountsForQuoteCurrency(feeIsTakenFromBase, directionIsSell, fee, tradeSymbol, tradeTransaction)
+    ? calculateTradeAndPreferredCurrencyAmountsForBaseCurrency(
+        feeIsTakenFromBase,
+        directionIsSell,
+        tradeSymbol,
+        tradeTransaction,
+        feeCurrencyBoundary,
+      )
+    : calculateTradeAndPreferredCurrencyAmountsForQuoteCurrency(
+        feeIsTakenFromBase,
+        directionIsSell,
+        tradeSymbol,
+        tradeTransaction,
+        feeCurrencyBoundary,
+      )
 
   const memo = `${tradeSymbol.base.code} ${directionIsSell ? 'sold for' : 'purchased with'} ${tradeSymbol.quote.code}`
   const direction = tradeAmount < 0 ? TransactionHistoryDirection.outgoing : TransactionHistoryDirection.incoming
@@ -72,16 +82,19 @@ const formResult = (
 const calculateTradeAndPreferredCurrencyAmountsForBaseCurrency = (
   feeIsTakenFromBase: boolean,
   directionIsSell: boolean,
-  fee: number,
   tradeSymbol: SymbolPair,
   tradeTransaction: TradeTransaction,
+  feeCurrencyBoundary: CurrencyBoundary,
 ) => {
   const tradeAmount = directionIsSell ? -tradeTransaction.amount : tradeTransaction.amount
   logger.info(`Trade amount ${tradeAmount}`)
   let tradeAmountAfterFeeTaken = tradeAmount
 
   if (feeIsTakenFromBase) {
-    tradeAmountAfterFeeTaken = new Decimal(tradeAmount).minus(fee).toNumber()
+    tradeAmountAfterFeeTaken = new Decimal(tradeAmount)
+      .minus(tradeTransaction.fee)
+      .toDP(feeCurrencyBoundary.maxDecimals, Decimal.ROUND_DOWN)
+      .toNumber()
   }
 
   let fiatConversionRate
@@ -100,9 +113,9 @@ const calculateTradeAndPreferredCurrencyAmountsForBaseCurrency = (
 const calculateTradeAndPreferredCurrencyAmountsForQuoteCurrency = (
   feeIsTakenFromBase: boolean,
   directionIsSell: boolean,
-  fee: number,
   tradeSymbol: SymbolPair,
   tradeTransaction: TradeTransaction,
+  feeCurrencyBoundary: CurrencyBoundary,
 ) => {
   const price = tradeTransaction.matchPrice
   const tradeAmountDecimal = new Decimal(tradeTransaction.amount)
@@ -112,12 +125,14 @@ const calculateTradeAndPreferredCurrencyAmountsForQuoteCurrency = (
     tradeAmount = directionIsSell
       ? tradeAmountDecimal
           .times(price)
-          .minus(fee)
+          .minus(tradeTransaction.fee)
+          .toDP(feeCurrencyBoundary.maxDecimals, Decimal.ROUND_DOWN)
           .toNumber()
       : tradeAmountDecimal
           .times(-1)
           .times(price)
-          .minus(fee)
+          .minus(tradeTransaction.fee)
+          .toDP(feeCurrencyBoundary.maxDecimals, Decimal.ROUND_DOWN)
           .toNumber()
   } else {
     tradeAmount = directionIsSell
