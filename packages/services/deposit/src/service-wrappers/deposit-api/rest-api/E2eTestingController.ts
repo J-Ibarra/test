@@ -54,9 +54,6 @@ export class E2eTestingController {
 
     const currency: OnChainCurrencyGateway = this.currencyManager.getCurrencyFromTicker(currencyCode)
 
-    const pK = await (currency as Kinesis)['getAddressFromPrivateKey'](privateKey)
-    this.logger.info(pK)
-
     await currency.transferTo({
       privateKey,
       amount: value,
