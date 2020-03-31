@@ -9,12 +9,14 @@ export const getDailyChange = async (symbolIds: string[]): Promise<Map<string, n
 
 const calculateDailyChangeForSymbol = async (symbolId: string): Promise<[string, number]> => {
   let allMidPrices = MemoryCache.getInstance().getList<number>(PRICE_CHANGE_KEY(symbolId))
+
   if (isEmpty(allMidPrices)) {
     allMidPrices = [await findLatestMidPriceForSymbol(symbolId)]
   }
 
   const latestMidPrice = getLatestMidPrice(symbolId, allMidPrices)
   const oldestMidPrice = getOldestMidPrice(symbolId, allMidPrices)
+
   const dailyChangeForSymbol = latestMidPrice === oldestMidPrice ? latestMidPrice / 100 : (latestMidPrice - oldestMidPrice) / oldestMidPrice
 
   return [symbolId, dailyChangeForSymbol]
