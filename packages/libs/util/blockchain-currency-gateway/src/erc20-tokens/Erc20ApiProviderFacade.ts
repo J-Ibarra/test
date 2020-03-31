@@ -16,7 +16,7 @@ export class Erc20ApiProviderFacade implements BlockchainApiProviderFacade {
   constructor(private currency: CurrencyCode) {
     this.cryptoApiProviderProxyEth = new CryptoApisProviderProxyEth(
       CurrencyCode.ethereum,
-      mainnetEnvironments.includes(process.env.NODE_ENV as Environment) ? ENetworkTypes.BTC_MAINNET : ENetworkTypes.BTC_TESTNET,
+      mainnetEnvironments.includes(process.env.NODE_ENV as Environment) ? ENetworkTypes.MAINNET : ENetworkTypes.ETH_TESTNET,
       process.env.CRYPTO_APIS_TOKEN!,
     )
   }

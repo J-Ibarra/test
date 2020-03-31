@@ -20,7 +20,7 @@ describe.skip('BitcoinTransactionDispatcher:integration', () => {
 
   it('createTransaction', async () => {
     try {
-      const cryptoApiProxy = new BtcCryptoApisProviderProxy(CurrencyCode.bitcoin, ENetworkTypes.BTC_TESTNET, 'xxx-INSERT-CRYPTO-API-TOKEN-HERE-xxxx')
+      const cryptoApiProxy = new BtcCryptoApisProviderProxy(CurrencyCode.bitcoin, ENetworkTypes.TESTNET, 'xxx-INSERT-CRYPTO-API-TOKEN-HERE-xxxx')
       const bitcoinTransactionDispatcher = new BitcoinTransactionDispatcher(cryptoApiProxy)
 
       const result = await bitcoinTransactionDispatcher.createTransaction({

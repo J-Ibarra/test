@@ -19,7 +19,7 @@ export class BitcoinApiProviderFacade implements BlockchainApiProviderFacade {
   constructor() {
     this.cryptoApiProviderProxy = new BtcCryptoApisProviderProxy(
       CurrencyCode.bitcoin,
-      mainnetEnvironments.includes(process.env.NODE_ENV as Environment) ? ENetworkTypes.BTC_MAINNET : ENetworkTypes.BTC_TESTNET,
+      mainnetEnvironments.includes(process.env.NODE_ENV as Environment) ? ENetworkTypes.MAINNET : ENetworkTypes.TESTNET,
       process.env.CRYPTO_APIS_TOKEN!,
     )
 

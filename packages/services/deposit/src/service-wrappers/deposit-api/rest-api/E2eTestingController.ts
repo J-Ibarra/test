@@ -14,6 +14,7 @@ const caClient = new CryptoApis(process.env.CRYPTO_APIS_TOKEN!)
 caClient.BC.ETH.switchNetwork(caClient.BC.ETH.NETWORKS.ROPSTEN)
 
 @Route('test-automation/deposit')
+@Hidden()
 export class E2eTestingController {
   private logger = Logger.getInstance('api', 'E2eTestingController')
   private currencyManager = new CurrencyManager(getEnvironment(), [CurrencyCode.kau, CurrencyCode.kag, CurrencyCode.kvt])
@@ -29,6 +30,7 @@ export class E2eTestingController {
   }
 
   @Post('/transaction/btc')
+  @Hidden()
   public async createTransactionBTC(@Body() { fromAddress, toAddress, value, wif }): Promise<void> {
     this.logger.info('Creating new BTC transaction.')
 

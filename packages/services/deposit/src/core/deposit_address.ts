@@ -29,7 +29,7 @@ export async function generateNewDepositAddress(accountId: string, currency: OnC
 
   let encryptedWif
   // Third party coins will have address and WIF
-  if (!!cryptoAddress.address) {
+  if (!!cryptoAddress.wif) {
     encryptedWif = await encryptValue(cryptoAddress.wif!)
   }
 

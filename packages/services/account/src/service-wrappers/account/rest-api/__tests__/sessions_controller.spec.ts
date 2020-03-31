@@ -12,7 +12,7 @@ import * as orderClientOperations from '@abx-service-clients/order'
 import { ACCOUNT_REST_API_PORT } from '@abx-service-clients/account'
 import * as depositOperations from '@abx-service-clients/deposit'
 
-describe.only('api:sessions', () => {
+describe('api:sessions', () => {
   let app
 
   beforeEach(async () => {
