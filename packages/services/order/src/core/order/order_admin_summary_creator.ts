@@ -4,6 +4,7 @@ import { buildTradeTransactionOrderAggregation } from '../transaction'
 import { Order, OrderAdminSummary, OrderType } from '@abx-types/order'
 import { findOrders } from './find_orders'
 import { findAccountWithUserDetails, findAccountsByIdWithUserDetails } from '@abx-service-clients/account'
+import { SymbolPairStateFilter } from '@abx-types/reference-data'
 
 interface OrderWithOwnerAccount extends Order {
   account: Account
@@ -47,7 +48,7 @@ export async function getAllOrdersAdminSummary(): Promise<OrderAdminSummary[]> {
 
 export async function enrichWithTransactionDetails(orders: OrderWithOwnerAccount[]): Promise<OrderAdminSummary[]> {
   const orderIdToTradeTransactionAggregation = await buildTradeTransactionAggregation()
-  const symbols = await getAllCompleteSymbolDetails()
+  const symbols = await getAllCompleteSymbolDetails(SymbolPairStateFilter.all)
   const symbolIdToSymbol = symbols.reduce((acc, symbol) => acc.set(symbol.id, symbol), new Map())
 
   return orders.map((order: OrderWithOwnerAccount) => ({

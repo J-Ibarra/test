@@ -5,8 +5,8 @@ import { REFERENCE_DATA_REST_API_PORT } from '../boundaries'
 
 const internalApiRequestDispatcher = new InternalApiRequestDispatcher(REFERENCE_DATA_REST_API_PORT)
 
-export function getAllCompleteSymbolDetails(): Promise<SymbolPair[]> {
-  return fetchSymbolsIfInMemoryCacheExpired()
+export function getAllCompleteSymbolDetails(state: SymbolPairStateFilter = SymbolPairStateFilter.enabled): Promise<SymbolPair[]> {
+  return fetchSymbolsIfInMemoryCacheExpired(state)
 }
 
 export async function getAllSymbolPairSummaries(state: SymbolPairStateFilter = SymbolPairStateFilter.enabled): Promise<SymbolPairSummary[]> {
