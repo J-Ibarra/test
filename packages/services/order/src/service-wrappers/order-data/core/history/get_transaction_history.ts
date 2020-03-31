@@ -1,5 +1,5 @@
 import { Logger } from '@abx-utils/logging'
-import { CurrencyCode, Currency } from '@abx-types/reference-data'
+import { CurrencyCode, Currency, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { TradeTransaction, TransactionDirection, CurrencyTransaction } from '@abx-types/order'
 import { TransactionHistory } from './model'
 import { formTradeTransactionToHistory } from './'
@@ -13,7 +13,10 @@ const logger = Logger.getInstance('transaction', 'transaction_history')
 
 export async function getAccountTransactionHistory(accountId: string, selectedCurrencyCode: CurrencyCode): Promise<TransactionHistory[]> {
   logger.debug(`Creating transaction history for ${accountId}`)
-  const [allSymbols, allCurrencies] = await Promise.all([getAllCompleteSymbolDetails(), findAllCurrencies()])
+  const [allSymbols, allCurrencies] = await Promise.all([
+    getAllCompleteSymbolDetails(SymbolPairStateFilter.all),
+    findAllCurrencies(SymbolPairStateFilter.all),
+  ])
   const allCurrencyBoundaries = await getAllCurrencyBoundaries()
   const selectedSymbols = allSymbols.filter(symbol => symbol.base.code === selectedCurrencyCode || symbol.quote.code === selectedCurrencyCode)
 
