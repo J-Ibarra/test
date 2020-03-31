@@ -20,12 +20,12 @@ export class E2eTestingController {
 
   @Post('/transaction/eth')
   @Hidden()
-  public async createTransactionETH(@Body() { fromAddress, toAddress, value, privateKey }): Promise<void> {
+  public async createTransactionETH(@Body() { fromAddress, toAddress, value, privateKey, nonce }): Promise<void> {
     this.logger.info('Creating new ETH transaction.')
     const gasPrice = 21000000000
     const gasLimit = 21000
 
-    return caClient.BC.ETH.transaction.newTransactionWithPrivateKey(fromAddress, toAddress, privateKey, value, gasPrice, gasLimit)
+    return caClient.BC.ETH.transaction.newTransactionWithPrivateKey(fromAddress, toAddress, privateKey, value, gasPrice, gasLimit, { nonce })
   }
 
   @Post('/transaction')
