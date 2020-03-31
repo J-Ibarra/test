@@ -8,13 +8,13 @@ import { sendAsyncChangeMessage } from '@abx-utils/async-message-publisher'
 import { EndpointInvocationUtils } from '../api-provider/EndpointInvocationUtils'
 import { IConfirmedTransaction, BtcCryptoApisProviderProxy } from '../api-provider/crypto-apis'
 import * as bitcoin from 'bitcoinjs-lib'
-import { mainnetEnvironments } from './BitcoinBlockchainFacade'
+import { mainnetEnvironments } from './BitcoinApiProviderFacade'
 import { Environment } from '@abx-types/reference-data'
 import { BitcoinTransactionFeeEstimator } from './BitcoinTransactionFeeEstimator'
 import { BitcoinTransactionCreationUtils } from './BitcoinTransactionCreationUtils'
 
 export class BitcoinTransactionDispatcher {
-  private readonly LOGGER = Logger.getInstance('blockchain-currency-gateway', 'BitcoinBlockchainFacade')
+  private readonly LOGGER = Logger.getInstance('blockchain-currency-gateway', 'BitcoinApiProviderFacade')
 
   private readonly bitcoinTransactionFeeEstimator: BitcoinTransactionFeeEstimator
   private readonly network = mainnetEnvironments.includes(process.env.NODE_ENV as Environment) ? bitcoin.networks.bitcoin : bitcoin.networks.testnet

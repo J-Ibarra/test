@@ -2,13 +2,13 @@ import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse, Exchan
 import { CurrencyCode } from '@abx-types/reference-data'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { RuntimeError } from '@abx-types/error'
-import { BitcoinBlockchainFacade } from './BitcoinBlockchainFacade'
+import { BitcoinApiProviderFacade } from './BitcoinApiProviderFacade'
 import { CryptoAddress, Transaction } from '../model'
 import { DepositAddress } from '@abx-types/deposit'
 import { Logger } from '@abx-utils/logging'
 import { decryptValue } from '@abx-utils/encryption'
 
-/** Adapting the {@link BitcoinBlockchainFacade} to {@link OnChainCurrencyGateway} for backwards-compatibility. */
+/** Adapting the {@link BitcoinApiProviderFacade} to {@link OnChainCurrencyGateway} for backwards-compatibility. */
 export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGateway {
   // Should use 0 when allowed by CRYPTO API
   private readonly UNCONFIRMED_TRANSACTIONS = 1
@@ -16,10 +16,10 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
   ticker = CurrencyCode.bitcoin
   logger = Logger.getInstance('blockchain-currency-gateway', 'BitcoinOnChainCurrencyGatewayAdapter')
 
-  private bitcoinBlockchainFacade: BitcoinBlockchainFacade
+  private bitcoinBlockchainFacade: BitcoinApiProviderFacade
 
   constructor() {
-    this.bitcoinBlockchainFacade = new BitcoinBlockchainFacade()
+    this.bitcoinBlockchainFacade = new BitcoinApiProviderFacade()
   }
 
   getId(): Promise<number> {

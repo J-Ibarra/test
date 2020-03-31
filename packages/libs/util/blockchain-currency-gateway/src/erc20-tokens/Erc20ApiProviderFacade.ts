@@ -7,7 +7,7 @@ import { TransactionResponse } from '../currency_gateway'
 
 export const mainnetEnvironments = [Environment.production]
 
-export class Erc20BlockchainFacade implements BlockchainApiProviderFacade {
+export class Erc20ApiProviderFacade implements BlockchainApiProviderFacade {
   private readonly LOGGER = Logger.getInstance('blockchain-currency-gateway', 'EthereumBlockchainFacade')
   private readonly DEFAULT_ERC20_TRANSACTION_CONFIRMATIONS = 1
 

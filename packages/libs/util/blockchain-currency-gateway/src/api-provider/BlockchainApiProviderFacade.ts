@@ -1,7 +1,7 @@
 import { CreateTransactionPayload, CryptoAddress, Transaction } from '../model'
 import { TransactionResponse } from '../currency_gateway'
 import { CurrencyCode } from '@abx-types/reference-data'
-import { BitcoinBlockchainFacade } from '../bitcoin/BitcoinBlockchainFacade'
+import { BitcoinApiProviderFacade } from '../bitcoin/BitcoinApiProviderFacade'
 import { IAddressTransaction } from './crypto-apis'
 
 /** The main mechanism for conducting blockchain operations. */
@@ -61,7 +61,7 @@ export abstract class BlockchainApiProviderFacade {
       let existingFacade = this.currencyFacades.get(currency)
 
       if (!existingFacade) {
-        existingFacade = new BitcoinBlockchainFacade()
+        existingFacade = new BitcoinApiProviderFacade()
         this.currencyFacades.set(currency, existingFacade)
       }
 

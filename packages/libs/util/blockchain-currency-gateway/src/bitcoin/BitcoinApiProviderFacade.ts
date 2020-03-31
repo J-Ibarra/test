@@ -10,8 +10,8 @@ import { BtcCryptoApisProviderProxy } from '../api-provider'
 
 export const mainnetEnvironments = [Environment.production]
 
-export class BitcoinBlockchainFacade implements BlockchainApiProviderFacade {
-  private readonly LOGGER = Logger.getInstance('blockchain-currency-gateway', 'BitcoinBlockchainFacade')
+export class BitcoinApiProviderFacade implements BlockchainApiProviderFacade {
+  private readonly LOGGER = Logger.getInstance('blockchain-currency-gateway', 'BitcoinApiProviderFacade')
 
   private cryptoApiProviderProxy: BtcCryptoApisProviderProxy
   private bitcoinTransactionDispatcher: BitcoinTransactionDispatcher

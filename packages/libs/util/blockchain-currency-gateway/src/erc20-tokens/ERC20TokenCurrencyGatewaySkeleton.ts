@@ -9,7 +9,7 @@ import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { CurrencyCode, Environment } from '@abx-types/reference-data'
 import { Logger } from '@abx-utils/logging'
 import { decryptValue } from '@abx-utils/encryption'
-import { Erc20BlockchainFacade } from './Erc20BlockchainFacade'
+import { Erc20ApiProviderFacade } from './Erc20ApiProviderFacade'
 
 import { OnChainCurrencyGateway, TransactionResponse, DepositTransaction } from '..'
 
@@ -40,7 +40,7 @@ export abstract class ERC20TokenCurrencyGatewaySkeleton implements OnChainCurren
     this.contract.options.address = this.getContractAddress(env)
 
     this.logger = Logger.getInstance('blockchain-currency-gateway', `ERC20TokenCurrencyGateway ${this.ticker.toLocaleLowerCase()}`)
-    this.erc20BlockchainFacade = new Erc20BlockchainFacade(this.ticker)
+    this.erc20BlockchainFacade = new Erc20ApiProviderFacade(this.ticker)
   }
 
   abstract getWeb3Config(env: Environment): any
