@@ -39,7 +39,7 @@ export class CurrencyManager {
 
       [CurrencyCode.kvt]: new KvtOnChainCurrencyGateway(env),
       [CurrencyCode.tether]: new TetherOnChainCurrencyGateway(env),
-      [CurrencyCode.tether]: new YeenusTestTokenOnChainCurrencyGateway(env),
+      [CurrencyCode.yeenus]: new YeenusTestTokenOnChainCurrencyGateway(env),
     }
 
     this.currencies = Object.entries(currencies)
