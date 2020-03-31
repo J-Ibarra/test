@@ -41,7 +41,7 @@ describe('form_withdrawal_currency_transaction', () => {
   beforeEach(() => sinon.restore())
 
   describe('buildWithdrawalTransactionHistory', () => {
-    it.only('should find all withdrawal requests and the fees for each of them', async () => {
+    it('should find all withdrawal requests and the fees for each of them', async () => {
       const withdrawalRequests = [withdrawalRequest1, withdrawalRequest2]
       const withdrawalFee1 = 0.2
       const withdrawalFee2 = 0.5

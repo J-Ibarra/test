@@ -37,7 +37,7 @@ describe('form_deposit_currency_transaction', () => {
     amount: 12,
     fiatCurrencyCode: CurrencyCode.usd,
     fiatConversion: 132,
-    from: 'foobar-xaxgxas12314fc-bfvfdaeaqwe-123fsd',
+    from: publicKeyHoldings,
     createdAt: new Date().toString(),
     status: DepositRequestStatus.completed,
   }
@@ -84,7 +84,7 @@ describe('form_deposit_currency_transaction', () => {
         primaryAmount: depositRequest1.amount,
         preferredCurrencyCode: depositRequest1.fiatCurrencyCode.toString() as CurrencyCode,
         preferredCurrencyAmount: depositRequest1.fiatConversion,
-        title: `${depositRequest1.from.substring(0, 7)}...${depositRequest1.from.substring(depositRequest2.from.length - 4)}`,
+        title: `${depositRequest1.from.substring(0, 7)}...${depositRequest1.from.substring(depositRequest1.from.length - 4)}`,
         memo: '',
         direction: TransactionHistoryDirection.incoming,
         createdAt: depositRequest1.createdAt!,

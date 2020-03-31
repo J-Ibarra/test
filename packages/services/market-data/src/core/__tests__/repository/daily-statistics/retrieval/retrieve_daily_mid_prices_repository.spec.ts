@@ -73,7 +73,7 @@ describe('Retrieve the mid prices', async () => {
 
       const midPriceKAUUSD = await getDailyChange([kauUsd])
       expect(midPriceKAUUSD.size).to.eql(1)
-      expect(midPriceKAUUSD.get(kauUsd)).to.eql(20)
+      expect(midPriceKAUUSD.get(kauUsd)).to.eql(0.2)
     })
 
     it('latest === oldest mid price - should return latest', async () => {
@@ -81,9 +81,11 @@ describe('Retrieve the mid prices', async () => {
       MemoryCache.getInstance().set({ key: `exchange:stats:change:${kauUsd}:2`, val: 47 })
       MemoryCache.getInstance().set({ key: `exchange:stats:change:${kauUsd}:3`, val: 48 })
       MemoryCache.getInstance().set({ key: `exchange:stats:change:${kauUsd}:4`, val: 34 })
+
       const midPriceKAUUSD = await getDailyChange([kauUsd])
+
       expect(midPriceKAUUSD.size).to.eql(1)
-      expect(midPriceKAUUSD.get(kauUsd)).to.eql(34)
+      expect(midPriceKAUUSD.get(kauUsd)).to.eql(0.34)
     })
   })
 })
