@@ -1,9 +1,9 @@
 import moment from 'moment'
 import { Logger } from '@abx-utils/logging'
-import { CurrencyCode } from '@abx-types/reference-data'
+import { CurrencyCode, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { DepositRequest, DepositRequestStatus, LockableDepositRequest } from '@abx-types/deposit'
 import { getAllDepositRequests } from '../../../../core'
-import { findAllCurrencies } from '@abx-service-clients/reference-data'
+import { findCurrencyForCodes } from '@abx-service-clients/reference-data'
 
 const logger = Logger.getInstance('deposits', 'DepositGatekeeper')
 
@@ -80,7 +80,10 @@ export class DepositGatekeeper {
   /** Executed on service startup */
   public async loadGatekeeper(status: DepositRequestStatus, retrieveDeposits = () => getAllDepositRequests({ status })) {
     const pendingDepositRequests = await retrieveDeposits()
-    const currencies = await findAllCurrencies()
+    const currencies = await findCurrencyForCodes(
+      [CurrencyCode.kag, CurrencyCode.kau, CurrencyCode.kvt, CurrencyCode.ethereum],
+      SymbolPairStateFilter.all,
+    )
 
     const currencyIdToCurrency = currencies.reduce(
       (idToCurrencyCode, currency) => idToCurrencyCode.set(currency.id, currency.code),

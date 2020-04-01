@@ -3,7 +3,7 @@ const CryptoApis = require('cryptoapis.io')
 import { Route, Body, Post, Get, Hidden } from 'tsoa'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode, getEnvironment } from '@abx-types/reference-data'
-import { CurrencyManager, OnChainCurrencyGateway, Kinesis } from '@abx-utils/blockchain-currency-gateway'
+import { CurrencyManager, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
 import { Account, User } from '@abx-types/account'
 import { findDepositAddressesForAccount } from '@abx-service-clients/deposit'
 import { findCurrencyForCode } from '@abx-service-clients/reference-data'
