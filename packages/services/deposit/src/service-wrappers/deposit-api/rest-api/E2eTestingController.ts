@@ -3,7 +3,7 @@ const CryptoApis = require('cryptoapis.io')
 import { Route, Body, Post, Get, Hidden } from 'tsoa'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode, getEnvironment } from '@abx-types/reference-data'
-import { CurrencyManager, OnChainCurrencyGateway, Kinesis } from '@abx-utils/blockchain-currency-gateway'
+import { CurrencyManager, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
 import { Account, User } from '@abx-types/account'
 import { findDepositAddressesForAccount } from '@abx-service-clients/deposit'
 import { findCurrencyForCode } from '@abx-service-clients/reference-data'
@@ -17,7 +17,7 @@ caClient.BC.ETH.switchNetwork(caClient.BC.ETH.NETWORKS.ROPSTEN)
 @Hidden()
 export class E2eTestingController {
   private logger = Logger.getInstance('api', 'E2eTestingController')
-  private currencyManager = new CurrencyManager(getEnvironment(), [CurrencyCode.kau, CurrencyCode.kag, CurrencyCode.kvt])
+  private currencyManager = new CurrencyManager(getEnvironment(), [CurrencyCode.kau, CurrencyCode.kag, CurrencyCode.kvt, CurrencyCode.yeenus])
 
   @Post('/transaction/eth')
   @Hidden()

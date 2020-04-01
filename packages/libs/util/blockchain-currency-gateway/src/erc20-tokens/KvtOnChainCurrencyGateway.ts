@@ -20,7 +20,7 @@ export class KvtOnChainCurrencyGateway extends ERC20TokenCurrencyGatewaySkeleton
   }
 
   getCurrencyCode(): CurrencyCode {
-    return CurrencyCode.tether
+    return CurrencyCode.kvt
   }
 
   getContractAddress(env: Environment): string {

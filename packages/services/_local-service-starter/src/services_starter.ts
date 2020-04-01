@@ -11,8 +11,8 @@ import {
   bootstrapKinesisAndEthCoinDepositProcessor,
   bootstrapThirdPartyCoinDepositProcessor,
   bootstrapDepositApi,
-  bootstrapEthereumBlockFollowerProcessor,
-  bootstrapKVTBlockFollowerProcessor,
+  // bootstrapEthereumBlockFollowerProcessor,
+  // bootstrapKVTBlockFollowerProcessor,
 } from '@abx/exchange-deposit-service'
 
 import { bootstrapWithdrawalApiService, bootstrapWithdrawalProcessorService } from '@abx/exchange-withdrawal-service'
@@ -40,8 +40,8 @@ export async function startAllServices() {
   await bootstrapThirdPartyCoinDepositProcessor()
   await bootstrapDepositApi()
   await bootstrapKinesisAndEthCoinDepositProcessor()
-  await bootstrapEthereumBlockFollowerProcessor()
-  await bootstrapKVTBlockFollowerProcessor()
+  // await bootstrapEthereumBlockFollowerProcessor()
+  // await bootstrapKVTBlockFollowerProcessor()
 
   await bootstrapWebhookApiService()
 }
