@@ -4,7 +4,7 @@ import {
   getOnChainCurrencyManagerForEnvironment,
   IAddressTokenTransactionEventPayload,
 } from '@abx-utils/blockchain-currency-gateway'
-import { findDepositAddress } from '../../../../core'
+import { findDepositAddressByAddressOrPublicKey } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
 import { DEPOSIT_ADDRESS_UNCONFIRMED_TRANSACTION_QUEUE_URL } from '../constants'
 import { NewTransactionRecorder } from './NewTransactionRecorder'
@@ -41,7 +41,7 @@ export class DepositAddressNewTransactionQueuePoller {
 
   private async processDepositAddressTransaction(currency: CurrencyCode, address: string, txid: string) {
     this.logger.info(`Received a new deposit transaction notification for currency ${currency} with address ${address}. Transaction ID: ${txid}`)
-    const depositAddress = await findDepositAddress({ address })
+    const depositAddress = await findDepositAddressByAddressOrPublicKey(address)
 
     if (!depositAddress) {
       this.logger.warn(`Deposit address not found for transaction ${txid}, not processing deposit`)

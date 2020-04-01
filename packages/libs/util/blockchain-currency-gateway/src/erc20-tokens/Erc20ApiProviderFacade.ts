@@ -4,6 +4,7 @@ import { CryptoApisProviderProxyEth, ENetworkTypes, IAddressTransaction } from '
 import { Transaction, CryptoAddress } from '../model'
 import { BlockchainApiProviderFacade } from '../api-provider/BlockchainApiProviderFacade'
 import { TransactionResponse } from '../currency_gateway'
+import moment from 'moment'
 
 export const mainnetEnvironments = [Environment.production]
 
@@ -32,7 +33,17 @@ export class Erc20ApiProviderFacade implements BlockchainApiProviderFacade {
   }
 
   async getTransaction(_transactionHash: string, _targetAddress: string): Promise<Transaction | null> {
-    throw new Error(`Unsupported operation for currency ${this.currency} - getTransaction`)
+    const transaction = await this.cryptoApiProviderProxyEth.getTransactionDetails({ TX_HASH: _transactionHash })
+    const tokenTransfer = transaction.token_transfers[0]
+
+    return {
+      transactionHash: _transactionHash,
+      time: moment(transaction.timestamp).toDate(),
+      amount: Number(tokenTransfer.value),
+      senderAddress: tokenTransfer.from,
+      receiverAddress: tokenTransfer.to,
+      confirmations: Number(transaction.confirmations),
+    }
   }
 
   async generateAddress(): Promise<CryptoAddress> {

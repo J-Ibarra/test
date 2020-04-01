@@ -30,4 +30,8 @@ export class KvtOnChainCurrencyGateway extends ERC20TokenCurrencyGatewaySkeleton
   getABI(_env: Environment) {
     return KinesisVelocityToken.abi
   }
+
+  getTokenDecimals() {
+    return 0
+  }
 }

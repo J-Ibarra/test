@@ -2,7 +2,7 @@ import { Transaction } from 'sequelize'
 import { getEnvironment, CurrencyCode, Currency } from '@abx-types/reference-data'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyManager, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
-import { getModel } from '@abx-utils/db-connection-utils'
+import { getModel, sequelize } from '@abx-utils/db-connection-utils'
 import { ValidationError } from '@abx-types/error'
 import { findCryptoCurrencies, isFiatCurrency, findCurrencyForCode, findCurrencyForId } from '@abx-service-clients/reference-data'
 import { DepositAddress } from '@abx-types/deposit'
@@ -56,6 +56,20 @@ export async function findDepositAddresses(query: Partial<DepositAddress>, trans
 export async function findDepositAddress(query: Partial<DepositAddress>, transaction?: Transaction): Promise<DepositAddress | null> {
   const depositAddressInstance = await getModel<DepositAddress>('depositAddress').findOne({
     where: query as any,
+    transaction,
+  })
+
+  return depositAddressInstance ? depositAddressInstance.get() : null
+}
+
+export async function findDepositAddressByAddressOrPublicKey(publicKey: string, transaction?: Transaction): Promise<DepositAddress | null> {
+  const depositAddressInstance = await getModel<DepositAddress>('depositAddress').findOne({
+    where: {
+      $or: [
+        { address: sequelize.where(sequelize.fn('LOWER', sequelize.col('address')), 'LIKE', `%${publicKey}%`) },
+        { publicKey: sequelize.where(sequelize.fn('LOWER', sequelize.col('publicKey')), 'LIKE', `%${publicKey}%`) },
+      ],
+    },
     transaction,
   })
 

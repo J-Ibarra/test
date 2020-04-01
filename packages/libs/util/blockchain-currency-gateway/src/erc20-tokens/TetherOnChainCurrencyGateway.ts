@@ -30,4 +30,8 @@ export class TetherOnChainCurrencyGateway extends ERC20TokenCurrencyGatewaySkele
   getABI(_env: Environment) {
     return Tether.abi
   }
+
+  getTokenDecimals() {
+    return 2
+  }
 }

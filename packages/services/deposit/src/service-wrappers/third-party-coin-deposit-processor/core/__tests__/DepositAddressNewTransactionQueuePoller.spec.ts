@@ -81,7 +81,7 @@ describe('DepositAddressNewTransactionQueuePoller', () => {
 
   function stubAllDependencies() {
     sinon.stub(blockchainCurrencyGateway, 'getOnChainCurrencyManagerForEnvironment').returns(onChainCurrencyManagerStub)
-    sinon.stub(coreOperations, 'findDepositAddress').resolves(depositAddress)
+    sinon.stub(coreOperations, 'findDepositAddressByAddressOrPublicKey').resolves(depositAddress)
     getTransactionStub.resolves(transactionDetails)
   }
 })

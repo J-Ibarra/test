@@ -34,4 +34,8 @@ export class YeenusTestTokenOnChainCurrencyGateway extends ERC20TokenCurrencyGat
   getABI(_env: Environment) {
     return YeenusToken.abi
   }
+
+  getTokenDecimals() {
+    return 8
+  }
 }

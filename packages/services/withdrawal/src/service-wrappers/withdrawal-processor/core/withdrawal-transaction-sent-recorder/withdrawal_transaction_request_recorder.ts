@@ -98,7 +98,6 @@ async function queueForCompletion(withdrawalRequestId: number, txid: string, cur
     logger.debug(`Queuing request for completion ${withdrawalRequestId}`)
 
     await sendAsyncChangeMessage<WithdrawalCompletionPendingPayload>({
-      id: `withdrawal-completion-pending-${txid}`,
       type: 'withdrawal-transaction-sent',
       target: {
         local: WITHDRAWAL_TRANSACTION_COMPLETION_PENDING_QUEUE_URL!,

@@ -75,7 +75,7 @@ export class NewTransactionRecorder {
     { transactionHash, confirmations }: Transaction,
     onChainCurrencyGateway: OnChainCurrencyGateway,
   ) {
-    if (confirmations === this.getRequiredConfirmationsForDepositTransaction(currency)) {
+    if ((confirmations || 0) >= this.getRequiredConfirmationsForDepositTransaction(currency)) {
       await this.queueForHoldingsTransactionCreation(transactionHash, currency)
       logger.info(`Transaction ${transactionHash} already confirmed ${confirmations} times, pushing message to confirmed transaction queue`)
     } else {
