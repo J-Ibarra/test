@@ -1,4 +1,5 @@
 export ENV=integration
+export AWS_PROFILE=kinesis
 export API_PORT=3031
 export EXCHANGE_DB_HOST=localhost
 export EXCHANGE_DB_PORT=6432

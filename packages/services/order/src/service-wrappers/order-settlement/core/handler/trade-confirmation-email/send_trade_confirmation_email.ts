@@ -9,8 +9,7 @@ import { EmailOrderStatus } from '@abx-types/notification'
 import { createEmail } from '@abx-service-clients/notification'
 
 import { createTradeConfirmationEmail } from './create_trade_confirmation_email'
-import { findOrderMatchTransactions, findOrder } from '../../../../../core'
-import { generateTradeTransactionReportData } from './trade_transaction_report_generator'
+import { findOrderMatchTransactions, findOrder, generateTradeTransactionReportData } from '../../../../../core'
 import { Transaction } from 'sequelize'
 
 const logger = Logger.getInstance('report', 'report generation')
