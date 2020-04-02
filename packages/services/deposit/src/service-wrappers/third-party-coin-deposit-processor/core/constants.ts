@@ -12,4 +12,4 @@ export const DEPOSIT_HOLDINGS_TRANSACTION_CONFIRMATION_QUEUE_URL =
 export const DEPOSIT_ADDRESS_UNCONFIRMED_TRANSACTION_QUEUE_URL =
   process.env.DEPOSIT_ADDRESS_UNCONFIRMED_TRANSACTION_QUEUE_URL! || 'local-deposit-address-unconfirmed-transaction-queue'
 
-export const ECR20_TOKENS_WITH_ETH_FEE = [CurrencyCode.kvt, CurrencyCode.tether, CurrencyCode.yeenus]
+export const ECR20_TOKENS_WITH_ETH_FEE = [CurrencyCode.kvt, CurrencyCode.tether]

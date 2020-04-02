@@ -7,5 +7,4 @@ export enum CryptoCurrency {
   kvt = CurrencyCode.kvt,
   bitcoin = CurrencyCode.bitcoin,
   tether = CurrencyCode.tether,
-  yeenus = CurrencyCode.yeenus,
 }

@@ -32,11 +32,19 @@ export class DepositAddressNewTransactionQueuePoller {
     // Checking if the transaction is an ECR20 token transaction
     if (!!payload['token_symbol']) {
       const tokenTransaction = payload as IAddressTokenTransactionEventPayload
-      return this.processDepositAddressTransaction(tokenTransaction.token_symbol as CurrencyCode, tokenTransaction.address, tokenTransaction.txHash)
+      return this.processDepositAddressTransaction(this.getTokenForTransaction(tokenTransaction), tokenTransaction.address, tokenTransaction.txHash)
     }
 
     const coinTransaction = payload as IAddressTransactionEventPayload
     return this.processDepositAddressTransaction(coinTransaction.currency, coinTransaction.address, coinTransaction.txid)
+  }
+
+  /**
+   * For ERC20 tokens (e.g Tether) when tests are executed we actually test with the YEENUS ERC20 token.
+   * So, the transactions that we receive will be YEENUS token transactions which we want to process as tether.
+   */
+  private getTokenForTransaction({ token_symbol }: IAddressTokenTransactionEventPayload): CurrencyCode {
+    return token_symbol === 'YEENUS' && process.env.NODE_EN !== Environment.production ? CurrencyCode.tether : (token_symbol as CurrencyCode)
   }
 
   private async processDepositAddressTransaction(currency: CurrencyCode, address: string, txid: string) {

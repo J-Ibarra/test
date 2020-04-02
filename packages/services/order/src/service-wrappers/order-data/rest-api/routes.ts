@@ -86,7 +86,7 @@ const models: TsoaRoute.Models = {
     },
   },
   "CurrencyCode": {
-    "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USDT", "YEENUS", "USD", "EUR", "GBP"],
+    "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USDT", "USD", "EUR", "GBP"],
   },
   "FeePool": {
     "properties": {
@@ -143,7 +143,7 @@ export function RegisterRoutes(app: express.Express) {
     authenticateMiddleware([{ "cookieAuth": [] }, { "tokenAuth": [] }]),
     function(request: any, response: any, next: any) {
       const args = {
-        currency: { "in": "path", "name": "currency", "required": true, "dataType": "enum", "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USDT", "YEENUS", "USD", "EUR", "GBP"] },
+        currency: { "in": "path", "name": "currency", "required": true, "dataType": "enum", "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USDT", "USD", "EUR", "GBP"] },
         request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
       };
 
@@ -364,7 +364,7 @@ export function RegisterRoutes(app: express.Express) {
     authenticateMiddleware([{ "cookieAuth": [] }, { "tokenAuth": [] }]),
     function(request: any, response: any, next: any) {
       const args = {
-        selectedCurrency: { "in": "path", "name": "selectedCurrency", "required": true, "dataType": "enum", "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USDT", "YEENUS", "USD", "EUR", "GBP"] },
+        selectedCurrency: { "in": "path", "name": "selectedCurrency", "required": true, "dataType": "enum", "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USDT", "USD", "EUR", "GBP"] },
         request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
       };
 

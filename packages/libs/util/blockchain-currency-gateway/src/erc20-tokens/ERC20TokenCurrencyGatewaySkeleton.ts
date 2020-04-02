@@ -43,7 +43,7 @@ export abstract class ERC20TokenCurrencyGatewaySkeleton implements OnChainCurren
     this.erc20BlockchainFacade = new Erc20ApiProviderFacade(this.ticker)
   }
 
-  abstract getTokenDecimals(): number
+  abstract getTokenDecimals(environment: Environment): number
   abstract getWeb3Config(env: Environment): any
   abstract getCurrencyCode(): CurrencyCode
   abstract getContractAddress(env: Environment): string
@@ -193,7 +193,9 @@ export abstract class ERC20TokenCurrencyGatewaySkeleton implements OnChainCurren
     }
 
     const sender = this.web3.eth.accounts.privateKeyToAccount(privateKey)
-    const transfer = await this.contract.methods.transfer(toAddress, new Decimal(amount).times(Math.pow(10, this.getTokenDecimals())).toNumber())
+    const formattedAmount = new Decimal(amount).times(Math.pow(10, this.getTokenDecimals(process.env.NODE_ENV as Environment))).toNumber()
+
+    const transfer = await this.contract.methods.transfer(toAddress, formattedAmount)
     const nonce = await this.web3.eth.getTransactionCount(sender.address, 'pending')
 
     const tx: Tx = {

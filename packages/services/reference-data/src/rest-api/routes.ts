@@ -11,7 +11,7 @@ const models: TsoaRoute.Models = {
   "Record": {
   },
   "CurrencyCode": {
-    "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USDT", "YEENUS", "USD", "EUR", "GBP"],
+    "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USDT", "USD", "EUR", "GBP"],
   },
   "Currency": {
     "properties": {
