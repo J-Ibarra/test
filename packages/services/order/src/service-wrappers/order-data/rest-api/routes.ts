@@ -7,6 +7,7 @@ import { AdminOrdersController } from './orders_admin_controller';
 import { TransactionHistoryController } from './transaction_history_controller';
 import { DepthController } from './depth_controller';
 import { E2eTestingDataSetupController } from './e2e-testing/E2eTestingDataSetupController';
+import { TransactionsController } from './transactions_controller';
 import { expressAuthentication } from './middleware/authentication';
 import * as express from 'express';
 
@@ -46,6 +47,8 @@ const models: TsoaRoute.Models = {
       "transactions": { "dataType": "array", "array": { "ref": "TradeTransaction" }, "required": true },
     },
   },
+  "Record": {
+  },
   "FeeTier": {
     "properties": {
       "id": { "dataType": "double" },
@@ -82,6 +85,18 @@ const models: TsoaRoute.Models = {
       "feeCurrency": { "dataType": "string", "required": true },
       "filled": { "dataType": "double", "required": true },
       "status": { "ref": "OrderStatus", "required": true },
+    },
+  },
+  "MonthlyTradeSummary": {
+    "properties": {
+      "trades": { "dataType": "double", "required": true },
+      "volume": { "dataType": "double", "required": true },
+    },
+  },
+  "AccountMonthlyTradeSummary": {
+    "properties": {
+      "currentMonth": { "ref": "MonthlyTradeSummary", "required": true },
+      "lastMonth": { "ref": "MonthlyTradeSummary", "required": true },
     },
   },
 };
@@ -450,6 +465,49 @@ export function RegisterRoutes(app: express.Express) {
 
 
       const promise = controller.runAccountSetupScript.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.get('/api/transactions/monthly-summary',
+    authenticateMiddleware([{ "cookieAuth": [] }, { "tokenAuth": [] }]),
+    function(request: any, response: any, next: any) {
+      const args = {
+        undefined: { "in": "request", "required": true, "dataType": "object" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new TransactionsController();
+
+
+      const promise = controller.getAccountMonthlyTradeSummary.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.get('/api/transactions',
+    authenticateMiddleware([{ "cookieAuth": [] }, { "tokenAuth": [] }]),
+    function(request: any, response: any, next: any) {
+      const args = {
+        request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+        type: { "in": "query", "name": "type", "required": true, "dataType": "enum", "enums": ["trade", "currency", "transfer"] },
+        limit: { "in": "query", "name": "limit", "dataType": "double" },
+        offset: { "in": "query", "name": "offset", "dataType": "double" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new TransactionsController();
+
+
+      const promise = controller.getTransactions.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
 
