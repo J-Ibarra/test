@@ -9,7 +9,7 @@ interface NotificationConfig {
 const notificationSubjectPrefix = process.env.MAILER_PREFIX ? `${process.env.MAILER_PREFIX}: ` : ''
 
 const config: NotificationConfig = {
-  activeEnvironments: ['uat', 'integration', 'production', 'development'],
+  activeEnvironments: ['uat', 'integration', 'production', 'development', 'stg'],
   fromEmail: process.env.NOTIFICATION_FROM_EMAIL || 'no-reply@kinesis.money',
   mandrillApi: process.env.MANDRILL_API || '5U8lA1W0NPMIqwMsOYEbJg', // Test key
   notificationEnv: process.env.NOTIFICATION_ENV || 'test',
