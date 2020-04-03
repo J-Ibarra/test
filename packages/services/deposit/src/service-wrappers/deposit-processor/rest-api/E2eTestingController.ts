@@ -51,8 +51,8 @@ export class E2eTestingController {
   public async getBalanceByCurrencyAndPublicKey(address: string, currencyCode: CurrencyCode): Promise<number> {
 
     const currency: OnChainCurrencyGateway = this.currencyManager.getCurrencyFromTicker(currencyCode)
-
-    return currency.balanceAt(address)
+    const result = await currency.balanceAt(address)
+    return result
   }
 
   @Get('/address/{email}/{currencyCode}')
