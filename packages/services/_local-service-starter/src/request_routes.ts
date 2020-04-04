@@ -35,6 +35,7 @@ const marketDataRoutes = ['/internal-api/market-data', '/api/market-data', '/api
 const orderDataRoutes = [
   '/internal-api/orders',
   '/api/fees',
+  '/api/fee-pool',
   '/api/admin/fees',
   '/api/depth',
   '/api/order-matches',
