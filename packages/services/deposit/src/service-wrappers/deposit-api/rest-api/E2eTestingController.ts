@@ -17,7 +17,7 @@ caClient.BC.ETH.switchNetwork(caClient.BC.ETH.NETWORKS.ROPSTEN)
 @Hidden()
 export class E2eTestingController {
   private logger = Logger.getInstance('api', 'E2eTestingController')
-  private currencyManager = new CurrencyManager(getEnvironment(), [CurrencyCode.kau, CurrencyCode.kag, CurrencyCode.kvt])
+  private currencyManager = new CurrencyManager(getEnvironment(), [CurrencyCode.kau, CurrencyCode.kag, CurrencyCode.kvt, CurrencyCode.tether])
 
   @Post('/transaction/eth')
   @Hidden()
@@ -72,13 +72,9 @@ export class E2eTestingController {
 
     const depositAddresses = await findDepositAddressesForAccount((account as Account).id)
     const currency = await findCurrencyForCode(currencyCode)
-    const depositAddressesForCurrency = depositAddresses.filter(d => d.currencyId === currency.id).map(d => d.publicKey)
+    const depositAddressForCurrency = depositAddresses.find(({ currencyId }) => currencyId === currency.id)!
 
-    if (depositAddressesForCurrency.length > 1) {
-      throw new Error(`The user ${email} has more that 1 deposit address for ${currencyCode}`)
-    }
-
-    return Promise.resolve(depositAddressesForCurrency[0] as string)
+    return Promise.resolve(depositAddressForCurrency.address || depositAddressForCurrency.publicKey)
   }
 
   @Post('/vault-address/remove')

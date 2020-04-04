@@ -49,9 +49,14 @@ describe('withdrawal_transaction_request_recorder', () => {
     sinon.stub(referenceDataOperations, 'findCryptoCurrencies').resolves([
       {
         id: 2,
-        code: CurrencyCode.kau,
+        code: CurrencyCode.ethereum,
       },
     ])
+    sinon.stub(referenceDataOperations, 'findCurrencyForId').resolves({
+      id: 2,
+      code: CurrencyCode.ethereum,
+    })
+
     const deductOnChainTransactionFeeFromRevenueBalanceStub = sinon
       .stub(withdrawalTransactionFeeOperations, 'deductOnChainTransactionFeeFromRevenueBalance')
       .resolves()
@@ -60,20 +65,21 @@ describe('withdrawal_transaction_request_recorder', () => {
 
     await recordWithdrawalOnChainTransaction(withdrawalTransactionSentEvent)
 
-    expect(
-      updateWithdrawalRequestStub.calledWith({
-        id: withdrawalRequest.id,
-        txHash: withdrawalTransactionSentEvent.transactionHash,
-        kinesisCoveredOnChainFee: 0,
-        state: WithdrawalState.holdingsTransactionCompleted,
-      }),
-    ).to.eql(true)
+    expect(updateWithdrawalRequestStub.getCall(0).args[0]).to.eql({
+      id: withdrawalRequest.id,
+      txHash: withdrawalTransactionSentEvent.transactionHash,
+      kinesisCoveredOnChainFee: withdrawalTransactionSentEvent.transactionFee,
+      state: WithdrawalState.holdingsTransactionCompleted,
+    })
     expect(
       deductOnChainTransactionFeeFromRevenueBalanceStub.calledWith(
         withdrawalRequest.id,
         withdrawalTransactionSentEvent.transactionFee,
         {},
-        withdrawalRequest.currencyId,
+        {
+          id: 2,
+          code: CurrencyCode.ethereum,
+        },
       ),
     ).to.eql(true)
     expect(
@@ -85,7 +91,7 @@ describe('withdrawal_transaction_request_recorder', () => {
         },
         payload: {
           txid: withdrawalTransactionSentEvent.transactionHash,
-          currency: CurrencyCode.kau,
+          currency: CurrencyCode.ethereum,
         },
       }),
     ).to.eql(true)
@@ -107,6 +113,11 @@ describe('withdrawal_transaction_request_recorder', () => {
         code: CurrencyCode.ethereum,
       },
     ])
+    sinon.stub(referenceDataOperations, 'findCurrencyForId').resolves({
+      id: feeCurrencyId,
+      code: CurrencyCode.ethereum,
+    })
+
     const deductOnChainTransactionFeeFromRevenueBalanceStub = sinon
       .stub(withdrawalTransactionFeeOperations, 'deductOnChainTransactionFeeFromRevenueBalance')
       .resolves()
@@ -114,31 +125,29 @@ describe('withdrawal_transaction_request_recorder', () => {
     const sendAsyncChangeMessageStub = sinon.stub(asyncMessagePublisherOperations, 'sendAsyncChangeMessage').resolves()
     await recordWithdrawalOnChainTransaction(withdrawalTransactionSentEvent)
 
-    expect(
-      updateWithdrawalRequestStub.calledWith({
-        id: withdrawalRequest.id,
-        txHash: withdrawalTransactionSentEvent.transactionHash,
-        kinesisCoveredOnChainFee: withdrawalTransactionSentEvent.transactionFee,
-        state: WithdrawalState.holdingsTransactionCompleted,
-      }),
-    ).to.eql(true)
-    expect(
-      updateWithdrawalRequestStub.calledWith({
-        id: feeRequestId,
-        state: WithdrawalState.holdingsTransactionCompleted,
-      }),
-    ).to.eql(true)
+    expect(updateWithdrawalRequestStub.getCall(0).args[0]).to.eql({
+      id: withdrawalRequest.id,
+      txHash: withdrawalTransactionSentEvent.transactionHash,
+      kinesisCoveredOnChainFee: withdrawalTransactionSentEvent.transactionFee,
+      state: WithdrawalState.holdingsTransactionCompleted,
+    })
+    expect(updateWithdrawalRequestStub.getCall(1).args[0]).to.eql({
+      id: feeRequestId,
+      state: WithdrawalState.holdingsTransactionCompleted,
+    })
     expect(
       deductOnChainTransactionFeeFromRevenueBalanceStub.calledWith(
         withdrawalRequest.id,
         withdrawalTransactionSentEvent.transactionFee,
         {},
-        feeCurrencyId,
+        {
+          id: feeCurrencyId,
+          code: CurrencyCode.ethereum,
+        },
       ),
     ).to.eql(true)
     expect(
       sendAsyncChangeMessageStub.calledWith({
-        id: `withdrawal-completion-pending-${withdrawalTransactionSentEvent.transactionHash}`,
         type: 'withdrawal-transaction-sent',
         target: {
           local: WITHDRAWAL_TRANSACTION_COMPLETION_PENDING_QUEUE_URL!,
@@ -146,7 +155,7 @@ describe('withdrawal_transaction_request_recorder', () => {
         },
         payload: {
           txid: withdrawalTransactionSentEvent.transactionHash,
-          currency: CurrencyCode.kau,
+          currency: CurrencyCode.ethereum,
         },
       }),
     )

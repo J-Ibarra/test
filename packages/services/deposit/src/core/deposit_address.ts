@@ -66,8 +66,8 @@ export async function findDepositAddressByAddressOrPublicKey(publicKey: string, 
   const depositAddressInstance = await getModel<DepositAddress>('depositAddress').findOne({
     where: {
       $or: [
-        { address: sequelize.where(sequelize.fn('LOWER', sequelize.col('address')), 'LIKE', `%${publicKey}%`) },
-        { publicKey: sequelize.where(sequelize.fn('LOWER', sequelize.col('publicKey')), 'LIKE', `%${publicKey}%`) },
+        { address: sequelize.where(sequelize.fn('LOWER', sequelize.col('address')), 'LIKE', `%${publicKey.toLowerCase()}%`) },
+        { publicKey: sequelize.where(sequelize.fn('LOWER', sequelize.col('publicKey')), 'LIKE', `%${publicKey.toLowerCase()}%`) },
       ],
     },
     transaction,

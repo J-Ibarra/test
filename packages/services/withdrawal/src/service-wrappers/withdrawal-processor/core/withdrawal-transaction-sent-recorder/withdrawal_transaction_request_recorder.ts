@@ -4,7 +4,7 @@ import { WithdrawalState, WithdrawalRequest, CurrencyEnrichedWithdrawalRequest }
 import { WITHDRAWAL_TRANSACTION_COMPLETION_PENDING_QUEUE_URL } from '@abx-service-clients/withdrawal'
 import { CurrencyCode, Environment } from '@abx-types/reference-data'
 import { getOnChainCurrencyManagerForEnvironment } from '@abx-utils/blockchain-currency-gateway'
-import { findCryptoCurrencies } from '@abx-service-clients/reference-data'
+import { findCryptoCurrencies, findCurrencyForId } from '@abx-service-clients/reference-data'
 import { sendAsyncChangeMessage } from '@abx-utils/async-message-publisher'
 import { deductOnChainTransactionFeeFromRevenueBalance } from '../withdrawal-transaction-creation/kinesis_revenie_transaction_fee_reconciler'
 import { WithdrawalCompletionPendingPayload } from '../withdrawal-completion/model'
@@ -33,13 +33,10 @@ export async function recordWithdrawalOnChainTransaction({
     }
 
     const { withdrawalCurrency, onChainCurrencyGateway } = await getOnChainCurrencyGatewayAndWithdrawnCurrency(withdrawalRequest.currencyId)
-
-    await deductOnChainTransactionFeeFromRevenueBalance(
-      withdrawalRequest.id!,
-      transactionFee,
-      onChainCurrencyGateway,
+    const feeCurrency = await findCurrencyForId(
       !!withdrawalRequest.feeRequest ? withdrawalRequest.feeRequest.currencyId : withdrawalRequest.currencyId,
     )
+    await deductOnChainTransactionFeeFromRevenueBalance(withdrawalRequest.id!, transactionFee, onChainCurrencyGateway, feeCurrency)
 
     await updateRequestStatuses(
       { ...withdrawalRequest!, currency: withdrawalCurrency },

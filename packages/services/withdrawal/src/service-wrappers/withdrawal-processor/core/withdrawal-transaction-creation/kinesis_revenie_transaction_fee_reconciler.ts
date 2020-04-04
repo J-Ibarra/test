@@ -1,9 +1,11 @@
-import { denyPendingDeposit } from '@abx-service-clients/balance'
+import { denyPendingDeposit, updateAvailable } from '@abx-service-clients/balance'
 import { SourceEventType } from '@abx-types/balance'
 import { findOrCreateKinesisRevenueAccount } from '@abx-service-clients/account'
-import { CurrencyCode } from '@abx-types/reference-data'
+import { CurrencyCode, Currency } from '@abx-types/reference-data'
 import { OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
 import { Logger } from '@abx-utils/logging'
+import { getTransactionFeeCurrency } from '../common'
+import { findCurrencyForCode } from '@abx-service-clients/reference-data'
 
 const logger = Logger.getInstance('withdrawal-processor', 'kinesis_revenue_transaction_fee_reconciler')
 const currencyToCoverOnChainFeeFor = [CurrencyCode.ethereum, CurrencyCode.kvt, CurrencyCode.tether, CurrencyCode.bitcoin]
@@ -18,21 +20,36 @@ export async function deductOnChainTransactionFeeFromRevenueBalance(
   withdrawalRequestId: number,
   transactionFee: number,
   currencyGateway: OnChainCurrencyGateway,
-  feeCurrencyId: number,
+  { id: userChargedFeeCurrencyId, code: userChargedFeeCurrencyCode }: Currency,
 ) {
   if (currencyToCoverOnChainFeeFor.includes(currencyGateway.ticker!)) {
     const kinesisRevenueAccount = await findOrCreateKinesisRevenueAccount()
+    const transactionFeeCurrencyCode = getTransactionFeeCurrency(userChargedFeeCurrencyCode)
 
-    await denyPendingDeposit({
-      accountId: kinesisRevenueAccount.id,
-      amount: transactionFee,
-      currencyId: feeCurrencyId,
-      sourceEventId: withdrawalRequestId!,
-      sourceEventType: SourceEventType.currencyWithdrawal,
-    })
+    if (userChargedFeeCurrencyCode !== transactionFeeCurrencyCode) {
+      logger.info(
+        `Reducing ${transactionFeeCurrencyCode} Kinesis Revenue balance by ${transactionFee} to cover withdrawal transaction for withdrawal request ${withdrawalRequestId}`,
+      )
+      const { id: transactionFeeCurrencyId } = await findCurrencyForCode(transactionFeeCurrencyCode)
 
-    logger.info(
-      `A ${transactionFee} on chain fee has been paid for withdrawal request ${withdrawalRequestId} and deducted from revenue balance for currency ${feeCurrencyId}`,
-    )
+      await updateAvailable({
+        accountId: kinesisRevenueAccount.id,
+        amount: -transactionFee,
+        currencyId: transactionFeeCurrencyId,
+        sourceEventId: withdrawalRequestId!,
+        sourceEventType: SourceEventType.currencyWithdrawal,
+      })
+    } else {
+      logger.info(
+        `A ${transactionFee} on chain fee has been paid for withdrawal request ${withdrawalRequestId} and deducted from revenue balance for currency ${userChargedFeeCurrencyId}`,
+      )
+      await denyPendingDeposit({
+        accountId: kinesisRevenueAccount.id,
+        amount: transactionFee,
+        currencyId: userChargedFeeCurrencyId,
+        sourceEventId: withdrawalRequestId!,
+        sourceEventType: SourceEventType.currencyWithdrawal,
+      })
+    }
   }
 }

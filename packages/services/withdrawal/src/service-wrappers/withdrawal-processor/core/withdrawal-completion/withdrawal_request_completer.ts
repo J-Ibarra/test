@@ -27,6 +27,7 @@ export async function completeWithdrawalRequest({ txid, currency }: WithdrawalCo
 
     // The message will be returned to the queue for a later attempt
     if (!transactionConfirmed) {
+      logger.info(`Withdrawal transaction with hash ${txid} not yet confirmed, putting back on queue for a later attempt`)
       return { skipMessageDeletion: true }
     }
   }

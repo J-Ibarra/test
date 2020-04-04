@@ -10,6 +10,7 @@ import { updateWithdrawalRequest, getTotalWithdrawalAmount, getWithdrawalFee } f
 import { createCurrencyTransaction } from '@abx-service-clients/order'
 import { triggerMultipleBalanceChanges, BalanceAsyncRequestType } from '@abx-service-clients/balance'
 import { Transaction } from 'sequelize'
+import { getTransactionFeeCurrency } from '../../common'
 
 const logger = Logger.getInstance('fiat_withdrawal_completer', 'completeFiatWithdrawal')
 
@@ -49,12 +50,17 @@ async function updateWithdrawerAndKinesisRevenueAccounts(withdrawalRequest: With
     getWithdrawalFee(currencyCode, withdrawalRequest.amount),
   ])
 
+  const transactionFeeCurrencyCode = getTransactionFeeCurrency(currencyCode)
+
   return await triggerMultipleBalanceChanges([
     {
       type: BalanceAsyncRequestType.confirmPendingDeposit,
       payload: {
         accountId: kinesisRevenueAccount.id,
-        amount: new Decimal(withdrawalFee).minus(withdrawalRequest.kinesisCoveredOnChainFee!).toNumber(),
+        amount:
+          transactionFeeCurrencyCode === currencyCode
+            ? new Decimal(withdrawalFee).minus(withdrawalRequest.kinesisCoveredOnChainFee!).toNumber()
+            : withdrawalFee,
         currencyId: withdrawalRequest.currencyId,
         sourceEventId: withdrawalRequest.id!,
         sourceEventType: SourceEventType.currencyWithdrawal,

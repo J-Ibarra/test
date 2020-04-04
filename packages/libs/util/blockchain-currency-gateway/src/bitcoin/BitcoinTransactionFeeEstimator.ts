@@ -51,15 +51,16 @@ export class BitcoinTransactionFeeEstimator {
       averageFeePerTransaction = latestAverageFeePerTransaction
     }
 
-    const { tx_size_bytes } = await this.cryptoApisProviderProxy.getTransactionSize({
-      inputs: [BitcoinTransactionCreationUtils.createTransactionAddress(senderAddress.address!, amount)],
-      outputs: [BitcoinTransactionCreationUtils.createTransactionAddress(receiverAddress, amount)],
-      fee: {
-        address: senderAddress.address!,
-        value: new Decimal(averageFeePerTransaction!).toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN).toNumber(),
-      },
-      data: memo,
-    })
+    const bitcoinFeeRequest = this.createBitcoinFeeRequest(senderAddress.address!, receiverAddress, amount, averageFeePerTransaction!)
+
+    const { tx_size_bytes } = await this.cryptoApisProviderProxy.getTransactionSize(
+      memo
+        ? {
+            ...bitcoinFeeRequest,
+            data: memo,
+          }
+        : bitcoinFeeRequest,
+    )
 
     let estimatedMinimumTransactionFee = new Decimal(tx_size_bytes)
       .times(averageFeePerByte!)
@@ -67,5 +68,16 @@ export class BitcoinTransactionFeeEstimator {
       .toNumber()
 
     return Math.min(estimatedMinimumTransactionFee, feeLimit)
+  }
+
+  private createBitcoinFeeRequest(senderAddress: string, receiverAddress: string, amount: number, averageFeePerTransaction: string) {
+    return {
+      inputs: [BitcoinTransactionCreationUtils.createTransactionAddress(senderAddress!, amount)],
+      outputs: [BitcoinTransactionCreationUtils.createTransactionAddress(receiverAddress, amount)],
+      fee: {
+        address: senderAddress!,
+        value: new Decimal(averageFeePerTransaction!).toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN).toNumber(),
+      },
+    }
   }
 }

@@ -138,7 +138,7 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
   }
 
   async validateAddressIsNotContractAddress(_address: string): Promise<boolean> {
-    return false
+    return true
   }
 
   getDecryptedHoldingsSecret(): Promise<string> {
