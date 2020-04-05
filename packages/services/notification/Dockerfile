@@ -30,4 +30,6 @@ RUN npm run bootstrap:production
 RUN npm run build:notification
 WORKDIR /sync/packages/services/notification
 
+EXPOSE 3114
+
 CMD ["ts-node-dev","--transpileOnly", "src/bootstrap.ts"]
