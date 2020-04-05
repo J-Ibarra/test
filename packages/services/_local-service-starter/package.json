@@ -19,6 +19,7 @@
     "@abx-service-clients/withdrawal": "^1.1.0",
     "@abx-service-clients/deposit": "^1.1.0",
     "@abx-service-clients/report": "^1.1.0",
+    "@abx-service-clients/notification": "^1.1.0",
     "@abx/admin-fund-management-service": "^1.1.0",
     "@abx/exchange-account-data-service": "^1.1.0",
     "@abx/exchange-balance-service": "^1.1.0",

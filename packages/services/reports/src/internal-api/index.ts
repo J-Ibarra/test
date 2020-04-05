@@ -16,6 +16,7 @@ export async function bootstrapInternalApi(publicApiExpress: Express) {
       jsrender: { enabled: true },
       handlebars: { enabled: true },
     },
+    reportTimeout: 60000,
   })
 
   logger.info('Boostrapping reports server')
@@ -25,6 +26,7 @@ export async function bootstrapInternalApi(publicApiExpress: Express) {
       file: { transport: 'console', level: 'info' },
       error: { transport: 'console', level: 'error' },
     },
+    reportTimeout: 60000,
   }).init()
 
   const internalApiEndpoints = createInternalApi()

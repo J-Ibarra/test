@@ -7,6 +7,7 @@ import { ORDER_DATA_API_PORT, ORDER_GATEWAY_API_PORT, SETTLEMENT_API_ROOT } from
 import { WITHDRAWAL_REST_API_PORT } from '@abx-service-clients/withdrawal'
 import { DEPOSIT_API_PORT } from '@abx-service-clients/deposit'
 import { REPORT_REST_API_PORT } from '@abx-service-clients/report'
+import { NOTIFICATION_API_PORT } from '@abx-service-clients/notification'
 
 const accountRoutes = [
   '/internal-api/accounts',
@@ -47,6 +48,7 @@ const orderSettlementRoutes = ['/internal-api/order-settlement']
 const withdrawalRoutes = ['/internal-api/withdrawals', '/api/withdrawals', '/api/contacts', '/api/crypto']
 const depositRoutes = ['/internal-api/deposit', '/api/vault', '/api/wallets', '/api/test-automation/deposit']
 const reportRoutes = ['/api/reports']
+const emailRoutes = ['/api/test-automation/emails']
 
 export const routesToPort: { routes: string[]; port: number }[] = [
   {
@@ -92,5 +94,9 @@ export const routesToPort: { routes: string[]; port: number }[] = [
   {
     routes: reportRoutes,
     port: REPORT_REST_API_PORT,
+  },
+  {
+    routes: emailRoutes,
+    port: NOTIFICATION_API_PORT,
   },
 ]
