@@ -36,7 +36,16 @@ function getEmailsSent(email: string, template: EmailTemplates, from: Date): Pro
         date_from: moment(from).format(),
       },
       (messages: SearchResultResponse[]) => {
-        return resolve(messages.filter(({ template: emailSentTemplateName }) => emailSentTemplateName === template.replace(' ', '-').toLowerCase()))
+        return resolve(
+          messages.filter(
+            ({ template: emailSentTemplateName }) =>
+              emailSentTemplateName ===
+              template
+                .split(' ')
+                .join('-')
+                .toLowerCase(),
+          ),
+        )
       },
       err => {
         logger.error(`An error has ocurred while fetching emails for ${email}`)
