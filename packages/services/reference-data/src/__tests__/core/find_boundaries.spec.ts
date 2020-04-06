@@ -1,10 +1,20 @@
 import { expect } from 'chai'
+import sinon from 'sinon'
 
 import { CurrencyCode } from '@abx-types/reference-data'
 import { findAllBoundaries, findBoundariesForAll, findBoundaryForCurrency } from '../../core'
+import * as currencies from '../../core/symbols/currency_in_memory_cache'
 
 describe('Currency Boundary', () => {
   describe('findBoundariesForAll', () => {
+    let findAllCurrenciesStub
+    beforeEach(async () => {
+      findAllCurrenciesStub = sinon.stub(currencies, 'fetchAllCurrencies').callsFake(currencies.findCurrencies)
+    })
+    afterEach(async () => {
+      findAllCurrenciesStub.restore()
+    })
+    
     it('returns boundary object keyed by for given currency codes', async () => {
       const boundaries = await findBoundariesForAll([CurrencyCode.ethereum, CurrencyCode.kau, CurrencyCode.usd, CurrencyCode.kvt])
 
