@@ -2,6 +2,6 @@ FROM 884998542479.dkr.ecr.ap-southeast-2.amazonaws.com/kbe-services-withdrawal-b
 
 WORKDIR /sync/packages/services/withdrawal/src/service-wrappers/withdrawal-processor
 
-EXPOSE 3114
+EXPOSE 3115
 
 CMD ["ts-node-dev","--transpileOnly", "bootstrap.ts"]

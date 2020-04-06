@@ -2,7 +2,7 @@ import { InternalApiRequestDispatcher } from '@abx-utils/internal-api-tools'
 import { WithdrawalProcessorEndpoints } from './endpoints'
 import { CurrencyCode } from '@abx-types/reference-data'
 
-export const WITHDRAWAL_PROCESSOR_SERVICE_PORT = 3114
+export const WITHDRAWAL_PROCESSOR_SERVICE_PORT = 3115
 
 const internalApiRequestDispatcher = new InternalApiRequestDispatcher(WITHDRAWAL_PROCESSOR_SERVICE_PORT)
 
