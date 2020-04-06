@@ -47,18 +47,13 @@ const orderDataRoutes = [
 const orderGatewayRoutes = ['/internal-api/order-gateway']
 const orderSettlementRoutes = ['/internal-api/order-settlement']
 const withdrawalRoutes = ['/internal-api/withdrawals', '/api/withdrawals', '/api/contacts', '/api/crypto']
-const depositRoutes = [
-  '/internal-api/deposit',
-  '/api/vault',
-  '/api/wallets',
-  '/api/test-automation/deposit'
-]
+const depositRoutes = ['/internal-api/deposit', '/api/vault', '/api/wallets', '/api/test-automation/deposit']
 
 const webhookRoutes = [
   '/api/webhooks/crypto/deposits/address/transactions/unconfirmed',
   '/api/webhooks/crypto/deposits/address/transactions/confirmed',
   '/api/webhooks/crypto/deposits/holdings-transactions/confirmations',
-  '/api/webhooks/crypto/withdrawals/confirmations'
+  '/api/webhooks/crypto/withdrawals/confirmations',
 ]
 const reportRoutes = ['/api/reports']
 const emailRoutes = ['/api/test-automation/emails']
@@ -106,8 +101,9 @@ export const routesToPort: { routes: string[]; port: number }[] = [
   },
   {
     routes: webhookRoutes,
-    port: WEBHOOK_API_SERVICE_PORT
-  }
+    port: WEBHOOK_API_SERVICE_PORT,
+  },
+  {
     routes: reportRoutes,
     port: REPORT_REST_API_PORT,
   },
