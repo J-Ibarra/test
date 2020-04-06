@@ -5,6 +5,7 @@ import {
   findOrderMatchTransactions,
   findTradeTransaction,
   findLastOrderMatchForSymbol,
+  generateReportForTradeTransaction,
 } from '../../../core'
 import { OrderDataEndpoints } from '@abx-service-clients/order'
 import { InternalRoute } from '@abx-utils/internal-api-tools'
@@ -42,6 +43,10 @@ export function createOrderQueryEndpointHandlers(): InternalRoute<any, any>[] {
     {
       path: OrderDataEndpoints.findTradeTransaction,
       handler: ({ id }) => findTradeTransaction({ where: { id } }),
+    },
+    {
+      path: OrderDataEndpoints.generateTradeTransactionReportData,
+      handler: ({ tradeTransactionId }) => generateReportForTradeTransaction(tradeTransactionId),
     },
   ]
 }

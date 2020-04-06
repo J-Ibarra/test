@@ -22,6 +22,7 @@
   "dependencies": {
     "@abx-types/depth-cache": "^1.1.0",
     "@abx-types/order": "^1.1.0",
+    "@abx-service-clients/report": "^1.1.0",
     "@abx-utils/internal-api-tools": "^1.1.0",
     "@abx-utils/async-message-publisher": "^1.1.0",
     "@types/sequelize": "3.30.4",

@@ -15,16 +15,8 @@ import {
 } from '@abx-utils/express-middleware'
 import { RegisterRoutes } from './routes'
 
-import './order_retrieval_controller'
-import './fees_controller'
-import './order_match_controller'
-import './orders_admin_controller'
-import './transaction_history_controller'
-import './depth_controller'
-import './fee_pools_controller'
-import './transactions_controller'
-import './e2e-testing/E2eTestingDataSetupController'
-import { ORDER_DATA_API_PORT } from '@abx-service-clients/order'
+import './E2eTestingController'
+import { NOTIFICATION_API_PORT } from '@abx-service-clients/notification'
 
 const logger = Logger.getInstance('api', 'bootstrapRestApi')
 
@@ -33,8 +25,8 @@ export function bootstrapRestApi() {
 
   app.use(requestIpMiddleware())
   app.use(cookieParser())
-  app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }))
-  app.use(bodyParser.json({ limit: '50mb' }))
+  app.use(bodyParser.urlencoded({ extended: true }))
+  app.use(bodyParser.json())
   app.use(methodOverride())
   app.use(maintenanceMiddleware)
   app.use(healthcheckMiddleware)
@@ -46,7 +38,7 @@ export function bootstrapRestApi() {
   configureCORS(app)
 
   if (process.env.NODE_ENV !== 'test') {
-    logger.debug(`Starting order data server on port ${ORDER_DATA_API_PORT}...`)
+    logger.debug(`Starting order data server on port ${NOTIFICATION_API_PORT}...`)
 
     configureApiRateLimiting = new RateLimiter().configureForApp(app).then(() => logger.debug('API rate limiting configured.'))
   }
@@ -65,6 +57,11 @@ export function bootstrapRestApi() {
     })
   })
 
-  console.log(`Order Data API on port ${ORDER_DATA_API_PORT}`)
-  return app
+  console.log(`Notification API on port ${NOTIFICATION_API_PORT}`)
+  const server = app.listen(NOTIFICATION_API_PORT)
+  /** Due to intermittent 502 response on the Load balancer side, the following 2 server settings need to be made. */
+  server.keepAliveTimeout = 65000 // Ensure all inactive connections are terminated by the ALB, by setting this a few seconds higher than the ALB idle timeout
+  server.headersTimeout = 66000 // Ensure the headersTimeout is set higher than the keepAliveTimeout due to this nodejs regression bug: https://github.com/nodejs/node/issues/27363
+
+  return server
 }

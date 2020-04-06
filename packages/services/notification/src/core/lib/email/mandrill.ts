@@ -15,6 +15,7 @@ import {
   EmailTemplates,
 } from '@abx-types/notification'
 import { Logger } from '@abx-utils/logging'
+import { Environment } from '@abx-types/reference-data'
 
 const mandrillClient = new Mandrill(config.mandrillApi)
 const logger = Logger.getInstance('notification', 'mandrill')
@@ -36,7 +37,7 @@ export async function sendEmail(email: Email) {
 
 export async function sendNotificationToOps(subject: string, text: string, html?: string) {
   return new Promise(async (resolve, reject) => {
-    const isActiveEnvironment = config.activeEnvironments.includes(config.notificationEnv)
+    const isActiveEnvironment = config.activeEnvironments.includes(process.env.NODE_ENV as Environment)
     const operationsEmail = await getOperationsEmail()
 
     if (isActiveEnvironment) {
@@ -69,7 +70,7 @@ export async function sendNotificationToOps(subject: string, text: string, html?
 
 function sendToMandrill({ templateName, templateContent, message }: MandrillEmailParams): Promise<MandrillResponse> {
   return new Promise((resolve, reject) => {
-    const isActiveEnvironment = config.activeEnvironments.includes(config.notificationEnv)
+    const isActiveEnvironment = config.activeEnvironments.includes(process.env.NODE_ENV as Environment)
 
     if (isActiveEnvironment) {
       const templateConfig = {

@@ -6,7 +6,7 @@ import { Email } from '@abx-types/notification'
 import { Logger } from '@abx-utils/logging'
 import { createEmail } from '../core'
 
-const localEnvironments = [Environment.test, Environment.development, Environment.e2eLocal]
+const localEnvironments = [Environment.test, Environment.development]
 
 const logger = Logger.getInstance('notification', 'create_email')
 

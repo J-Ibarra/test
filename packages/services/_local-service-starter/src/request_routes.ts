@@ -7,6 +7,8 @@ import { ORDER_DATA_API_PORT, ORDER_GATEWAY_API_PORT, SETTLEMENT_API_ROOT } from
 import { WITHDRAWAL_API_SERVICE_PORT } from '@abx-service-clients/withdrawal'
 import { DEPOSIT_API_PORT } from '@abx-service-clients/deposit'
 import { WEBHOOK_API_SERVICE_PORT } from './webhooks'
+import { REPORT_REST_API_PORT } from '@abx-service-clients/report'
+import { NOTIFICATION_API_PORT } from '@abx-service-clients/notification'
 
 const accountRoutes = [
   '/internal-api/accounts',
@@ -35,6 +37,7 @@ const marketDataRoutes = ['/internal-api/market-data', '/api/market-data', '/api
 const orderDataRoutes = [
   '/internal-api/orders',
   '/api/fees',
+  '/api/fee-pool',
   '/api/admin/fees',
   '/api/depth',
   '/api/order-matches',
@@ -57,6 +60,8 @@ const webhookRoutes = [
   '/api/webhooks/crypto/deposits/holdings-transactions/confirmations',
   '/api/webhooks/crypto/withdrawals/confirmations'
 ]
+const reportRoutes = ['/api/reports']
+const emailRoutes = ['/api/test-automation/emails']
 
 export const routesToPort: { routes: string[]; port: number }[] = [
   {
@@ -103,4 +108,11 @@ export const routesToPort: { routes: string[]; port: number }[] = [
     routes: webhookRoutes,
     port: WEBHOOK_API_SERVICE_PORT
   }
+    routes: reportRoutes,
+    port: REPORT_REST_API_PORT,
+  },
+  {
+    routes: emailRoutes,
+    port: NOTIFICATION_API_PORT,
+  },
 ]

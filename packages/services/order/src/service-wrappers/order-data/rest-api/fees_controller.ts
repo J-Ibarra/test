@@ -17,10 +17,8 @@ export class FeesController extends Controller {
   @Security('cookieAuth')
   @Security('tokenAuth')
   @Get('/fees/trade')
-  public async getAllDefaultTiers(): Promise<FeeTier[]> {
-    const symbolIdToFeeTiers = await getAllDefaultFeeTiers()
-
-    return Object.values(symbolIdToFeeTiers).reduce((acc, tiers) => acc.concat(tiers))
+  public async getAllDefaultTiers(): Promise<Record<string, FeeTier[]>> {
+    return getAllDefaultFeeTiers()
   }
 
   @Security('cookieAuth')
