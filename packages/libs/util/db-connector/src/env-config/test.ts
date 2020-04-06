@@ -3,7 +3,7 @@ const privateKey = 'test'
 export const dbConfig = {
   exchangeDb: {
     username: 'postgres',
-    password: '',
+    password: 'postgres',
     schema: 'kinesis_exchange',
     dialect: 'postgres',
     host: '127.0.0.1',

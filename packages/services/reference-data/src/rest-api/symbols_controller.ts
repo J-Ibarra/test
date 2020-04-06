@@ -1,5 +1,5 @@
 import { Controller, Get, Route, Query, Security, Request } from 'tsoa'
-import { getAllCompleteSymbolDetails, getExcludedAccountTypesFromOrderRangeValidations } from '../core'
+import { getAllCompleteSymbolDetails, getExcludedAccountTypesFromOrderRangeValidations, findCurrenciesByAccountId } from '../core'
 import { SymbolPairApiResponse, SymbolPair } from '@abx-types/reference-data'
 import { OverloadedRequest } from '@abx-types/account'
 import { ApiErrorPayload } from '@abx-types/error'
@@ -7,10 +7,15 @@ import { ApiErrorPayload } from '@abx-types/error'
 @Route()
 export class SymbolsController extends Controller {
   @Get('/symbols')
-  public async getSymbols(@Query() includeOrderRange?: boolean) {
+  public async getSymbols(@Request() request: OverloadedRequest, @Query() includeOrderRange?: boolean) {
     const symbols = await getAllCompleteSymbolDetails()
 
-    const sortableSymbols = symbols.map(
+    const allowedCurrencies = await findCurrenciesByAccountId(request.account!.id)
+
+    const allowedSymbols = symbols.filter(s => allowedCurrencies.some(c => c.code === s.base.code) 
+      && allowedCurrencies.some(c => c.code === s.quote.code))
+
+    const sortableSymbols = allowedSymbols.map(
       ({ id, base, quote, fee, orderRange, sortOrder }: SymbolPair): SymbolPairApiResponse => {
         const result: SymbolPairApiResponse = {
           id,
