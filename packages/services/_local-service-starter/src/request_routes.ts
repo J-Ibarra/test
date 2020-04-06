@@ -30,6 +30,8 @@ const referenceDataRoutes = [
   '/api/config',
   '/api/symbols',
   '/api/symbols/apply-threshold',
+  '/api/test-automation/feature-flags',
+  '/api/test-automation/currencies',
 ]
 const balanceRoutes = ['/internal-api/balances', '/api/balances', '/api/test-automation/balances']
 const adminFundManagementRoutes = ['/internal-api/admin-fund-management', '/api/admin/fund-management', '/api/test-automation/admin/fund-management']

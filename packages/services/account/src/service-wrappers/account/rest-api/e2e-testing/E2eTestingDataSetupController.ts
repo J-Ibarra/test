@@ -21,7 +21,7 @@ export class E2eTestingDataSetupController {
 
   @Patch('/account-status')
   @Hidden()
-  public async updateAccountStatus(@Body() { email, status, enableMfa, hasTriggeredKycCheck, suspended }: AccountStatusUpdateRequest): Promise<void> {
+  public async updateAccountStatus(@Body() { email, status, enableMfa, hasTriggeredKycCheck, suspended, hasLogged }: AccountStatusUpdateRequest): Promise<void> {
     const user = await findUserByEmail(email.toLocaleLowerCase())
     await getModel<Partial<Account>>('account').update(
       {
@@ -47,11 +47,12 @@ export class E2eTestingDataSetupController {
     if (enableMfa) {
       // The actual secret is dummy because we actually skip the MFA validation in e2e tests
       // It is only used to disable MFA prompts on the UI
-      await updateUser({ mfaSecret: 'fooBard', id: user!.id })
-    }
+      const lastLogin = !!hasLogged ? new Date() : undefined
+      await updateUser({ mfaSecret: 'fooBard', lastLogin, id: user!.id })
+    } 
   }
 
-  @Get('/details/{publicKey}')
+  @Get('/eth-details/{publicKey}')
   @Hidden()
   public async getAddressDetailsByPublicKey(publicKey: string): Promise<any> {
     return caClient.BC.ETH.address.getInfo(publicKey)

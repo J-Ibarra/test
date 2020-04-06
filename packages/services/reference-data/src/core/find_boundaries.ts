@@ -11,8 +11,7 @@ let cache = {
 }
 
 export async function findAllBoundaries(currencyCodeFilter: CurrencyCode[] = []): Promise<Record<CurrencyCode, CurrencyBoundary>> {
-  const allCurrencies = await findAllCurrencyCodes()
-  const currencyCodes = currencyCodeFilter.length > 0 ? currencyCodeFilter : allCurrencies
+  const currencyCodes = currencyCodeFilter.length > 0 ? currencyCodeFilter : await findAllCurrencyCodes()
 
   let boundaries
   if (cache.boundaries.length > 0 && moment().diff(cache.lastInvalidation, 'minute') < 20) {
