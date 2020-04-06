@@ -1,9 +1,10 @@
 import { findAccountById } from '@abx-service-clients/account'
 import { Logger } from '@abx-utils/logging'
 import { ValidationError } from '@abx-types/error'
-import { findTradeTransaction } from '@abx-service-clients/order'
-import { TradeTransactionInvoiceUrl } from '@abx-service-clients/report'
+import { findTradeTransaction, generateTradeTransactionReportData } from '@abx-service-clients/order'
+import { TradeTransactionInvoiceUrl, ReportType } from '@abx-service-clients/report'
 import { generatePreSignedUrlForTradeTransactionReport } from './s3_presigned_url'
+import { createReportAndUploadToS3 } from '../generate_report'
 
 const logger = Logger.getInstance('trade transaction report', 'getTradeTransactionInvoicePreSignedUrl')
 
@@ -17,6 +18,16 @@ export async function getTradeTransactionInvoicePreSignedUrl(userAccountId: stri
   const account = await findAccountById(userAccountId)
 
   const preSignedUrl = await generatePreSignedUrlForTradeTransactionReport(transactionId, account.hin!)
-  logger.debug('Created presigned url')
+
+  if (!preSignedUrl.url) {
+    logger.debug(`Unable to create presigned URL as resource not found, generating new transaction pdf for ${transactionId}`)
+    const transactionData = await generateTradeTransactionReportData(transactionId)
+    await createReportAndUploadToS3({ reportType: ReportType.tradeTransaction, data: transactionData })
+
+    return generatePreSignedUrlForTradeTransactionReport(transactionId, account.hin!)
+  } else {
+    logger.debug('Created presigned url')
+  }
+
   return preSignedUrl
 }

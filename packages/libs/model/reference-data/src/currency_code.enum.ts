@@ -4,6 +4,7 @@ export enum CurrencyCode {
   kag = 'KAG',
   kvt = 'KVT',
   bitcoin = 'BTC',
+  tether = 'USDT',
 
   usd = 'USD',
   euro = 'EUR',

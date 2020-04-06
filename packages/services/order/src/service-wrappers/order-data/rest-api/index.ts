@@ -21,6 +21,8 @@ import './order_match_controller'
 import './orders_admin_controller'
 import './transaction_history_controller'
 import './depth_controller'
+import './fee_pools_controller'
+import './transactions_controller'
 import './e2e-testing/E2eTestingDataSetupController'
 import { ORDER_DATA_API_PORT } from '@abx-service-clients/order'
 
@@ -31,8 +33,8 @@ export function bootstrapRestApi() {
 
   app.use(requestIpMiddleware())
   app.use(cookieParser())
-  app.use(bodyParser.urlencoded({ extended: true }))
-  app.use(bodyParser.json())
+  app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }))
+  app.use(bodyParser.json({ limit: '50mb' }))
   app.use(methodOverride())
   app.use(maintenanceMiddleware)
   app.use(healthcheckMiddleware)

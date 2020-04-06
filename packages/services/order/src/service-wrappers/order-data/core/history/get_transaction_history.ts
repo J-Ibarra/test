@@ -29,7 +29,12 @@ export async function getAccountTransactionHistory(accountId: string, selectedCu
     return acc.concat(formTradeTransactionToHistory(tradeTransaction, selectedCurrencyCode, allSymbols, Object.values(allCurrencyBoundaries)))
   }, [])
 
-  const depositAndWithdrawalTransactions = await createDepositAndWithdrawalTransactions(currencyTransactions, selectedCurrencyCode, allCurrencies)
+  const depositAndWithdrawalTransactions = await createDepositAndWithdrawalTransactions(
+    accountId,
+    currencyTransactions,
+    selectedCurrencyCode,
+    allCurrencies,
+  )
   const existingTransactionHistories = [...tradeTransactionsToHistory, ...depositAndWithdrawalTransactions].filter(Boolean)
 
   existingTransactionHistories.sort((transactionA, transactionB) => (moment(transactionA.createdAt).isBefore(transactionB.createdAt) ? 1 : -1))
@@ -38,16 +43,17 @@ export async function getAccountTransactionHistory(accountId: string, selectedCu
 }
 
 async function createDepositAndWithdrawalTransactions(
+  accountId: string,
   currencyTransactions: CurrencyTransaction[],
   selectedCurrencyCode: CurrencyCode,
   allCurrencies: Currency[],
 ) {
+  const selectedCurrency = allCurrencies.find(({ code }) => code === selectedCurrencyCode)
   const depositTransactionsToAdd = currencyTransactions.filter(({ direction }) => direction === TransactionDirection.deposit)
-  const withdrawalTransactionsToAdd = currencyTransactions.filter(({ direction }) => direction === TransactionDirection.withdrawal)
 
   const [depositTransactionHistoryItems, withdrawalRequestTransactionHistoryItems] = await Promise.all([
-    buildDepositTransactionHistory(selectedCurrencyCode, depositTransactionsToAdd, allCurrencies),
-    buildWithdrawalTransactionHistory(withdrawalTransactionsToAdd, selectedCurrencyCode),
+    buildDepositTransactionHistory(accountId, selectedCurrencyCode, depositTransactionsToAdd, allCurrencies),
+    buildWithdrawalTransactionHistory(accountId, selectedCurrency!.id, selectedCurrencyCode),
   ])
 
   return depositTransactionHistoryItems.concat(withdrawalRequestTransactionHistoryItems)

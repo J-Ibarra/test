@@ -7,7 +7,9 @@
     "start-api-debug:dev": "./dev-starter.sh",
     "start-api-debug:e2e-local": "./e2e-local-starter.sh",
     "start-api-debug-debit-card:dev": "./dev-starter-debit-card.sh",
-    "start-api-debug-debit-card:e2e-local": "./e2e-local-starter-debit-card.sh"
+    "start-api-debug-debit-card:e2e-local": "./e2e-local-starter-debit-card.sh",
+    "start-ngrok:dev": "ngrok http 3000 > /dev/null &",
+    "start-ngrok:e2e-local": "ngrok http 12345 > /dev/null &"
   },
   "dependencies": {
     "@abx-service-clients/reference-data": "^1.1.0",
@@ -18,6 +20,8 @@
     "@abx-service-clients/order": "^1.1.0",
     "@abx-service-clients/withdrawal": "^1.1.0",
     "@abx-service-clients/deposit": "^1.1.0",
+    "@abx-service-clients/report": "^1.1.0",
+    "@abx-service-clients/notification": "^1.1.0",
     "@abx/admin-fund-management-service": "^1.1.0",
     "@abx/exchange-account-data-service": "^1.1.0",
     "@abx/exchange-balance-service": "^1.1.0",
@@ -29,8 +33,12 @@
     "@abx/exchange-scheduler-service": "^1.1.0",
     "@abx/exchange-withdrawal-service": "^1.1.0",
     "@abx/order-service": "^1.1.0",
+    "@abx-utils/blockchain-currency-gateway": "^1.1.0",
+    "@abx-utils/db-connection-utils": "^1.1.0",
     "http-proxy": "1.18.0",
-    "source-map-support": "0.5.16"
+    "source-map-support": "0.5.16",
+    "body-parser": "1.18.3",
+    "express": "4.16.4"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",
@@ -47,6 +55,7 @@
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "mocha": "5.2.0",
+    "ngrok": "^3.2.7",
     "sinon": "7.2.0",
     "source-map-support": "0.5.9",
     "supertest": "3.3.0",

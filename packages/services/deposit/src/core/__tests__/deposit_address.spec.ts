@@ -15,6 +15,7 @@ import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import { truncateTables } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import * as onChainIntegration from '@abx-utils/blockchain-currency-gateway'
+import { findDepositAddressByAddressOrPublicKey } from '../deposit_address'
 
 describe('Deposit Address module', () => {
   let ACCOUNT_ID: string
@@ -61,18 +62,53 @@ describe('Deposit Address module', () => {
     expect(addressesForAccount.length).to.equal(1)
   })
 
+  it('findDepositAddressByAddressOrPublicKey should find deposit address for a publicKey', async () => {
+    const storedAddress = await storeDepositAddress({
+      accountId: ACCOUNT_ID,
+      currencyId: 1,
+      encryptedPrivateKey: 'foo',
+      publicKey: 'Bar',
+      transactionTrackingActivated: false,
+    })
+
+    const fetchedDepositAddress = await findDepositAddressByAddressOrPublicKey('bar')
+
+    expect(storedAddress).to.eql(fetchedDepositAddress)
+  })
+
+  it('findDepositAddressByAddressOrPublicKey should find deposit address for an address', async () => {
+    const storedAddress = await storeDepositAddress({
+      accountId: ACCOUNT_ID,
+      currencyId: 1,
+      encryptedPrivateKey: 'foo',
+      publicKey: 'foo-pk',
+      address: 'Bar',
+      transactionTrackingActivated: false,
+    })
+
+    const fetchedDepositAddress = await findDepositAddressByAddressOrPublicKey('bar')
+
+    expect(storedAddress).to.eql(fetchedDepositAddress)
+  })
+
   it('fetchDepositAddressesForUser generates missing deposit addresses for implemented currencies', async () => {
     const newAddress = {
       accountId: ACCOUNT_ID,
       currencyId: 1,
       encryptedPrivateKey: 'private-key-1',
       publicKey: 'public-key-2',
+      transactionTrackingActivated: false,
     }
 
     await storeDepositAddress(newAddress)
 
     const currentAddresses = await findDepositAddressesForAccount(ACCOUNT_ID)
     expect(currentAddresses.length).to.eql(1)
+
+    sinon.stub(referenceDataOperations, 'findCurrencyForId').resolves({
+      id: currencyId,
+      code: CurrencyCode.kau,
+    })
 
     sinon.stub(referenceDataOperations, 'findCryptoCurrencies').resolves([
       {
@@ -103,12 +139,14 @@ describe('Deposit Address module', () => {
       encryptedPrivateKey: 'encrPK',
       currencyId: ethereumCurrencyId,
       publicKey: 'pk1',
+      transactionTrackingActivated: false,
     })
     await storeDepositAddress({
       accountId: kycVerifiedAccount2.id,
       encryptedPrivateKey: 'encrPK2',
       currencyId: ethereumCurrencyId,
       publicKey: 'pk2',
+      transactionTrackingActivated: false,
     })
     sinon.stub(accountOperations, 'getAllKycOrEmailVerifiedAccountIds').resolves(new Set([kycVerifiedAccount.id, kycVerifiedAccount2.id]))
 

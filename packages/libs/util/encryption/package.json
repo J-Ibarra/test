@@ -12,7 +12,8 @@
   "scripts": {
     "build": "npm run clean && npm run compile",
     "clean": "rm -rf ./dist",
-    "compile": "tsc -p tsconfig.build.json --skipLibCheck"
+    "compile": "tsc -p tsconfig.build.json --skipLibCheck",
+    "test": "ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts --require ../../../../_test-setup/test_globals.js src/**/*.spec.ts --exit"
   },
   "publishConfig": {
     "access": "restricted"
@@ -20,7 +21,7 @@
   "gitHead": "8a29dce4e9bfe143b1c40c7196d4b51ea0d72d8a",
   "dependencies": {
     "@abx-types/reference-data": "^1.1.0",
-    "aws-sdk": "latest",
+    "aws-sdk": "2.574.0",
     "lodash": "4.17.5",
     "moment": "2.22.2",
     "newrelic": "4.10.0",

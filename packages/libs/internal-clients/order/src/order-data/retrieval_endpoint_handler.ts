@@ -2,6 +2,7 @@ import { OrderDataEndpoints } from './endpoints'
 import { Order, OrderMatch, TradeTransaction, OrderDirection } from '@abx-types/order'
 import { FindOptions } from 'sequelize'
 import { InternalApiRequestDispatcher } from '@abx-utils/internal-api-tools'
+import { ReportData } from '@abx-service-clients/report'
 
 export const ORDER_DATA_API_PORT = 3106
 
@@ -21,6 +22,12 @@ export async function findLastOrderMatchForSymbols(symbolIds: string[]): Promise
   })
 
   return orderMatches.reduce((acc, orderMatch) => ({ ...acc, [orderMatch.symbolId]: orderMatch }), {})
+}
+
+export function generateTradeTransactionReportData(tradeTransactionId: number): Promise<ReportData> {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<ReportData>(OrderDataEndpoints.generateTradeTransactionReportData, {
+    tradeTransactionId,
+  })
 }
 
 export function findOrderMatch(criteria: FindOptions): Promise<OrderMatch> {

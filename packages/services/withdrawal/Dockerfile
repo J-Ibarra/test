@@ -28,8 +28,3 @@ COPY packages/services/withdrawal ./packages/services/withdrawal
 
 RUN npm run bootstrap:production
 RUN npm run build:withdrawal
-WORKDIR /sync/packages/services/withdrawal
-
-EXPOSE 3108
-
-CMD ["ts-node-dev","--transpileOnly", "src/bootstrap.ts"]

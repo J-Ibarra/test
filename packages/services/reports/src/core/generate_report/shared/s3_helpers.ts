@@ -63,13 +63,31 @@ export async function getTemplateFromS3(template: ReportType): Promise<string> {
   }
 }
 
-export function createSignedUrl(params: S3SignedUrlParams): Promise<string> {
+export async function createSignedUrl(params: S3SignedUrlParams): Promise<string> {
+  const keyExists = await s3KeyExists(params.Bucket, params.Key)
+
+  if (!keyExists) {
+    return Promise.reject(`Key ${params.Key} not found`)
+  }
+
   return new Promise((resolve, reject) => {
     s3.getSignedUrl('getObject', params, (err: Error, url: string) => {
       if (err) {
         reject(err)
       }
       resolve(url)
+    })
+  })
+}
+
+function s3KeyExists(bucket: string, key: string): Promise<boolean> {
+  return new Promise(resolve => {
+    s3.getObject({ Bucket: bucket, Key: key }, (err: Error) => {
+      if (err) {
+        resolve(false)
+      }
+
+      resolve(true)
     })
   })
 }

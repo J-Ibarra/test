@@ -6,7 +6,7 @@ import * as boundaryOperations from '@abx-service-clients/reference-data'
 import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 import { Currency, CurrencyCode } from '@abx-types/reference-data'
 import * as helper from '../../lib'
-import { createAccountsAndWithdrawalFunctions } from '../initialisation_helper'
+import { createAccountsAndWithdrawalFunctions } from '../../../service-wrappers/withdrawal-api/__tests__/initialisation_helper'
 
 let accountGiver: Account
 let cryptoKauCurrency: Currency = {

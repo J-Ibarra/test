@@ -20,6 +20,7 @@ export function formTradeTransactionToHistory(
 ): TransactionHistory {
   logger.debug(`Traded transaction: ${JSON.stringify(tradeTransaction)}`)
   logger.debug(`selected currency code: ${selectedCurrencyCode}, symbols: ${JSON.stringify(allSymbols)}`)
+
   const tradeSymbol = allSymbols.find(symbol => symbol.id === tradeTransaction.symbolId)
   const feeCurrency = tradeSymbol!.fee
   logger.debug(`Traded symbol: ${JSON.stringify(tradeSymbol)}`)

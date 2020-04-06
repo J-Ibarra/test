@@ -31,5 +31,5 @@ export function configureCORS(app) {
 }
 
 export const CORS_ENABLED_ORIGINS = ENVIRONMENTS_WITH_LOCALHOST_ORIGIN_ENABLED.includes(process.env.NODE_ENV as any)
-  ? [process.env.KMS_DOMAIN, process.env.MARKETING_DOMAIN, 'http://localhost:1234']
-  : [process.env.KMS_DOMAIN, process.env.MARKETING_DOMAIN, 'http://localhost:1234']
+  ? [process.env.KMS_DOMAIN, process.env.MARKETING_DOMAIN, process.env.KINESIS_EXPLORER_DOMAIN, 'http://localhost:1234']
+  : [process.env.KMS_DOMAIN, process.env.MARKETING_DOMAIN, process.env.KINESIS_EXPLORER_DOMAIN, 'http://localhost:1234']

@@ -5,6 +5,10 @@ import { withdrawalEmissionRequestModel } from './withdrawal_kinesis_coin_emissi
 
 export default function withdrawalModels(sequelize: Sequelize): any {
   const WithdrawalRequest = withdrawalRequest(sequelize)
+  WithdrawalRequest.belongsTo(sequelize.models.withdrawalRequest, {
+    foreignKey: 'feeWithdrawalRequestId',
+    as: 'feeRequest',
+  })
   const WithdrawalKinesisCoinEmission = withdrawalEmissionRequestModel(sequelize)
   const Contact = contact(sequelize)
 

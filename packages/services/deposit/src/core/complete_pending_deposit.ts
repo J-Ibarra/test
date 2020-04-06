@@ -83,7 +83,7 @@ async function rebateOnChainFeeFromKinesisRevenueAccount(confirmedRequest: Depos
   }
 }
 
-async function sendDepositConfirmEmail(accountId: string, amount: number, currencyCode: CurrencyCode) {
+export async function sendDepositConfirmEmail(accountId: string, amount: number, currencyCode: CurrencyCode) {
   if (isFiatCurrency(currencyCode)) {
     return
   }

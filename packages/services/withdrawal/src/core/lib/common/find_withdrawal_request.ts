@@ -1,7 +1,7 @@
 import moment from 'moment'
 import { Transaction } from 'sequelize'
 
-import { getModel } from '@abx-utils/db-connection-utils'
+import { getModel, wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 import { WithdrawalRequest, WithdrawalState } from '@abx-types/withdrawal'
 
 export async function findWithdrawalRequestById(id: number, transaction?: Transaction) {
@@ -12,10 +12,25 @@ export async function findWithdrawalRequestById(id: number, transaction?: Transa
   return withdrawalRequest ? withdrawalRequest.get({ plain: true }) : null
 }
 
+export async function findWithdrawalRequestByIdWithFeeRequest(id: number, transaction?: Transaction): Promise<WithdrawalRequest | null> {
+  return wrapInTransaction(sequelize, transaction, async t => {
+    const withdrawalRequestInstance = await getModel<WithdrawalRequest>('withdrawalRequest').findByPrimary(id, {
+      transaction,
+      lock: t.LOCK.UPDATE,
+    })
+
+    if (withdrawalRequestInstance) {
+      return joinWithdrawalRequestWithFeeRequest(withdrawalRequestInstance.get(), transaction)
+    }
+
+    return null
+  })
+}
+
 export async function findWithdrawalRequestsByIds(ids: number[], transaction?: Transaction) {
   const withdrawalRequests = await getModel<WithdrawalRequest>('withdrawalRequest').findAll({
     where: {
-      id: { $in: ids }
+      id: { $in: ids },
     },
     transaction,
   })
@@ -26,7 +41,7 @@ export async function findWithdrawalRequestsByIds(ids: number[], transaction?: T
 export async function findWithdrawalRequestsForTransactionHashes(txHashes: string[], transaction?: Transaction) {
   const withdrawalRequests = await getModel<WithdrawalRequest>('withdrawalRequest').findAll({
     where: {
-      txHash: { $in: txHashes }
+      txHash: { $in: txHashes },
     },
     transaction,
   })
@@ -82,4 +97,30 @@ export async function findWithdrawalRequests(query: Partial<WithdrawalRequest>) 
   })
 
   return withdrawalRequests.map(withdrawalRequest => withdrawalRequest.get({ plain: true }))
+}
+
+export const findWithdrawalRequestByTxHash = (txHash: string) => findWithdrawalRequest({ txHash })
+
+export const findWithdrawalRequestByTxHashWithFeeRequest = async (txHash: string, transaction: Transaction) => {
+  const withdrawalRequestInstance = await getModel<WithdrawalRequest>('withdrawalRequest').findOne({
+    where: { txHash },
+    transaction,
+    lock: transaction.LOCK.UPDATE,
+  })
+
+  if (withdrawalRequestInstance) {
+    return joinWithdrawalRequestWithFeeRequest(withdrawalRequestInstance.get(), transaction)
+  }
+
+  return null
+}
+
+async function joinWithdrawalRequestWithFeeRequest(withdrawalRequest: WithdrawalRequest, transaction?: Transaction) {
+  if (withdrawalRequest.feeWithdrawalRequestId) {
+    const feeRequest = await findWithdrawalRequestById(withdrawalRequest.id!, transaction)
+
+    withdrawalRequest.feeRequest = feeRequest!
+  }
+
+  return withdrawalRequest
 }

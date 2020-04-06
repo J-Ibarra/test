@@ -109,7 +109,7 @@ describe('api:market-data', () => {
       symbolId: kvtUsdSymbol,
       askPrice: 10,
       bidPrice: 10,
-      dailyChange: 10.5,
+      dailyChange: 0.105,
       dailyVolume: 105,
     })
   })
@@ -137,7 +137,7 @@ describe('api:market-data', () => {
       symbolId: kvtUsdSymbol,
       askPrice: 10,
       bidPrice: 10,
-      dailyChange: 10.5,
+      dailyChange: 0.105,
       dailyVolume: 105,
     })
   })
@@ -165,7 +165,7 @@ describe('api:market-data', () => {
       symbolId: kvtUsdSymbol,
       askPrice: 10,
       bidPrice: 10,
-      dailyChange: 10.5,
+      dailyChange: 0.105,
       dailyVolume: 105,
     })
   }).timeout(60_000)

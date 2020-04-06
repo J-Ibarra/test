@@ -9,6 +9,7 @@ const SalesforceDepositAddressType = {
   [CurrencyCode.kvt]: 'KVT Deposit Address',
   [CurrencyCode.ethereum]: 'ETH Deposit Address',
   [CurrencyCode.bitcoin]: 'BTC Deposit Address',
+  [CurrencyCode.tether]: 'USDT Deposit Address',
 }
 
 interface SalesforceLinkedAddress {

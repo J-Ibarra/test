@@ -10,4 +10,7 @@ lerna run build --scope @abx-utils/kbe-legacy-migrations --include-dependencies 
 npm run run-legacy-migrations:test
 
 lerna run build --scope $1 --since develop --include-dependencies
+
+lerna run run-migrations:test --scope $1 
+
 lerna run test --scope $1 --since develop --include-dependencies

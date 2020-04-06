@@ -29,7 +29,7 @@ before_install:
   - aws configure set profile.kinesis.region ap-southeast-2
   - gem install bundler --version '2.0.2'
 before_script:
-  - psql -c 'create database kinesis_exchange;' -U postgres
+  - PGPASSWORD=postgres psql -c 'create database kinesis_exchange;' -U postgres
 
 jobs:
   include:

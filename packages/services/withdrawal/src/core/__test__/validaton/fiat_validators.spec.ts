@@ -11,7 +11,7 @@ import * as conversion from '@abx-utils/fx-rate'
 import { WithdrawalRequest, WithdrawalRequestType, WithdrawalState } from '@abx-types/withdrawal'
 import * as helper from '../../lib'
 import { createWithdrawalRequest } from '../../lib'
-import { createAccountsAndWithdrawalFunctions } from '../initialisation_helper'
+import { createAccountsAndWithdrawalFunctions } from '../../../service-wrappers/withdrawal-api/__tests__/initialisation_helper'
 
 let accountGiver: Account
 let fiatUsdCurrency: Currency

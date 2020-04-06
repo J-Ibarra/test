@@ -10,6 +10,7 @@ const caClient = new CryptoApis(process.env.CRYPTO_APIS_TOKEN!)
 caClient.BC.ETH.switchNetwork(caClient.BC.ETH.NETWORKS.ROPSTEN)
 
 @Route('test-automation/accounts')
+@Hidden()
 export class E2eTestingDataSetupController {
   @Patch('/type')
   @Hidden()
@@ -51,11 +52,13 @@ export class E2eTestingDataSetupController {
   }
 
   @Get('/details/{publicKey}')
+  @Hidden()
   public async getAddressDetailsByPublicKey(publicKey: string): Promise<any> {
     return caClient.BC.ETH.address.getInfo(publicKey)
   }
 
   @Get('/nonce/{publicKey}')
+  @Hidden()
   public async getNonce(publicKey: string): Promise<any> {
     return caClient.BC.ETH.address.getAddressNonce(publicKey)
   }

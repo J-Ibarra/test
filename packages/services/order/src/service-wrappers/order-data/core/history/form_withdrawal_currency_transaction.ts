@@ -1,47 +1,42 @@
 import Decimal from 'decimal.js'
 import { CurrencyCode } from '@abx-types/reference-data'
-import { CurrencyTransaction, TransactionType } from '@abx-types/order'
+import { TransactionType } from '@abx-types/order'
 import { WithdrawalRequest, WithdrawalRequestType } from '@abx-types/withdrawal'
 import { TransactionHistory, TransactionHistoryDirection } from './model'
-import { findWithdrawalRequestsByIds, getWithdrawalFees } from '@abx-service-clients/withdrawal'
+import { getWithdrawalFees, findAllWithdrawalRequestsForAccountAndCurrency } from '@abx-service-clients/withdrawal'
 import { groupBy, head } from 'lodash'
 
 export async function buildWithdrawalTransactionHistory(
-  currencyTransactions: CurrencyTransaction[],
+  accountId: string,
+  selectedCurrencyId: number,
   selectedCurrencyCode: CurrencyCode,
 ): Promise<TransactionHistory[]> {
-  const withdrawalRequests = await findWithdrawalRequestsByIds(currencyTransactions.map(({ requestId }) => requestId!))
+  const allWithdrawalRequests = await findAllWithdrawalRequestsForAccountAndCurrency(accountId, selectedCurrencyId)
   const withdrawalFees = await getWithdrawalFees(
     selectedCurrencyCode,
-    withdrawalRequests.map(({ id, amount, adminRequestId }) => ({ withdrawalRequestId: id!, withdrawalAmount: amount, adminRequestId })),
+    allWithdrawalRequests.map(({ id, amount, adminRequestId }) => ({ withdrawalRequestId: id!, withdrawalAmount: amount, adminRequestId })),
   )
   const withdrawalRequestIdToFees = groupBy(withdrawalFees, 'withdrawalRequestId')
 
-  return Promise.all(
-    withdrawalRequests.map(withdrawalRequest => {
-      const withdrawalRequestFeeDetails = head(withdrawalRequestIdToFees[withdrawalRequest.id!])!
+  return allWithdrawalRequests.map(withdrawalRequest => {
+    const withdrawalRequestFeeDetails = head(withdrawalRequestIdToFees[withdrawalRequest.id!])!
 
-      return formWithdrawalCurrencyTransactionToHistory(
-        withdrawalRequest,
-        selectedCurrencyCode,
-        withdrawalRequestFeeDetails.feeCurrencyCode,
-        withdrawalRequestFeeDetails.withdrawalFee,
-      )
-    }),
-  )
+    return formWithdrawalCurrencyTransactionToHistory(
+      withdrawalRequest,
+      selectedCurrencyCode,
+      withdrawalRequestFeeDetails.feeCurrencyCode,
+      withdrawalRequestFeeDetails.withdrawalFee,
+    )
+  })
 }
 
-/**
- * Form withdrawal request to transaction history type
- * @param currencyTransaction
- * @param selectedCurrencyCode
- */
-export async function formWithdrawalCurrencyTransactionToHistory(
+/** Transforms withdrawal request to transaction history type */
+export function formWithdrawalCurrencyTransactionToHistory(
   withdrawalRequest: WithdrawalRequest,
   selectedCurrencyCode: CurrencyCode,
   feeCurrencyCode: CurrencyCode,
-  withdrawalFee: number,
-): Promise<TransactionHistory> {
+  withdrawalFee = 0,
+) {
   const { title, transactionType } = !!withdrawalRequest.address
     ? resultOfReceiverExist(withdrawalRequest.address)
     : resultOfReceiverNotExist(selectedCurrencyCode)
@@ -70,6 +65,9 @@ export async function formWithdrawalCurrencyTransactionToHistory(
     targetAddress: withdrawalRequest.address,
     fee: withdrawalFee,
     feeCurrency: feeCurrencyCode,
+    metadata: {
+      status: withdrawalRequest.state,
+    },
   }
 }
 
