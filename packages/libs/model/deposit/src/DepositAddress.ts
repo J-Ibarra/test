@@ -9,4 +9,11 @@ export interface DepositAddress {
   currencyId: number
   encryptedPrivateKey: string
   publicKey: string
+  address?: string
+  encryptedWif?: string
+  /**
+   * When an address is activated Kinesis is actively monitoring the address for new transactions
+   * processing them as deposits.
+   */
+  transactionTrackingActivated?: boolean
 }

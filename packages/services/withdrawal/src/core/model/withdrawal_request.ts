@@ -78,6 +78,15 @@ export default function withdrawalRequestModel(sequelize: Sequelize.Sequelize) {
       adminRequestId: {
         type: Sequelize.INTEGER,
       },
+      feeWithdrawalRequestId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'withdrawal_request',
+          key: 'id',
+          deferrable: Sequelize.Deferrable,
+        },
+        allowNull: true,
+      },
     },
     {
       tableName: 'withdrawal_request',

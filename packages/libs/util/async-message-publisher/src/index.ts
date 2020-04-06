@@ -34,7 +34,8 @@ const sqs = new AWS.SQS({ region: getAwsRegionForEnvironment(process.env.NODE_EN
  * @param message contains the payload to publish
  */
 export function sendAsyncChangeMessage<T>(message: AsyncMessage<T>): Promise<void> {
-  return environmentsWithLocalRedisQueue.includes(process.env.NODE_ENV as Environment)
+  return environmentsWithLocalRedisQueue.includes(process.env.NODE_ENV as Environment) &&
+    (!message.target.deployedEnvironment || message.target.deployedEnvironment.startsWith('local'))
     ? publishChangeThroughRedis<T>(message)
     : queueChangeInSQS<T>(message)
 }

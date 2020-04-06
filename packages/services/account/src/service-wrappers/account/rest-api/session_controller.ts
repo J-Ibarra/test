@@ -7,6 +7,7 @@ import { createSessionForUser, isAccountSuspended, killSession, validateUserCred
 import { Logger } from '@abx-utils/logging'
 import { ValidationError } from '@abx-types/error'
 import { OverloadedRequest } from '@abx-types/account'
+import { createWalletAddressesForNewAccount } from '@abx-service-clients/deposit'
 
 const DEFAULT_SESSION_EXPIRY = 12
 
@@ -104,6 +105,8 @@ export class SessionsController extends Controller {
           this.isLocalDev() ? '' : 'SameSite=Strict;'
         } expires=${appSessionExpires};`,
       )
+
+      process.nextTick(() => createWalletAddressesForNewAccount(user.accountId))
 
       return {
         ...updatedUser,

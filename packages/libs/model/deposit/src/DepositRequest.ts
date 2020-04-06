@@ -18,5 +18,5 @@ export interface DepositRequest {
   fiatConversion: number
   fiatCurrencyCode: FiatCurrency
   updatedAt?: Date
+  createdAt?: Date
 }
-

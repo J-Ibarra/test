@@ -13,8 +13,8 @@
     "build": "npm run clean && npm run compile",
     "clean": "rm -rf ./dist",
     "compile": "tsc -p tsconfig.build.json --skipLibCheck",
-    "run-legacy-migrations-test": "npm run compile && NODE_ENV=test NODE_PATH=dist node dist/runner.js",
-    "run-legacy-migrations-dev": "npm run compile && NODE_ENV=dev NODE_PATH=dist node dist/runner.js"
+    "run-legacy-migrations-test": "NODE_ENV=test tsnd src/runner.ts",
+    "run-legacy-migrations-dev": "NODE_ENV=dev tsnd src/runner.ts"
   },
   "publishConfig": {
     "access": "restricted"

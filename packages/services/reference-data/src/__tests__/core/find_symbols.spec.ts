@@ -1,9 +1,25 @@
 import { expect } from 'chai'
+import sinon from 'sinon'
 
 import { CurrencyCode } from '@abx-types/reference-data'
 import { getAllCompleteSymbolDetails, getAllSymbolsIncludingCurrency, getSymbolsForQuoteCurrency, getSymbolWithCurrencyPair } from '../../core'
+import * as currencies from '../../core/symbols/currency_in_memory_cache'
+import * as symbols from '../../core/symbols/symbol_in_memory_cache'
+import rewire from 'rewire'
+const symbolsCache = rewire('../../core/symbols/symbol_in_memory_cache')
 
 describe('find_symbols', () => {
+  let findAllCurrenciesStub
+  let fetchAllSymbolsStub
+    beforeEach(async () => {
+      findAllCurrenciesStub = sinon.stub(currencies, 'fetchAllCurrencies').callsFake(currencies.findCurrencies)
+      fetchAllSymbolsStub = sinon.stub(symbols, 'fetchAllSymbols').callsFake(symbolsCache.fetchAllSymbols)
+    })
+    afterEach(async () => {
+      findAllCurrenciesStub.restore()
+      fetchAllSymbolsStub.restore()
+    })
+
   it('getSymbolsForQuoteCurrency should find all symbols for a quote currency', async () => {
     const symbols = await getSymbolsForQuoteCurrency(CurrencyCode.ethereum)
 

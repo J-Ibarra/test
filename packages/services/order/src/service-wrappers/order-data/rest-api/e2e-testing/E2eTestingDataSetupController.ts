@@ -13,6 +13,7 @@ import { depthPrefix } from '../../../order-matcher/core/order-match-handling/de
 export const orderTestAccountEmails = ['order-user-1@abx.com', 'order-user-2@abx.com']
 
 @Route('test-automation')
+@Hidden()
 export class E2eTestingDataSetupController {
   private logger = Logger.getInstance('api', 'E2eTestDataCleanerController')
 
@@ -59,6 +60,7 @@ export class E2eTestingDataSetupController {
   }
 
   @Post('/orders/account-setup-scripts')
+  @Hidden()
   public async runAccountSetupScript(@Body() { email, balances, orders }): Promise<void> {
     this.logger.info(`Setting up account for ${email}`)
 

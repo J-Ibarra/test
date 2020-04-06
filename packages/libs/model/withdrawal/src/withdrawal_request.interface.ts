@@ -35,6 +35,8 @@ export interface WithdrawalRequest {
   transactionId?: string
   transactionFee?: number
   adminRequestId?: number
+  feeWithdrawalRequestId?: number
+  feeRequest?: WithdrawalRequest
 }
 
 export interface CurrencyEnrichedWithdrawalRequest extends WithdrawalRequest {

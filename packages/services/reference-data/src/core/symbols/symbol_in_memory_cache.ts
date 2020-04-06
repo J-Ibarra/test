@@ -28,7 +28,7 @@ function filterSymbols(state: SymbolPairStateFilter) {
     : symbols.filter(({ isEnabled }) => (state === SymbolPairStateFilter.disabled ? isEnabled === false : isEnabled === true))
 }
 
-async function findSymbols(transaction?: Transaction): Promise<SymbolPair[]> {
+export async function findSymbols(transaction?: Transaction): Promise<SymbolPair[]> {
   const allSymbols = await getModel<SymbolPair>('symbol').findAll({
     transaction,
     include: [createCurrencyIncludeOption('quote'), createCurrencyIncludeOption('base'), createCurrencyIncludeOption('fee')],

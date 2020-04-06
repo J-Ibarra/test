@@ -1,5 +1,5 @@
 import { DepositRequest } from '@abx-types/deposit'
-import { findDepositAddressesForAccount, findDepositRequestsByIds } from '@abx-service-clients/deposit'
+import { findDepositAddressesForAccount, findDepositRequestsForAccountAndCurrency } from '@abx-service-clients/deposit'
 import { CurrencyCode, Currency } from '@abx-types/reference-data'
 import { CurrencyTransaction, TransactionType } from '@abx-types/order'
 import { WithdrawalRequest } from '@abx-types/withdrawal'
@@ -10,6 +10,7 @@ import { AdminRequest, findAdminRequests } from '@abx-service-clients/admin-fund
 import { groupBy, head } from 'lodash'
 
 export async function buildDepositTransactionHistory(
+  accountId: string,
   selectedCurrencyCode: CurrencyCode,
   depositTransactions: CurrencyTransaction[],
   allCurrencies: Currency[],
@@ -29,21 +30,17 @@ export async function buildDepositTransactionHistory(
   }
 
   const holdingWallets = await getExchangeHoldingsWallets()
-  const depositRequests = await findDepositRequestsByIds(depositTransactions.map(({ requestId }) => requestId!))
-  const depositRequestIdToRequest = groupBy<DepositRequest>(depositRequests, 'id')
+  const depositCurrency = allCurrencies.find(({ code }) => code === selectedCurrencyCode)!
+  const allDepositRequestsForAccount = await findDepositRequestsForAccountAndCurrency(accountId, depositCurrency.id)
 
-  const withdrawalRequests = await findWithdrawalRequestsForTransactionHashes(depositRequests.map(({ depositTxHash }) => depositTxHash))
+  const withdrawalRequests = await findWithdrawalRequestsForTransactionHashes(allDepositRequestsForAccount.map(({ depositTxHash }) => depositTxHash))
   const txHashToWithdrawalRequest = groupBy(withdrawalRequests, 'txHash')
 
   return Promise.all(
-    depositTransactions.map(depositTransaction => {
-      const depositRequest = head(depositRequestIdToRequest[depositTransaction.requestId!])!
-
+    allDepositRequestsForAccount.map(depositRequest => {
       return formCryptoDepositHistoryItem(
-        depositTransaction,
         depositRequest,
-        selectedCurrencyCode,
-        allCurrencies,
+        depositCurrency,
         holdingWallets.some(holdingWallet => holdingWallet.publicKey === depositRequest.from)
           ? head(txHashToWithdrawalRequest[depositRequest.depositTxHash] || [])!
           : null,
@@ -71,30 +68,30 @@ async function formFiatDepositHistoryItem(
 }
 
 async function formCryptoDepositHistoryItem(
-  currencyTransaction: CurrencyTransaction,
   depositRequest: DepositRequest,
-  selectedCurrencyCode: CurrencyCode,
-  allCurrencies: Currency[],
+  depositCurrency: Currency,
   senderRequest?: WithdrawalRequest | null,
+  currencyTransaction?: CurrencyTransaction,
 ): Promise<TransactionHistory> {
-  const depositCurrency = allCurrencies.find(({ code }) => code === selectedCurrencyCode)
-
   const { title, memo, senderAddress, transactionType } = !!senderRequest
     ? await resultOfSenderExist(senderRequest, depositCurrency!.id)
     : resultOfSenderNotExist(depositRequest)
 
   return {
     transactionType,
-    primaryCurrencyCode: selectedCurrencyCode,
-    primaryAmount: currencyTransaction.amount,
+    primaryCurrencyCode: depositCurrency.code,
+    primaryAmount: currencyTransaction ? currencyTransaction.amount : depositRequest.amount,
     preferredCurrencyCode: depositRequest.fiatCurrencyCode.toString() as CurrencyCode,
     preferredCurrencyAmount: depositRequest.fiatConversion,
     title,
     memo: memo!,
     direction: TransactionHistoryDirection.incoming,
-    createdAt: currencyTransaction.createdAt!,
+    createdAt: currencyTransaction ? currencyTransaction.createdAt! : depositRequest.createdAt!,
     transactionId: !!depositRequest ? depositRequest.depositTxHash : '',
     targetAddress: senderAddress,
+    metadata: {
+      status: depositRequest.status,
+    },
   }
 }
 

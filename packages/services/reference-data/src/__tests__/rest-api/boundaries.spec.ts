@@ -1,18 +1,23 @@
 import { expect } from 'chai'
+import sinon from 'sinon'
 import request from 'supertest'
 import { CurrencyBoundary, CurrencyCode } from '@abx-types/reference-data'
 import { Server } from 'http'
 import { bootstrapRestApi } from '../../rest-api'
 import { REFERENCE_DATA_REST_API_PORT } from '@abx-service-clients/reference-data'
+import * as currencies from '../../core/symbols/currency_in_memory_cache'
 
 describe('api:boundaries', () => {
   let app: Server
-
+  let findAllCurrenciesStub
+  
   beforeEach(async () => {
+    findAllCurrenciesStub = sinon.stub(currencies, 'fetchAllCurrencies').callsFake(currencies.findCurrencies)
     app = bootstrapRestApi().listen(REFERENCE_DATA_REST_API_PORT)
   })
 
   afterEach(async () => {
+    findAllCurrenciesStub.restore()
     await app.close()
   })
 

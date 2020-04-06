@@ -4,8 +4,9 @@ import { BALANCE_REST_API_PORT } from '@abx-service-clients/balance'
 import { ADMIN_FUND_MANAGEMENT_REST_API_PORT } from '@abx-service-clients/admin-fund-management'
 import { MARKET_DATA_REST_API_PORT } from '@abx-service-clients/market-data'
 import { ORDER_DATA_API_PORT, ORDER_GATEWAY_API_PORT, SETTLEMENT_API_ROOT } from '@abx-service-clients/order'
-import { WITHDRAWAL_REST_API_PORT } from '@abx-service-clients/withdrawal'
+import { WITHDRAWAL_API_SERVICE_PORT } from '@abx-service-clients/withdrawal'
 import { DEPOSIT_API_PORT } from '@abx-service-clients/deposit'
+import { WEBHOOK_API_SERVICE_PORT } from './webhooks'
 import { REPORT_REST_API_PORT } from '@abx-service-clients/report'
 import { NOTIFICATION_API_PORT } from '@abx-service-clients/notification'
 
@@ -46,7 +47,19 @@ const orderDataRoutes = [
 const orderGatewayRoutes = ['/internal-api/order-gateway']
 const orderSettlementRoutes = ['/internal-api/order-settlement']
 const withdrawalRoutes = ['/internal-api/withdrawals', '/api/withdrawals', '/api/contacts', '/api/crypto']
-const depositRoutes = ['/internal-api/deposit', '/api/vault', '/api/wallets', '/api/test-automation/deposit']
+const depositRoutes = [
+  '/internal-api/deposit',
+  '/api/vault',
+  '/api/wallets',
+  '/api/test-automation/deposit'
+]
+
+const webhookRoutes = [
+  '/api/webhooks/crypto/deposits/address/transactions/unconfirmed',
+  '/api/webhooks/crypto/deposits/address/transactions/confirmed',
+  '/api/webhooks/crypto/deposits/holdings-transactions/confirmations',
+  '/api/webhooks/crypto/withdrawals/confirmations'
+]
 const reportRoutes = ['/api/reports']
 const emailRoutes = ['/api/test-automation/emails']
 
@@ -81,7 +94,7 @@ export const routesToPort: { routes: string[]; port: number }[] = [
   },
   {
     routes: withdrawalRoutes,
-    port: WITHDRAWAL_REST_API_PORT,
+    port: WITHDRAWAL_API_SERVICE_PORT,
   },
   {
     routes: referenceDataRoutes,
@@ -92,6 +105,9 @@ export const routesToPort: { routes: string[]; port: number }[] = [
     port: DEPOSIT_API_PORT,
   },
   {
+    routes: webhookRoutes,
+    port: WEBHOOK_API_SERVICE_PORT
+  }
     routes: reportRoutes,
     port: REPORT_REST_API_PORT,
   },

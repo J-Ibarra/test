@@ -1,11 +1,11 @@
 import Decimal from 'decimal.js'
 import { Transaction } from 'sequelize'
-import { Environment, CurrencyCode } from '@abx-types/reference-data'
+import { Environment, SymbolPair } from '@abx-types/reference-data'
 import { Logger } from '@abx-utils/logging'
 import { sequelize, wrapInTransaction, getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { findOrder } from '../order'
 import { Order, OrderDirection, OrderMatchStatus, OrderStatus } from '@abx-types/order'
-import { findCurrencyForCode } from '@abx-service-clients/reference-data'
+import { getCompleteSymbolDetails } from '@abx-service-clients/reference-data'
 import { findTradeTransactions, findOrderMatchTransactions } from '../transaction'
 import { retrieveTotalOrderValueReceivedByAccount } from '@abx-service-clients/balance'
 import { RuntimeError } from '@abx-types/error'
@@ -19,6 +19,7 @@ export interface TradeExecutionResult {
 }
 
 const logger = Logger.getInstance('order_execution_result_dispatcher', 'publishOrderExecutionResultEvent')
+const symbolDictionary: Record<string, SymbolPair> = {}
 
 /**
  * Publishes order execution result for a given order, retrieving all the balance adjustments that happened as a result of
@@ -42,9 +43,10 @@ export function publishOrderExecutionResultEvent(orderId: number, parentTransact
       logger.info(`All matches settled for order ${orderId}`)
       const { rows: orderTradeTransactions } = await findTradeTransactions({ where: { orderId }, transaction })
 
-      const currencyReceived = await findCurrencyForCode(
-        (order.direction === OrderDirection.buy ? order.symbolId.substring(0, 3) : order.symbolId.slice(-3)) as CurrencyCode,
-      )
+      const tradedSymbol = symbolDictionary[order.symbolId] || (await getCompleteSymbolDetails(order.symbolId))
+      symbolDictionary[order.symbolId] = tradedSymbol
+
+      const currencyReceived = order.direction === OrderDirection.buy ? tradedSymbol.base : tradedSymbol.quote
 
       logger.info(`Counter trade ids ${orderTradeTransactions.map(({ counterTradeTransactionId }) => counterTradeTransactionId)}`)
       const totalAmountReceived = await retrieveTotalOrderValueReceivedByAccount(

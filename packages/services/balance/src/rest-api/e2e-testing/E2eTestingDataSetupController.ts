@@ -3,6 +3,7 @@ import { findUsersByEmail } from '@abx-service-clients/account'
 import { BalanceRepository } from '../../core'
 
 @Route('test-automation')
+@Hidden()
 export class E2eTestingDataSetupController {
   private balanceRepository = BalanceRepository.getInstance()
 

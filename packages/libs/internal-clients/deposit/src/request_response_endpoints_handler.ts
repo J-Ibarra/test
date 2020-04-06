@@ -14,6 +14,13 @@ export function findDepositRequestById(id: number): Promise<DepositRequest | nul
   return internalApiRequestDispatcher.fireRequestToInternalApi<DepositRequest | null>(DepositQueryEndpoints.findDepositRequestById, { id })
 }
 
+export function findDepositRequestsForAccountAndCurrency(accountId: string, currencyId: number): Promise<DepositRequest[]> {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<DepositRequest[]>(DepositQueryEndpoints.findDepositRequestsForAccountAndCurrency, {
+    accountId,
+    currencyId,
+  })
+}
+
 export function findDepositRequestsByIds(ids: number[]): Promise<DepositRequest[]> {
   return internalApiRequestDispatcher.fireRequestToInternalApi<DepositRequest[]>(DepositQueryEndpoints.findDepositRequestsByIds, { ids })
 }

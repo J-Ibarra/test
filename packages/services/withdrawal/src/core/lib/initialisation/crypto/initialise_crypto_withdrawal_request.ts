@@ -3,11 +3,12 @@ import { Transaction } from 'sequelize'
 import { Logger } from '@abx-utils/logging'
 import { wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
-import { FiatCurrency, Currency } from '@abx-types/reference-data'
+import { FiatCurrency } from '@abx-types/reference-data'
 import { getWithdrawalFee } from '../../../helper'
 import { InitialiseWithdrawalParams } from '@abx-types/withdrawal'
 import { updatePendingWithdrawerAndKinesisRevenueAccounts } from './balance-update'
 import { createWithdrawalRequests, WithdrawalRequestCreationResult } from './request-creation'
+import { findCurrencyForCodes } from '@abx-service-clients/reference-data'
 import { WithdrawalPubSubChannels } from '@abx-service-clients/withdrawal'
 
 const preferredCurrencyCode = FiatCurrency.usd
@@ -16,13 +17,12 @@ const logger = Logger.getInstance('initialise_crypto_withdrawal_request', 'initi
 
 export function initialiseCryptoWithdrawalRequest(
   initialiseWithdrawalParams: InitialiseWithdrawalParams,
-  withdrawalCurrency: Currency,
-  feeCurrency: Currency,
   t?: Transaction,
 ): Promise<WithdrawalRequestCreationResult> {
   const epicurus = getEpicurusInstance()
   return wrapInTransaction(sequelize, t, async transaction => {
     const { withdrawalFee, feeCurrencyCode } = await getWithdrawalFee(initialiseWithdrawalParams.currencyCode, initialiseWithdrawalParams.amount)
+    const [withdrawalCurrency, feeCurrency] = await findCurrencyForCodes([initialiseWithdrawalParams.currencyCode, feeCurrencyCode])
 
     const { amountRequest, feeRequest } = await createWithdrawalRequests(
       initialiseWithdrawalParams,
