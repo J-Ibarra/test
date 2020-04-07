@@ -5,6 +5,7 @@ import {
   getDailyMarketDataStats,
   getDailyMarketDataStatsForAllSymbols,
   getDailyMarketDataStatsForCurrency,
+  SYMBOL_TOTAL_TRADE_VOLUME,
 } from '../../../../repository/daily-statistics'
 import { setupMemoryCache } from '../test-helper'
 import sinon from 'sinon'
@@ -39,7 +40,7 @@ describe('Retrieve the latest daily stats', async () => {
       expect(dailyStatsForKauUsd.length).to.eql(1)
       expect(dailyStatsForKauUsd[0].symbolId).to.eql(kauUsd)
       expect(dailyStatsForKauUsd[0].dailyChange).to.eql(-0.058823529411764705)
-      expect(dailyStatsForKauUsd[0].dailyVolume).to.eql(18848)
+      expect(dailyStatsForKauUsd[0].dailyVolume).to.eql(13792)
       expect(dailyStatsForKauUsd[0].bidPrice).to.eql(3)
       expect(dailyStatsForKauUsd[0].askPrice).to.eql(4)
 
@@ -47,7 +48,7 @@ describe('Retrieve the latest daily stats', async () => {
       expect(dailyStatsForKauUsdSecondTime.length).to.eql(1)
       expect(dailyStatsForKauUsdSecondTime[0].symbolId).to.eql(kauUsd)
       expect(dailyStatsForKauUsdSecondTime[0].dailyChange).to.eql(-0.058823529411764705)
-      expect(dailyStatsForKauUsdSecondTime[0].dailyVolume).to.eql(18848)
+      expect(dailyStatsForKauUsdSecondTime[0].dailyVolume).to.eql(13792)
       expect(dailyStatsForKauUsdSecondTime[0].bidPrice).to.eql(3)
       expect(dailyStatsForKauUsdSecondTime[0].askPrice).to.eql(4)
     })
@@ -74,7 +75,7 @@ describe('Retrieve the latest daily stats', async () => {
 
       expect(dailyStatsForKauUsd.symbolId).to.eql(kauUsd)
       expect(dailyStatsForKauUsd.dailyChange).to.eql(-0.058823529411764705)
-      expect(dailyStatsForKauUsd.dailyVolume).to.eql(18848)
+      expect(dailyStatsForKauUsd.dailyVolume).to.eql(13792)
       expect(dailyStatsForKauUsd.bidPrice).to.eql(3)
       expect(dailyStatsForKauUsd.askPrice).to.eql(4)
     })
@@ -96,22 +97,15 @@ describe('Retrieve the latest daily stats', async () => {
 
       expect(dailyStatsForKauUsd.symbolId).to.eql(kauUsd)
       expect(dailyStatsForKauUsd.dailyChange).to.eql(-0.058823529411764705)
-      expect(dailyStatsForKauUsd.dailyVolume).to.eql(18848)
+      expect(dailyStatsForKauUsd.dailyVolume).to.eql(13792)
       expect(dailyStatsForKauUsd.bidPrice).to.eql(3)
       expect(dailyStatsForKauUsd.askPrice).to.eql(4)
     })
   })
 })
-const setupDailyStats = symbol => {
+const setupDailyStats = (symbol) => {
   setupMemoryCache(symbol)
   MemoryCache.getInstance().set({ key: `exchange:stats:ask:${symbol}`, val: 4 })
   MemoryCache.getInstance().set({ key: `exchange:stats:bid:${symbol}`, val: 3 })
-  MemoryCache.getInstance().set({ key: `exchange:stats:volume:${symbol}:1`, val: 4 })
-  MemoryCache.getInstance().set({ key: `exchange:stats:volume:${symbol}:2`, val: 41 })
-  MemoryCache.getInstance().set({ key: `exchange:stats:volume:${symbol}:3`, val: 41 })
-  MemoryCache.getInstance().set({ key: `exchange:stats:volume:${symbol}:4`, val: 412 })
-  MemoryCache.getInstance().set({ key: `exchange:stats:volume:${symbol}:5`, val: 44 })
-  MemoryCache.getInstance().set({ key: `exchange:stats:volume:${symbol}:6`, val: 44 })
-  MemoryCache.getInstance().set({ key: `exchange:stats:volume:${symbol}:7`, val: 2 })
-  MemoryCache.getInstance().set({ key: `exchange:stats:volume:${symbol}:8`, val: 1 })
+  MemoryCache.getInstance().set({ key: SYMBOL_TOTAL_TRADE_VOLUME(symbol), val: 431 })
 }

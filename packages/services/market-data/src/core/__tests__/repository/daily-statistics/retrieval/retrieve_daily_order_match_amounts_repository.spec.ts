@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { MemoryCache, truncateTables } from '@abx-utils/db-connection-utils'
-import { getDailyVolume } from '../../../../repository/daily-statistics'
+import { getDailyVolume, MID_PRICE_LATEST_KEY, SYMBOL_TOTAL_TRADE_VOLUME } from '../../../../repository/daily-statistics'
 
 describe('Retrieve the order match amounts', async () => {
   let memCacheGateway: MemoryCache
@@ -21,24 +21,16 @@ describe('Retrieve the order match amounts', async () => {
 
   describe('getDailyVolume', () => {
     it('get the daily volume for a symbol', async () => {
-      MemoryCache.getInstance().set({ key: `exchange:stats:change:${kauUsd}:1`, val: 10 })
+      MemoryCache.getInstance().set({ key: MID_PRICE_LATEST_KEY(kauUsd), val: 10 })
+      MemoryCache.getInstance().set({ key: SYMBOL_TOTAL_TRADE_VOLUME(kauUsd), val: 1 })
 
-      MemoryCache.getInstance().set({ key: `exchange:stats:volume:${kauUsd}:1`, val: 4 })
-      MemoryCache.getInstance().set({ key: `exchange:stats:volume:${kauUsd}:2`, val: 41 })
-      MemoryCache.getInstance().set({ key: `exchange:stats:volume:${kauUsd}:3`, val: 41 })
-      MemoryCache.getInstance().set({ key: `exchange:stats:volume:${kauUsd}:4`, val: 412 })
-      MemoryCache.getInstance().set({ key: `exchange:stats:volume:${kauUsd}:5`, val: 44 })
-      MemoryCache.getInstance().set({ key: `exchange:stats:volume:${kauUsd}:6`, val: 44 })
-      MemoryCache.getInstance().set({ key: `exchange:stats:volume:${kauUsd}:7`, val: 2 })
-      MemoryCache.getInstance().set({ key: `exchange:stats:volume:${kauUsd}:8`, val: 1 })
-
-      const dailyVolume = getDailyVolume([kauUsd])
+      const dailyVolume = await getDailyVolume([kauUsd])
       expect(dailyVolume.size).to.eql(1)
-      expect(dailyVolume.get(kauUsd)).to.eql(5890)
+      expect(dailyVolume.get(kauUsd)).to.eql(10)
     })
 
     it('no stored match prices - should get nothing', async () => {
-      const dailyVolume = getDailyVolume([kauUsd])
+      const dailyVolume = await getDailyVolume([kauUsd])
       expect(dailyVolume.size).to.eql(1)
       expect(dailyVolume.get(kauUsd)).to.eql(0)
     })
