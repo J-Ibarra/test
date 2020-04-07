@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import moment from 'moment'
 import { truncateTables, MemoryCache } from '@abx-utils/db-connection-utils'
-import { findAndStoreMidPrices, storeMidPrice } from '../../../../repository'
+import { findAndStoreMidPrices, storeMidPrice, getLatestMidPrice, getOldestMidPrice } from '../../../../repository'
 import { initialiseRedis } from '../test-helper'
 import { createTemporaryTestingAccount } from '@abx-utils/account'
 
@@ -29,64 +29,29 @@ describe('Caching the mid prices', async () => {
   describe('findAndStoreMidPrices', async () => {
     it('should set all mid prices in cache', async () => {
       await initialiseRedis({ testAccount, testAccountTwo, symbolId: kauUsd, addToDepth: false })
-      await findAndStoreMidPrices(
-        [kauUsd],
-        moment()
-          .subtract(24, 'hours')
-          .toDate(),
-      )
-      const midPrices = MemoryCache.getInstance().getList<number>(`exchange:stats:change:${kauUsd}`)
+      await findAndStoreMidPrices([kauUsd], moment().subtract(24, 'hours').toDate())
 
-      expect(midPrices).to.eql([21, 22])
+      const latestMidPrice = await getLatestMidPrice(kauUsd)
+      const oldestMidPrice = await getOldestMidPrice(kauUsd)
+
+      expect(latestMidPrice).to.eql(21)
+      expect(oldestMidPrice).to.eql(22)
     })
   })
 
   describe('storeMidPrice', () => {
-    it('should set mid price in cache', () => {
+    it('should set mid price in cache', async () => {
       storeMidPrice(
         {
-          id: 1,
           symbolId: kauUsd,
           price: 4,
-          createdAt: moment()
-            .subtract('2', 'hours')
-            .toDate(),
+          createdAt: moment().subtract('2', 'hours').toDate(),
         },
-        moment()
-          .subtract('24', 'hours')
-          .toDate(),
+        moment().subtract('24', 'hours').toDate(),
       )
-      const midPrices = MemoryCache.getInstance().getList<number>(`exchange:stats:change:${kauUsd}`)
-      expect(midPrices).to.eql([4])
-    })
-    it('should set mid price in cache and it should be at the head of the list when returned', async () => {
-      await initialiseRedis({ testAccount, testAccountTwo, symbolId: kauUsd, addToDepth: false })
-      await findAndStoreMidPrices(
-        [kauUsd],
-        moment()
-          .subtract(24, 'hours')
-          .toDate(),
-      )
-      const midPrices = MemoryCache.getInstance().getList<number>(`exchange:stats:change:${kauUsd}`)
 
-      expect(midPrices).to.eql([21, 22])
-
-      storeMidPrice(
-        {
-          id: 5,
-          symbolId: kauUsd,
-          price: 4,
-          createdAt: moment()
-            .subtract('1', 'hours')
-            .toDate(),
-        },
-        moment()
-          .subtract('24', 'hours')
-          .toDate(),
-      )
-      const midPricesTwo = MemoryCache.getInstance().getList<number>(`exchange:stats:change:${kauUsd}`)
-
-      expect(midPricesTwo).to.eql([4, 21, 22])
+      const midPrice = await getLatestMidPrice(kauUsd)
+      expect(midPrice).to.eql(4)
     })
   })
 })

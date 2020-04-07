@@ -1,6 +1,7 @@
-import { head, isEmpty, last } from 'lodash'
-import { findLatestMidPriceForSymbol, PRICE_CHANGE_KEY } from '..'
+import { findLatestMidPriceForSymbol, MID_PRICE_LATEST_KEY, MID_PRICE_OLDEST_KEY } from '..'
 import { MemoryCache } from '@abx-utils/db-connection-utils'
+import { findOldestMidPriceForSymbol } from '../database'
+import moment from 'moment'
 
 export const getDailyChange = async (symbolIds: string[]): Promise<Map<string, number>> => {
   const symbolDailyChange = await Promise.all(symbolIds.map(calculateDailyChangeForSymbol))
@@ -8,20 +9,39 @@ export const getDailyChange = async (symbolIds: string[]): Promise<Map<string, n
 }
 
 const calculateDailyChangeForSymbol = async (symbolId: string): Promise<[string, number]> => {
-  let allMidPrices = MemoryCache.getInstance().getList<number>(PRICE_CHANGE_KEY(symbolId))
-  if (isEmpty(allMidPrices)) {
-    allMidPrices = [await findLatestMidPriceForSymbol(symbolId)]
-  }
+  const [latestMidPrice, oldestMidPrice] = await Promise.all([getLatestMidPrice(symbolId), getOldestMidPrice(symbolId)])
 
-  const latestMidPrice = getLatestMidPrice(symbolId, allMidPrices)
-  const oldestMidPrice = getOldestMidPrice(symbolId, allMidPrices)
-  const dailyChangeForSymbol = latestMidPrice === oldestMidPrice ? latestMidPrice / 100 : (latestMidPrice - oldestMidPrice) / oldestMidPrice
+  const dailyChangeForSymbol =
+    latestMidPrice === oldestMidPrice || oldestMidPrice === 0 ? latestMidPrice / 100 : (latestMidPrice - oldestMidPrice) / oldestMidPrice
 
   return [symbolId, dailyChangeForSymbol]
 }
 
-export const getLatestMidPrice = (symbolId: string, allMidPrices = MemoryCache.getInstance().getList<number>(PRICE_CHANGE_KEY(symbolId))) =>
-  head(allMidPrices) || 0
+export const getLatestMidPrice = async (symbolId: string) => {
+  let latestMidPrice = MemoryCache.getInstance().get<number>(MID_PRICE_LATEST_KEY(symbolId)) || 0
 
-export const getOldestMidPrice = (symbolId: string, allMidPrices = MemoryCache.getInstance().getList<number>(PRICE_CHANGE_KEY(symbolId))) =>
-  last(allMidPrices) || 0
+  if (!latestMidPrice) {
+    latestMidPrice = await findLatestMidPriceForSymbol(symbolId)
+    MemoryCache.getInstance().set<number>({
+      key: MID_PRICE_LATEST_KEY(symbolId),
+      val: latestMidPrice,
+    })
+  }
+
+  return latestMidPrice
+}
+
+export const getOldestMidPrice = async (symbolId: string) => {
+  let oldestMidPrice = MemoryCache.getInstance().get<number>(MID_PRICE_OLDEST_KEY(symbolId)) || 0
+
+  if (!oldestMidPrice) {
+    oldestMidPrice = await findOldestMidPriceForSymbol(symbolId, moment().subtract(1, 'days').toDate())
+    MemoryCache.getInstance().set<number>({
+      key: MID_PRICE_OLDEST_KEY(symbolId),
+      ttl: moment().diff(moment().add(1, 'day'), 'ms'),
+      val: oldestMidPrice,
+    })
+  }
+
+  return oldestMidPrice
+}

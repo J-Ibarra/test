@@ -3,7 +3,7 @@ import moment from 'moment'
 import { expect } from 'chai'
 import { MemoryCache, truncateTables } from '@abx-utils/db-connection-utils'
 import { OrderMatchStatus } from '@abx-types/order'
-import { findAndStoreOrderMatchPrices, storeOrderMatchPrice } from '../../../../repository/daily-statistics'
+import { findAndStoreOrderMatchPrices, storeOrderMatchPrice, SYMBOL_TOTAL_TRADE_VOLUME } from '../../../../repository/daily-statistics'
 import { initialiseRedis } from '../test-helper'
 import { createTemporaryTestingAccount } from '@abx-utils/account'
 
@@ -17,6 +17,7 @@ describe('Caching the volume amounts', async () => {
     await truncateTables()
     memCacheGateway = MemoryCache.newInstance()
   })
+
   beforeEach(async () => {
     await truncateTables()
     await memCacheGateway.flush()
@@ -32,14 +33,9 @@ describe('Caching the volume amounts', async () => {
     it('should set all the order matches in cache', async () => {
       await initialiseRedis({ testAccount, testAccountTwo, symbolId: kauUsd, addToDepth: true })
 
-      await findAndStoreOrderMatchPrices(
-        [kauUsd],
-        moment()
-          .subtract(24, 'hours')
-          .toDate(),
-      )
+      await findAndStoreOrderMatchPrices([kauUsd], moment().subtract(24, 'hours').toDate())
 
-      const [volume] = MemoryCache.getInstance().getList<number>(`exchange:stats:volume:${kauUsd}`)
+      const volume = MemoryCache.getInstance().get<number>(SYMBOL_TOTAL_TRADE_VOLUME(kauUsd))
       expect(volume).to.eql(15)
     })
   })
@@ -54,13 +50,9 @@ describe('Caching the volume amounts', async () => {
         matchPrice: 20,
         status: OrderMatchStatus.settled,
       } as any
-      storeOrderMatchPrice(
-        orderMatch,
-        moment()
-          .subtract(24, 'hours')
-          .toDate(),
-      )
-      const [volume] = MemoryCache.getInstance().getList<number>(`exchange:stats:volume:${kauUsd}`)
+      storeOrderMatchPrice(orderMatch, moment().subtract(24, 'hours').toDate())
+
+      const volume = MemoryCache.getInstance().get<number>(SYMBOL_TOTAL_TRADE_VOLUME(kauUsd))
       expect(volume).to.eql(15)
     })
   })
