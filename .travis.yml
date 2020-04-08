@@ -54,19 +54,19 @@ jobs:
       #The following scripts trigger parallel image build for the different functional areas
       # !!!! ONLY FOR THE SERVICES WHERE THERE WERE CHANGES
     - script: ./_scripts/travis/travis-build-service-release.sh '{@abx/exchange-balance-service,@abx/exchange-reference-data-service}'
-      if: branch = develop and type = push
+      if: branch = master and type = push
       name: 'Build Balance and Reference Data image and push to ECR'
     - script: ./_scripts/travis/travis-build-service-release.sh '{@abx/exchange-report-service,@abx/exchange-scheduler-service,@abx/exchange-account-data-service}'
-      if: branch = develop and type = push
+      if: branch = master and type = push
       name: 'Build Reports, Scheduler and Account  images and push to ECR'
     - script: ./_scripts/travis/travis-build-service-release.sh '{@abx/exchange-withdrawal-service,@abx/exchange-notification-service}'
-      if: branch = develop and type = push
+      if: branch = master and type = push
       name: 'Build Withdrawal and Notification image and push to ECR'
     - script: ./_scripts/travis/travis-build-service-release.sh '{@abx/order-service,@abx/exchange-market-data-service}'
-      if: branch = develop and type = push
+      if: branch = master and type = push
       name: 'Build Order and Market Data images and push to ECR'
     - script: ./_scripts/travis/travis-build-service-release.sh '{@abx/exchange-deposit-service,@abx/admin-fund-management-service}'
-      if: branch = develop and type = push
+      if: branch = master and type = push
       name: 'Build Deposit and Fund Admin image and push to ECR'
 
     # Triggered after a push to develop branch, generating the latest API documentation
