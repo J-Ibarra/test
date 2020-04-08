@@ -33,26 +33,9 @@ before_script:
 
 jobs:
   include:
-    #The following scripts trigger parallel test runs for the different functional areas, grouped in pairs
+    # !!! Once BTC and Tether are released and develop is stable we will simply this build to just generate and update API Docs
+    # The following scripts trigger parallel image build for the different functional areas
     # !!!! ONLY FOR THE SERVICES WHERE THERE WERE CHANGES
-    - script: ./_scripts/travis/travis-build-test-execution.sh '{@abx/exchange-deposit-service,@abx/exchange-reference-data-service}'
-      if: tag IS blank and branch != develop
-      name: Build & Test Deposit and Reference Data Functional Areas
-    - script: ./_scripts/travis/travis-build-test-execution.sh '{@abx/exchange-withdrawal-service,@abx/exchange-balance-service}'
-      if: tag IS blank and branch != develop
-      name: Build & Test Withdrawal and Balance Functional Areas
-    - script: ./_scripts/travis/travis-build-test-execution.sh '{@abx/exchange-scheduler-service,@abx/exchange-reports-service,@abx/exchange-account-data-service}'
-      if: tag IS blank and branch != develop
-      name: Build & Test Scheduler, Reports and Account Functional Areas
-    - script: ./_scripts/travis/travis-build-test-execution.sh '{@abx/exchange-notification-service,@abx/admin-fund-management-service}'
-      if: tag IS blank and branch != develop
-      name: Build & Test Notification and Admin Fund Management Functional Areas
-    - script: ./_scripts/travis/travis-build-test-execution.sh '{@abx/order-service,@abx/exchange-market-data-service}'
-      if: tag IS blank and branch != develop
-      name: Build & Test Order and Market Data Functional Areas
-
-      #The following scripts trigger parallel image build for the different functional areas
-      # !!!! ONLY FOR THE SERVICES WHERE THERE WERE CHANGES
     - script: ./_scripts/travis/travis-build-service-release.sh '{@abx/exchange-balance-service,@abx/exchange-reference-data-service}'
       if: branch = develop and type = push
       name: 'Build Balance and Reference Data image and push to ECR'
@@ -68,8 +51,6 @@ jobs:
     - script: ./_scripts/travis/travis-build-service-release.sh '{@abx/exchange-deposit-service,@abx/admin-fund-management-service}'
       if: branch = develop and type = push
       name: 'Build Deposit and Fund Admin image and push to ECR'
-
-    # Triggered after a push to develop branch, generating the latest API documentation
     - script:
         - npm run bootstrap:production
         - npm run build
@@ -79,3 +60,21 @@ jobs:
         - npm run push-api-docs-to-s3
       if: branch = develop and type = push
       name: 'Build latest api docs and push to s3'
+
+    # Build builds execute tests for changed functional areas and upon success create a new ${BRANCH_NAME}-{COMMIT_HASH} image tag, uploaded to ECR
+    # !!!! ONLY FOR THE SERVICES WHERE THERE WERE CHANGES
+    - script: ./_scripts/travis/travis-build-bugfix.sh '{@abx/exchange-deposit-service,@abx/exchange-reference-data-service}'
+      if: (branch = /^bugfix.*$/ or branch = /^feature.*$/) and type = push
+      name: Build & Test Deposit and Reference Data Functional Areas
+    - script: ./_scripts/travis/travis-build-bugfix.sh '{@abx/exchange-withdrawal-service,@abx/exchange-balance-service}'
+      if: (branch = /^bugfix.*$/ or branch = /^feature.*$/) and type = push
+      name: Build & Test Withdrawal and Balance Functional Areas
+    - script: ./_scripts/travistravis-build-bugfix.sh '{@abx/exchange-scheduler-service,@abx/exchange-reports-service,@abx/exchange-account-data-service}'
+      if: (branch = /^bugfix.*$/ or branch = /^feature.*$/) and type = push
+      name: Build & Test Scheduler, Reports and Account Functional Areas
+    - script: ./_scripts/travis/travis-build-bugfix.sh '{@abx/exchange-notification-service,@abx/admin-fund-management-service}'
+      if: (branch = /^bugfix.*$/ or branch = /^feature.*$/) and type = push
+      name: Build & Test Notification and Admin Fund Management Functional Areas
+    - script: ./_scripts/travis/travis-build-bugfix.sh '{@abx/order-service,@abx/exchange-market-data-service}'
+      if: (branch = /^bugfix.*$/ or branch = /^feature.*$/) and type = push
+      name: Build & Test Order and Market Data Functional Areas

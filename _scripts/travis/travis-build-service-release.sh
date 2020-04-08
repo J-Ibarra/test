@@ -1,3 +1,6 @@
+# !!!
+# !!! THIS WILL BE DEPRECATED AFTER BTC RELEASE
+# !!!
 source ./_scripts/travis/travis-build-tag-creation-helpers.sh 
 
 # Authenticating with ECR
