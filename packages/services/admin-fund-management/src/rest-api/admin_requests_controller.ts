@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Post, Request, Route, Security } from 'tsoa'
+import { Body, Controller, Get, Patch, Post, Request, Route, Security, Tags } from 'tsoa'
 
 import { AdminRequest, AdminRequestStatus, AdminRequestType } from '@abx-service-clients/admin-fund-management'
 import { Logger } from '@abx-utils/logging'
@@ -23,6 +23,7 @@ interface AdminRequestParams {
 
 const logger = Logger.getInstance('api', 'AdminRequestsController')
 
+@Tags('admin-funds-management')
 @Route('admin/fund-management/admin-requests')
 export class AdminRequestsController extends Controller {
   @Security('adminAuth')

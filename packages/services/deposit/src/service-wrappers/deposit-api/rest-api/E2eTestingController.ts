@@ -14,7 +14,6 @@ const caClient = new CryptoApis(process.env.CRYPTO_APIS_TOKEN!)
 caClient.BC.ETH.switchNetwork(caClient.BC.ETH.NETWORKS.ROPSTEN)
 
 @Route('test-automation/deposit')
-@Hidden()
 export class E2eTestingController {
   private logger = Logger.getInstance('api', 'E2eTestingController')
   private currencyManager = new CurrencyManager(getEnvironment(), [

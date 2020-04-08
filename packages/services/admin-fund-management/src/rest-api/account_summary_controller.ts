@@ -1,6 +1,7 @@
-import { Controller, Get, Route, Security } from 'tsoa'
+import { Controller, Get, Route, Security, Tags } from 'tsoa'
 import { getAccountSummary } from '../core'
 
+@Tags('admin-funds-management')
 @Route('admin/fund-management/account-summary')
 export class AccountSummaryController extends Controller {
   @Security('adminAuth')

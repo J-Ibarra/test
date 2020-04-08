@@ -52,7 +52,7 @@ async function getJwt() {
   })
 }
 
-@Tags('sessions')
+@Tags('accounts')
 @Route('sessions')
 export class SessionsController extends Controller {
   @SuccessResponse('201', 'Created')

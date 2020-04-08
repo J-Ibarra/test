@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, Request, Route, Security, SuccessResponse } from 'tsoa'
+import { Body, Controller, Get, Post, Query, Request, Route, Security, SuccessResponse, Tags } from 'tsoa'
 
 import { AccountFeeTier, FeeTier } from '@abx-types/order'
 import {
@@ -12,6 +12,7 @@ import {
 } from '../../../core'
 import { OverloadedRequest } from '@abx-types/account'
 
+@Tags('order')
 @Route()
 export class FeesController extends Controller {
   @Security('cookieAuth')

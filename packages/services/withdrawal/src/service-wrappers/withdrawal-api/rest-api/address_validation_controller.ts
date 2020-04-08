@@ -1,9 +1,10 @@
-import { Controller, Get, Query, Route, Security } from 'tsoa'
+import { Controller, Get, Query, Route, Security, Tags } from 'tsoa'
 
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { AddressValidationParams, validateCryptoAddress } from '@abx-utils/blockchain-currency-gateway'
 
+@Tags('withdrawal')
 @Route('/crypto')
 export class CryptoController extends Controller {
   private logger = Logger.getInstance('api', 'crypto')

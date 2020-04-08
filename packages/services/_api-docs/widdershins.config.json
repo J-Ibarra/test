@@ -3,12 +3,44 @@
   "verbose": true,
   "tagGroups": [
     {
-      "title": "Account",
+      "title": "Account API",
       "tags": ["accounts"]
     },
     {
-      "title": "Auth",
-      "tags": ["session", "invoice-close", "invoice-delete"]
+      "title": "Admin Fund Management API",
+      "tags": ["admin-funds-management"]
+    },
+    {
+      "title": "Balance API",
+      "tags": ["balance"]
+    },
+    {
+      "title": "Debit Card API",
+      "tags": ["debit-card-service"]
+    },
+    {
+      "title": "Deposit API",
+      "tags": "deposit"
+    },
+    {
+      "title": "Market Data API",
+      "tags": "market-data"
+    },
+    {
+      "title": "Order API",
+      "tags": "order"
+    },
+    {
+      "title": "Reference Data API",
+      "tags": "reference-data"
+    },
+    {
+      "title": "Reports API",
+      "tags": "reports"
+    },
+    {
+      "title": "Withdrawal API",
+      "tags": "withdrawal"
     }
   ]
 }

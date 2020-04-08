@@ -1,7 +1,8 @@
-import { Controller, Security, Delete, Route } from 'tsoa'
+import { Controller, Security, Delete, Route, Tags } from 'tsoa'
 import { Logger } from '@abx-utils/logging'
 import { OrderCancellationGateway } from '../core/order_cancellation_gateway'
 
+@Tags('order')
 @Route()
 export class AdminOrderChangeController extends Controller {
   private logger = Logger.getInstance('api', 'AdminOrderChangeController')

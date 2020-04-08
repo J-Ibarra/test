@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Request, Route, Security } from 'tsoa'
+import { Body, Controller, Get, Post, Request, Route, Security, Tags } from 'tsoa'
 
 import { CurrencyCode } from '@abx-types/reference-data'
 import { OverloadedRequest } from '@abx-types/account'
@@ -10,6 +10,7 @@ export interface ContactCreateRequest {
   publicKey: string
 }
 
+@Tags('withdrawal')
 @Route('/contacts')
 export class ContactsController extends Controller {
   @Security('cookieAuth')

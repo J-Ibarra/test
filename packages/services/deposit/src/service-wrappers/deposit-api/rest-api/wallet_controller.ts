@@ -1,4 +1,4 @@
-import { Controller, Get, Request, Route, Security, Post, Body } from 'tsoa'
+import { Controller, Get, Request, Route, Security, Post, Body, Tags } from 'tsoa'
 
 import { Logger } from '@abx-utils/logging'
 import { OverloadedRequest } from '@abx-types/account'
@@ -7,6 +7,7 @@ import { CurrencyCode } from '@abx-types/reference-data'
 import { findDepositAddressesForAccount } from '../../../core'
 import { findCryptoCurrencies } from '@abx-service-clients/reference-data'
 
+@Tags('deposit')
 @Route('/wallets')
 export class WalletsController extends Controller {
   private logger = Logger.getInstance('api', 'WalletsController')

@@ -1,10 +1,11 @@
-import { Controller, Get, Request, Route, Security } from 'tsoa'
+import { Controller, Get, Request, Route, Security, Tags } from 'tsoa'
 import { OverloadedRequest } from '@abx-types/account'
 import { Logger } from '@abx-utils/logging'
 import * as orderRetrieval from '../../../core'
 import { CoreOrderDetails, OrderWithTradeTransactions } from '@abx-types/order'
 import { CurrencyCode } from '@abx-types/reference-data'
 
+@Tags('order')
 @Route('orders')
 export class OrderRetrievalController extends Controller {
   private logger = Logger.getInstance('api', 'OrderRetrievalController')

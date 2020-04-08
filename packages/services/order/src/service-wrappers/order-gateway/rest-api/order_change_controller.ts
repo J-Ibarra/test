@@ -1,5 +1,5 @@
 import { noticeError } from 'newrelic'
-import { Body, Controller, Delete, Post, Request, Response, Route, Security, SuccessResponse } from 'tsoa'
+import { Body, Controller, Delete, Post, Request, Response, Route, Security, SuccessResponse, Tags } from 'tsoa'
 import util from 'util'
 import { findAccountById } from '@abx-service-clients/account'
 import { AccountStatus, OverloadedRequest } from '@abx-types/account'
@@ -12,6 +12,7 @@ import { ApiErrorPayload } from '@abx-types/error'
 import { placeOrder } from '../core/place_order'
 import { OrderCancellationGateway } from '../core/order_cancellation_gateway'
 
+@Tags('order')
 @Route('orders')
 export class OrderChangeController extends Controller {
   private logger = Logger.getInstance('api', 'OrderChangeController')

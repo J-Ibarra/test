@@ -1,9 +1,10 @@
-import { Controller, Get, Route, Query, Security, Request } from 'tsoa'
+import { Controller, Get, Route, Query, Security, Request, Tags } from 'tsoa'
 import { getAllCompleteSymbolDetails, getExcludedAccountTypesFromOrderRangeValidations, findCurrenciesByAccountId } from '../core'
 import { SymbolPairApiResponse, SymbolPair } from '@abx-types/reference-data'
 import { OverloadedRequest } from '@abx-types/account'
 import { ApiErrorPayload } from '@abx-types/error'
 
+@Tags('reference-data')
 @Route()
 export class SymbolsController extends Controller {
   @Get('/symbols')

@@ -13,7 +13,7 @@ export interface TokenRequest {
   password: string
 }
 
-@Tags('tokens')
+@Tags('accounts')
 @Route('tokens')
 export class TokensController extends Controller {
   @Security('cookieAuth')
