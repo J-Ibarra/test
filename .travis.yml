@@ -64,17 +64,17 @@ jobs:
     # Build builds execute tests for changed functional areas and upon success create a new ${BRANCH_NAME}-{COMMIT_HASH} image tag, uploaded to ECR
     # !!!! ONLY FOR THE SERVICES WHERE THERE WERE CHANGES
     - script: ./_scripts/travis/travis-build-bugfix.sh '{@abx/exchange-deposit-service,@abx/exchange-reference-data-service}'
-      if: branch =~ /^bugfix*$/ or branch =~ /^feature*$/
+      if: branch =~ /^bugfix*/ or branch =~ /^feature*/
       name: Build & Test Deposit and Reference Data Functional Areas
     - script: ./_scripts/travis/travis-build-bugfix.sh '{@abx/exchange-withdrawal-service,@abx/exchange-balance-service}'
-      if: (branch =~ /^bugfix*$/ or branch =~ /^feature*$/) and type = push
+      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and type = push
       name: Build & Test Withdrawal and Balance Functional Areas
     - script: ./_scripts/travistravis-build-bugfix.sh '{@abx/exchange-scheduler-service,@abx/exchange-reports-service,@abx/exchange-account-data-service}'
-      if: (branch =~ /^bugfix*$/ or branch =~ /^feature*$/) and type = push
+      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and type = push
       name: Build & Test Scheduler, Reports and Account Functional Areas
     - script: ./_scripts/travis/travis-build-bugfix.sh '{@abx/exchange-notification-service,@abx/admin-fund-management-service}'
-      if: (branch =~ /^bugfix*$/ or branch =~ /^feature*$/) and type = push
+      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and type = push
       name: Build & Test Notification and Admin Fund Management Functional Areas
     - script: ./_scripts/travis/travis-build-bugfix.sh '{@abx/order-service,@abx/exchange-market-data-service}'
-      if: (branch =~ /^bugfix*$/ or branch =~ /^feature*$/) and type = push
+      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and type = push
       name: Build & Test Order and Market Data Functional Areas
