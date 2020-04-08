@@ -87,10 +87,32 @@ export function RegisterRoutes(app: express.Express) {
       const promise = controller.getAccountSummaryForHin.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
+  app.get('/api/admin/fund-management/admin-requests/count',
+    authenticateMiddleware([{ "adminAuth": [] }]),
+    function(request: any, response: any, next: any) {
+      const args = {
+        accountHin: { "in": "query", "name": "accountHin", "dataType": "string" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new AdminRequestsController();
+
+
+      const promise = controller.retrieveAdminRequestsCount.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
   app.get('/api/admin/fund-management/admin-requests',
     authenticateMiddleware([{ "adminAuth": [] }]),
     function(request: any, response: any, next: any) {
       const args = {
+        limit: { "in": "query", "name": "limit", "dataType": "double" },
+        offset: { "in": "query", "name": "offset", "dataType": "double" },
       };
 
       let validatedArgs: any[] = [];
@@ -111,6 +133,8 @@ export function RegisterRoutes(app: express.Express) {
     function(request: any, response: any, next: any) {
       const args = {
         accountHin: { "in": "path", "name": "accountHin", "required": true, "dataType": "string" },
+        limit: { "in": "query", "name": "limit", "dataType": "double" },
+        offset: { "in": "query", "name": "offset", "dataType": "double" },
       };
 
       let validatedArgs: any[] = [];

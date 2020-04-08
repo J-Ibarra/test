@@ -6,11 +6,15 @@ import { findOrders } from './find_orders'
 import { findAccountWithUserDetails, findAccountsByIdWithUserDetails } from '@abx-service-clients/account'
 import { SymbolPairStateFilter } from '@abx-types/reference-data'
 
+interface QueryLimitAndOffsetPair {
+  limit?: number
+  offset?: number
+}
 interface OrderWithOwnerAccount extends Order {
   account: Account
 }
 
-export async function getAllOrdersForAccountHin(hin: string): Promise<OrderAdminSummary[]> {
+export async function getAllOrdersForAccountHin(hin: string, { limit, offset }: QueryLimitAndOffsetPair): Promise<OrderAdminSummary[]> {
   const account = await findAccountWithUserDetails({ hin })
 
   if (!account) {
@@ -20,26 +24,30 @@ export async function getAllOrdersForAccountHin(hin: string): Promise<OrderAdmin
   const allOrders = await findOrders({
     where: { accountId: account!.id },
     order: [['createdAt', 'DESC']],
+    limit: limit || 50,
+    offset: offset || 1,
   })
 
   return enrichWithTransactionDetails(
-    allOrders.map(order => ({
+    allOrders.map((order) => ({
       ...order,
       account: account!,
     })),
   )
 }
 
-export async function getAllOrdersAdminSummary(): Promise<OrderAdminSummary[]> {
+export async function getAllOrdersAdminSummary({ limit, offset }: QueryLimitAndOffsetPair): Promise<OrderAdminSummary[]> {
   const allOrders = await findOrders({
     order: [['createdAt', 'DESC']],
+    limit: limit || 50,
+    offset: offset || 1,
   })
 
   const allAccountsWithOrders = await findAccountsByIdWithUserDetails(allOrders.map(({ accountId }) => accountId))
   const accountIdToAccount = allAccountsWithOrders.reduce((acc, account) => acc.set(account.id, account), new Map())
 
   return enrichWithTransactionDetails(
-    allOrders.map(order => ({
+    allOrders.map((order) => ({
       ...order,
       account: accountIdToAccount.get(order.accountId),
     })),

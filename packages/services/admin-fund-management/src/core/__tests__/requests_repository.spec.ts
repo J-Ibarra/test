@@ -21,7 +21,7 @@ describe('requests_repository', () => {
   }
 
   before(async () => {
-    sinon.stub(gtid, 'getNextGlobalTransactionId').callsFake(type => Promise.resolve(`${type}xxx`))
+    sinon.stub(gtid, 'getNextGlobalTransactionId').callsFake((type) => Promise.resolve(`${type}xxx`))
   })
 
   after(() => {
@@ -31,10 +31,10 @@ describe('requests_repository', () => {
   afterEach(async () => await truncateTables())
 
   it('should save and retrieve admin requests', async () => {
-    return wrapInTransaction(sequelize, null, async transaction => {
+    return wrapInTransaction(sequelize, null, async (transaction) => {
       await saveAdminRequest(adminRequestParams, transaction)
-      await new Promise(resolve => setTimeout(() => resolve(), 100))
-      const adminRequests = await findAllAdminRequests(transaction)
+      await new Promise((resolve) => setTimeout(() => resolve(), 100))
+      const adminRequests = await findAllAdminRequests({ transaction })
       expect(adminRequests.length).to.eql(1)
 
       const [redemptionRequest] = adminRequests
@@ -50,7 +50,7 @@ describe('requests_repository', () => {
   })
 
   it('should save and retrieve admin request for specific account hin', async () => {
-    return wrapInTransaction(sequelize, null, async transaction => {
+    return wrapInTransaction(sequelize, null, async (transaction) => {
       const accountHin = 'KM12314'
       const adminRequestPersisted = await saveAdminRequest({ ...adminRequestParams, hin: accountHin }, transaction)
 
