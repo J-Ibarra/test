@@ -4,7 +4,7 @@ import { findAccountById } from '@abx-service-clients/account'
 import { findBoundaryForCurrency, getCurrencyCode, formatCurrencyValue, getBoundariesForCurrencies } from '@abx-service-clients/reference-data'
 import { Logger } from '@abx-utils/logging'
 import { OrderDirection } from '@abx-types/order'
-import { CurrencyCode } from '@abx-types/reference-data'
+import { CurrencyCode, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { OrderMatchData, ReportData } from '@abx-service-clients/report'
 import { findTradeTransactionFromOrderMatch } from './trade_transaction_report_helpers'
 
@@ -21,7 +21,7 @@ export async function generateTradeTransactionReportData(orderMatchData: OrderMa
   })
 
   const { hin: accountHin } = await findAccountById(accountId)
-  const feeCurrency = await getCurrencyCode(feeCurrencyId)
+  const feeCurrency = await getCurrencyCode(feeCurrencyId, SymbolPairStateFilter.all)
 
   const formattedFee = await truncateFees(fee, feeCurrency!)
   logger.debug(`Fetched client data: ${accountHin!}`)

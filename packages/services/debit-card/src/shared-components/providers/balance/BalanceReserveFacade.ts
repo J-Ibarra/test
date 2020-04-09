@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { CurrencyCode } from '../../models'
 import { confirmPendingDebitCardTopUp, createPendingDebitCardTopUp, recordDebitCardToExchangeWithdrawal } from '@abx-service-clients/balance'
 import { findCurrencyForCode } from '@abx-service-clients/reference-data'
-import { Currency, CurrencyCode as ReferenceDataCurrencyCode } from '@abx-types/reference-data'
+import { Currency, CurrencyCode as ReferenceDataCurrencyCode, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { SourceEventType } from '@abx-types/balance'
 
 export const reserveBalanceChannel = 'datasetRetrieval:reserveDebitCardTopUpBalance'
@@ -59,7 +59,7 @@ export class BalanceReserveFacade {
       return currency
     }
 
-    currency = await findCurrencyForCode(currencyCode)
+    currency = await findCurrencyForCode(currencyCode, SymbolPairStateFilter.all)
     this.cachedCurrencies.push(currency)
 
     return currency

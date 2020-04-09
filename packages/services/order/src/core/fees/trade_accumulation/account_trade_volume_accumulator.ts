@@ -6,6 +6,7 @@ import { getCompleteSymbolDetails } from '@abx-service-clients/reference-data'
 import { TradeAccumulationRequest } from '@abx-types/order'
 import { TradeAccumulationStrategyFactory } from './accumulation_price_calculation_strategies'
 import { TradeAccumulationRepository } from './trade_accumulation_repository'
+import { SymbolPairStateFilter } from '@abx-types/reference-data'
 
 /** The mechanism responsible for calculating and recording the monthly trade amount for users. */
 export class AccountTradeVolumeAccumulator {
@@ -41,7 +42,7 @@ export class AccountTradeVolumeAccumulator {
     transaction,
     date,
   }: TradeAccumulationRequest): Promise<void> {
-    const symbol = await getCompleteSymbolDetails(symbolId)
+    const symbol = await getCompleteSymbolDetails(symbolId, SymbolPairStateFilter.all)
 
     if (!symbol) {
       this.logger.error(`Tried to accumulate trades for non-existent symbol id ${symbolId}`)

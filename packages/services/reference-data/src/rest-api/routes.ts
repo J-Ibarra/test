@@ -20,6 +20,7 @@ const models: TsoaRoute.Models = {
       "code": { "ref": "CurrencyCode", "required": true },
       "symbolSortPriority": { "dataType": "double" },
       "currencyOrderPriority": { "dataType": "double" },
+      "isEnabled": { "dataType": "boolean" },
     },
   },
   "SupportedFeatureFlags": {

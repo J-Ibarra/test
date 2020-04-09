@@ -1,6 +1,6 @@
 import { Transaction } from 'sequelize'
 import { calculateConversionRates, WithdrawalRequestCreationResult } from '.'
-import { Currency, FiatCurrency } from '@abx-types/reference-data'
+import { Currency, FiatCurrency, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { InitialiseWithdrawalParams, WithdrawalRequestType, WithdrawalState } from '@abx-types/withdrawal'
 import { createWithdrawalRequest } from '../../../common/create_withdrawal_request'
 import { findCurrencyForCode } from '@abx-service-clients/reference-data'
@@ -30,7 +30,7 @@ export async function createSeparateWithdrawalFeeRequest(
       preferredCurrencyCode,
       addFee: false,
     }),
-    findCurrencyForCode(initialiseWithdrawalParams.currencyCode),
+    findCurrencyForCode(initialiseWithdrawalParams.currencyCode, SymbolPairStateFilter.all),
   ])
 
   const withdrawalAmountRequest = await createWithdrawalRequest(

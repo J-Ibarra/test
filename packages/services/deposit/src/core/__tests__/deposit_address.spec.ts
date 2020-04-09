@@ -26,7 +26,7 @@ describe('Deposit Address module', () => {
   const testCurrencyManager = {
     generateAddress: () => ({ privateKey: 'private-key', publicKey: 'publicKey' }),
     getAddressFromPrivateKey: () => 'address',
-    encryptValue: value => Promise.resolve(value),
+    encryptValue: (value) => Promise.resolve(value),
     getId: () => currencyId,
   } as any
 
@@ -124,6 +124,21 @@ describe('Deposit Address module', () => {
         code: CurrencyCode.kag,
       },
     ])
+    sinon.stub(referenceDataOperations, 'getAllCurrenciesEligibleForAccount').resolves([
+      {
+        id: currencyId,
+        code: CurrencyCode.kau,
+      },
+      {
+        id: ethereumCurrencyId,
+        code: CurrencyCode.ethereum,
+      },
+      {
+        id: 4,
+        code: CurrencyCode.kag,
+      },
+    ])
+
     sinon.stub(onChainIntegration.CurrencyManager.prototype, 'getCurrencyFromTicker').returns(testCurrencyManager)
 
     const newAddresses = await findOrCreateDepositAddressesForAccount(ACCOUNT_ID)
@@ -153,7 +168,7 @@ describe('Deposit Address module', () => {
     const addresses = await findKycOrEmailVerifiedDepositAddresses(ethereumCurrencyId)
     addresses.forEach(({ currencyId: addressCurrencyId }) => expect(addressCurrencyId).to.eql(ethereumCurrencyId))
 
-    const accountIdsFromAddresses = addresses.map(address => address.accountId)
+    const accountIdsFromAddresses = addresses.map((address) => address.accountId)
 
     expect(accountIdsFromAddresses.includes(kycVerifiedAccount.id)).to.eql(true)
     expect(accountIdsFromAddresses.includes(kycVerifiedAccount2.id)).to.eql(true)

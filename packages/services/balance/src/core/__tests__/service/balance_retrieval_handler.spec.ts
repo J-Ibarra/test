@@ -15,7 +15,7 @@ describe('BalanceRetrievalHandler', () => {
 
   beforeEach(() => {
     sinon.stub(referenceDataClientOperations, 'getCurrencyCode').resolves(CurrencyCode.kag)
-    sinon.stub(referenceDataClientOperations, 'findAllCurrencies').resolves([kagCurrency, kauCurrency])
+    sinon.stub(referenceDataClientOperations, 'getAllCurrenciesEligibleForAccount').resolves([kagCurrency, kauCurrency])
   })
 
   afterEach(async () => {
@@ -113,7 +113,7 @@ describe('BalanceRetrievalHandler', () => {
     const kinesisCurrencyIds = [kagCurrency.id, kauCurrency.id]
     const nonKinesisBalances = balances.filter(({ currencyId }) => !kinesisCurrencyIds.includes(currencyId))
 
-    nonKinesisBalances.forEach(theBalance => {
+    nonKinesisBalances.forEach((theBalance) => {
       expect(theBalance.available.value).to.equal(0)
     })
   })

@@ -5,20 +5,21 @@ import { getAllSymbolPairSummaries } from '@abx-service-clients/reference-data'
 import { FeeTier } from '@abx-types/order'
 import { DefaultFeeTierInstance } from '../../model/default_execution_fee'
 import { validateTiers } from './validation-utils'
+import { SymbolPairStateFilter } from '@abx-types/reference-data'
 
 export async function getAllDefaultFeeTiers(): Promise<Record<string, FeeTier[]>> {
-  const symbols = await getAllSymbolPairSummaries()
+  const symbols = await getAllSymbolPairSummaries(SymbolPairStateFilter.all)
 
   const instances = await getModel<DefaultFeeTierInstance>('defaultExecutionFee').findAll({
     order: [['tier', 'ASC']],
     where: {
       symbolId: {
-        $in: symbols.map(sym => sym.id),
+        $in: symbols.map((sym) => sym.id),
       },
     },
   })
 
-  const defaultFeeTiers = instances.map(i => i.get())
+  const defaultFeeTiers = instances.map((i) => i.get())
 
   return defaultFeeTiers.reduce((symbolToFeeTiers, feeTier) => {
     const feeTiersForSymbol = symbolToFeeTiers[feeTier.symbolId] || []
@@ -44,7 +45,7 @@ export async function getDefaultFeeTiersForSymbol(symbolId: string, transaction?
     transaction,
   })
 
-  return instances.map(i => i.get())
+  return instances.map((i) => i.get())
 }
 
 /**
@@ -54,10 +55,10 @@ export async function getDefaultFeeTiersForSymbol(symbolId: string, transaction?
  * @param transaction the parent transaction
  */
 export function setDefaultFeeTiers(tiers: FeeTier[], transaction?: Transaction) {
-  return wrapInTransaction(sequelize, transaction, async t => {
+  return wrapInTransaction(sequelize, transaction, async (t) => {
     validateTiers(tiers)
 
-    return Promise.all(tiers.map(tier => updateOrCreateDefaultTier(tier, t)))
+    return Promise.all(tiers.map((tier) => updateOrCreateDefaultTier(tier, t)))
   })
 }
 

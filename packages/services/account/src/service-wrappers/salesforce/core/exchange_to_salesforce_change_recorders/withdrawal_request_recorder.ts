@@ -8,6 +8,7 @@ import { getCurrencyCode, isFiatCurrency } from '@abx-service-clients/reference-
 import { WithdrawalRequest } from '@abx-types/withdrawal'
 import { SalesforceReferenceTable } from '@abx-types/account'
 import { getSalesforceClient } from '../../../../core'
+import { SymbolPairStateFilter } from '@abx-types/reference-data'
 
 const logger = Logger.getInstance('salesforce', 'withdrawalRequestRecorder')
 
@@ -18,7 +19,7 @@ export async function withdrawalRequestRecorder({
   withdrawalRequest: WithdrawalRequest
   adminRequestId: number
 }) {
-  const currencyCode = await getCurrencyCode(withdrawalRequest.currencyId)
+  const currencyCode = await getCurrencyCode(withdrawalRequest.currencyId, SymbolPairStateFilter.all)
   if (!isFiatCurrency(currencyCode!)) {
     logger.debug('Not a FIAT currency, not posting to SF')
     return

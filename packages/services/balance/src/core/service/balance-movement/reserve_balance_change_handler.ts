@@ -5,6 +5,7 @@ import { getCurrencyCode } from '@abx-service-clients/reference-data'
 import { Balance, BalanceChangeParams, BalanceType } from '@abx-types/balance'
 import { BalanceRetrievalHandler } from '../balance_retrieval_handler'
 import { BalanceChangeHandler } from './balance_change_handler'
+import { SymbolPairStateFilter } from '@abx-types/reference-data'
 
 export class ReserveBalanceHandler {
   constructor(
@@ -74,7 +75,7 @@ export class ReserveBalanceHandler {
    */
   public async finaliseReserve(changeParams: BalanceChangeParams): Promise<void> {
     const { currencyId, initialReserve, amount } = changeParams
-    const currencyCode = await getCurrencyCode(currencyId)
+    const currencyCode = await getCurrencyCode(currencyId, SymbolPairStateFilter.all)
     const { maxDecimals } = await findBoundaryForCurrency(currencyCode!)
 
     if (amount > initialReserve!) {
@@ -90,10 +91,7 @@ export class ReserveBalanceHandler {
       BalanceType.reserved,
     )
 
-    const rebateAmount = new Decimal(initialReserve!)
-      .minus(amount)
-      .toDP(maxDecimals, Decimal.ROUND_DOWN)
-      .toNumber()
+    const rebateAmount = new Decimal(initialReserve!).minus(amount).toDP(maxDecimals, Decimal.ROUND_DOWN).toNumber()
 
     await Promise.all([
       this.balanceChangeHandler.updateAvailableBalance({ ...changeParams, amount: rebateAmount }),

@@ -2,7 +2,7 @@ const CryptoApis = require('cryptoapis.io')
 
 import { Route, Body, Post, Get, Hidden } from 'tsoa'
 import { Logger } from '@abx-utils/logging'
-import { CurrencyCode, getEnvironment } from '@abx-types/reference-data'
+import { CurrencyCode, getEnvironment, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { CurrencyManager, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
 import { Account, User } from '@abx-types/account'
 import { findDepositAddressesForAccount } from '@abx-service-clients/deposit'
@@ -71,7 +71,7 @@ export class E2eTestingController {
     }
 
     const depositAddresses = await findDepositAddressesForAccount((account as Account).id)
-    const currency = await findCurrencyForCode(currencyCode)
+    const currency = await findCurrencyForCode(currencyCode, SymbolPairStateFilter.all)
     const depositAddressForCurrency = depositAddresses.find(({ currencyId }) => currencyId === currency.id)!
 
     return Promise.resolve(depositAddressForCurrency.address || depositAddressForCurrency.publicKey)
@@ -84,7 +84,7 @@ export class E2eTestingController {
   }
 
   private async findAccount(email: string): Promise<Account | null> {
-    return wrapInTransaction(sequelize, null, async tran => {
+    return wrapInTransaction(sequelize, null, async (tran) => {
       const account = await getModel<Account>('account').findOne({
         transaction: tran,
         include: [

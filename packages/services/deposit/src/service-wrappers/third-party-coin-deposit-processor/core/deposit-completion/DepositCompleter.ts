@@ -10,6 +10,7 @@ import { wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 import { findOrCreateKinesisRevenueAccount } from '@abx-service-clients/account'
 import Decimal from 'decimal.js'
 import { getDepositTransactionFeeCurrencyId } from '../utils'
+import { SymbolPairStateFilter } from '@abx-types/reference-data'
 
 export class DepositCompleter {
   private readonly logger = Logger.getInstance('third-party-coin-deposit-processor', 'DepositCompleter')
@@ -27,14 +28,14 @@ export class DepositCompleter {
    * @param depositRequests the deposit requests to complete
    */
   async completeDepositRequests(depositRequests: DepositRequest[]) {
-    return wrapInTransaction(sequelize, null, async transaction => {
+    return wrapInTransaction(sequelize, null, async (transaction) => {
       this.logger.info(`Completing deposit requests ${JSON.stringify(depositRequests)}`)
 
       const depositAddress = depositRequests[0].depositAddress
       const depositRequestWhereHoldingsFeeWasRecorded = depositRequests.find(({ holdingsTxFee }) => !!holdingsTxFee)!
 
       const totalAmount = depositRequests.reduce((acc, { amount }) => new Decimal(acc).plus(amount), new Decimal(0)).toNumber()
-      const depositCurrency = await findCurrencyForId(depositAddress.currencyId)
+      const depositCurrency = await findCurrencyForId(depositAddress.currencyId, SymbolPairStateFilter.all)
 
       await Promise.all([
         updateAllDepositRequests(

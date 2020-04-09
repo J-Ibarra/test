@@ -3,7 +3,7 @@ import { Logger } from '@abx-utils/logging'
 import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 import { InitialiseWithdrawalParams } from '@abx-types/withdrawal'
 import { validateWithdrawal, initialiseCryptoWithdrawalRequest } from '../../../core'
-import { Currency } from '@abx-types/reference-data'
+import { Currency, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { findCurrencyAvailableBalances } from '@abx-service-clients/balance'
 import { getEnvironment } from '@abx-types/reference-data'
 import { findAccountWithUserDetails } from '@abx-service-clients/account'
@@ -42,7 +42,7 @@ async function validateRequest(
   const feeCurrencyCode = configForCurrency.feeCurrency
 
   const [currencies, account, availableBalances] = await Promise.all([
-    findCurrencyForCodes([currencyCode, feeCurrencyCode]),
+    findCurrencyForCodes([currencyCode, feeCurrencyCode], SymbolPairStateFilter.all),
     findAccountWithUserDetails({ id: accountId }),
     findCurrencyAvailableBalances([currencyCode, feeCurrencyCode], accountId),
   ])

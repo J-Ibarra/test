@@ -1,7 +1,7 @@
 import { Order, OrderDirection, OrderMatch, OrderStatus } from '@abx-types/order'
 import { findUsersByAccountId } from '@abx-service-clients/account'
 import { Logger } from '@abx-utils/logging'
-import { CurrencyCode, Environment } from '@abx-types/reference-data'
+import { CurrencyCode, Environment, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 import { ReportType, generateReport } from '@abx-service-clients/report'
 import { getCurrencyCode, getSymbolPairSummary } from '@abx-service-clients/reference-data'
@@ -19,7 +19,7 @@ export async function sendTradeConfirmationEmail(orderMatch: OrderMatch) {
     return
   }
 
-  const tradeConfirmationEmails = await wrapInTransaction(sequelize, null, async t => {
+  const tradeConfirmationEmails = await wrapInTransaction(sequelize, null, async (t) => {
     const { buyAccountId, sellAccountId, amount, consideration, buyOrderId, createdAt, sellOrderId } = orderMatch
 
     const [
@@ -78,8 +78,8 @@ const retrieveCurrencyAccountAndOrderDetails = async (
 ) => {
   const { baseId, quoteId } = await getSymbolPairSummary(symbolId)
 
-  const baseCurrencyPromise = getCurrencyCode(baseId)
-  const quoteCurrencyPromise = getCurrencyCode(quoteId)
+  const baseCurrencyPromise = getCurrencyCode(baseId, SymbolPairStateFilter.all)
+  const quoteCurrencyPromise = getCurrencyCode(quoteId, SymbolPairStateFilter.all)
   const usersForBuyAccountPromise = findUsersByAccountId(buyAccountId)
   const usersForSellAccountPromise = findUsersByAccountId(sellAccountId)
 
