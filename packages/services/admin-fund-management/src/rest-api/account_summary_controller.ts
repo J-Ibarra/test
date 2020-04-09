@@ -1,4 +1,4 @@
-import { Controller, Get, Route, Security, Tags } from 'tsoa'
+import { Controller, Get, Route, Security, Tags, Hidden } from 'tsoa'
 import { getAccountSummary } from '../core'
 
 @Tags('admin-funds-management')
@@ -6,6 +6,7 @@ import { getAccountSummary } from '../core'
 export class AccountSummaryController extends Controller {
   @Security('adminAuth')
   @Get('{accountHin}')
+  @Hidden()
   public async getAccountSummaryForHin(accountHin: string) {
     try {
       this.setStatus(200)
