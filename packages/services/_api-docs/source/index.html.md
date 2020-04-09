@@ -18,19 +18,9 @@ headingLevel: 2
 
 > Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
 
-Contains the account related services
-
 Base URLs:
 
 * <a href="/api">/api</a>
-
-# Authentication
-
-* API Key (cookieAuth)
-    - Parameter Name: **appSession**, in: cookie. 
-
-* API Key (adminAuth)
-    - Parameter Name: **appSession**, in: cookie. 
 
 <h1 id="kinesis-exchange-api-admin-fund-management-api">Admin Fund Management API</h1>
 
@@ -249,8 +239,8 @@ p JSON.parse(result)
     "fee": 0,
     "id": 0,
     "globalTransactionId": "string",
-    "createdAt": "2020-04-08T13:16:47Z",
-    "updatedAt": "2020-04-08T13:16:47Z",
+    "createdAt": "2020-04-09T10:45:06Z",
+    "updatedAt": "2020-04-09T10:45:06Z",
     "tradingPlatformName": "string"
   }
 ]
@@ -555,8 +545,8 @@ p JSON.parse(result)
     "fee": 0,
     "id": 0,
     "globalTransactionId": "string",
-    "createdAt": "2020-04-08T13:16:47Z",
-    "updatedAt": "2020-04-08T13:16:47Z",
+    "createdAt": "2020-04-09T10:45:06Z",
+    "updatedAt": "2020-04-09T10:45:06Z",
     "tradingPlatformName": "string"
   }
 ]
@@ -652,7 +642,7 @@ $.ajax({
 const fetch = require('node-fetch');
 const inputBody = '{
   "status": "pending",
-  "updatedAt": "2020-04-08T13:16:47Z"
+  "updatedAt": "2020-04-09T10:45:06Z"
 }';
 const headers = {
   'Content-Type':'application/json',
@@ -713,7 +703,7 @@ p JSON.parse(result)
 ```json
 {
   "status": "pending",
-  "updatedAt": "2020-04-08T13:16:47Z"
+  "updatedAt": "2020-04-09T10:45:06Z"
 }
 ```
 
@@ -4354,7 +4344,7 @@ cookieAuth, None
 > Code samples
 
 ```http
-GET /api/market-data/ohlc?symbolId=string&timeFrame=1&fromDate=2020-04-08T13%3A16%3A47Z HTTP/1.1
+GET /api/market-data/ohlc?symbolId=string&timeFrame=1&fromDate=2020-04-09T10%3A45%3A06Z HTTP/1.1
 
 Accept: application/json
 
@@ -4369,7 +4359,7 @@ var headers = {
 $.ajax({
   url: '/api/market-data/ohlc',
   method: 'get',
-  data: '?symbolId=string&timeFrame=1&fromDate=2020-04-08T13%3A16%3A47Z',
+  data: '?symbolId=string&timeFrame=1&fromDate=2020-04-09T10%3A45%3A06Z',
   headers: headers,
   success: function(data) {
     console.log(JSON.stringify(data));
@@ -4386,7 +4376,7 @@ const headers = {
 
 };
 
-fetch('/api/market-data/ohlc?symbolId=string&timeFrame=1&fromDate=2020-04-08T13%3A16%3A47Z',
+fetch('/api/market-data/ohlc?symbolId=string&timeFrame=1&fromDate=2020-04-09T10%3A45%3A06Z',
 {
   method: 'GET',
 
@@ -4407,7 +4397,7 @@ headers = {
 }
 
 r = requests.get('/api/market-data/ohlc', params={
-  'symbolId': 'string',  'timeFrame': '1',  'fromDate': '2020-04-08T13:16:47Z'
+  'symbolId': 'string',  'timeFrame': '1',  'fromDate': '2020-04-09T10:45:06Z'
 }, headers = headers)
 
 print r.json()
@@ -6781,8 +6771,8 @@ adminAuth
   "fee": 0,
   "id": 0,
   "globalTransactionId": "string",
-  "createdAt": "2020-04-08T13:16:47Z",
-  "updatedAt": "2020-04-08T13:16:47Z",
+  "createdAt": "2020-04-09T10:45:06Z",
+  "updatedAt": "2020-04-09T10:45:06Z",
   "tradingPlatformName": "string"
 }
 
@@ -6816,7 +6806,7 @@ adminAuth
 ```json
 {
   "status": "pending",
-  "updatedAt": "2020-04-08T13:16:47Z"
+  "updatedAt": "2020-04-09T10:45:06Z"
 }
 
 ```

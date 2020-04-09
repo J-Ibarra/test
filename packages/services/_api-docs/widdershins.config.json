@@ -1,7 +1,12 @@
 {
   "language_tabs": [{ "http": "HTTP" }, { "javascript": "JavaScript" }, { "javascript--nodejs": "Node.JS" }, { "python": "Python" }, { "ruby": "Ruby" }],
+  "user_templates": "./user_templates",
   "verbose": true,
   "tagGroups": [
+    {
+      "title": "Authentication",
+      "tags": ["authentication"]
+    },
     {
       "title": "Account API",
       "tags": ["accounts"]

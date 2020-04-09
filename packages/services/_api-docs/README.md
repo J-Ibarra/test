@@ -10,3 +10,8 @@ After building the other services (running `npm run build` at the root of the re
 
 The static docs resources would be generated in the `./build` folder.
 To access the locally you can use [http-server](https://www.npmjs.com/package/http-server) npm package and run `http-server . -p 3111` in the `./build` folder
+
+## How to override documentation structure
+
+Templates used to generate the documentation are in the `./user-templates` folder. In case a change
+in the layout/structure of the documentation is needed, changes should take place there.
