@@ -1,3 +1,6 @@
+# !!!
+# !!! THIS WILL BE DEPRECATED AFTER BTC RELEASE
+# !!!
 source ./_scripts/travis/travis-build-tag-creation-helpers.sh 
 
 # Authenticating with ECR
@@ -18,10 +21,6 @@ PREVIOUS_COMMIT_HASH=$(git rev-parse @~)
 echo $PREVIOUS_COMMIT_HASH 
 
 # Invoking build-image-latest script on each service package that has changed since previous commit
-lerna run build-image-latest --scope $1 --since $PREVIOUS_COMMIT_HASH
-
-# Invoking push-image script on each service package that has changed since previous commit
-lerna run push-image --scope $1 --since $PREVIOUS_COMMIT_HASH
-
-# Invoking deploy-latest-integration script on each service package that has changed since previous commit
-lerna run deploy-latest-integration --scope $1 --since $PREVIOUS_COMMIT_HASH
+lerna run build-image-latest --scope $1 --since $PREVIOUS_COMMIT_HASH \
+&& lerna run push-image --scope $1 --since $PREVIOUS_COMMIT_HASH \
+&& lerna run deploy-latest-integration --scope $1 --since $PREVIOUS_COMMIT_HASH

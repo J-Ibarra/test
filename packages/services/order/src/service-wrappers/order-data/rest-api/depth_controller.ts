@@ -18,6 +18,8 @@ export class DepthController extends Controller {
   @Security('tokenAuth')
   @Get('/{symbolId}/{direction}/top')
   public async getTopOfDepthForCurrencyPairAndDirection(symbolId: string, direction: OrderDirection) {
+    await this.initialiseDepthCache()
+
     return this.depthCacheFacade.getTopOfDepthForDirectionAndCurrencyPair(direction, symbolId)
   }
 

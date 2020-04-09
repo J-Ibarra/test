@@ -22,7 +22,6 @@ export KVT_INFURA_PROJECT_ID='c2ea3bc13d094d3a824322a7628f4882'
 export TETHER_INFURA_PROJECT_ID='eb156d80cb244c4488044c60dc9d0c05'
 export KVT_FEE_HOLDINGS_SECRET='B7AFD4671093505A4C1197099270F77532DF63959676824E88B91C86688C8CFA'
 export ETHERSCAN_API_DOMAIN_ROOT='ropsten'
-export CRYPTO_APIS_TOKEN='801c9ee2538cb40da9dbc03790894ea3431fb8ac'
 
 export ENV=integration
 export API_PORT=3031
@@ -54,7 +53,7 @@ export CONTIS_CARD_ORDER_VALIDATION_SLA=5
 # All the variables required for running deposits/withdrawals locally are listed here
 # These variables will allow connecting to and consuming transaction notification messages from SQS
 # int in the URL path is to be replaced by the environment
-export CRYPTO_APIS_TOKEN='xxxx'
+export CRYPTO_APIS_TOKEN='801c9ee2538cb40da9dbc03790894ea3431fb8ac'
 export KINESIS_BITCOIN_HOLDINGS_WIF='cUh5AjG5LMpQjkdjs3y22h7duzBxTukJpHvkMLydBhFDiKnj7zhn'
 export KINESIS_BITCOIN_HOLDINGS_ADDRESS='n38x83CNLcKqNWAgKSzfdvfaEMAT4CiLr8'
 export KINESIS_BITCOIN_HOLDINGS_PRIVATE_KEY='d423a7abfa4752c3e99ba1e755356511f82887f73b40e0bedafef140993100e4'

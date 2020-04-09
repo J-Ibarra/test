@@ -178,7 +178,7 @@ export function RegisterRoutes(app: express.Express) {
     function(request: any, response: any, next: any) {
       const args = {
         address: { "in": "path", "name": "address", "required": true, "dataType": "string" },
-        currencyCode: { "in": "path", "name": "currencyCode", "required": true, "dataType": "enum", "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USD", "EUR", "GBP"] },
+        currencyCode: { "in": "path", "name": "currencyCode", "required": true, "dataType": "enum", "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USDT", "USD", "EUR", "GBP"] },
       };
 
       let validatedArgs: any[] = [];

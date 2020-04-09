@@ -1,15 +1,17 @@
-import { sum } from 'lodash'
-import { getLatestMidPrice, ORDER_MATCH_KEY } from '..'
+import { getLatestMidPrice, SYMBOL_TOTAL_TRADE_VOLUME } from '..'
 import { MemoryCache } from '@abx-utils/db-connection-utils'
 
-export const getDailyVolume = (symbolIds: string[]): Map<string, number> => {
+export const getDailyVolume = async (symbolIds: string[]): Promise<Map<string, number>> => {
   const mapVolumesToSymbols = new Map<string, number>()
-  symbolIds.forEach(symbolId => {
-    const symbolsMidPrice = getLatestMidPrice(symbolId) || 0
-    const orderMatchesInCache = MemoryCache.getInstance().getList<number>(ORDER_MATCH_KEY(symbolId))
-    const totalAmount = sum(orderMatchesInCache)
-    mapVolumesToSymbols.set(symbolId, totalAmount * symbolsMidPrice || 0)
-  })
+
+  await Promise.all(
+    symbolIds.map(async (symbolId) => {
+      const symbolsMidPrice = (await getLatestMidPrice(symbolId)) || 0
+      const totalTradedAmountForSymbol = MemoryCache.getInstance().get<number>(SYMBOL_TOTAL_TRADE_VOLUME(symbolId)) || 0
+
+      mapVolumesToSymbols.set(symbolId, totalTradedAmountForSymbol * symbolsMidPrice || 0)
+    }),
+  )
 
   return mapVolumesToSymbols
 }

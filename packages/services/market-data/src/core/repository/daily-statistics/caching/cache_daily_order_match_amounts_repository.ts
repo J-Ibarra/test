@@ -1,26 +1,29 @@
 import moment from 'moment'
+import Decimal from 'decimal.js'
 
-import { findOrderMatchTransactionsForSymbols, ORDER_MATCH_KEY } from '..'
-import { MemoryCache, CachingObject } from '@abx-utils/db-connection-utils'
+import { findOrderMatchTransactionsForSymbols, SYMBOL_TOTAL_TRADE_VOLUME } from '..'
+import { MemoryCache } from '@abx-utils/db-connection-utils'
 import { OrderMatch } from '@abx-types/order'
 
 export const findAndStoreOrderMatchPrices = async (symbolIds: string[], timeFilter: Date) => {
   const orderMatchTransactions = await findOrderMatchTransactionsForSymbols(symbolIds, timeFilter)
   orderMatchTransactions.forEach((orderMatches: OrderMatch[], symbolId: string) => {
-    const cachingOrderMatch = orderMatches.map(
-      ({ id, amount, createdAt }): CachingObject<number> => ({
-        key: `${ORDER_MATCH_KEY(symbolId)}:${id}`,
-        ttl: moment(createdAt).diff(moment(timeFilter), 'ms'),
-        val: amount,
-      }),
-    )
-    MemoryCache.getInstance().setList<number>(cachingOrderMatch)
+    const orderMatchTotalAmount = orderMatches.reduce((acc, { amount }) => acc + amount, 0)
+
+    MemoryCache.getInstance().set<number>({
+      key: SYMBOL_TOTAL_TRADE_VOLUME(symbolId),
+      ttl: moment().diff(moment(timeFilter), 'ms'),
+      val: orderMatchTotalAmount,
+    })
   })
 }
 
-export const storeOrderMatchPrice = ({ symbolId, id, createdAt, amount }: OrderMatch, timeFilter: Date) =>
+export const storeOrderMatchPrice = ({ symbolId, createdAt, amount }: Pick<OrderMatch, 'symbolId' | 'createdAt' | 'amount'>, timeFilter: Date) => {
+  const totalRecordedTradeVolume = MemoryCache.getInstance().get<number>(SYMBOL_TOTAL_TRADE_VOLUME(symbolId)) || 0
+
   MemoryCache.getInstance().set<number>({
-    key: `${ORDER_MATCH_KEY(symbolId)}:${id}`,
+    key: SYMBOL_TOTAL_TRADE_VOLUME(symbolId),
     ttl: moment(createdAt).diff(moment(timeFilter), 'ms'),
-    val: amount,
+    val: new Decimal(totalRecordedTradeVolume).add(amount).toNumber(),
   })
+}

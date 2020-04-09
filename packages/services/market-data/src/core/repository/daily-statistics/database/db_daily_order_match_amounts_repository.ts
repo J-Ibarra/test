@@ -15,5 +15,6 @@ export const findOrderMatchTransactionsForSymbols = async (symbolIds: string[], 
     },
     order: ['symbolId'],
   })
+
   return reduceSymbolsToMappedObject(orderMatchTransactions)
 }
