@@ -1,11 +1,11 @@
 'use strict'
 const exec = require('child_process').exec;
 
-const RETRY_REPEATED = 3;
+const RETRY_BUILD_TIMES = 3;
 const passedParameter = process.argv.slice(2)[0];
 
 const retryImageBuild = (times = 1, commandPassed = false) => {
-    if (times > RETRY_REPEATED || commandPassed) {
+    if (times > RETRY_BUILD_TIMES || commandPassed) {
         return;
     }
     
