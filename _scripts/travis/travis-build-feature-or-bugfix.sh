@@ -10,6 +10,4 @@ eval $(aws ecr get-login --region ap-southeast-2 --no-include-email)
 # Invoking test followed by build-image-latest followed by push-image on each service package that has changed since previous commit
 lerna run build --scope $1 --since develop --include-dependencies \
 && lerna run run-migrations:test --since develop --include-dependencies \
-&& lerna run test --scope $1 --since develop --include-dependencies \
-&& node ./_scripts/travis/build-image.util.js $1 \
-&& lerna run push-image --scope $1 --since develop
+&& lerna run test --scope $1 --since develop --include-dependencies
