@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Request, Route, Security } from 'tsoa'
+import { Body, Controller, Get, Post, Request, Route, Security, Tags } from 'tsoa'
 import { isNullOrUndefined } from 'util'
 import { Logger } from '@abx-utils/logging'
 import { OverloadedRequest } from '@abx-types/account'
@@ -8,6 +8,7 @@ export interface VaultPersistRequest {
   publicKey: string
 }
 
+@Tags('deposit')
 @Route('/vault')
 export class VaultController extends Controller {
   private logger = Logger.getInstance('api', 'VaultController')

@@ -18,730 +18,11 @@ headingLevel: 2
 
 > Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
 
-Contains the account related services
-
 Base URLs:
 
 * <a href="/api">/api</a>
 
-# Authentication
-
-* API Key (cookieAuth)
-    - Parameter Name: **appSession**, in: cookie. 
-
-* API Key (adminAuth)
-    - Parameter Name: **appSession**, in: cookie. 
-
-<h1 id="kinesis-exchange-api-default">Default</h1>
-
-## GetAccountSummaryForHin
-
-<a id="opIdGetAccountSummaryForHin"></a>
-
-> Code samples
-
-```http
-GET /api/admin/fund-management/account-summary/{accountHin} HTTP/1.1
-
-Accept: application/json
-
-```
-
-```javascript
-var headers = {
-  'Accept':'application/json'
-
-};
-
-$.ajax({
-  url: '/api/admin/fund-management/account-summary/{accountHin}',
-  method: 'get',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const fetch = require('node-fetch');
-
-const headers = {
-  'Accept':'application/json'
-
-};
-
-fetch('/api/admin/fund-management/account-summary/{accountHin}',
-{
-  method: 'GET',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
-
-r = requests.get('/api/admin/fund-management/account-summary/{accountHin}', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Accept' => 'application/json'
-}
-
-result = RestClient.get '/api/admin/fund-management/account-summary/{accountHin}',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-`GET /admin/fund-management/account-summary/{accountHin}`
-
-<h3 id="getaccountsummaryforhin-parameters">Parameters</h3>
-
-|Name|In|Type|Required|Description|
-|---|---|---|---|---|
-|accountHin|path|string|true|none|
-
-> Example responses
-
-> 200 Response
-
-```json
-{}
-```
-
-<h3 id="getaccountsummaryforhin-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
-
-<h3 id="getaccountsummaryforhin-responseschema">Response Schema</h3>
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-adminAuth
-</aside>
-
-## RetrieveAllAdminRequests
-
-<a id="opIdRetrieveAllAdminRequests"></a>
-
-> Code samples
-
-```http
-GET /api/admin/fund-management/admin-requests HTTP/1.1
-
-Accept: application/json
-
-```
-
-```javascript
-var headers = {
-  'Accept':'application/json'
-
-};
-
-$.ajax({
-  url: '/api/admin/fund-management/admin-requests',
-  method: 'get',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const fetch = require('node-fetch');
-
-const headers = {
-  'Accept':'application/json'
-
-};
-
-fetch('/api/admin/fund-management/admin-requests',
-{
-  method: 'GET',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
-
-r = requests.get('/api/admin/fund-management/admin-requests', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Accept' => 'application/json'
-}
-
-result = RestClient.get '/api/admin/fund-management/admin-requests',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-`GET /admin/fund-management/admin-requests`
-
-> Example responses
-
-> 200 Response
-
-```json
-[
-  {
-    "client": "string",
-    "hin": "string",
-    "type": "withdrawal",
-    "description": "string",
-    "asset": "ETH",
-    "amount": 0,
-    "admin": "string",
-    "status": "pending",
-    "fee": 0,
-    "id": 0,
-    "globalTransactionId": "string",
-    "createdAt": "2020-03-09T16:47:12Z",
-    "updatedAt": "2020-03-09T16:47:12Z",
-    "tradingPlatformName": "string"
-  }
-]
-```
-
-<h3 id="retrievealladminrequests-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
-
-<h3 id="retrievealladminrequests-responseschema">Response Schema</h3>
-
-Status Code **200**
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|*anonymous*|[[AdminRequest](#schemaadminrequest)]|false|none|[Contains the details for a withdrawal, deposit or redemption admin request for a given client.]|
-|» client|string|true|none|none|
-|» hin|string|true|none|none|
-|» type|[AdminRequestType](#schemaadminrequesttype)|true|none|none|
-|» description|string\|null|false|none|none|
-|» asset|[CurrencyCode](#schemacurrencycode)|true|none|none|
-|» amount|number(double)|true|none|none|
-|» admin|string|true|none|none|
-|» status|[AdminRequestStatus](#schemaadminrequeststatus)|true|none|none|
-|» fee|number(double)\|null|false|none|none|
-|» id|number(double)|true|none|none|
-|» globalTransactionId|string|true|none|none|
-|» createdAt|string(date-time)|true|none|none|
-|» updatedAt|string(date-time)|true|none|none|
-|» tradingPlatformName|string|true|none|none|
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|type|withdrawal|
-|type|deposit|
-|type|redemption|
-|asset|ETH|
-|asset|KAU|
-|asset|KAG|
-|asset|KVT|
-|asset|BTC|
-|asset|USD|
-|asset|EUR|
-|asset|GBP|
-|status|pending|
-|status|approved|
-|status|rejected|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-adminAuth
-</aside>
-
-## CreateAdminRequest
-
-<a id="opIdCreateAdminRequest"></a>
-
-> Code samples
-
-```http
-POST /api/admin/fund-management/admin-requests HTTP/1.1
-
-Content-Type: application/json
-Accept: application/json
-
-```
-
-```javascript
-var headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/json'
-
-};
-
-$.ajax({
-  url: '/api/admin/fund-management/admin-requests',
-  method: 'post',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const fetch = require('node-fetch');
-const inputBody = '{
-  "hin": "string",
-  "type": "withdrawal",
-  "description": "string",
-  "asset": "ETH",
-  "amount": 0,
-  "fee": 0
-}';
-const headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/json'
-
-};
-
-fetch('/api/admin/fund-management/admin-requests',
-{
-  method: 'POST',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-}
-
-r = requests.post('/api/admin/fund-management/admin-requests', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Content-Type' => 'application/json',
-  'Accept' => 'application/json'
-}
-
-result = RestClient.post '/api/admin/fund-management/admin-requests',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-`POST /admin/fund-management/admin-requests`
-
-> Body parameter
-
-```json
-{
-  "hin": "string",
-  "type": "withdrawal",
-  "description": "string",
-  "asset": "ETH",
-  "amount": 0,
-  "fee": 0
-}
-```
-
-<h3 id="createadminrequest-parameters">Parameters</h3>
-
-|Name|In|Type|Required|Description|
-|---|---|---|---|---|
-|body|body|[AdminRequestParams](#schemaadminrequestparams)|true|none|
-
-> Example responses
-
-> 200 Response
-
-```json
-{}
-```
-
-<h3 id="createadminrequest-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
-
-<h3 id="createadminrequest-responseschema">Response Schema</h3>
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-adminAuth
-</aside>
-
-## GetAdminRequestsForAccountHin
-
-<a id="opIdGetAdminRequestsForAccountHin"></a>
-
-> Code samples
-
-```http
-GET /api/admin/fund-management/admin-requests/{accountHin} HTTP/1.1
-
-Accept: application/json
-
-```
-
-```javascript
-var headers = {
-  'Accept':'application/json'
-
-};
-
-$.ajax({
-  url: '/api/admin/fund-management/admin-requests/{accountHin}',
-  method: 'get',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const fetch = require('node-fetch');
-
-const headers = {
-  'Accept':'application/json'
-
-};
-
-fetch('/api/admin/fund-management/admin-requests/{accountHin}',
-{
-  method: 'GET',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
-
-r = requests.get('/api/admin/fund-management/admin-requests/{accountHin}', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Accept' => 'application/json'
-}
-
-result = RestClient.get '/api/admin/fund-management/admin-requests/{accountHin}',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-`GET /admin/fund-management/admin-requests/{accountHin}`
-
-<h3 id="getadminrequestsforaccounthin-parameters">Parameters</h3>
-
-|Name|In|Type|Required|Description|
-|---|---|---|---|---|
-|accountHin|path|string|true|none|
-
-> Example responses
-
-> 200 Response
-
-```json
-[
-  {
-    "client": "string",
-    "hin": "string",
-    "type": "withdrawal",
-    "description": "string",
-    "asset": "ETH",
-    "amount": 0,
-    "admin": "string",
-    "status": "pending",
-    "fee": 0,
-    "id": 0,
-    "globalTransactionId": "string",
-    "createdAt": "2020-03-09T16:47:12Z",
-    "updatedAt": "2020-03-09T16:47:12Z",
-    "tradingPlatformName": "string"
-  }
-]
-```
-
-<h3 id="getadminrequestsforaccounthin-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
-
-<h3 id="getadminrequestsforaccounthin-responseschema">Response Schema</h3>
-
-Status Code **200**
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|*anonymous*|[[AdminRequest](#schemaadminrequest)]|false|none|[Contains the details for a withdrawal, deposit or redemption admin request for a given client.]|
-|» client|string|true|none|none|
-|» hin|string|true|none|none|
-|» type|[AdminRequestType](#schemaadminrequesttype)|true|none|none|
-|» description|string\|null|false|none|none|
-|» asset|[CurrencyCode](#schemacurrencycode)|true|none|none|
-|» amount|number(double)|true|none|none|
-|» admin|string|true|none|none|
-|» status|[AdminRequestStatus](#schemaadminrequeststatus)|true|none|none|
-|» fee|number(double)\|null|false|none|none|
-|» id|number(double)|true|none|none|
-|» globalTransactionId|string|true|none|none|
-|» createdAt|string(date-time)|true|none|none|
-|» updatedAt|string(date-time)|true|none|none|
-|» tradingPlatformName|string|true|none|none|
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|type|withdrawal|
-|type|deposit|
-|type|redemption|
-|asset|ETH|
-|asset|KAU|
-|asset|KAG|
-|asset|KVT|
-|asset|BTC|
-|asset|USD|
-|asset|EUR|
-|asset|GBP|
-|status|pending|
-|status|approved|
-|status|rejected|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-adminAuth
-</aside>
-
-## UpdateAdminRequestStatus
-
-<a id="opIdUpdateAdminRequestStatus"></a>
-
-> Code samples
-
-```http
-PATCH /api/admin/fund-management/admin-requests/{id} HTTP/1.1
-
-Content-Type: application/json
-Accept: application/json
-
-```
-
-```javascript
-var headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/json'
-
-};
-
-$.ajax({
-  url: '/api/admin/fund-management/admin-requests/{id}',
-  method: 'patch',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const fetch = require('node-fetch');
-const inputBody = '{
-  "status": "pending",
-  "updatedAt": "2020-03-09T16:47:12Z"
-}';
-const headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/json'
-
-};
-
-fetch('/api/admin/fund-management/admin-requests/{id}',
-{
-  method: 'PATCH',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-}
-
-r = requests.patch('/api/admin/fund-management/admin-requests/{id}', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Content-Type' => 'application/json',
-  'Accept' => 'application/json'
-}
-
-result = RestClient.patch '/api/admin/fund-management/admin-requests/{id}',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-`PATCH /admin/fund-management/admin-requests/{id}`
-
-> Body parameter
-
-```json
-{
-  "status": "pending",
-  "updatedAt": "2020-03-09T16:47:12Z"
-}
-```
-
-<h3 id="updateadminrequeststatus-parameters">Parameters</h3>
-
-|Name|In|Type|Required|Description|
-|---|---|---|---|---|
-|id|path|number(double)|true|none|
-|body|body|[AdminRequestStatusUpdateParams](#schemaadminrequeststatusupdateparams)|true|none|
-
-> Example responses
-
-> 200 Response
-
-```json
-{}
-```
-
-<h3 id="updateadminrequeststatus-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
-
-<h3 id="updateadminrequeststatus-responseschema">Response Schema</h3>
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-adminAuth
-</aside>
+<h1 id="kinesis-exchange-api-account-api">Account API</h1>
 
 ## GetBankDetails
 
@@ -833,26 +114,16 @@ p JSON.parse(result)
 > 200 Response
 
 ```json
-{
-  "id": 0,
-  "accountHolderName": "string",
-  "bankName": "string",
-  "iban": "string",
-  "bankSwiftCode": "string",
-  "routingCode": "string",
-  "abaNumber": "string",
-  "accountNumber": "string",
-  "notes": "string",
-  "bankAddress": "string",
-  "accountId": "string"
-}
+{}
 ```
 
 <h3 id="getbankdetails-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|[PersonalBankDetails](#schemapersonalbankdetails)|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
+
+<h3 id="getbankdetails-responseschema">Response Schema</h3>
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -990,16 +261,26 @@ p JSON.parse(result)
 > 200 Response
 
 ```json
-{}
+{
+  "id": 0,
+  "accountHolderName": "string",
+  "bankName": "string",
+  "iban": "string",
+  "bankSwiftCode": "string",
+  "routingCode": "string",
+  "abaNumber": "string",
+  "accountNumber": "string",
+  "notes": "string",
+  "bankAddress": "string",
+  "accountId": "string"
+}
 ```
 
 <h3 id="savebankdetails-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|Inline|
-
-<h3 id="savebankdetails-responseschema">Response Schema</h3>
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[PersonalBankDetails](#schemapersonalbankdetails)|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -1814,152 +1095,6 @@ p JSON.parse(result)
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
 cookieAuth, None
-</aside>
-
-## SearchForUserAccount
-
-<a id="opIdSearchForUserAccount"></a>
-
-> Code samples
-
-```http
-GET /api/admin/accounts/search?hin=string HTTP/1.1
-
-Accept: application/json
-
-```
-
-```javascript
-var headers = {
-  'Accept':'application/json'
-
-};
-
-$.ajax({
-  url: '/api/admin/accounts/search',
-  method: 'get',
-  data: '?hin=string',
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const fetch = require('node-fetch');
-
-const headers = {
-  'Accept':'application/json'
-
-};
-
-fetch('/api/admin/accounts/search?hin=string',
-{
-  method: 'GET',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
-
-r = requests.get('/api/admin/accounts/search', params={
-  'hin': 'string'
-}, headers = headers)
-
-print r.json()
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Accept' => 'application/json'
-}
-
-result = RestClient.get '/api/admin/accounts/search',
-  params: {
-  'hin' => 'string'
-}, headers: headers
-
-p JSON.parse(result)
-
-```
-
-`GET /admin/accounts/search`
-
-<h3 id="searchforuseraccount-parameters">Parameters</h3>
-
-|Name|In|Type|Required|Description|
-|---|---|---|---|---|
-|hin|query|string|true|none|
-
-> Example responses
-
-> 200 Response
-
-```json
-[
-  {
-    "mfaEnabled": true,
-    "accountType": "individual",
-    "status": "registered",
-    "hin": "string",
-    "hasTriggeredKycCheck": true
-  }
-]
-```
-
-<h3 id="searchforuseraccount-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
-
-<h3 id="searchforuseraccount-responseschema">Response Schema</h3>
-
-Status Code **200**
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|*anonymous*|[[UserPublicView](#schemauserpublicview)]|false|none|none|
-|» mfaEnabled|boolean|true|none|True if MFA has been enabled by the user.|
-|» accountType|[AccountType](#schemaaccounttype)|true|none|none|
-|» status|[AccountStatus](#schemaaccountstatus)|true|none|The account status.|
-|» hin|string|true|none|The hin of the owner account|
-|» hasTriggeredKycCheck|boolean\|null|false|none|The hasTriggeredKycCheck value of the owner account|
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|accountType|individual|
-|accountType|corporate|
-|accountType|operator|
-|accountType|administrator|
-|accountType|kinesisRevenue|
-|status|registered|
-|status|emailVerified|
-|status|kycVerified|
-|status|superUser|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-adminAuth
 </aside>
 
 ## ChangeAccountStatus
@@ -3013,137 +2148,6 @@ p JSON.parse(result)
 This operation does not require authentication
 </aside>
 
-## Login
-
-<a id="opIdLogin"></a>
-
-> Code samples
-
-```http
-POST /api/sessions HTTP/1.1
-
-Content-Type: application/json
-Accept: application/json
-
-```
-
-```javascript
-var headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/json'
-
-};
-
-$.ajax({
-  url: '/api/sessions',
-  method: 'post',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const fetch = require('node-fetch');
-const inputBody = '{
-  "email": "string",
-  "password": "string",
-  "mfaToken": "string"
-}';
-const headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/json'
-
-};
-
-fetch('/api/sessions',
-{
-  method: 'POST',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-}
-
-r = requests.post('/api/sessions', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Content-Type' => 'application/json',
-  'Accept' => 'application/json'
-}
-
-result = RestClient.post '/api/sessions',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-`POST /sessions`
-
-> Body parameter
-
-```json
-{
-  "email": "string",
-  "password": "string",
-  "mfaToken": "string"
-}
-```
-
-<h3 id="login-parameters">Parameters</h3>
-
-|Name|In|Type|Required|Description|
-|---|---|---|---|---|
-|body|body|[LoginRequest](#schemaloginrequest)|true|none|
-
-> Example responses
-
-> 201 Response
-
-```json
-{}
-```
-
-<h3 id="login-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Created|Inline|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request|None|
-
-<h3 id="login-responseschema">Response Schema</h3>
-
-<aside class="success">
-This operation does not require authentication
-</aside>
-
 ## RemoveUsersSession
 
 <a id="opIdRemoveUsersSession"></a>
@@ -3339,135 +2343,6 @@ To perform this operation, you must be authenticated by means of one of the foll
 cookieAuth, None
 </aside>
 
-## CreateToken
-
-<a id="opIdCreateToken"></a>
-
-> Code samples
-
-```http
-POST /api/tokens HTTP/1.1
-
-Content-Type: application/json
-Accept: application/json
-
-```
-
-```javascript
-var headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/json'
-
-};
-
-$.ajax({
-  url: '/api/tokens',
-  method: 'post',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const fetch = require('node-fetch');
-const inputBody = '{
-  "email": "string",
-  "password": "string"
-}';
-const headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/json'
-
-};
-
-fetch('/api/tokens',
-{
-  method: 'POST',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-}
-
-r = requests.post('/api/tokens', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Content-Type' => 'application/json',
-  'Accept' => 'application/json'
-}
-
-result = RestClient.post '/api/tokens',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-`POST /tokens`
-
-> Body parameter
-
-```json
-{
-  "email": "string",
-  "password": "string"
-}
-```
-
-<h3 id="createtoken-parameters">Parameters</h3>
-
-|Name|In|Type|Required|Description|
-|---|---|---|---|---|
-|body|body|[TokenRequest](#schematokenrequest)|true|none|
-
-> Example responses
-
-> 201 Response
-
-```json
-{}
-```
-
-<h3 id="createtoken-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Created|Inline|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request|None|
-
-<h3 id="createtoken-responseschema">Response Schema</h3>
-
-<aside class="success">
-This operation does not require authentication
-</aside>
-
 ## RemoveToken
 
 <a id="opIdRemoveToken"></a>
@@ -3626,258 +2501,32 @@ To perform this operation, you must be authenticated by means of one of the foll
 cookieAuth, None
 </aside>
 
-## UpdateAccountType
+<h1 id="kinesis-exchange-api-authentication">Authentication</h1>
 
-<a id="opIdUpdateAccountType"></a>
+## Login
+
+<a id="opIdLogin"></a>
 
 > Code samples
 
 ```http
-PATCH /api/test-automation/accounts/accounts/type HTTP/1.1
+POST /api/sessions HTTP/1.1
 
 Content-Type: application/json
-
-```
-
-```javascript
-var headers = {
-  'Content-Type':'application/json'
-
-};
-
-$.ajax({
-  url: '/api/test-automation/accounts/accounts/type',
-  method: 'patch',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const fetch = require('node-fetch');
-const inputBody = '{
-  "email": "string",
-  "type": "individual"
-}';
-const headers = {
-  'Content-Type':'application/json'
-
-};
-
-fetch('/api/test-automation/accounts/accounts/type',
-{
-  method: 'PATCH',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json'
-}
-
-r = requests.patch('/api/test-automation/accounts/accounts/type', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Content-Type' => 'application/json'
-}
-
-result = RestClient.patch '/api/test-automation/accounts/accounts/type',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-`PATCH /test-automation/accounts/accounts/type`
-
-> Body parameter
-
-```json
-{
-  "email": "string",
-  "type": "individual"
-}
-```
-
-<h3 id="updateaccounttype-parameters">Parameters</h3>
-
-|Name|In|Type|Required|Description|
-|---|---|---|---|---|
-|body|body|[AccountTypeUpdateRequest](#schemaaccounttypeupdaterequest)|true|none|
-
-<h3 id="updateaccounttype-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|No content|None|
-
-<aside class="success">
-This operation does not require authentication
-</aside>
-
-## UpdateAccountStatus
-
-<a id="opIdUpdateAccountStatus"></a>
-
-> Code samples
-
-```http
-PATCH /api/test-automation/accounts/account-status HTTP/1.1
-
-Content-Type: application/json
-
-```
-
-```javascript
-var headers = {
-  'Content-Type':'application/json'
-
-};
-
-$.ajax({
-  url: '/api/test-automation/accounts/account-status',
-  method: 'patch',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const fetch = require('node-fetch');
-const inputBody = '{
-  "email": "string",
-  "status": "registered",
-  "enableMfa": true,
-  "hasTriggeredKycCheck": true
-}';
-const headers = {
-  'Content-Type':'application/json'
-
-};
-
-fetch('/api/test-automation/accounts/account-status',
-{
-  method: 'PATCH',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json'
-}
-
-r = requests.patch('/api/test-automation/accounts/account-status', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Content-Type' => 'application/json'
-}
-
-result = RestClient.patch '/api/test-automation/accounts/account-status',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-`PATCH /test-automation/accounts/account-status`
-
-> Body parameter
-
-```json
-{
-  "email": "string",
-  "status": "registered",
-  "enableMfa": true,
-  "hasTriggeredKycCheck": true
-}
-```
-
-<h3 id="updateaccountstatus-parameters">Parameters</h3>
-
-|Name|In|Type|Required|Description|
-|---|---|---|---|---|
-|body|body|[AccountStatusUpdateRequest](#schemaaccountstatusupdaterequest)|true|none|
-
-<h3 id="updateaccountstatus-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|No content|None|
-
-<aside class="success">
-This operation does not require authentication
-</aside>
-
-## GetAddressDetailsByPublicKey
-
-<a id="opIdGetAddressDetailsByPublicKey"></a>
-
-> Code samples
-
-```http
-GET /api/test-automation/accounts/details/{publicKey} HTTP/1.1
-
 Accept: application/json
 
 ```
 
 ```javascript
 var headers = {
+  'Content-Type':'application/json',
   'Accept':'application/json'
 
 };
 
 $.ajax({
-  url: '/api/test-automation/accounts/details/{publicKey}',
-  method: 'get',
+  url: '/api/sessions',
+  method: 'post',
 
   headers: headers,
   success: function(data) {
@@ -3889,16 +2538,21 @@ $.ajax({
 
 ```javascript--nodejs
 const fetch = require('node-fetch');
-
+const inputBody = '{
+  "email": "string",
+  "password": "string",
+  "mfaToken": "string"
+}';
 const headers = {
+  'Content-Type':'application/json',
   'Accept':'application/json'
 
 };
 
-fetch('/api/test-automation/accounts/details/{publicKey}',
+fetch('/api/sessions',
 {
-  method: 'GET',
-
+  method: 'POST',
+  body: inputBody,
   headers: headers
 })
 .then(function(res) {
@@ -3912,10 +2566,11 @@ fetch('/api/test-automation/accounts/details/{publicKey}',
 ```python
 import requests
 headers = {
+  'Content-Type': 'application/json',
   'Accept': 'application/json'
 }
 
-r = requests.get('/api/test-automation/accounts/details/{publicKey}', params={
+r = requests.post('/api/sessions', params={
 
 }, headers = headers)
 
@@ -3928,10 +2583,11 @@ require 'rest-client'
 require 'json'
 
 headers = {
+  'Content-Type' => 'application/json',
   'Accept' => 'application/json'
 }
 
-result = RestClient.get '/api/test-automation/accounts/details/{publicKey}',
+result = RestClient.post '/api/sessions',
   params: {
   }, headers: headers
 
@@ -3939,33 +2595,175 @@ p JSON.parse(result)
 
 ```
 
-`GET /test-automation/accounts/details/{publicKey}`
+`POST /sessions`
 
-<h3 id="getaddressdetailsbypublickey-parameters">Parameters</h3>
+> Body parameter
+
+```json
+{
+  "email": "string",
+  "password": "string",
+  "mfaToken": "string"
+}
+```
+
+<h3 id="login-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
-|publicKey|path|string|true|none|
+|body|body|[LoginRequest](#schemaloginrequest)|true|none|
 
 > Example responses
 
-> 200 Response
+> 201 Response
 
 ```json
 {}
 ```
 
-<h3 id="getaddressdetailsbypublickey-responses">Responses</h3>
+<h3 id="login-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
+|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Created|Inline|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request|None|
 
-<h3 id="getaddressdetailsbypublickey-responseschema">Response Schema</h3>
+<h3 id="login-responseschema">Response Schema</h3>
 
 <aside class="success">
 This operation does not require authentication
 </aside>
+
+## CreateToken
+
+<a id="opIdCreateToken"></a>
+
+> Code samples
+
+```http
+POST /api/tokens HTTP/1.1
+
+Content-Type: application/json
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/tokens',
+  method: 'post',
+
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{
+  "email": "string",
+  "password": "string"
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+fetch('/api/tokens',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('/api/tokens', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+}
+
+result = RestClient.post '/api/tokens',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`POST /tokens`
+
+> Body parameter
+
+```json
+{
+  "email": "string",
+  "password": "string"
+}
+```
+
+<h3 id="createtoken-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|body|body|[TokenRequest](#schematokenrequest)|true|none|
+
+> Example responses
+
+> 201 Response
+
+```json
+{}
+```
+
+<h3 id="createtoken-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Created|Inline|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request|None|
+
+<h3 id="createtoken-responseschema">Response Schema</h3>
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
+<h1 id="kinesis-exchange-api-balance-api">Balance API</h1>
 
 ## GetAllBalancesForAccount
 
@@ -4108,112 +2906,7 @@ To perform this operation, you must be authenticated by means of one of the foll
 cookieAuth, None
 </aside>
 
-## UpdateBalancesForAccount
-
-<a id="opIdUpdateBalancesForAccount"></a>
-
-> Code samples
-
-```http
-PATCH /api/test-automation/balances HTTP/1.1
-
-Content-Type: application/json
-
-```
-
-```javascript
-var headers = {
-  'Content-Type':'application/json'
-
-};
-
-$.ajax({
-  url: '/api/test-automation/balances',
-  method: 'patch',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const fetch = require('node-fetch');
-const inputBody = '{}';
-const headers = {
-  'Content-Type':'application/json'
-
-};
-
-fetch('/api/test-automation/balances',
-{
-  method: 'PATCH',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json'
-}
-
-r = requests.patch('/api/test-automation/balances', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Content-Type' => 'application/json'
-}
-
-result = RestClient.patch '/api/test-automation/balances',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-`PATCH /test-automation/balances`
-
-> Body parameter
-
-```json
-{}
-```
-
-<h3 id="updatebalancesforaccount-parameters">Parameters</h3>
-
-|Name|In|Type|Required|Description|
-|---|---|---|---|---|
-|body|body|[VerifyMfaForUserRequestbody](#schemaverifymfaforuserrequestbody)|true|none|
-
-<h3 id="updatebalancesforaccount-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|No content|None|
-
-<aside class="success">
-This operation does not require authentication
-</aside>
+<h1 id="kinesis-exchange-api-deposit-api">Deposit API</h1>
 
 ## PersistAccountsVaultPublicKey
 
@@ -4783,6 +3476,8 @@ To perform this operation, you must be authenticated by means of one of the foll
 cookieAuth, None
 </aside>
 
+<h1 id="kinesis-exchange-api-market-data-api">Market Data API</h1>
+
 ## GetOHLCMarketData
 
 <a id="opIdGetOHLCMarketData"></a>
@@ -4790,7 +3485,7 @@ cookieAuth, None
 > Code samples
 
 ```http
-GET /api/market-data/ohlc?symbolId=string&timeFrame=1&fromDate=2020-03-09T16%3A47%3A12Z HTTP/1.1
+GET /api/market-data/ohlc?symbolId=string&timeFrame=1&fromDate=2020-04-09T16%3A03%3A13Z HTTP/1.1
 
 Accept: application/json
 
@@ -4805,7 +3500,7 @@ var headers = {
 $.ajax({
   url: '/api/market-data/ohlc',
   method: 'get',
-  data: '?symbolId=string&timeFrame=1&fromDate=2020-03-09T16%3A47%3A12Z',
+  data: '?symbolId=string&timeFrame=1&fromDate=2020-04-09T16%3A03%3A13Z',
   headers: headers,
   success: function(data) {
     console.log(JSON.stringify(data));
@@ -4822,7 +3517,7 @@ const headers = {
 
 };
 
-fetch('/api/market-data/ohlc?symbolId=string&timeFrame=1&fromDate=2020-03-09T16%3A47%3A12Z',
+fetch('/api/market-data/ohlc?symbolId=string&timeFrame=1&fromDate=2020-04-09T16%3A03%3A13Z',
 {
   method: 'GET',
 
@@ -4843,7 +3538,7 @@ headers = {
 }
 
 r = requests.get('/api/market-data/ohlc', params={
-  'symbolId': 'string',  'timeFrame': '1',  'fromDate': '2020-03-09T16:47:12Z'
+  'symbolId': 'string',  'timeFrame': '1',  'fromDate': '2020-04-09T16:03:13Z'
 }, headers = headers)
 
 print r.json()
@@ -5119,6 +3814,7 @@ p JSON.parse(result)
 |currency|KAG|
 |currency|KVT|
 |currency|BTC|
+|currency|USDT|
 |currency|USD|
 |currency|EUR|
 |currency|GBP|
@@ -5491,6 +4187,8 @@ To perform this operation, you must be authenticated by means of one of the foll
 cookieAuth, None
 </aside>
 
+<h1 id="kinesis-exchange-api-reference-data-api">Reference Data API</h1>
+
 ## FindAllBoundaries
 
 <a id="opIdFindAllBoundaries"></a>
@@ -5721,6 +4419,7 @@ Status Code **200**
 |code|KAG|
 |code|KVT|
 |code|BTC|
+|code|USDT|
 |code|USD|
 |code|EUR|
 |code|GBP|
@@ -5822,7 +4521,7 @@ p JSON.parse(result)
 [
   {
     "name": "debit_card",
-    "enabled": true
+    "enabled": {}
   }
 ]
 ```
@@ -5841,13 +4540,14 @@ Status Code **200**
 |---|---|---|---|---|
 |*anonymous*|[[FeatureFlag](#schemafeatureflag)]|false|none|none|
 |» name|[SupportedFeatureFlags](#schemasupportedfeatureflags)|true|none|none|
-|» enabled|boolean|true|none|none|
+|» enabled|object|true|none|none|
 
 #### Enumerated Values
 
 |Property|Value|
 |---|---|
 |name|debit_card|
+|name|BTC|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -5991,6 +4691,7 @@ Status Code **200**
 |base|KAG|
 |base|KVT|
 |base|BTC|
+|base|USDT|
 |base|USD|
 |base|EUR|
 |base|GBP|
@@ -5999,6 +4700,7 @@ Status Code **200**
 |quote|KAG|
 |quote|KVT|
 |quote|BTC|
+|quote|USDT|
 |quote|USD|
 |quote|EUR|
 |quote|GBP|
@@ -6007,6 +4709,7 @@ Status Code **200**
 |fee|KAG|
 |fee|KVT|
 |fee|BTC|
+|fee|USDT|
 |fee|USD|
 |fee|EUR|
 |fee|GBP|
@@ -6123,6 +4826,8 @@ Returns true if you are bound and false if you aren't
 To perform this operation, you must be authenticated by means of one of the following methods:
 None, cookieAuth
 </aside>
+
+<h1 id="kinesis-exchange-api-withdrawal-api">Withdrawal API</h1>
 
 ## InitialiseWithdrawal
 
@@ -6463,6 +5168,7 @@ p JSON.parse(result)
 |currency|KAG|
 |currency|KVT|
 |currency|BTC|
+|currency|USDT|
 |currency|USD|
 |currency|EUR|
 |currency|GBP|
@@ -6591,6 +5297,7 @@ p JSON.parse(result)
 |code|KAG|
 |code|KVT|
 |code|BTC|
+|code|USDT|
 |code|USD|
 |code|EUR|
 |code|GBP|
@@ -6714,6 +5421,7 @@ p JSON.parse(result)
 |currencyCode|KAG|
 |currencyCode|KVT|
 |currencyCode|BTC|
+|currencyCode|USDT|
 |currencyCode|USD|
 |currencyCode|EUR|
 |currencyCode|GBP|
@@ -6871,6 +5579,8 @@ p JSON.parse(result)
 To perform this operation, you must be authenticated by means of one of the following methods:
 cookieAuth, None
 </aside>
+
+<h1 id="kinesis-exchange-api-order-api">Order API</h1>
 
 ## CreateOrder
 
@@ -7157,6 +5867,7 @@ cookieAuth, None
 |*anonymous*|KAG|
 |*anonymous*|KVT|
 |*anonymous*|BTC|
+|*anonymous*|USDT|
 |*anonymous*|USD|
 |*anonymous*|EUR|
 |*anonymous*|GBP|
@@ -7201,8 +5912,8 @@ cookieAuth, None
   "fee": 0,
   "id": 0,
   "globalTransactionId": "string",
-  "createdAt": "2020-03-09T16:47:12Z",
-  "updatedAt": "2020-03-09T16:47:12Z",
+  "createdAt": "2020-04-09T16:03:13Z",
+  "updatedAt": "2020-04-09T16:03:13Z",
   "tradingPlatformName": "string"
 }
 
@@ -7236,7 +5947,7 @@ cookieAuth, None
 ```json
 {
   "status": "pending",
-  "updatedAt": "2020-03-09T16:47:12Z"
+  "updatedAt": "2020-04-09T16:03:13Z"
 }
 
 ```
@@ -7273,6 +5984,39 @@ cookieAuth, None
 |description|string\|null|false|none|none|
 |asset|[CurrencyCode](#schemacurrencycode)|true|none|none|
 |amount|number(double)|true|none|none|
+|fee|number(double)\|null|false|none|none|
+
+<h2 id="tocScreateadminrequestparams">CreateAdminRequestParams</h2>
+
+<a id="schemacreateadminrequestparams"></a>
+
+```json
+{
+  "client": "string",
+  "hin": "string",
+  "type": "withdrawal",
+  "description": "string",
+  "asset": "ETH",
+  "amount": 0,
+  "admin": "string",
+  "status": "pending",
+  "fee": 0
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|client|string|true|none|none|
+|hin|string|true|none|none|
+|type|[AdminRequestType](#schemaadminrequesttype)|true|none|none|
+|description|string\|null|false|none|none|
+|asset|[CurrencyCode](#schemacurrencycode)|true|none|none|
+|amount|number(double)|true|none|none|
+|admin|string|true|none|none|
+|status|[AdminRequestStatus](#schemaadminrequeststatus)|true|none|none|
 |fee|number(double)\|null|false|none|none|
 
 <h2 id="tocSpersonalbankdetails">PersonalBankDetails</h2>
@@ -7736,7 +6480,8 @@ cookieAuth, None
   "email": "string",
   "status": "registered",
   "enableMfa": true,
-  "hasTriggeredKycCheck": true
+  "hasTriggeredKycCheck": true,
+  "suspended": true
 }
 
 ```
@@ -7749,6 +6494,7 @@ cookieAuth, None
 |status|[AccountStatus](#schemaaccountstatus)|true|none|The account status.|
 |enableMfa|boolean\|null|false|none|none|
 |hasTriggeredKycCheck|boolean\|null|false|none|none|
+|suspended|boolean\|null|false|none|none|
 
 <h2 id="tocSbalanceamount">BalanceAmount</h2>
 
@@ -7916,6 +6662,59 @@ cookieAuth, None
 |---|---|---|---|---|
 |publicKey|string|true|none|none|
 
+<h2 id="tocSemailtemplates">EmailTemplates</h2>
+
+<a id="schemaemailtemplates"></a>
+
+```json
+"Kinesis Money Welcome Email"
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|string|false|none|none|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|*anonymous*|Kinesis Money Welcome Email|
+|*anonymous*|Kinesis Money Verify Email Resend|
+|*anonymous*|Kinesis Money Referral Link Email|
+|*anonymous*|Kinesis Money Account Suspension|
+|*anonymous*|Kinesis Money Account Reactivation|
+|*anonymous*|Kinesis Money Withdrawal Request|
+|*anonymous*|Kinesis Money Crypto Withdraw Success|
+|*anonymous*|Kinesis Money Reset Password Request|
+|*anonymous*|Kinesis Money Password Reset Confirmation|
+|*anonymous*|Kinesis Money Trade Confirmation v2|
+|*anonymous*|Kinesis Money Deposit Success|
+|*anonymous*|Kinesis Money Suspended Account Crypto Deposit|
+
+<h2 id="tocSemailcheckrequestbody">EmailCheckRequestBody</h2>
+
+<a id="schemaemailcheckrequestbody"></a>
+
+```json
+{
+  "email": "string",
+  "template": "Kinesis Money Welcome Email",
+  "from": "string"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|email|string|true|none|none|
+|template|[EmailTemplates](#schemaemailtemplates)|true|none|none|
+|from|string\|null|false|none|none|
+
 <h2 id="tocSrecord">Record</h2>
 
 <a id="schemarecord"></a>
@@ -7974,6 +6773,7 @@ cookieAuth, None
 |Property|Value|
 |---|---|
 |*anonymous*|debit_card|
+|*anonymous*|BTC|
 
 <h2 id="tocSfeatureflag">FeatureFlag</h2>
 
@@ -7982,7 +6782,7 @@ cookieAuth, None
 ```json
 {
   "name": "debit_card",
-  "enabled": true
+  "enabled": {}
 }
 
 ```
@@ -7992,7 +6792,7 @@ cookieAuth, None
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |name|[SupportedFeatureFlags](#schemasupportedfeatureflags)|true|none|none|
-|enabled|boolean|true|none|none|
+|enabled|object|true|none|none|
 
 <h2 id="tocSsymbolpairapiresponse">SymbolPairApiResponse</h2>
 

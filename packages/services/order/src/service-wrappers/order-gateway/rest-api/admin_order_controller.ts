@@ -1,7 +1,8 @@
-import { Controller, Security, Delete, Route } from 'tsoa'
+import { Controller, Security, Delete, Route, Tags, Hidden } from 'tsoa'
 import { Logger } from '@abx-utils/logging'
 import { OrderCancellationGateway } from '../core/order_cancellation_gateway'
 
+@Tags('order')
 @Route()
 export class AdminOrderChangeController extends Controller {
   private logger = Logger.getInstance('api', 'AdminOrderChangeController')
@@ -9,6 +10,7 @@ export class AdminOrderChangeController extends Controller {
 
   @Security('adminAuth')
   @Delete('/admin/orders/{id}')
+  @Hidden()
   public async cancelOrder(id: number): Promise<{ orderId: number }> {
     this.logger.debug(`Cancelling order ${id}`)
 

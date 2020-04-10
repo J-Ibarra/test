@@ -13,7 +13,7 @@ export interface TokenRequest {
   password: string
 }
 
-@Tags('tokens')
+@Tags('accounts')
 @Route('tokens')
 export class TokensController extends Controller {
   @Security('cookieAuth')
@@ -25,6 +25,7 @@ export class TokensController extends Controller {
     return accountTokens.map(({ id, token }) => ({ id, token }))
   }
 
+  @Tags('authentication')
   @SuccessResponse('201', 'Created')
   @Response('400', 'Bad request')
   @Post()

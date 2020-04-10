@@ -11,7 +11,7 @@ interface AccountSuspensionChangeRequest {
   suspended: boolean
 }
 
-@Tags('admin')
+@Tags('accounts')
 @Route('/admin/accounts')
 export class AccountStateController extends Controller {
   @Security({

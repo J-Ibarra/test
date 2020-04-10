@@ -5,8 +5,7 @@ const output = {};
 
 const info = {
   "title": "Kinesis Exchange API",
-  "version": "1.2.0",
-  "description": "Contains the account related services"
+  "version": "1.2.0"
 };
 
 glob('../../**/dist/swagger.json', (error, files) => {

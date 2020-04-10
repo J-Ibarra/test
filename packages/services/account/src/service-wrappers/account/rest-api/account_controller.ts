@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Post, Query, Request, Response, Route, Security, SuccessResponse, Tags } from 'tsoa'
+import { Body, Controller, Get, Patch, Post, Query, Request, Response, Route, Security, SuccessResponse, Tags, Hidden } from 'tsoa'
 import {
   createAccountAndPrepareWelcomeEmail,
   createResetPasswordConfirmationEmailContent,
@@ -177,6 +177,7 @@ export class AccountsController extends Controller {
 
   @Security('adminAuth')
   @Get('admin/accounts/search')
+  @Hidden()
   public async searchForUserAccount(@Query() hin: string): Promise<UserPublicView[]> {
     return findAllUsersForHin(hin)
   }
