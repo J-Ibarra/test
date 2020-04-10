@@ -75,7 +75,7 @@ jobs:
     - script: ./_scripts/travis/travis-build-feature-or-bugfix.sh '{@abx/order-service,@abx/exchange-market-data-service}'
       name: Build & Test Order and Market Data Functional Areas
     - stage: Deploy
-      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and type = push
+      if: branch = master
       script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/exchange-deposit-service,@abx/exchange-reference-data-service}'
       name: Deploy Deposit and Reference Data Functional Areas
     - script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/exchange-withdrawal-service,@abx/exchange-balance-service}'
@@ -86,12 +86,12 @@ jobs:
       name: Deploy Notification and Admin Fund Management Functional Areas
     - script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/order-service,@abx/exchange-market-data-service}'
       name: Deploy Order and Market Data Functional Areas
-    # - stage: API Docs update
-    #   if: branch = develop and type = push
-    #   script:
-    #     - npm run bootstrap:production
-    #     - npm run build
-    #     - cd packages/services/_api-docs
-    #     - bundle install
-    #     - npm run build:docs
-    #     - npm run push-api-docs-to-s3
+  # - stage: API Docs update
+  #   if: branch = develop and type = push
+  #   script:
+  #     - npm run bootstrap:production
+  #     - npm run build
+  #     - cd packages/services/_api-docs
+  #     - bundle install
+  #     - npm run build:docs
+  #     - npm run push-api-docs-to-s3
