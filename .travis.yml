@@ -64,7 +64,6 @@ jobs:
     # Build builds execute tests for changed functional areas and upon success create a new ${BRANCH_NAME}-{COMMIT_HASH} image tag, uploaded to ECR
     # !!!! ONLY FOR THE SERVICES WHERE THERE WERE CHANGES
     - stage: Build & Test
-      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and type = push
       - script: ./_scripts/travis/travis-build-feature-or-bugfix.sh '{@abx/exchange-deposit-service,@abx/exchange-reference-data-service}'
         name: Build & Test Deposit and Reference Data Functional Areas
       - script: ./_scripts/travis/travis-build-feature-or-bugfix.sh '{@abx/exchange-withdrawal-service,@abx/exchange-balance-service}'
