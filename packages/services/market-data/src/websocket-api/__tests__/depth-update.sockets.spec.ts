@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-cd
+
 import socketClient from 'socket.io-client'
 import { AccountType } from '@abx-types/account'
 import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
