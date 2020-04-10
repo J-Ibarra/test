@@ -5,13 +5,13 @@ const output = {};
 
 const info = {
   "title": "Kinesis Exchange API",
-  "version": "1.2.0"
+  "version": process.env.TRAVIS_TAG || '1.2.0'
 };
 
 glob('../../**/dist/swagger.json', (error, files) => {
   files.forEach((filename) => {
     const contents = JSON.parse(fs.readFileSync(filename, 'utf8'));
-    if (Object.keys(output).length === 0 ) {
+    if (Object.keys(output).length === 0) {
       Object.assign(output, contents);
     } else {
       const definitions = output["definitions"];
