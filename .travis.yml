@@ -63,7 +63,7 @@ jobs:
     #     name: 'Build latest api docs and push to s3'
     # Build builds execute tests for changed functional areas and upon success create a new ${BRANCH_NAME}-{COMMIT_HASH} image tag, uploaded to ECR
     # !!!! ONLY FOR THE SERVICES WHERE THERE WERE CHANGES
-    name: Build & Test
+    - stage: Build & Test
     - script: ./_scripts/travis/travis-build-feature-or-bugfix.sh '{@abx/exchange-deposit-service,@abx/exchange-reference-data-service}'
       if: branch =~ /^bugfix*/ or branch =~ /^feature*/
       name: Build & Test Deposit and Reference Data Functional Areas
