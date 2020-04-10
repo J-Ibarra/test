@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Post, Request, Route, Security } from 'tsoa'
+import { Body, Controller, Get, Patch, Post, Request, Route, Security, Tags, Hidden } from 'tsoa'
 
 import { AdminRequest, AdminRequestStatus, AdminRequestType } from '@abx-service-clients/admin-fund-management'
 import { Logger } from '@abx-utils/logging'
@@ -23,22 +23,26 @@ interface AdminRequestParams {
 
 const logger = Logger.getInstance('api', 'AdminRequestsController')
 
+@Tags('admin-funds-management')
 @Route('admin/fund-management/admin-requests')
 export class AdminRequestsController extends Controller {
   @Security('adminAuth')
   @Get()
+  @Hidden()
   public async retrieveAllAdminRequests(): Promise<AdminRequest[]> {
     return findAllAdminRequests()
   }
 
   @Security('adminAuth')
   @Get('{accountHin}')
+  @Hidden()
   public async getAdminRequestsForAccountHin(accountHin: string): Promise<AdminRequest[]> {
     return findAllAdminRequestsForAccountHin(accountHin)
   }
 
   @Security('adminAuth')
   @Patch('{id}')
+  @Hidden()
   public async updateAdminRequestStatus(
     id: number,
     @Body() { status, updatedAt }: AdminRequestStatusUpdateParams,
@@ -75,6 +79,7 @@ export class AdminRequestsController extends Controller {
 
   @Security('adminAuth')
   @Post()
+  @Hidden()
   public async createAdminRequest(
     @Body() requestBody: AdminRequestParams,
     @Request() request: OverloadedRequest,

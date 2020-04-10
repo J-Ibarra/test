@@ -1,6 +1,7 @@
-import { Controller, Get, Route, Security } from 'tsoa'
+import { Controller, Get, Route, Security, Tags } from 'tsoa'
 import { getTransactionFeeCaps } from '../core'
 
+@Tags('reference-data')
 @Route()
 export class ExchangeConfigController extends Controller {
   @Security('cookieAuth')

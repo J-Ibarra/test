@@ -1,8 +1,9 @@
-import { Controller, Route, Get } from 'tsoa'
+import { Controller, Route, Get, Tags } from 'tsoa'
 import { getApiCacheClient } from '@abx-utils/db-connection-utils'
 import { FeePool } from '@abx-types/order'
 import { findAllFeePools, findFeePool } from '../core/fee_pool_retrieval'
 
+@Tags('order')
 @Route('fee-pools')
 export class FeePoolsController extends Controller {
   @Get()

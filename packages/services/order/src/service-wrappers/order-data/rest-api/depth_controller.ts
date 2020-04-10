@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Request, Route, Security } from 'tsoa'
+import { Controller, Get, Query, Request, Route, Security, Tags } from 'tsoa'
 
 import { getApiCacheClient } from '@abx-utils/db-connection-utils'
 import { ACCOUNT_ALL_ORDERS_CACHE_KEY, findOrders } from '../../../core'
@@ -6,6 +6,7 @@ import { Order, OrderDirection, OrderStatus } from '@abx-types/order'
 import { DepthCacheFacade, enrichWithOwnedAmount } from '@abx-utils/in-memory-depth-cache'
 import { OverloadedRequest } from '@abx-types/account'
 
+@Tags('order')
 @Route('depth')
 export class DepthController extends Controller {
   private depthCacheFacade: DepthCacheFacade
@@ -18,6 +19,8 @@ export class DepthController extends Controller {
   @Security('tokenAuth')
   @Get('/{symbolId}/{direction}/top')
   public async getTopOfDepthForCurrencyPairAndDirection(symbolId: string, direction: OrderDirection) {
+    await this.initialiseDepthCache()
+
     return this.depthCacheFacade.getTopOfDepthForDirectionAndCurrencyPair(direction, symbolId)
   }
 

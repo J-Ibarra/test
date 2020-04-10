@@ -4,7 +4,6 @@ import { CreateAdminRequestParams, AdminRequest } from '@abx-service-clients/adm
 import { saveAdminRequest, deleteAllRequestsByEmail } from '../core'
 
 @Route('test-automation/admin/fund-management')
-@Hidden()
 export class E2eTestingController {
   private logger = Logger.getInstance('api', 'E2eTestingController')
 

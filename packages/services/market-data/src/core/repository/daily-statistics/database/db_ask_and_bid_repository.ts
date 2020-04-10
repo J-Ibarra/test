@@ -8,11 +8,12 @@ type returnTypeForAskAndBid = Map<string, Array<Pick<SymbolMarketDataSnapshot, '
 
 export const findAskAndBidPricesForSymbols = async (symbolIds: string[]): Promise<returnTypeForAskAndBid> => {
   const allAskAndBids = await Promise.all(
-    symbolIds.map(async symbolId => {
+    symbolIds.map(async (symbolId) => {
       const [buyOrder, sellOrder] = await Promise.all([
         getOpenOrders(symbolId, OrderDirection.buy, 1),
         getOpenOrders(symbolId, OrderDirection.sell, 1),
       ])
+
       return { symbolId, bidPrice: !isEmpty(buyOrder) ? buyOrder[0].limitPrice : 0, askPrice: !isEmpty(sellOrder) ? sellOrder[0].limitPrice : 0 }
     }),
   )

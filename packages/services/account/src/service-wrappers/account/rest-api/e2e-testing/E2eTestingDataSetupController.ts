@@ -10,7 +10,6 @@ const caClient = new CryptoApis(process.env.CRYPTO_APIS_TOKEN!)
 caClient.BC.ETH.switchNetwork(caClient.BC.ETH.NETWORKS.ROPSTEN)
 
 @Route('test-automation/accounts')
-@Hidden()
 export class E2eTestingDataSetupController {
   @Patch('/type')
   @Hidden()

@@ -1,14 +1,51 @@
 {
   "language_tabs": [{ "http": "HTTP" }, { "javascript": "JavaScript" }, { "javascript--nodejs": "Node.JS" }, { "python": "Python" }, { "ruby": "Ruby" }],
+  "user_templates": "./user_templates",
   "verbose": true,
   "tagGroups": [
     {
-      "title": "Account",
+      "title": "Authentication",
+      "tags": ["authentication"]
+    },
+    {
+      "title": "Account API",
       "tags": ["accounts"]
     },
     {
-      "title": "Auth",
-      "tags": ["session", "invoice-close", "invoice-delete"]
+      "title": "Admin Fund Management API",
+      "tags": ["admin-funds-management"]
+    },
+    {
+      "title": "Balance API",
+      "tags": ["balance"]
+    },
+    {
+      "title": "Debit Card API",
+      "tags": ["debit-card-service"]
+    },
+    {
+      "title": "Deposit API",
+      "tags": "deposit"
+    },
+    {
+      "title": "Market Data API",
+      "tags": "market-data"
+    },
+    {
+      "title": "Order API",
+      "tags": "order"
+    },
+    {
+      "title": "Reference Data API",
+      "tags": "reference-data"
+    },
+    {
+      "title": "Reports API",
+      "tags": "reports"
+    },
+    {
+      "title": "Withdrawal API",
+      "tags": "withdrawal"
     }
   ]
 }

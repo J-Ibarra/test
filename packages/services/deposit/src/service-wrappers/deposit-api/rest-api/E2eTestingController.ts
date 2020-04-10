@@ -14,10 +14,15 @@ const caClient = new CryptoApis(process.env.CRYPTO_APIS_TOKEN!)
 caClient.BC.ETH.switchNetwork(caClient.BC.ETH.NETWORKS.ROPSTEN)
 
 @Route('test-automation/deposit')
-@Hidden()
 export class E2eTestingController {
   private logger = Logger.getInstance('api', 'E2eTestingController')
-  private currencyManager = new CurrencyManager(getEnvironment(), [CurrencyCode.kau, CurrencyCode.kag, CurrencyCode.kvt, CurrencyCode.tether])
+  private currencyManager = new CurrencyManager(getEnvironment(), [
+    CurrencyCode.kau,
+    CurrencyCode.kag,
+    CurrencyCode.kvt,
+    CurrencyCode.ethereum,
+    CurrencyCode.tether,
+  ])
 
   @Post('/transaction/eth')
   @Hidden()
@@ -60,6 +65,14 @@ export class E2eTestingController {
       toAddress,
       signerKey,
     })
+  }
+
+  @Get('/balance/{address}/{currencyCode}')
+  @Hidden()
+  public async getBalanceByCurrencyAndPublicKey(address: string, currencyCode: CurrencyCode): Promise<number> {
+    const currency: OnChainCurrencyGateway = this.currencyManager.getCurrencyFromTicker(currencyCode)
+    const result = await currency.balanceAt(address)
+    return result
   }
 
   @Get('/address/{email}/{currencyCode}')

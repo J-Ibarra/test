@@ -16,6 +16,7 @@ async function createCurrencyTransactionIfNotCreatedAlready(createCurrencyTransa
     where: {
       direction: createCurrencyTransactionRequest.direction,
       requestId: createCurrencyTransactionRequest.requestId,
+      currencyId: createCurrencyTransactionRequest.currencyId,
       accountId: createCurrencyTransactionRequest.accountId,
     },
   })

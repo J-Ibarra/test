@@ -6,8 +6,7 @@ import { SymbolMarketDataSnapshot } from '@abx-types/market-data'
 export const getDailyMarketDataStats = async (symbolIds: string[]): Promise<SymbolMarketDataSnapshot[]> => {
   const askPriceForAllSymbols = getAskPriceForAllSymbols(symbolIds)
   const bidPriceForAllSymbols = getBidPriceForAllSymbols(symbolIds)
-  const dailyChangeForAllSymbols = await getDailyChange(symbolIds)
-  const dailyVolumeForAllSymbols = getDailyVolume(symbolIds)
+  const [dailyChangeForAllSymbols, dailyVolumeForAllSymbols] = await Promise.all([getDailyChange(symbolIds), getDailyVolume(symbolIds)])
 
   return symbolIds.map(
     (symbolId: string): SymbolMarketDataSnapshot => {

@@ -1,9 +1,10 @@
-import { Controller, Get, Query, Request, Route, Security } from 'tsoa'
+import { Controller, Get, Query, Request, Route, Security, Tags } from 'tsoa'
 
 import { buildAccountMonthlyTradeSummary, findTradeTransactions, findCurrencyTransactions } from '../../../core'
 import { OverloadedRequest } from '@abx-types/account'
 import { AccountMonthlyTradeSummary, TransactionType, TradeTransaction, CurrencyTransaction } from '@abx-types/order'
 
+@Tags('order')
 @Route('transactions')
 export class TransactionsController extends Controller {
   @Security('cookieAuth')

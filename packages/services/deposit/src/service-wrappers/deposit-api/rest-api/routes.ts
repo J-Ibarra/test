@@ -174,6 +174,26 @@ export function RegisterRoutes(app: express.Express) {
       const promise = controller.createTransaction.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
+  app.get('/api/test-automation/deposit/balance/:address/:currencyCode',
+    function(request: any, response: any, next: any) {
+      const args = {
+        address: { "in": "path", "name": "address", "required": true, "dataType": "string" },
+        currencyCode: { "in": "path", "name": "currencyCode", "required": true, "dataType": "enum", "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USDT", "USD", "EUR", "GBP"] },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new E2eTestingController();
+
+
+      const promise = controller.getBalanceByCurrencyAndPublicKey.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
   app.get('/api/test-automation/deposit/address/:email/:currencyCode',
     function(request: any, response: any, next: any) {
       const args = {

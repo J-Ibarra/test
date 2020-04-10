@@ -3,9 +3,9 @@ import { CurrencyCode, Environment } from '@abx-types/reference-data'
 
 import KinesisVelocityToken from './contracts/kvt/KinesisVelocityToken.json'
 
-const tetherAddress = {
-  mainnet: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-  ropsten: '0x7c619efddb1b941ec124508421d0034436ed00c1',
+const kvtAddress = {
+  mainnet: '0x3a859b9ea4998D344547283C7Ce8EBc4aBb77656',
+  ropsten: '0x05cB21867dda44391F7a1fd32940E7D7B1280273',
 }
 
 export class KvtOnChainCurrencyGateway extends ERC20TokenCurrencyGatewaySkeleton {
@@ -24,7 +24,7 @@ export class KvtOnChainCurrencyGateway extends ERC20TokenCurrencyGatewaySkeleton
   }
 
   getContractAddress(env: Environment): string {
-    return env === Environment.production ? tetherAddress.mainnet : tetherAddress.ropsten
+    return env === Environment.production ? kvtAddress.mainnet : kvtAddress.ropsten
   }
 
   getABI(_env: Environment) {
