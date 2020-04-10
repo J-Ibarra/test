@@ -11,5 +11,5 @@ eval $(aws ecr get-login --region ap-southeast-2 --no-include-email)
 lerna run build --scope $1 --since develop --include-dependencies \
 && lerna run run-migrations:test --since develop --include-dependencies \
 && lerna run test --scope $1 --since develop --include-dependencies \
-&& lerna run build-image-latest --scope $1 --since develop \
+&& node build-image.util.js $1 \
 && lerna run push-image --scope $1 --since develop
