@@ -74,16 +74,16 @@ jobs:
       name: Build & Test Notification and Admin Fund Management Functional Areas
     - script: ./_scripts/travis/travis-build-feature-or-bugfix.sh '{@abx/order-service,@abx/exchange-market-data-service}'
       name: Build & Test Order and Market Data Functional Areas
-    - stage: Deploy
-      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and type = push
-      script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/order-service,@abx/exchange-market-data-service}'
-      - script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/order-service,@abx/exchange-market-data-service}'
-      - script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/order-service,@abx/exchange-market-data-service}'
-      - script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/order-service,@abx/exchange-market-data-service}'
-      - script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/order-service,@abx/exchange-market-data-service}'
+    # - stage: Deploy
+    #   if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and type = push
+    #   script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/order-service,@abx/exchange-market-data-service}'
+    #   - script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/order-service,@abx/exchange-market-data-service}'
+    #   - script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/order-service,@abx/exchange-market-data-service}'
+    #   - script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/order-service,@abx/exchange-market-data-service}'
+    #   - script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/order-service,@abx/exchange-market-data-service}'
     # - stage: API Docs update
     #   if: branch = develop and type = push
-    #   script: 
+    #   script:
     #     - npm run bootstrap:production
     #     - npm run build
     #     - cd packages/services/_api-docs
