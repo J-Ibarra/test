@@ -1,5 +1,5 @@
 'use strict'
-const exec = require('child_process').exec;
+const { spawn } = require('child_process');
 
 const RETRY_BUILD_TIMES = 3;
 const passedParameter = process.argv.slice(2)[0];
@@ -9,20 +9,28 @@ const retryImageBuild = (times = 1, commandPassed = false) => {
         return;
     }
     
-    const result = executeBuildImageCommand();
-    retryImageBuild(++times, result);
+    executeBuildImageCommand();
 }
 
 
 const executeBuildImageCommand = () => {
-    exec(`lerna run build-image-latest --scope ${passedParameter} --since develop`,
-    (error, stdout, stderr) => {
-        if (error !== null) {
-            console.log(`executeBuildImageCommand error: ${error}`);
-            return false;
-        }
-        
-        return true;
+    const process = spawn(
+        'lerna run build-image-latest',
+        ['--scope', passedParameter, '--since', 'develop']
+    );
+
+    process.stdout.on('data', (data) => {
+        console.log(`lerna run build-image-latest success: ${data}`);
+    });
+    
+    process.stderr.on('data', (data) => {
+        console.error(`lerna run build-image-latest error: ${data}`);
+        retryImageBuild(++times, false);
+    });
+    
+    process.on('close', (code) => {
+        console.log(`lerna run build-image-latest exited with code ${code}`);
+        retryImageBuild(++times, code === 0);
     });
 }
 
