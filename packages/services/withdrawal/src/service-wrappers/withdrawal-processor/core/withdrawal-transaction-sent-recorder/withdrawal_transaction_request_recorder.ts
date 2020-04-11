@@ -10,7 +10,7 @@ import { deductOnChainTransactionFeeFromRevenueBalance } from '../withdrawal-tra
 import { WithdrawalCompletionPendingPayload } from '../withdrawal-completion/model'
 import { Logger } from '@abx-utils/logging'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
-import { nativelyImplementedCoins } from '../common'
+import { holdingsAddressTransactionNotificationEnabledCurrencies } from '../common'
 import { QueueConsumerOutput } from '@abx-utils/async-message-consumer'
 import { Transaction } from 'sequelize'
 
@@ -24,7 +24,7 @@ export async function recordWithdrawalOnChainTransaction({
 }: WithdrawalTransactionSent): Promise<void | QueueConsumerOutput> {
   logger.info(`Recording on chain transaction details for withdrawal request ${withdrawalRequestId}`)
 
-  return wrapInTransaction(sequelize, null, async transaction => {
+  return wrapInTransaction(sequelize, null, async (transaction) => {
     const withdrawalRequest = await findWithdrawalRequestByIdWithFeeRequest(withdrawalRequestId, transaction)
 
     if (!withdrawalRequest) {
@@ -91,11 +91,11 @@ async function updateRequestStatuses(
 }
 
 async function queueForCompletion(withdrawalRequestId: number, txid: string, currency: CurrencyCode) {
-  if (nativelyImplementedCoins.includes(currency)) {
+  if (!holdingsAddressTransactionNotificationEnabledCurrencies.includes(currency)) {
     logger.debug(`Queuing request for completion ${withdrawalRequestId}`)
 
     await sendAsyncChangeMessage<WithdrawalCompletionPendingPayload>({
-      type: 'withdrawal-transaction-sent',
+      type: 'withdrawal-completion-pending',
       target: {
         local: WITHDRAWAL_TRANSACTION_COMPLETION_PENDING_QUEUE_URL!,
         deployedEnvironment: WITHDRAWAL_TRANSACTION_COMPLETION_PENDING_QUEUE_URL!,

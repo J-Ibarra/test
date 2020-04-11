@@ -32,7 +32,7 @@ const kinesisCoins = [CurrencyCode.kau, CurrencyCode.kag]
 
 async function transferFunds(withdrawalRequestId: number, currencyGateway: OnChainCurrencyGateway, address: string, memo: string, amount: number) {
   if (kinesisCoins.includes(currencyGateway.ticker!)) {
-    return wrapInTransaction(sequelize, null, transaction => {
+    return wrapInTransaction(sequelize, null, (transaction) => {
       return transferWithdrawalFundsForKinesisCurrency(
         {
           withdrawalRequestId,
@@ -50,8 +50,6 @@ async function transferFunds(withdrawalRequestId: number, currencyGateway: OnCha
     toAddress: address,
     amount,
     memo,
-    transactionConfirmationWebhookUrl: process.env.WITHDRAWAL_TRANSACTION_CONFIRMATION_CALLBACK_URL!,
-    transactionConfirmations: DEFAULT_NUMBER_OF_CONFIRMATION_FOR_WITHDRAWAL,
   })
 }
 
