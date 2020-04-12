@@ -4,10 +4,12 @@ import { IAddressTransactionEventPayload, getOnChainCurrencyManagerForEnvironmen
 import { completeWithdrawalRequest } from './withdrawal_request_completer'
 import { findWithdrawalRequest } from '../../../../core'
 import { holdingsAddressTransactionNotificationEnabledCurrencies } from '../common'
+import { Logger } from '@abx-utils/logging'
 
 const requiredConfirmationsForCurrency = {
   [CurrencyCode.bitcoin]: parseInt(process.env.BITCOIN_WITHDRAWAL_TRANSACTION_CONFIRMATION_BLOCKS || '1'),
 }
+const logger = Logger.getInstance('withdrawal-processor', 'withdrawal_completion_message_validation_proxy')
 
 /**
  * The withdrawal completion flow can be trigger in 2 different ways:
@@ -44,5 +46,23 @@ async function completeWithdrawalRequestIfOutgoingTransactionConfirmed({ currenc
 
   if (isTransactionOutgoing && confirmations === requiredConfirmationsForCurrency[currency] && !!withdrawalRequest) {
     return completeWithdrawalRequest({ txid, currency } as WithdrawalCompletionPendingPayload)
+  } else {
+    logUnhandledNotificationReason({ isTransactionOutgoing, address, currency, txid, confirmations, withdrawalRequest })
+  }
+}
+
+function logUnhandledNotificationReason({ isTransactionOutgoing, address, currency, txid, confirmations, withdrawalRequest }) {
+  if (!isTransactionOutgoing) {
+    logger.debug(
+      `Transaction notification received for address ${address} and ${currency}, with id ${txid}, is not outgoing. Withdrawal completion skipped.`,
+    )
+  } else if (confirmations !== requiredConfirmationsForCurrency[currency]) {
+    logger.debug(
+      `Transaction notification received for address ${address} and ${currency}, with id ${txid}, has ${confirmations} confirmations. Withdrawal completion skipped.`,
+    )
+  } else if (!withdrawalRequest) {
+    logger.debug(
+      `Outgoing transaction notification received for address ${address} and ${currency}, with id ${txid}, with ${confirmations} confirmations but withdrawal request not found.`,
+    )
   }
 }
