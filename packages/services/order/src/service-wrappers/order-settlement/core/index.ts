@@ -9,6 +9,7 @@ import { sendTradeConfirmationEmail } from './handler/trade-confirmation-email'
 import { allMatchesSettledExceptForCurrentOne, balanceAdjustmentsCreatedForAllPreviousTradeTransactions } from './handler/shared.utils'
 import { getCompleteSymbolDetails } from '@abx-service-clients/reference-data'
 import { Transaction } from 'sequelize'
+import { SymbolPairStateFilter } from '@abx-types/reference-data'
 
 const logger = Logger.getInstance('settlement', 'settle_order_match')
 
@@ -50,7 +51,7 @@ export async function settleOrderMatchForPair(symbolId: string) {
     orderMatchDeadLetterQueue.push(orderMatchToSettle)
   } finally {
     accountsSettlingOrdersFor = accountsSettlingOrdersFor.filter(
-      accountId => accountId !== orderMatchToSettle.buyAccountId && accountId !== orderMatchToSettle.sellAccountId,
+      (accountId) => accountId !== orderMatchToSettle.buyAccountId && accountId !== orderMatchToSettle.sellAccountId,
     )
     orderMatchQueue[orderMatchToSettle.symbolId] = orderMatchQueue[orderMatchToSettle.symbolId].filter(({ id }) => id !== orderMatchToSettle.id)
   }
@@ -64,7 +65,7 @@ export async function settleOrderMatchForPair(symbolId: string) {
  * This is the done to cancel the actual lock query which has not succeeded during the timeout.
  */
 export async function runSettlementLogic(rawOrderMatch: UsdMidPriceEnrichedOrderMatch) {
-  return wrapInTransaction(sequelize, null, async transaction => {
+  return wrapInTransaction(sequelize, null, async (transaction) => {
     const orderMatch = await OrderMatchRepository.getInstance().lockOrderMatchTransaction(rawOrderMatch.id!, transaction)
 
     if (!orderMatch) {
@@ -105,7 +106,7 @@ export async function runSettlementLogic(rawOrderMatch: UsdMidPriceEnrichedOrder
 function unlockAccountsAndTriggerSettlement({ buyAccountId, sellAccountId, symbolId, id }: OrderMatch) {
   const orderMatches = orderMatchQueue[symbolId] || []
   const orderMatchIndex: number = orderMatches.findIndex(
-    order => order.buyAccountId === buyAccountId && order.sellAccountId === sellAccountId && order.id === id,
+    (order) => order.buyAccountId === buyAccountId && order.sellAccountId === sellAccountId && order.id === id,
   )
   const orderMatchArr = orderMatches.splice(orderMatchIndex, 1)
 
@@ -123,7 +124,7 @@ async function balanceAdjustmentsCreatedForAllOtherOrderMatches(rawOrderMatch: O
     rawOrderMatch.buyOrderId,
     transaction,
   )
-  const symbolDetails = await getCompleteSymbolDetails(rawOrderMatch.symbolId)
+  const symbolDetails = await getCompleteSymbolDetails(rawOrderMatch.symbolId, SymbolPairStateFilter.all)
   const balanceAdjustmentsCreatedForAllOrderMatches = await balanceAdjustmentsCreatedForAllPreviousTradeTransactions(
     rawOrderMatch.buyOrderId,
     rawOrderMatch.buyAccountId,

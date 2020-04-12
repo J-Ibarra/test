@@ -22,12 +22,12 @@ export async function getAllSymbolsIncludingCurrency(currencyCode: CurrencyCode,
   )
 }
 
-export async function getCompleteSymbolDetails(symbolId: string): Promise<SymbolPair> {
-  return (await fetchSymbolsIfInMemoryCacheExpired()).find(({ id }) => id === symbolId)!
+export async function getCompleteSymbolDetails(symbolId: string, state?: SymbolPairStateFilter): Promise<SymbolPair> {
+  return (await fetchSymbolsIfInMemoryCacheExpired(state)).find(({ id }) => id === symbolId)!
 }
 
-export async function getSymbolPairSummary(id: string): Promise<SymbolPairSummary> {
-  const symbol = await getCompleteSymbolDetails(id)
+export async function getSymbolPairSummary(id: string, state = SymbolPairStateFilter.enabled): Promise<SymbolPairSummary> {
+  const symbol = await getCompleteSymbolDetails(id, state)
 
   return transformToSummary(symbol)
 }

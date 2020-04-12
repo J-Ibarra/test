@@ -2,7 +2,7 @@ import { WithdrawalTransactionSent } from './model'
 import { findWithdrawalRequestByIdWithFeeRequest, updateWithdrawalRequest } from '../../../../core'
 import { WithdrawalState, WithdrawalRequest, CurrencyEnrichedWithdrawalRequest } from '@abx-types/withdrawal'
 import { WITHDRAWAL_TRANSACTION_COMPLETION_PENDING_QUEUE_URL } from '@abx-service-clients/withdrawal'
-import { CurrencyCode, Environment } from '@abx-types/reference-data'
+import { CurrencyCode, Environment, SymbolPairStateFilter, Currency } from '@abx-types/reference-data'
 import { getOnChainCurrencyManagerForEnvironment } from '@abx-utils/blockchain-currency-gateway'
 import { findCryptoCurrencies, findCurrencyForId } from '@abx-service-clients/reference-data'
 import { sendAsyncChangeMessage } from '@abx-utils/async-message-publisher'
@@ -16,6 +16,7 @@ import { Transaction } from 'sequelize'
 
 const currencyToCoverOnChainFeeFor = [CurrencyCode.ethereum, CurrencyCode.kvt, CurrencyCode.bitcoin]
 const logger = Logger.getInstance('withdrawal-processor', 'withdrawal_transaction_request_recorder')
+let cryptoCurrencies: Currency[]
 
 export async function recordWithdrawalOnChainTransaction({
   withdrawalRequestId,
@@ -35,6 +36,7 @@ export async function recordWithdrawalOnChainTransaction({
     const { withdrawalCurrency, onChainCurrencyGateway } = await getOnChainCurrencyGatewayAndWithdrawnCurrency(withdrawalRequest.currencyId)
     const feeCurrency = await findCurrencyForId(
       !!withdrawalRequest.feeRequest ? withdrawalRequest.feeRequest.currencyId : withdrawalRequest.currencyId,
+      SymbolPairStateFilter.all,
     )
     await deductOnChainTransactionFeeFromRevenueBalance(withdrawalRequest.id!, transactionFee, onChainCurrencyGateway, feeCurrency)
 
@@ -51,12 +53,15 @@ export async function recordWithdrawalOnChainTransaction({
 }
 
 async function getOnChainCurrencyGatewayAndWithdrawnCurrency(currencyId: number) {
-  const currencies = await findCryptoCurrencies()
+  if (!cryptoCurrencies) {
+    cryptoCurrencies = await findCryptoCurrencies(SymbolPairStateFilter.all)
+  }
+
   const currencyManager = getOnChainCurrencyManagerForEnvironment(
     process.env.NODE_ENV as Environment,
-    currencies.map(({ code }) => code),
+    cryptoCurrencies.map(({ code }) => code),
   )
-  const withdrawalCurrency = currencies.find(({ id }) => id === currencyId)!
+  const withdrawalCurrency = cryptoCurrencies.find(({ id }) => id === currencyId)!
 
   return { withdrawalCurrency, onChainCurrencyGateway: currencyManager.getCurrencyFromTicker(withdrawalCurrency.code) }
 }

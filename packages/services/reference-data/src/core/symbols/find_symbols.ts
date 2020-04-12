@@ -34,8 +34,8 @@ export async function getSymbolsForBaseCurrency(baseCurrencyCode: CurrencyCode, 
   )
 }
 
-export async function getCompleteSymbolDetails(symbolId: string, transaction?: Transaction): Promise<SymbolPair> {
-  return (await fetchAllSymbols({ transaction })).find(({ id }) => id === symbolId)!
+export async function getCompleteSymbolDetails(symbolId: string, transaction?: Transaction, state?: SymbolPairStateFilter): Promise<SymbolPair> {
+  return (await fetchAllSymbols({ transaction, state })).find(({ id }) => id === symbolId)!
 }
 
 export async function getAllSymbolsIncludingCurrency(currency: CurrencyCode, transaction?: Transaction): Promise<SymbolPair[]> {

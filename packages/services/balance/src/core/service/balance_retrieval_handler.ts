@@ -1,7 +1,7 @@
 import { get } from 'lodash'
 import { Transaction } from 'sequelize'
-import { getCurrencyCode, findAllCurrencies } from '@abx-service-clients/reference-data'
-import { CurrencyCode } from '@abx-types/reference-data'
+import { getCurrencyCode, getAllCurrenciesEligibleForAccount } from '@abx-service-clients/reference-data'
+import { CurrencyCode, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { EDisplayFormats, Balance, BalanceType, RawBalance } from '@abx-types/balance'
 import { BalanceRepository } from '../repository/balance_repository'
 
@@ -19,7 +19,7 @@ export class BalanceRetrievalHandler {
   }
 
   public async findCurrencyAvailableBalances(accountId: string, currencyCodes: CurrencyCode[]): Promise<Record<CurrencyCode, number>> {
-    const allCurrencies = await findAllCurrencies()
+    const allCurrencies = await getAllCurrenciesEligibleForAccount(accountId)
 
     const currencyIdToCode = allCurrencies.reduce(
       (acc, { code, id }) => (currencyCodes.includes(code) ? acc.set(id, code) : acc),
@@ -36,11 +36,11 @@ export class BalanceRetrievalHandler {
       return acc
     }, {} as Record<CurrencyCode, number>)
 
-    rawBalances.forEach(balance => {
+    rawBalances.forEach((balance) => {
       if (balance.balanceTypeId === BalanceType.available) {
         availableBalances[currencyIdToCode.get(balance.currencyId)!] = balance.value || 0
       }
-    });
+    })
 
     return availableBalances
   }
@@ -61,7 +61,7 @@ export class BalanceRetrievalHandler {
       })
     ).reduce((typeToBalance, balance) => typeToBalance.set(balance.balanceTypeId, balance), new Map<BalanceType, RawBalance>())
 
-    const currencyCode = await getCurrencyCode(currencyId)
+    const currencyCode = await getCurrencyCode(currencyId, SymbolPairStateFilter.all)
 
     return this.transformRawBalances(accountId, currencyId, balanceTypeToBalance, currencyCode!)
   }
@@ -88,7 +88,7 @@ export class BalanceRetrievalHandler {
    */
   public async findAllBalancesForAccount(accountId: string): Promise<Balance[]> {
     // get all the available currencies for trade
-    const currenciesAvailableForTrade = await findAllCurrencies()
+    const currenciesAvailableForTrade = await getAllCurrenciesEligibleForAccount(accountId)
 
     const allBalancesForAccount = await this.repository.findRawBalances({
       accountId,
@@ -97,7 +97,7 @@ export class BalanceRetrievalHandler {
     // get account balances that exists in the db
     const currencyToAccountBalances = this.combineCurrenciesWithRawBalances(allBalancesForAccount)
 
-    const result = currenciesAvailableForTrade.map(mainCurrency => {
+    const result = currenciesAvailableForTrade.map((mainCurrency) => {
       // check to see if we have an existing balance in the db
       const balanceExists: any = Array.from(currencyToAccountBalances).find(([currencyId]) => currencyId === mainCurrency.id)
 

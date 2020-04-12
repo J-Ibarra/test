@@ -5,4 +5,5 @@ export interface Currency {
   code: CurrencyCode
   symbolSortPriority?: number
   currencyOrderPriority?: number
+  isEnabled?: boolean
 }

@@ -3,7 +3,7 @@ import { recordCustomEvent } from 'newrelic'
 import { Transaction } from 'sequelize'
 import { Logger } from '@abx-utils/logging'
 import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-data'
-import { CurrencyCode, SymbolBoundaries } from '@abx-types/reference-data'
+import { CurrencyCode, SymbolBoundaries, SymbolPairStateFilter } from '@abx-types/reference-data'
 import {
   DepthState,
   Order,
@@ -66,7 +66,7 @@ export async function fillOrders(
     }
   }
 
-  const symbolBoundaries = await getSymbolBoundaries(order.symbolId)
+  const symbolBoundaries = await getSymbolBoundaries(order.symbolId, SymbolPairStateFilter.all)
 
   const orderMatch = buildOrderMatchObject(order, matchingOrder, matchAmount, symbolBoundaries)
   logger.debug(`Created order match ${orderMatch.id} for buy order ${orderMatch.buyOrderId} and sell order ${orderMatch.sellOrderId}`)
@@ -135,10 +135,7 @@ function buildOrderMatchObject(order: Order, matchedOrder: Order, matchedAmount:
     status: OrderMatchStatus.matched,
     amount: matchedAmount,
     matchPrice,
-    consideration: new Decimal(matchedAmount)
-      .times(matchPrice)
-      .toDP(quoteBoundary.maxDecimals, Decimal.ROUND_DOWN)
-      .toNumber(),
+    consideration: new Decimal(matchedAmount).times(matchPrice).toDP(quoteBoundary.maxDecimals, Decimal.ROUND_DOWN).toNumber(),
     sellAccountId: sellOrder.accountId,
     sellOrderId: sellOrder.id!,
     sellOrderType: sellOrder.orderType,
@@ -171,10 +168,7 @@ async function updateOrders(
 }
 
 function persistOrderUpdate(order: Order, amount: number, { baseBoundary }: SymbolBoundaries, transaction?: Transaction): Promise<Order> {
-  order.remaining = new Decimal(order.remaining)
-    .minus(amount)
-    .toDP(baseBoundary.maxDecimals)
-    .toNumber()
+  order.remaining = new Decimal(order.remaining).minus(amount).toDP(baseBoundary.maxDecimals).toNumber()
 
   order.status = order.remaining === 0 ? OrderStatus.fill : OrderStatus.partialFill
   logger.debug(`Updated remaining order amount for order ${order.id} to ${order.remaining} and status to ${order.status}`)
@@ -191,7 +185,7 @@ function persistOrderUpdate(order: Order, amount: number, { baseBoundary }: Symb
  * @param transaction the parent transaction
  */
 async function enrichOrderMatchWithUsdMidPrice(orderMatch: OrderMatch): Promise<UsdMidPriceEnrichedOrderMatch> {
-  const symbol = await getCompleteSymbolDetails(orderMatch.symbolId)
+  const symbol = await getCompleteSymbolDetails(orderMatch.symbolId, SymbolPairStateFilter.all)
   if (symbol.quote.code === CurrencyCode.usd) {
     return {
       ...orderMatch,

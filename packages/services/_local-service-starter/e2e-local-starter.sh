@@ -50,6 +50,10 @@ export CONTIS_API_ROOT=https://sandboxapi.contis.com
 export CONTIS_CARD_ORDER_FEE=5
 export CONTIS_CARD_ORDER_VALIDATION_SLA=5
 
+kill $(ps aux | grep -i ngrok | awk '{print $2}')
+npm run start-ngrok:e2e-local
+sleep 2
+PROXY_URL=`curl --silent --show-error http://localhost:4040/api/tunnels | sed -nE 's/.*public_url":"https:..([^"]*).*/\1/p'`
 # All the variables required for running deposits/withdrawals locally are listed here
 # These variables will allow connecting to and consuming transaction notification messages from SQS
 # int in the URL path is to be replaced by the environment
@@ -71,10 +75,5 @@ export DEPOSIT_HOLDINGS_TRANSACTION_CONFIRMATION_CALLBACK_URL="https://$PROXY_UR
 # export WITHDRAWAL_TRANSACTION_SENT_QUEUE_URL='https://sqs.ap-southeast-2.amazonaws.com/884998542479/int-kbe-withdrawal-transaction-sent.fifo'
 # export WITHDRAWAL_TRANSACTION_COMPLETION_PENDING_QUEUE_URL='https://sqs.ap-southeast-2.amazonaws.com/884998542479/int-kbe-withdrawal-transaction-completion-pending'
 export WITHDRAWAL_TRANSACTION_CONFIRMATION_CALLBACK_URL="https://$PROXY_URL/api/webhooks/crypto/withdrawals/confirmations"
-
-kill $(ps aux | grep -i ngrok | awk '{print $2}')
-npm run start-ngrok:e2e-local
-sleep 2
-PROXY_URL=`curl --silent --show-error http://localhost:4040/api/tunnels | sed -nE 's/.*public_url":"https:..([^"]*).*/\1/p'`
 
 npm run start
