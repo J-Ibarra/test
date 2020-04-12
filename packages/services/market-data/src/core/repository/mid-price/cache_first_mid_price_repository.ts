@@ -3,7 +3,7 @@ import moment from 'moment'
 import { Logger } from '@abx-utils/logging'
 import { DBOrder, getCacheClient, CacheGateway } from '@abx-utils/db-connection-utils'
 import { DepthItem } from '@abx-types/depth-cache'
-import { SymbolPair } from '@abx-types/reference-data'
+import { SymbolPair, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { getAllCompleteSymbolDetails } from '@abx-service-clients/reference-data'
 import { DepthMidPrice, MidPricesForSymbolRequest, MidPricesForSymbolsRequest } from '@abx-types/market-data'
 import { storeMidPrice } from '../daily-statistics'
@@ -51,14 +51,7 @@ export class CacheFirstMidPriceRepository implements MidPriceRepository {
       await this.cacheGateway.addValueToTailOfList<DepthMidPrice>(`${cacheKeyPrefix}${symbolId}`, midPrice!)
     }
 
-    process.nextTick(() =>
-      storeMidPrice(
-        midPrice!,
-        moment()
-          .subtract(24, 'hours')
-          .toDate(),
-      ),
-    )
+    process.nextTick(() => storeMidPrice(midPrice!, moment().subtract(24, 'hours').toDate()))
     return midPrice
   }
 
@@ -80,7 +73,7 @@ export class CacheFirstMidPriceRepository implements MidPriceRepository {
 
     if (!isEmpty(cachedMidPricesForSymbol)) {
       this.logger.debug(`Retrieved mid-price information for ${request.symbolId} from cache`)
-      const filteredMidPrices = cachedMidPricesForSymbol.filter(cachedMidPrice => moment(cachedMidPrice.createdAt).isAfter(request.from))
+      const filteredMidPrices = cachedMidPricesForSymbol.filter((cachedMidPrice) => moment(cachedMidPrice.createdAt).isAfter(request.from))
       return filteredMidPrices.length > 0 ? filteredMidPrices : cachedMidPricesForSymbol.slice(-1)
     }
 
@@ -101,7 +94,7 @@ export class CacheFirstMidPriceRepository implements MidPriceRepository {
    */
   public async getMidPricesForSymbols(request: MidPricesForSymbolsRequest): Promise<Map<string, DepthMidPrice[]>> {
     const symbolMidPrices: DepthMidPrice[][] = await Promise.all(
-      request.symbolIds.map(symbolId =>
+      request.symbolIds.map((symbolId) =>
         this.getMidPricesForSymbol({
           symbolId,
           from: request.from,
@@ -151,7 +144,7 @@ export class CacheFirstMidPriceRepository implements MidPriceRepository {
    */
   public async getOHLCOrderedMidPricesForSymbols(request: MidPricesForSymbolsRequest): Promise<Map<string, DepthMidPrice[]>> {
     const symbolMidPrices: DepthMidPrice[][] = await Promise.all(
-      request.symbolIds.map(symbolId =>
+      request.symbolIds.map((symbolId) =>
         this.getOHLCOrderedMidPricesForSymbol({
           symbolId,
           from: request.from,
@@ -169,9 +162,9 @@ export class CacheFirstMidPriceRepository implements MidPriceRepository {
   /** For each symbol evicts the mid-prices cached more than 24hours ago. */
   public async cleanOldMidPrices(): Promise<void> {
     this.logger.info(`Cleaning all old mid-prices`)
-    const symbols = await getAllCompleteSymbolDetails()
+    const symbols = await getAllCompleteSymbolDetails(SymbolPairStateFilter.all)
 
-    const midPriceCleanupForAllSymbols = symbols.map(symbol => this.cleanOldMidPricesForSymbol(symbol))
+    const midPriceCleanupForAllSymbols = symbols.map((symbol) => this.cleanOldMidPricesForSymbol(symbol))
 
     await Promise.all(midPriceCleanupForAllSymbols)
   }

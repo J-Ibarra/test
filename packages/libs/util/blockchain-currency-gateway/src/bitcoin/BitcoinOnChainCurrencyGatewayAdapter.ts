@@ -1,5 +1,5 @@
 import { OnChainCurrencyGateway, DepositTransaction, TransactionResponse, ExchangeHoldingsTransfer } from '../currency_gateway'
-import { CurrencyCode } from '@abx-types/reference-data'
+import { CurrencyCode, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { RuntimeError } from '@abx-types/error'
 import { BitcoinApiProviderFacade } from './BitcoinApiProviderFacade'
@@ -23,7 +23,7 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
   }
 
   getId(): Promise<number> {
-    return getCurrencyId(this.ticker)
+    return getCurrencyId(this.ticker, SymbolPairStateFilter.all)
   }
 
   generateAddress(): Promise<CryptoAddress> {

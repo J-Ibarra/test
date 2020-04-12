@@ -2,7 +2,7 @@ import { FindOptions, WhereOptions } from 'sequelize'
 import { isNullOrUndefined } from 'util'
 import { getModel } from '@abx-utils/db-connection-utils'
 import { getApiCacheClient } from '@abx-utils/db-connection-utils'
-import { CurrencyCode, SymbolPair } from '@abx-types/reference-data'
+import { CurrencyCode, SymbolPair, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { getAllCompleteSymbolDetails, getAllSymbolsIncludingCurrency } from '@abx-service-clients/reference-data'
 import { TradeTransaction, OrderType, OrderDirection } from '@abx-types/order'
 import { CoreOrderDetails, Order, OrderStatus, OrderWithTradeTransactions } from '@abx-types/order'
@@ -23,7 +23,7 @@ interface OrderTransactionSummary {
  */
 export async function findOrders<T = Order>(query?: FindOptions, orderTransformer?: (orders: Order[]) => T[]): Promise<T[]> {
   const orderInstances = await getModel<Order>('order').findAll(query)
-  const orders = orderInstances.map(order => order.get())
+  const orders = orderInstances.map((order) => order.get())
   return orderTransformer ? orderTransformer(orders) : (orders as any)
 }
 
@@ -39,7 +39,7 @@ export const ACCOUNT_CURRENCY_ORDERS_CACHE_KEY = 'orders-account-currency'
  * @param currency the currency to look up pairs for
  */
 export async function findOrdersForCurrency(accountId: string, currency: CurrencyCode, where?: WhereOptions): Promise<OrderWithTradeTransactions[]> {
-  const allSymbolsForCurrency = await getAllSymbolsIncludingCurrency(currency)
+  const allSymbolsForCurrency = await getAllSymbolsIncludingCurrency(currency, SymbolPairStateFilter.all)
 
   const orders = await findOrdersWithTransactionsForAccount(accountId, allSymbolsForCurrency, where)
   await getApiCacheClient().setCache(`${ACCOUNT_CURRENCY_ORDERS_CACHE_KEY}-${currency}-${accountId}-${JSON.stringify(where)}`, orders, 10)
@@ -56,7 +56,7 @@ export function findAllOrdersForAccountAndSymbols(
   const whereOptions = {}
 
   // Whitelist allowed URL queryable fields
-  Object.keys(where).forEach(key => {
+  Object.keys(where).forEach((key) => {
     if (['createdAt', 'updatedAt'].includes(key)) {
       whereOptions[key] = where[key]
     }
@@ -87,7 +87,7 @@ export const ACCOUNT_ALL_ORDERS_CACHE_KEY = 'orders-account'
  * @param orderTransformer a mapping function used to transform the order instances
  */
 export async function findAllOrdersForAccount(accountId: string, where?: WhereOptions): Promise<OrderWithTradeTransactions[]> {
-  const allSymbols = await getAllCompleteSymbolDetails()
+  const allSymbols = await getAllCompleteSymbolDetails(SymbolPairStateFilter.all)
 
   const orders = await findOrdersWithTransactionsForAccount(accountId, allSymbols, where)
   await getApiCacheClient().setCache(`${ACCOUNT_ALL_ORDERS_CACHE_KEY}-${accountId}-${JSON.stringify(where)}`, orders, 10)

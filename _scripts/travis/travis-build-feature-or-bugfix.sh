@@ -1,7 +1,7 @@
 ./_scripts/travis/travis-build-branch-checkout.sh
 ./_scripts/travis/travis-build-test-execution.sh $1
 
-JIRA_IMAGE_TAG="$TRAVIS_BRANCH-$TRAVIS_COMMIT"
+export JIRA_IMAGE_TAG=`echo "$TRAVIS_BRANCH-$TRAVIS_COMMIT" | sed -r 's/[\/_]+/-/g'`
 echo $JIRA_IMAGE_TAG
 
 # Authenticating with ECR

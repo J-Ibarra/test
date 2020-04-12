@@ -12,4 +12,5 @@ export interface AccountStatusUpdateRequest {
   enableMfa?: boolean
   hasTriggeredKycCheck?: boolean
   suspended?: boolean
+  hasLogged?: boolean
 }

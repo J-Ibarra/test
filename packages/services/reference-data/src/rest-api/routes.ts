@@ -4,6 +4,7 @@ import { BoundariesController } from './boundaries_controller';
 import { CurrenciesController } from './currencies_controller';
 import { FeatureFlagsController } from './feature_flags_controller';
 import { SymbolsController } from './symbols_controller';
+import { E2eTestingDataSetupController } from './E2eTestingDataSetupController';
 import { expressAuthentication } from './middleware/authentication';
 import * as express from 'express';
 
@@ -19,6 +20,7 @@ const models: TsoaRoute.Models = {
       "code": { "ref": "CurrencyCode", "required": true },
       "symbolSortPriority": { "dataType": "double" },
       "currencyOrderPriority": { "dataType": "double" },
+      "isEnabled": { "dataType": "boolean" },
     },
   },
   "SupportedFeatureFlags": {
@@ -47,6 +49,7 @@ export function RegisterRoutes(app: express.Express) {
   app.get('/api/boundaries',
     function(request: any, response: any, next: any) {
       const args = {
+        request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
       };
 
       let validatedArgs: any[] = [];
@@ -138,6 +141,62 @@ export function RegisterRoutes(app: express.Express) {
 
 
       const promise = controller.getApplySymbolsThresholdStatus.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.get('/api/test-automation/feature-flags',
+    function(request: any, response: any, next: any) {
+      const args = {
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new E2eTestingDataSetupController();
+
+
+      const promise = controller.getFeatureFlags.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.patch('/api/test-automation/feature-flags',
+    function(request: any, response: any, next: any) {
+      const args = {
+        body: { "in": "body", "name": "body", "required": true, "dataType": "any" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new E2eTestingDataSetupController();
+
+
+      const promise = controller.updateFeatureFlags.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.patch('/api/test-automation/currencies/status',
+    function(request: any, response: any, next: any) {
+      const args = {
+        body: { "in": "body", "name": "body", "required": true, "dataType": "any" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new E2eTestingDataSetupController();
+
+
+      const promise = controller.updateCurrencyStatus.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
 

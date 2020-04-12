@@ -6,6 +6,7 @@ import { BalanceLockParams } from '../balance_movement_facade'
 import { AccountSetupBalance } from '@abx-service-clients/balance'
 import { findCurrencyForCode } from '@abx-service-clients/reference-data'
 import { Logger } from '@abx-utils/logging'
+import { SymbolPairStateFilter } from '@abx-types/reference-data'
 
 /** The gateway used to fetch {@link RawBalance} from persistent storage */
 export class BalanceRepository {
@@ -34,7 +35,7 @@ export class BalanceRepository {
       transaction,
     })
 
-    return balances.map(b => {
+    return balances.map((b) => {
       const balance = b.get()
 
       return {
@@ -57,7 +58,7 @@ export class BalanceRepository {
       transaction,
     })
 
-    return balances.map(b => {
+    return balances.map((b) => {
       const balance = b.get()
 
       return {
@@ -117,7 +118,7 @@ export class BalanceRepository {
         where: { accountId, currencyId, balanceTypeId },
         transaction,
       })
-      .then(balanceInstance => balanceInstance!.get())
+      .then((balanceInstance) => balanceInstance!.get())
   }
 
   public async lockBalancesForAccounts({ accountIds, currencyIds, transaction, timeout = 30_000 }: BalanceLockParams): Promise<boolean> {
@@ -129,17 +130,17 @@ export class BalanceRepository {
           lock: transaction.LOCK.UPDATE,
         })
         .then(() => true),
-      new Promise(resolve => setTimeout(() => resolve(false), timeout)),
+      new Promise((resolve) => setTimeout(() => resolve(false), timeout)),
     ])
 
     return result as boolean
   }
 
   public async setupAccountBalances(accountId: string, balances: AccountSetupBalance[], t?: Transaction) {
-    await wrapInTransaction(sequelize, t, async transaction => {
+    await wrapInTransaction(sequelize, t, async (transaction) => {
       await Promise.all(
-        balances.map(async balanceDetails => {
-          const currency = await findCurrencyForCode(balanceDetails.currencyCode)
+        balances.map(async (balanceDetails) => {
+          const currency = await findCurrencyForCode(balanceDetails.currencyCode, SymbolPairStateFilter.all)
 
           this.logger.info(`Updating available ${currency.code} ${balanceDetails.amount}`)
           await sequelize.query(

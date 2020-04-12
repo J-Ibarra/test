@@ -1,7 +1,7 @@
 import { Transaction, FindOptions } from 'sequelize'
 import { getModel } from '@abx-utils/db-connection-utils'
 import { RuntimeError } from '@abx-types/error'
-import { CurrencyCode } from '@abx-types/reference-data'
+import { CurrencyCode, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { CurrencyTransaction } from '@abx-types/order'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 
@@ -10,7 +10,7 @@ export async function findCurrencyTransactions(query: FindOptions) {
     const { count, rows } = await getModel<CurrencyTransaction>('currencyTransaction').findAndCountAll(query)
     return {
       count,
-      rows: rows.map(tr => tr.get()),
+      rows: rows.map((tr) => tr.get()),
     }
   } catch (e) {
     throw new RuntimeError('Unable to fetch currency transactions', {
@@ -21,15 +21,11 @@ export async function findCurrencyTransactions(query: FindOptions) {
   }
 }
 
-export async function createCurrencyTransaction(
-  currencyTransaction: CurrencyTransaction,
-  transaction?: Transaction,
-): Promise<CurrencyTransaction> {
+export async function createCurrencyTransaction(currencyTransaction: CurrencyTransaction, transaction?: Transaction): Promise<CurrencyTransaction> {
   const createdInst = await getModel<CurrencyTransaction>('currencyTransaction').create(currencyTransaction, { transaction })
 
   return createdInst.get()
 }
-
 
 export async function findCurrencyTransaction(id: number) {
   try {
@@ -52,7 +48,7 @@ export async function findCurrencyTransactionForAccountAndCurrency(
   accountId: string,
   selectedCurrency: CurrencyCode,
 ): Promise<CurrencyTransaction[]> {
-  const selectedCurrencyId = await getCurrencyId(selectedCurrency)
+  const selectedCurrencyId = await getCurrencyId(selectedCurrency, SymbolPairStateFilter.all)
 
   const currencyTransactionQuery = {
     where: {

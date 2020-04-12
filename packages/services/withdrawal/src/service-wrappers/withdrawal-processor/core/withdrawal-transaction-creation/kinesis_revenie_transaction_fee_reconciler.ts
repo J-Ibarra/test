@@ -1,7 +1,7 @@
 import { denyPendingDeposit, updateAvailable } from '@abx-service-clients/balance'
 import { SourceEventType } from '@abx-types/balance'
 import { findOrCreateKinesisRevenueAccount } from '@abx-service-clients/account'
-import { CurrencyCode, Currency } from '@abx-types/reference-data'
+import { CurrencyCode, Currency, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
 import { Logger } from '@abx-utils/logging'
 import { getTransactionFeeCurrency } from '../common'
@@ -30,7 +30,7 @@ export async function deductOnChainTransactionFeeFromRevenueBalance(
       logger.info(
         `Reducing ${transactionFeeCurrencyCode} Kinesis Revenue balance by ${transactionFee} to cover withdrawal transaction for withdrawal request ${withdrawalRequestId}`,
       )
-      const { id: transactionFeeCurrencyId } = await findCurrencyForCode(transactionFeeCurrencyCode)
+      const { id: transactionFeeCurrencyId } = await findCurrencyForCode(transactionFeeCurrencyCode, SymbolPairStateFilter.all)
 
       await updateAvailable({
         accountId: kinesisRevenueAccount.id,

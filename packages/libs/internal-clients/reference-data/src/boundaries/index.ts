@@ -1,4 +1,4 @@
-import { CurrencyBoundary, CurrencyCode, SymbolBoundaries } from '@abx-types/reference-data'
+import { CurrencyBoundary, CurrencyCode, SymbolBoundaries, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { BoundaryEndpoints } from './endpoints'
 import { InternalApiRequestDispatcher } from '@abx-utils/internal-api-tools'
 
@@ -14,8 +14,8 @@ export async function getAllCurrencyBoundaries(): Promise<Record<CurrencyCode, C
   return internalApiRequestDispatcher.fireRequestToInternalApi<Record<CurrencyCode, CurrencyBoundary>>(BoundaryEndpoints.getAllCurrencyBoundaries, {})
 }
 
-export async function getSymbolBoundaries(symbolId: string): Promise<SymbolBoundaries> {
-  return internalApiRequestDispatcher.fireRequestToInternalApi<SymbolBoundaries>(BoundaryEndpoints.getSymbolBoundaries, { symbolId })
+export async function getSymbolBoundaries(symbolId: string, state = SymbolPairStateFilter.enabled): Promise<SymbolBoundaries> {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<SymbolBoundaries>(BoundaryEndpoints.getSymbolBoundaries, { symbolId, state })
 }
 
 export async function getBoundariesForCurrencies(currencies: CurrencyCode[]): Promise<Record<CurrencyCode, CurrencyBoundary>> {

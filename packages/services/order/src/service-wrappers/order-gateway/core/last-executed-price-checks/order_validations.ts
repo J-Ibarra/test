@@ -5,6 +5,7 @@ import { getExcludedAccountTypesFromOrderRangeValidations, getSymbolPairSummary 
 import { ValidationError } from '@abx-types/error'
 import { OrderType, PlaceOrderRequest } from '@abx-types/order'
 import { getLastExecutedPrice } from '../../../../core/order-match/last_executed_price_redis'
+import { SymbolPairStateFilter } from '@abx-types/reference-data'
 
 export const validatePriceIfAccountBoundByOrderRange = async ({ accountId, symbolId, orderType, limitPrice }: PlaceOrderRequest) => {
   if (orderType === OrderType.limit) {
@@ -18,7 +19,7 @@ export const validatePriceIfAccountBoundByOrderRange = async ({ accountId, symbo
 
 const validatePriceWithinOrderRange = async (symbolId: string, limitPrice: number) => {
   const lastExecutedPrice = await getLastExecutedPrice(symbolId)
-  const { orderRange } = await getSymbolPairSummary(symbolId)
+  const { orderRange } = await getSymbolPairSummary(symbolId, SymbolPairStateFilter.all)
 
   if (lastExecutedPrice === 0 || isNullOrUndefined(orderRange)) {
     return
@@ -35,10 +36,7 @@ export const getOrderRangeBoundariesForSymbol = (orderRangePercentage: number, l
   const varianceAmount = new Decimal(lastExecutedPrice).times(orderRangePercentage)
   return {
     upperBounds: varianceAmount.plus(lastExecutedPrice).toNumber(),
-    lowerBounds: varianceAmount
-      .mul(-1)
-      .plus(lastExecutedPrice)
-      .toNumber(),
+    lowerBounds: varianceAmount.mul(-1).plus(lastExecutedPrice).toNumber(),
   }
 }
 export const isAccountBoundByOrderRange = async (accountId: string) => {

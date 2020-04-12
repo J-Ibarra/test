@@ -5,7 +5,7 @@ import { Transaction } from 'sequelize'
 import { findBoundaryForCurrency, getCompleteSymbolDetails, feeTakenFromBase } from '@abx-service-clients/reference-data'
 import { Logger } from '@abx-utils/logging'
 import { ValidationError } from '@abx-types/error'
-import { SymbolPair } from '@abx-types/reference-data'
+import { SymbolPair, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { Order, OrderDirection, OrderType } from '@abx-types/order'
 import { allocateBuyOrderReserveBalance, getMaxFeeRate } from '../../../../../../core'
 
@@ -37,7 +37,7 @@ export function validateOrderExpiry(order: Order) {
 }
 
 async function validateAndReserveBuyMarketOrder(order: Order, matchingOrder: Order, transaction: Transaction): Promise<void> {
-  const pair = await getCompleteSymbolDetails(order.symbolId)
+  const pair = await getCompleteSymbolDetails(order.symbolId, SymbolPairStateFilter.all)
   logger.debug(`Validating if account ${order.accountId} has enough funds to cover buy market order `)
 
   const feeAndAmountBoundaryDetails = await getFeeAndAmountBoundaryDetails(order, pair, transaction)
@@ -94,10 +94,7 @@ function calculateMatchDetails(
 
   const matchPrice = feeTakenFromBase(symbol)
     ? matchPriceNoFee.toDP(currencyMaxDecimals, Decimal.ROUND_DOWN).toNumber()
-    : matchPriceNoFee
-        .plus(feeToUse)
-        .toDP(currencyMaxDecimals, Decimal.ROUND_DOWN)
-        .toNumber()
+    : matchPriceNoFee.plus(feeToUse).toDP(currencyMaxDecimals, Decimal.ROUND_DOWN).toNumber()
   logger.debug(`matchPrice ${matchPrice} for market order ${marketOrderId} and match order ${matchingOrder.id}`)
 
   return matchPrice
