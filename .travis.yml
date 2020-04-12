@@ -62,6 +62,7 @@ jobs:
       if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and type = push
     - script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/order-service,@abx/exchange-market-data-service}'
       name: Deploy Order and Market Data Functional Areas
+      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and type = push
     - stage: API Docs update
       if: tag IS present
       script:

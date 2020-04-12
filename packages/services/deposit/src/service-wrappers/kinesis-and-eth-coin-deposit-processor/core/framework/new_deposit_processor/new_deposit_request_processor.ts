@@ -80,15 +80,7 @@ async function transferAmountIntoHoldingsAndUpdateDepositRequest(
   currencyCode: CurrencyCode,
   manager: CurrencyManager,
 ) {
-  return wrapInTransaction(sequelize, null, async transaction => {
-    await createPendingDeposit({
-      accountId: depositRequest.depositAddress.accountId,
-      amount: depositRequest.amount,
-      currencyId: depositRequest.depositAddress.currencyId,
-      sourceEventId: depositRequest.id!,
-      sourceEventType: SourceEventType.currencyDepositRequest,
-    })
-
+  return wrapInTransaction(sequelize, null, async (transaction) => {
     const currency = await manager.getCurrencyFromId(depositRequest.depositAddress.currencyId)
     logger.info(
       `Transferring ${depositRequest.amount} ${currency.ticker} from address:  ${depositRequest.depositAddress.publicKey} to the Exchange Holdings`,
@@ -98,6 +90,13 @@ async function transferAmountIntoHoldingsAndUpdateDepositRequest(
     logger.info(
       `Successfully transferred ${depositRequest.amount} ${currency.ticker} from address:  ${depositRequest.depositAddress.publicKey} to the Exchange Holdings`,
     )
+    await createPendingDeposit({
+      accountId: depositRequest.depositAddress.accountId,
+      amount: depositRequest.amount,
+      currencyId: depositRequest.depositAddress.currencyId,
+      sourceEventId: depositRequest.id!,
+      sourceEventType: SourceEventType.currencyDepositRequest,
+    })
 
     const updatedRequest = await updateDepositRequest(
       depositRequest.id!,
