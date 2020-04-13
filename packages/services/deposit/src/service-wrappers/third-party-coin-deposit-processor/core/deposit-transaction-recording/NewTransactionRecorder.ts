@@ -3,15 +3,12 @@ import {
   FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION,
   findDepositRequestsWhereTransactionHashPresent,
   createNewDepositRequest,
-  getMinimumDepositAmountForCurrency,
+  getMinimumDepositAmountForCurrency
 } from '../../../../core'
-import { Transaction, OnChainCurrencyGateway, getOnChainCurrencyManagerForEnvironment } from '@abx-utils/blockchain-currency-gateway'
-import { CurrencyCode, Environment } from '@abx-types/reference-data'
+import { Transaction } from '@abx-utils/blockchain-currency-gateway'
+import { CurrencyCode } from '@abx-types/reference-data'
 import { DepositAddress, DepositRequestStatus } from '@abx-types/deposit'
 import { Logger } from '@abx-utils/logging'
-import { sendAsyncChangeMessage } from '@abx-utils/async-message-publisher'
-import { DEPOSIT_CONFIRMED_TRANSACTION_QUEUE_URL } from '../constants'
-import { ConfirmedDepositTransactionPayload } from '../holdings-transaction-creation/DepositTransactionConfirmationQueuePoller'
 
 interface NewTransactionDetails {
   currency: CurrencyCode
@@ -25,7 +22,6 @@ const logger = Logger.getInstance('public-coin-deposit-processor', 'NewTransacti
  * Responsible for processing potential new deposit request transactions.
  */
 export class NewTransactionRecorder {
-  private DEFAULT_REQUIRED_DEPOSIT_TRANSACTION_CONFIRMATIONS = 1
 
   async recordDepositTransaction({ currency, depositTransactionDetails, depositAddress }: NewTransactionDetails) {
     const transactionToBePersisted = await this.shouldPersistTransaction(depositTransactionDetails)
@@ -56,8 +52,6 @@ export class NewTransactionRecorder {
    * a 'insufficientAmount' status is used for the new record and it is not processed any further.
    */
   private async persistTransactionDetails(currency: CurrencyCode, depositTransactionDetails: Transaction, depositAddress: DepositAddress) {
-    const onChainCurrencyManager = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment, [currency])
-
     const fiatValueOfOneCryptoCurrency = await calculateRealTimeMidPriceForSymbol(`${currency}_${FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION}`)
     let depositAmountAboveMinimumForCurrency = getMinimumDepositAmountForCurrency(currency) <= depositTransactionDetails.amount
 
@@ -66,43 +60,6 @@ export class NewTransactionRecorder {
       await createNewDepositRequest(depositTransactionDetails, depositAddress, fiatValueOfOneCryptoCurrency, DepositRequestStatus.insufficientAmount)
     } else {
       await createNewDepositRequest(depositTransactionDetails, depositAddress, fiatValueOfOneCryptoCurrency)
-      await this.subscribeForDepositConfirmation(currency, depositTransactionDetails, onChainCurrencyManager.getCurrencyFromTicker(currency))
     }
-  }
-
-  private async subscribeForDepositConfirmation(
-    currency: CurrencyCode,
-    { transactionHash, confirmations }: Transaction,
-    onChainCurrencyGateway: OnChainCurrencyGateway,
-  ) {
-    if ((confirmations || 0) >= this.getRequiredConfirmationsForDepositTransaction(currency)) {
-      await this.queueForHoldingsTransactionCreation(transactionHash, currency)
-      logger.info(`Transaction ${transactionHash} already confirmed ${confirmations} times, pushing message to confirmed transaction queue`)
-    } else {
-      await onChainCurrencyGateway.subscribeToTransactionConfirmationEvents(transactionHash, process.env.DEPOSIT_CONFIRMED_TRANSACTION_CALLBACK_URL!)
-      logger.info(`Subscribed for transaction confirmation events for deposit transaction ${transactionHash}`)
-    }
-  }
-
-  private queueForHoldingsTransactionCreation(txid: string, currency: CurrencyCode) {
-    return sendAsyncChangeMessage<ConfirmedDepositTransactionPayload>({
-      type: `deposit-transaction-confirmed-${txid}`,
-      target: {
-        local: DEPOSIT_CONFIRMED_TRANSACTION_QUEUE_URL!,
-        deployedEnvironment: DEPOSIT_CONFIRMED_TRANSACTION_QUEUE_URL!,
-      },
-      payload: {
-        txid,
-        currency,
-      },
-    })
-  }
-
-  private getRequiredConfirmationsForDepositTransaction(currency: CurrencyCode) {
-    if (currency === CurrencyCode.bitcoin) {
-      return Number(process.env.BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS)
-    }
-
-    return this.DEFAULT_REQUIRED_DEPOSIT_TRANSACTION_CONFIRMATIONS
   }
 }

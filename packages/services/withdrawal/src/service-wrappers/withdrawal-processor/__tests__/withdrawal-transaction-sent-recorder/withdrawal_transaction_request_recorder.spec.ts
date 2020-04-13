@@ -84,7 +84,7 @@ describe('withdrawal_transaction_request_recorder', () => {
     ).to.eql(true)
     expect(
       sendAsyncChangeMessageStub.calledWith({
-        type: 'withdrawal-transaction-sent',
+        type: 'withdrawal-completion-pending',
         target: {
           local: WITHDRAWAL_TRANSACTION_COMPLETION_PENDING_QUEUE_URL!,
           deployedEnvironment: WITHDRAWAL_TRANSACTION_COMPLETION_PENDING_QUEUE_URL!,

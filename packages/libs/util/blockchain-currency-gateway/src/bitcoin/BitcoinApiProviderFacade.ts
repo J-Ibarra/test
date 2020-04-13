@@ -40,15 +40,26 @@ export class BitcoinApiProviderFacade implements BlockchainApiProviderFacade {
 
   async getTransaction(transactionHash: string, targetAddress: string): Promise<Transaction> {
     const { txid, txouts, txins, time, confirmations } = await this.cryptoApiProviderProxy.getTransactionDetails({ txID: transactionHash })
-    const txOutForTargetAddress = txouts.find(({ addresses }) => addresses.includes(targetAddress))
+    const receiver = this.getTransactionReceiver(targetAddress, txins, txouts)
 
     return {
       transactionHash: txid,
-      receiverAddress: txouts[0].addresses[0],
+      receiverAddress: receiver.addresses[0],
       senderAddress: txins[0].addresses[0],
-      amount: Number(txOutForTargetAddress ? txOutForTargetAddress!.amount : 0),
+      amount: Number(receiver!.amount),
       time: time,
       confirmations,
+    }
+  }
+
+  private getTransactionReceiver(targetAddress: string, txins: any[], txouts: any[]) {
+    const isTargetAddressSender = txins.some(({ addresses }) => addresses.includes(targetAddress))
+    if (isTargetAddressSender) {
+      const txOutsideTargetAddress = txouts.filter(({ addresses }) => !addresses.includes(targetAddress))
+      return txOutsideTargetAddress[0]
+    } else {
+      const txOutForTargetAddress = txouts.find(({ addresses }) => addresses.includes(targetAddress))
+      return txOutForTargetAddress ? txOutForTargetAddress : txouts[0]
     }
   }
 
@@ -90,7 +101,7 @@ export class BitcoinApiProviderFacade implements BlockchainApiProviderFacade {
   subscribeToAddressTransactionEvents(publicKey: string, confirmations: number): Promise<IAddressTransaction> {
     return this.cryptoApiProviderProxy.createAddressTransactiontEventSubscription({
       address: publicKey,
-      callbackURL: process.env.DEPOSIT_ADDRESS_UNCONFIRMED_TRANSACTION_CALLBACK_URL!,
+      callbackURL: process.env.DEPOSIT_ADDRESS_TRANSACTION_CALLBACK_URL!,
       confirmations,
     })
   }
