@@ -2,15 +2,71 @@ import { DepositRequest, DepositRequestStatus, DepositAddress } from '@abx-types
 import { isAccountSuspended, findOrCreateKinesisRevenueAccount } from '@abx-service-clients/account'
 import { createPendingDeposit, createPendingWithdrawal } from '@abx-service-clients/balance'
 import { SourceEventType } from '@abx-types/balance'
-import { TransactionResponse, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
+import { TransactionResponse, OnChainCurrencyGateway, getOnChainCurrencyManagerForEnvironment } from '@abx-utils/blockchain-currency-gateway'
 import { decryptValue } from '@abx-utils/encryption'
-import { updateDepositRequest, updateAllDepositRequests } from '../../../../core'
+import { updateDepositRequest, updateAllDepositRequests, findDepositRequestByDepositTransactionHash, findDepositRequestsWithInsufficientAmount, findDepositRequestsByHoldingsTransactionHash } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
-import { CurrencyCode } from '@abx-types/reference-data'
+import { CurrencyCode, Environment } from '@abx-types/reference-data'
 import { getDepositTransactionFeeCurrencyId } from '../utils'
+import Decimal from 'decimal.js'
+import { DepositCompleter } from '../deposit-completion/DepositCompleter'
 
 export class HoldingsTransactionDispatcher {
   private readonly logger = Logger.getInstance('public-coin-deposit-processor', 'HoldingsTransactionDispatcher')
+
+  public async processDepositAddressTransaction(txid: string, currency: CurrencyCode) {
+    this.logger.info(`Received a deposit transaction confirmation for currency ${currency} and transaction hash ${txid}`)
+    const depositRequest = await findDepositRequestByDepositTransactionHash(txid)
+
+    if (!depositRequest) {
+      this.logger.warn(`Deposit request not found for transaction ${txid}, not processing any further`)
+      return
+    }
+
+    const { totalAmount: totalAmountToTransfer, depositsRequestsWithInsufficientStatus } = await this.computeTotalAmountToTransfer(depositRequest)
+
+    const currencyManager = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment, [currency])
+
+    const holdingsTransactionHash = await this.transferTransactionAmountToHoldingsWallet(
+      {
+        ...depositRequest,
+        amount: totalAmountToTransfer,
+      },
+      depositsRequestsWithInsufficientStatus,
+      currencyManager.getCurrencyFromTicker(currency),
+    )
+
+    if (holdingsTransactionHash) {
+      this.logger.info(`Starting completion for deposit request with holdings transaction hash ${txid} for completion`)
+      this.completeDepositRequest(holdingsTransactionHash)
+    }
+  }
+
+  /**
+   * We want to add up the amount of all the deposit requests which are recorded in `insufficientBalance` status.
+   * The result amount can then be added to the amount fo the current deposit request.
+   */
+  private async computeTotalAmountToTransfer({
+    amount: currentRequestAmount,
+    depositAddressId,
+    id: depositRequestId,
+  }: DepositRequest): Promise<{ totalAmount: number; depositsRequestsWithInsufficientStatus: number[] }> {
+    const preExistingDepositRequestsWithInsufficientBalance = await findDepositRequestsWithInsufficientAmount(depositAddressId!)
+
+    const totalAmounOfDepositsWithInsufficientBalance = preExistingDepositRequestsWithInsufficientBalance.reduce(
+      (acc, { amount }) => new Decimal(acc).plus(amount),
+      new Decimal(0),
+    )
+
+    this.logger.info(
+      `Found ${preExistingDepositRequestsWithInsufficientBalance} pre existing deposits for deposit address ${depositAddressId} while processing deposit request ${depositRequestId}, total amount of pre existing deposit requests ${totalAmounOfDepositsWithInsufficientBalance}`,
+    )
+
+    return {
+      totalAmount: new Decimal(currentRequestAmount).plus(totalAmounOfDepositsWithInsufficientBalance).toNumber(),
+      depositsRequestsWithInsufficientStatus: preExistingDepositRequestsWithInsufficientBalance.map(({ id }) => id!),
+    }
+  }
 
   /**
    * Creates a holdings transaction, transferring the deposited funds to the Kinesis
@@ -21,7 +77,7 @@ export class HoldingsTransactionDispatcher {
    * @param depositRequest the deposit request
    * @param param the deposit request
    */
-  public async transferTransactionAmountToHoldingsWallet(
+  private async transferTransactionAmountToHoldingsWallet(
     { amount, id, depositAddress }: DepositRequest,
     joinedDepositRequestsWithInsufficientBalance: number[],
     onChainCurrencyGateway: OnChainCurrencyGateway,
@@ -104,5 +160,18 @@ export class HoldingsTransactionDispatcher {
     this.logger.info(
       `A ${transactionFee} on chain fee has been paid for deposit request ${depositRequestId} and deducted from revenue balance for currency ${currencyId}`,
     )
+  }
+
+  private async completeDepositRequest(txid: string) {
+    const depositRequests = await findDepositRequestsByHoldingsTransactionHash(txid)
+
+    if (depositRequests.length === 0) {
+      this.logger.warn(`Deposit request not found for holdings transaction ${txid}, not processing any further`)
+      return
+    }
+
+    const depositCompleter = new DepositCompleter()
+    await depositCompleter.completeDepositRequests(depositRequests)
+    this.logger.info(`Completed deposit requests ${JSON.stringify(depositRequests)}`)
   }
 }

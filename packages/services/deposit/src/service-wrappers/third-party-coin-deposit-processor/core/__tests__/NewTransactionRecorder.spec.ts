@@ -7,7 +7,6 @@ import * as marketDataOperations from '@abx-service-clients/market-data'
 import { DepositRequestStatus } from '@abx-types/deposit'
 import * as asyncMessagePublisherOperations from '@abx-utils/async-message-publisher'
 import * as blockchainGateway from '@abx-utils/blockchain-currency-gateway'
-import { DEPOSIT_CONFIRMED_TRANSACTION_QUEUE_URL } from '../constants'
 
 describe('NewTransactionRecorder:recordDepositTransaction', () => {
   const newTransactionRecorder = new NewTransactionRecorder()
@@ -69,7 +68,7 @@ describe('NewTransactionRecorder:recordDepositTransaction', () => {
     expect(subscribeToTransactionConfirmationEventsStub.calledOnce).to.eql(false)
   })
 
-  it('should record transaction and subscribe for transaction confirmations', async () => {
+  it('should record transaction when amount is big enough', async () => {
     sinon.stub(coreOperations, 'findDepositRequestsWhereTransactionHashPresent').resolves([])
     sinon.stub(blockchainGateway, 'getOnChainCurrencyManagerForEnvironment').returns(onChainCurrencyManagerStub)
 
@@ -78,8 +77,6 @@ describe('NewTransactionRecorder:recordDepositTransaction', () => {
     process.env.DEPOSIT_CONFIRMED_TRANSACTION_CALLBACK_URL = confirmedTransactionCallbackUrl
     sinon.stub(marketDataOperations, 'calculateRealTimeMidPriceForSymbol').resolves(fiatValueForCryptoCurrency)
 
-    const sendAsyncChangeMessageStub = sinon.stub(asyncMessagePublisherOperations, 'sendAsyncChangeMessage').resolves()
-
     const createNewDepositRequestStub = sinon.stub(coreOperations, 'createNewDepositRequest').resolves()
     await newTransactionRecorder.recordDepositTransaction(newTransactionDetails)
 
@@ -89,51 +86,6 @@ describe('NewTransactionRecorder:recordDepositTransaction', () => {
         newTransactionDetails.depositAddress,
         fiatValueForCryptoCurrency,
       ),
-    ).to.eql(true)
-    expect(subscribeToTransactionConfirmationEventsStub.calledWith(depositTxHash, confirmedTransactionCallbackUrl)).to.eql(true)
-    expect(sendAsyncChangeMessageStub.calledOnce).to.eql(false)
-  })
-
-  it('should record transaction and push confirmed transaction processing when confirmations === required confirmations', async () => {
-    sinon.stub(coreOperations, 'findDepositRequestsWhereTransactionHashPresent').resolves([])
-    sinon.stub(blockchainGateway, 'getOnChainCurrencyManagerForEnvironment').returns(onChainCurrencyManagerStub)
-
-    const bitcoinConfirmationsRequired = 1
-    process.env.BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS = `${bitcoinConfirmationsRequired}`
-
-    const fiatValueForCryptoCurrency = 12
-    sinon.stub(marketDataOperations, 'calculateRealTimeMidPriceForSymbol').resolves(fiatValueForCryptoCurrency)
-
-    const sendAsyncChangeMessageStub = sinon.stub(asyncMessagePublisherOperations, 'sendAsyncChangeMessage').resolves()
-
-    const createNewDepositRequestStub = sinon.stub(coreOperations, 'createNewDepositRequest').resolves()
-    newTransactionDetails = {
-      ...newTransactionDetails,
-      depositTransactionDetails: { ...newTransactionDetails.depositTransactionDetails, confirmations: bitcoinConfirmationsRequired },
-    }
-
-    await newTransactionRecorder.recordDepositTransaction(newTransactionDetails)
-
-    expect(
-      createNewDepositRequestStub.calledWith(
-        newTransactionDetails.depositTransactionDetails,
-        newTransactionDetails.depositAddress,
-        fiatValueForCryptoCurrency,
-      ),
-    ).to.eql(true)
-    expect(subscribeToTransactionConfirmationEventsStub.calledOnce).to.eql(false)
-    expect(
-      sendAsyncChangeMessageStub.calledWith({
-        type: `deposit-transaction-confirmed-${depositTxHash}`,
-        target: {
-          local: DEPOSIT_CONFIRMED_TRANSACTION_QUEUE_URL!,
-          deployedEnvironment: DEPOSIT_CONFIRMED_TRANSACTION_QUEUE_URL!,
-        },
-        payload: {
-          txid: depositTxHash,
-          currency: CurrencyCode.bitcoin,
-        },
-      }),
     ).to.eql(true)
   })
 })

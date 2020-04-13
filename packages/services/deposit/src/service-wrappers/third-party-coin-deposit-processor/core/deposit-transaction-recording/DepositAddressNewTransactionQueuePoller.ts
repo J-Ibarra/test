@@ -3,12 +3,15 @@ import {
   IAddressTransactionEventPayload,
   getOnChainCurrencyManagerForEnvironment,
   IAddressTokenTransactionEventPayload,
+  Transaction,
 } from '@abx-utils/blockchain-currency-gateway'
-import { findDepositAddressByAddressOrPublicKey } from '../../../../core'
+import { findDepositAddressByAddressOrPublicKey, getMinimumDepositAmountForCurrency } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
-import { DEPOSIT_ADDRESS_UNCONFIRMED_TRANSACTION_QUEUE_URL } from '../constants'
+import { DEPOSIT_ADDRESS_TRANSACTION_QUEUE_URL } from '../constants'
 import { NewTransactionRecorder } from './NewTransactionRecorder'
 import { Environment, CurrencyCode } from '@abx-types/reference-data'
+import { HoldingsTransactionDispatcher } from '../holdings-transaction-creation/HoldingsTransactionDispatcher'
+import { DepositAddress } from '@abx-types/deposit'
 
 /**
  * Handles the first step of the deposit processing flow where new unconfirmed transaction
@@ -17,13 +20,14 @@ import { Environment, CurrencyCode } from '@abx-types/reference-data'
  */
 export class DepositAddressNewTransactionQueuePoller {
   private readonly logger = Logger.getInstance('public-coin-deposit-processor', 'NewDepositTransactionQueuePoller')
-  private readonly newTransactionRecorder = new NewTransactionRecorder()
+  
+  private DEFAULT_REQUIRED_DEPOSIT_TRANSACTION_CONFIRMATIONS = 1
 
   public bootstrapPoller() {
     const queuePoller = getQueuePoller()
-
+    
     queuePoller.subscribeToQueueMessages<IAddressTransactionEventPayload>(
-      DEPOSIT_ADDRESS_UNCONFIRMED_TRANSACTION_QUEUE_URL,
+      DEPOSIT_ADDRESS_TRANSACTION_QUEUE_URL,
       this.processNewDepositAddressTransaction.bind(this),
     )
   }
@@ -59,12 +63,38 @@ export class DepositAddressNewTransactionQueuePoller {
     const onChainCurrencyManager = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment, [currency])
     const depositTransactionDetails = await onChainCurrencyManager.getCurrencyFromTicker(currency).getTransaction(txid, address)
 
-    if (!!depositTransactionDetails) {
-      this.newTransactionRecorder.recordDepositTransaction({
+    if (!!depositTransactionDetails && depositTransactionDetails.receiverAddress === address) {
+      await this.handleDepositAddressTransaction(depositTransactionDetails, depositAddress, txid, currency)
+    }
+  }
+
+  private async handleDepositAddressTransaction(depositTransactionDetails: Transaction, 
+    depositAddress: DepositAddress, txid: string, currency: CurrencyCode) {
+    if ((depositTransactionDetails.confirmations || 0) >= this.getRequiredConfirmationsForDepositTransaction(currency)) { 
+      await this.processHoldingsTransaction(depositTransactionDetails.amount, currency, txid)
+    } else if (!depositTransactionDetails.confirmations) {
+      const newTransactionRecorder = new NewTransactionRecorder()
+      await newTransactionRecorder.recordDepositTransaction({
         currency,
         depositAddress,
         depositTransactionDetails,
       })
     }
+  }
+
+  private async processHoldingsTransaction(depositAmount: number, currency: CurrencyCode, txid: string) {
+    const depositAmountAboveMinimumForCurrency = getMinimumDepositAmountForCurrency(currency) <= depositAmount
+    if (depositAmountAboveMinimumForCurrency) {
+      const holdingsTransactionDispatcher = new HoldingsTransactionDispatcher()
+      await holdingsTransactionDispatcher.processDepositAddressTransaction(txid, currency)
+    }
+  }
+
+  private getRequiredConfirmationsForDepositTransaction(currency: CurrencyCode) {
+    if (currency === CurrencyCode.bitcoin) {
+      return Number(process.env.BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS)
+    }
+
+    return this.DEFAULT_REQUIRED_DEPOSIT_TRANSACTION_CONFIRMATIONS
   }
 }
