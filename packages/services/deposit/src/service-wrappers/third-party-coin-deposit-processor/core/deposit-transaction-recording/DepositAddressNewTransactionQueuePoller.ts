@@ -3,13 +3,15 @@ import {
   IAddressTransactionEventPayload,
   getOnChainCurrencyManagerForEnvironment,
   IAddressTokenTransactionEventPayload,
+  Transaction,
 } from '@abx-utils/blockchain-currency-gateway'
 import { findDepositAddressByAddressOrPublicKey, getMinimumDepositAmountForCurrency } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
-import { DEPOSIT_ADDRESS_UNCONFIRMED_TRANSACTION_QUEUE_URL } from '../constants'
+import { DEPOSIT_ADDRESS_TRANSACTION_QUEUE_URL } from '../constants'
 import { NewTransactionRecorder } from './NewTransactionRecorder'
 import { Environment, CurrencyCode } from '@abx-types/reference-data'
 import { HoldingsTransactionDispatcher } from '../holdings-transaction-creation/HoldingsTransactionDispatcher'
+import { DepositAddress } from '@abx-types/deposit'
 
 /**
  * Handles the first step of the deposit processing flow where new unconfirmed transaction
@@ -23,9 +25,9 @@ export class DepositAddressNewTransactionQueuePoller {
 
   public bootstrapPoller() {
     const queuePoller = getQueuePoller()
-
+    
     queuePoller.subscribeToQueueMessages<IAddressTransactionEventPayload>(
-      DEPOSIT_ADDRESS_UNCONFIRMED_TRANSACTION_QUEUE_URL,
+      DEPOSIT_ADDRESS_TRANSACTION_QUEUE_URL,
       this.processNewDepositAddressTransaction.bind(this),
     )
   }
@@ -62,20 +64,21 @@ export class DepositAddressNewTransactionQueuePoller {
     const depositTransactionDetails = await onChainCurrencyManager.getCurrencyFromTicker(currency).getTransaction(txid, address)
 
     if (!!depositTransactionDetails && depositTransactionDetails.receiverAddress === address) {
-      if ((depositTransactionDetails.confirmations || 0) >= this.getRequiredConfirmationsForDepositTransaction(currency)) { 
-        await this.processHoldingsTransaction(depositTransactionDetails.amount, currency, txid)
-      } else if (!depositTransactionDetails.confirmations) {
-        const newTransactionRecorder = new NewTransactionRecorder()
-        await newTransactionRecorder.recordDepositTransaction({
-          currency,
-          depositAddress,
-          depositTransactionDetails,
-        })
-      }
-      // else if (depositTransactionDetails.receiverAddress === process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS!) {
-      //   // this might not be necessary as it should be completed when the holdings is done
-      //   await this.completeDepositRequest(depositTransactionDetails.transactionHash)
-      // }
+      await this.handleDepositAddressTransaction(depositTransactionDetails, depositAddress, txid, currency)
+    }
+  }
+
+  private async handleDepositAddressTransaction(depositTransactionDetails: Transaction, 
+    depositAddress: DepositAddress, txid: string, currency: CurrencyCode) {
+    if ((depositTransactionDetails.confirmations || 0) >= this.getRequiredConfirmationsForDepositTransaction(currency)) { 
+      await this.processHoldingsTransaction(depositTransactionDetails.amount, currency, txid)
+    } else if (!depositTransactionDetails.confirmations) {
+      const newTransactionRecorder = new NewTransactionRecorder()
+      await newTransactionRecorder.recordDepositTransaction({
+        currency,
+        depositAddress,
+        depositTransactionDetails,
+      })
     }
   }
 

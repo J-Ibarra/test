@@ -101,7 +101,7 @@ export class BitcoinApiProviderFacade implements BlockchainApiProviderFacade {
   subscribeToAddressTransactionEvents(publicKey: string, confirmations: number): Promise<IAddressTransaction> {
     return this.cryptoApiProviderProxy.createAddressTransactiontEventSubscription({
       address: publicKey,
-      callbackURL: process.env.DEPOSIT_ADDRESS_UNCONFIRMED_TRANSACTION_CALLBACK_URL!,
+      callbackURL: process.env.DEPOSIT_ADDRESS_TRANSACTION_CALLBACK_URL!,
       confirmations,
     })
   }
