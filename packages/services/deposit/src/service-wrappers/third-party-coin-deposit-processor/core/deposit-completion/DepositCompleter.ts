@@ -10,11 +10,12 @@ import { wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 import { findOrCreateKinesisRevenueAccount } from '@abx-service-clients/account'
 import Decimal from 'decimal.js'
 import { getDepositTransactionFeeCurrencyId } from '../utils'
-import { SymbolPairStateFilter } from '@abx-types/reference-data'
+import { CurrencyCode, SymbolPairStateFilter } from '@abx-types/reference-data'
 
 export class DepositCompleter {
   private readonly logger = Logger.getInstance('third-party-coin-deposit-processor', 'DepositCompleter')
 
+  private DEFAULT_REQUIRED_DEPOSIT_TRANSACTION_CONFIRMATIONS = 1
   /**
    * Carries out the final step of the deposit process where:
    * - all deposit requests are updated with 'completed' status
@@ -61,6 +62,14 @@ export class DepositCompleter {
 
       return sendDepositConfirmEmail(depositAddress.accountId, totalAmount, depositCurrency.code)
     })
+  }
+
+  public getRequiredConfirmationsForDepositTransaction(currency: CurrencyCode) {
+    if (currency === CurrencyCode.bitcoin) {
+      return Number(process.env.BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS)
+    }
+
+    return this.DEFAULT_REQUIRED_DEPOSIT_TRANSACTION_CONFIRMATIONS
   }
 
   private async triggerBalanceUpdates(depositRequestId: number, { accountId, currency }: DepositAddress, amount: number, holdingsTxFee: number) {
