@@ -10,7 +10,7 @@ import { WithdrawalState } from '@abx-types/withdrawal'
 import { wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 import { QueueConsumerOutput } from '@abx-utils/async-message-consumer'
 
-const logger = Logger.getInstance('order-data', 'withdrawal-completion')
+const logger = Logger.getInstance('withdrawal-processor', 'withdrawal-completion')
 
 export async function completeWithdrawalRequest({ txid, currency }: WithdrawalCompletionPendingPayload): Promise<void | QueueConsumerOutput> {
   logger.debug(`Received withdrawal completion request for currency ${currency} and transaction ${txid}`)
