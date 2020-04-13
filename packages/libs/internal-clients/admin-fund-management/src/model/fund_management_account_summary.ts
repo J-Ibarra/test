@@ -12,5 +12,6 @@ export interface FundManagementAccountSummary {
   lastLogin: Date
   createdAt: Date
   balances: BalanceSummary[]
+  mfaEnabled: boolean
 }
 

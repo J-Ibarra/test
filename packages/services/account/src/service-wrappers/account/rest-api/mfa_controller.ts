@@ -1,9 +1,13 @@
-import { Body, Controller, Delete, Get, Post, Query, Request, Response, Route, Security, SuccessResponse, Tags } from 'tsoa'
-import { activateMfa, deactivateMfa, verifyMfa, MFA, findUserByEmail } from '../../../core'
+import { Body, Controller, Patch, Delete, Get, Post, Query, Request, Response, Route, Security, SuccessResponse, Tags } from 'tsoa'
+import { activateMfa, deactivateMfa, deactivateMfaAdmin, verifyMfa, MFA, findUserByEmail } from '../../../core'
 import { OverloadedRequest } from '@abx-types/account'
 
 interface MfaStatusResponse {
   enabled: boolean
+}
+
+interface UserDisableMFAAdminRequest {
+  suspended: boolean
 }
 
 @Tags('accounts')
@@ -62,6 +66,21 @@ export class MFAController extends Controller {
       return {
         message: error.message,
       }
+    }
+  }
+  @Security({
+    cookieAuth: [],
+    adminAuth: [],
+  })
+  @Patch('{id}/disableMFA')
+  public async disableMfaByAdmin(id: string, @Body() { suspended }: UserDisableMFAAdminRequest): Promise<{ message: string } | void> {
+    try {
+      await deactivateMfaAdmin({ userId: id, suspended })
+      this.setStatus(200)
+      return { message: '2FA was disabled' }
+    } catch (e) {
+      this.setStatus(400)
+      return { message: e.message }
     }
   }
 }

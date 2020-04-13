@@ -108,6 +108,11 @@ const models: TsoaRoute.Models = {
   },
   "PartialMFA": {
   },
+  "UserDisableMFAAdminRequest": {
+    "properties": {
+      "suspended": { "dataType": "boolean", "required": true },
+    },
+  },
   "SendResetPasswordEmailRequest": {
     "properties": {
       "email": { "dataType": "string", "required": true },
@@ -481,6 +486,27 @@ export function RegisterRoutes(app: express.Express) {
 
 
       const promise = controller.verifyMfaForUser.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.patch('/api/mfa/:id/disableMFA',
+    authenticateMiddleware([{ "cookieAuth": [], "adminAuth": [] }]),
+    function(request: any, response: any, next: any) {
+      const args = {
+        id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
+        undefined: { "in": "body", "required": true, "ref": "UserDisableMFAAdminRequest" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new MFAController();
+
+
+      const promise = controller.disableMfaByAdmin.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
   app.post('/api/reset-password',

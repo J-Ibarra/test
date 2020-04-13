@@ -32,3 +32,25 @@ export async function deactivateMfa(userId: string, token: string): Promise<void
     id: userId,
   } as any)
 }
+
+export async function deactivateMfaAdmin(request: { userId: string; suspended: boolean }): Promise<void> {
+
+  const user = await findUserById(request.userId)
+
+  if (!user) {
+    throw new Error(`User not found for id ${request.userId}`)
+  }
+
+  const { mfaSecret, mfaTempSecret } = user
+  if (!mfaSecret && !mfaTempSecret) {
+    throw new ValidationError('Multifactor authentication has already been disabled')
+  }
+  if (request.suspended) {
+    await updateUser({
+      mfaSecret: null,
+      mfaTempSecret: null,
+      id: request.userId,
+    } as any)
+  }
+
+}
