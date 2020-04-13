@@ -1,6 +1,6 @@
 # Houses the logic for processing third party cryptos.
 
-## coins added to date: BTC
+## coins added to date: BTC and USDT
 
 ## WorkFlow
 
