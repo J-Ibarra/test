@@ -393,4 +393,20 @@ export class Kinesis implements OnChainCurrencyGateway {
 
     return Keypair.fromRawEd25519Seed(hash.digest())
   }
+
+  public subscribeForNewDepositRequests(
+    newDepositHandler: (message: PaymentOperationRecord) => void
+  ): void {
+    this.getServer()
+      .payments()
+      .cursor('now')
+      .stream({
+        onmessage: (message: PaymentOperationRecord) => {
+          newDepositHandler(message)
+        },
+        onerror: () => {
+          this.subscribeForNewDepositRequests(newDepositHandler)
+        }
+      })
+  }
 }
