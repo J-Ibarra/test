@@ -7,6 +7,11 @@ const RETRY_BUILD_TIMES = 3
 const passedParameter = process.argv.slice(2)[0]
 let attempts = 1
 
+/**
+ * The `lerna run bootstrap` command in the docker images 
+ * can be a bit flakey at times and fail due to some file watcher issues.
+ * Since we don't want that to fail the build we retry a total of 3 times before failing the docker build step.
+ */
 const retryImageBuild = (commandPassed = false) => {
   if (commandPassed) {
     return
@@ -28,7 +33,7 @@ const executeBuildImageCommand = () => {
   process.stderr.on('data', (data) => {
     console.error(`${data}`)
   })
-  
+
   process.on('close', (code) => {
     console.log(`lerna run build-image-latest exited with code ${code}`)
     attempts++

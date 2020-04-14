@@ -21,13 +21,16 @@
     "migrate-db": "npm run build && NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test NODE_PATH=dist node dist/migrations/index.js",
     "start": "ts-node-dev src/index.ts",
     "test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test NODE_PATH=dist ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts src/**/*.spec.ts --exit",
-    "build-image-withdrawal-api": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-withdrawal-api:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-withdrawal-api:latest -f packages/services/withdrawal/src/service-wrappers/withdrawal-api/Dockerfile . && cd packages/services/withdrawal ",
-    "build-image-withdrawal-processor": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-withdrawal-processor:$TRAVIS_COMMIT -t $KINESIS_ECR_URL/kbe-services-withdrawal-processor:latest -f packages/services/withdrawal/src/service-wrappers/withdrawal-processor/Dockerfile . && cd packages/services/withdrawal ",
+    "build-image-withdrawal-api": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-withdrawal-api:$DOCKER_IMAGE_TAG -t $KINESIS_ECR_URL/kbe-services-withdrawal-api:latest -f packages/services/withdrawal/src/service-wrappers/withdrawal-api/Dockerfile . && cd packages/services/withdrawal ",
+    "build-image-withdrawal-processor": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-withdrawal-processor:$DOCKER_IMAGE_TAG -t $KINESIS_ECR_URL/kbe-services-withdrawal-processor:latest -f packages/services/withdrawal/src/service-wrappers/withdrawal-processor/Dockerfile . && cd packages/services/withdrawal ",
     "build-base-image": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-withdrawal-base:latest -f packages/services/withdrawal/Dockerfile . && cd packages/services/withdrawal ",
     "build-image-latest": "npm run build-base-image && npm run build-image-withdrawal-api && npm run build-image-withdrawal-processor",
     "push-image-withdrawal-api": "docker push $KINESIS_ECR_URL/kbe-services-withdrawal-api",
     "push-image-withdrawal-processor": "docker push $KINESIS_ECR_URL/kbe-services-withdrawal-processor",
-    "push-image": "npm run push-image-withdrawal-api && npm run push-image-withdrawal-processor"
+    "push-image": "npm run push-image-withdrawal-api && npm run push-image-withdrawal-processor",
+    "deploy-latest-integration:withdrawal-api": "aws ecs update-service --service kbe-int-withdrawal-api-service-v3 --cluster kbe-int-cluster --region ap-southeast-2",
+    "deploy-latest-integration:withdrawal-processor": "aws ecs update-service --service kbe-int-withdrawal-processor-service-v3 --cluster kbe-int-cluster --region ap-southeast-2",
+    "deploy-latest-integration": "npm run deploy-latest-integration:withdrawal-api && npm run deploy-latest-integration:withdrawal-processor"
   },
   "dependencies": {
     "@abx-service-clients/account": "^1.1.0",

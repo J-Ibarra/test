@@ -33,38 +33,46 @@ before_script:
 
 jobs:
   include:
-    # Build builds execute tests for changed functional areas and upon success create a new ${BRANCH_NAME}-{COMMIT_HASH} image tag, uploaded to ECR
-    # !!!! ONLY FOR THE SERVICES WHERE THERE WERE CHANGES
+    # Build builds execute tests for changed functional areas (ONLY FOR THE SERVICES WHERE THERE WERE CHANGES)
     - stage: Build & Test
       script: ./_scripts/travis/travis-build-feature-or-bugfix.sh '{@abx/exchange-deposit-service,@abx/exchange-reference-data-service}'
       name: Build & Test Deposit and Reference Data Functional Areas
+      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and tag IS blank
     - script: ./_scripts/travis/travis-build-feature-or-bugfix.sh '{@abx/exchange-withdrawal-service,@abx/exchange-balance-service}'
       name: Build & Test Withdrawal and Balance Functional Areas
+      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and tag IS blank
     - script: ./_scripts/travis/travis-build-feature-or-bugfix.sh '{@abx/exchange-scheduler-service,@abx/exchange-reports-service,@abx/exchange-account-data-service}'
       name: Build & Test Scheduler, Reports and Account Functional Areas
+      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and tag IS blank
     - script: ./_scripts/travis/travis-build-feature-or-bugfix.sh '{@abx/exchange-notification-service,@abx/admin-fund-management-service}'
       name: Build & Test Notification and Admin Fund Management Functional Areas
+      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and tag IS blank
     - script: ./_scripts/travis/travis-build-feature-or-bugfix.sh '{@abx/order-service,@abx/exchange-market-data-service}'
       name: Build & Test Order and Market Data Functional Areas
+      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and tag IS blank
+
+      # Build and publishes a new docker image for the services where a change was observed
     - stage: Deploy
-      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and type = push
+      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and tag IS present
       script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/exchange-deposit-service,@abx/exchange-reference-data-service}'
       name: Deploy Deposit and Reference Data Functional Areas
-      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and type = push
+      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and tag IS present
     - script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/exchange-withdrawal-service,@abx/exchange-balance-service}'
       name: Deploy Withdrawal and Balance Functional Areas
-      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and type = push
+      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and tag IS present
     - script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/exchange-scheduler-service,@abx/exchange-reports-service,@abx/exchange-account-data-service}'
       name: Deploy Scheduler, Reports and Account Functional Areas
-      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and type = push
+      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and tag IS present
     - script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/exchange-notification-service,@abx/admin-fund-management-service}'
       name: Deploy Notification and Admin Fund Management Functional Areas
-      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and type = push
+      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and tag IS present
     - script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/order-service,@abx/exchange-market-data-service}'
       name: Deploy Order and Market Data Functional Areas
-      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and type = push
+      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and tag IS present
+
+     # Rebuild and publish API Docs on develop branch tag
     - stage: API Docs update
-      if: tag IS present
+      if: branch=develop and tag IS present
       script:
         - npm run bootstrap:production
         - npm run build

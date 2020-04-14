@@ -19,7 +19,7 @@
     "run-migrations:test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test tsnd src/migrations/index.ts",
     "start": "ts-node-dev src/index.ts",
     "test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test NODE_PATH=dist ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts src/**/*.spec.ts --exit",
-    "build-image-latest": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-reference-data:$JIRA_IMAGE_TAG -t $KINESIS_ECR_URL/kbe-services-reference-data:latest -f packages/services/reference-data/Dockerfile . && cd packages/services/reference-data ",
+    "build-image-latest": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-reference-data:$DOCKER_IMAGE_TAG -t $KINESIS_ECR_URL/kbe-services-reference-data:latest -f packages/services/reference-data/Dockerfile . && cd packages/services/reference-data ",
     "push-image": "docker push $KINESIS_ECR_URL/kbe-services-reference-data",
     "deploy-latest-integration": "aws ecs update-service --service kbe-int-reference-data-service-v2 --cluster kbe-int-cluster --region ap-southeast-2"
   },
