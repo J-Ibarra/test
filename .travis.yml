@@ -72,7 +72,7 @@ jobs:
 
      # Rebuild and publish API Docs on develop branch tag
     - stage: API Docs update
-      if: branch=develop and tag IS present
+      if: tag =~ /^v.+/
       script:
         - npm run bootstrap:production
         - npm run build
