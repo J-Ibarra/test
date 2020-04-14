@@ -1,9 +1,16 @@
-import { Body, Controller, Get, Patch, Post, Request, Route, Security, Tags, Hidden } from 'tsoa'
+import { Body, Controller, Get, Patch, Post, Request, Route, Security, Tags, Hidden, Query } from 'tsoa'
 
 import { AdminRequest, AdminRequestStatus, AdminRequestType } from '@abx-service-clients/admin-fund-management'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode } from '@abx-types/reference-data'
-import { findAllAdminRequests, findAllAdminRequestsForAccountHin, rejectAdminRequest, approveAdminRequest, createAdminRequest } from '../core'
+import {
+  countAllAdminRequests,
+  findAllAdminRequests,
+  findAllAdminRequestsForAccountHin,
+  rejectAdminRequest,
+  approveAdminRequest,
+  createAdminRequest,
+} from '../core'
 import { OverloadedRequest } from '@abx-types/account'
 import { ApiErrorPayload } from '@abx-types/error'
 
@@ -27,17 +34,27 @@ const logger = Logger.getInstance('api', 'AdminRequestsController')
 @Route('admin/fund-management/admin-requests')
 export class AdminRequestsController extends Controller {
   @Security('adminAuth')
+  @Get('count')
+  public async retrieveAdminRequestsCount(@Query() accountHin?: string): Promise<{ total: number }> {
+    const total = await countAllAdminRequests(accountHin)
+
+    return {
+      total,
+    }
+  }
+
+  @Security('adminAuth')
   @Get()
   @Hidden()
-  public async retrieveAllAdminRequests(): Promise<AdminRequest[]> {
-    return findAllAdminRequests()
+  public async retrieveAllAdminRequests(@Query() limit?: number, @Query() offset?: number): Promise<AdminRequest[]> {
+    return findAllAdminRequests({ limit, offset })
   }
 
   @Security('adminAuth')
   @Get('{accountHin}')
   @Hidden()
-  public async getAdminRequestsForAccountHin(accountHin: string): Promise<AdminRequest[]> {
-    return findAllAdminRequestsForAccountHin(accountHin)
+  public async getAdminRequestsForAccountHin(accountHin: string, @Query() limit?: number, @Query() offset?: number): Promise<AdminRequest[]> {
+    return findAllAdminRequestsForAccountHin({ accountHin, limit, offset })
   }
 
   @Security('adminAuth')
