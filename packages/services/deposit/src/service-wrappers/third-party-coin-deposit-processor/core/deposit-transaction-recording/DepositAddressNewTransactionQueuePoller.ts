@@ -70,15 +70,16 @@ export class DepositAddressNewTransactionQueuePoller {
 
   private async handleDepositAddressTransaction(depositTransactionDetails: Transaction, 
     depositAddress: DepositAddress, txid: string, currency: CurrencyCode) {
+
+    // the deposit request will be created only once
+    const newTransactionRecorder = new NewTransactionRecorder()
+    await newTransactionRecorder.recordDepositTransaction({
+      currency,
+      depositAddress,
+      depositTransactionDetails,
+    })
     if ((depositTransactionDetails.confirmations || 0) >= this.getRequiredConfirmationsForDepositTransaction(currency)) { 
       await this.processHoldingsTransaction(depositTransactionDetails.amount, currency, txid)
-    } else if (!depositTransactionDetails.confirmations) {
-      const newTransactionRecorder = new NewTransactionRecorder()
-      await newTransactionRecorder.recordDepositTransaction({
-        currency,
-        depositAddress,
-        depositTransactionDetails,
-      })
     }
   }
 

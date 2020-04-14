@@ -104,7 +104,7 @@ describe('DepositAddressNewTransactionQueuePoller', () => {
       await depositAddressTransactionQueuePoller['processDepositAddressTransaction'](CurrencyCode.bitcoin, address, transactionId)
 
       expect(getTransactionStub.calledOnce).to.eql(true)
-      expect(recordDepositTransactionStub.calledOnce).to.eql(false)
+      expect(recordDepositTransactionStub.calledOnce).to.eql(true)
       expect(processHoldingsTransactionStub.calledOnce).to.eql(false)
     })
 
@@ -117,7 +117,7 @@ describe('DepositAddressNewTransactionQueuePoller', () => {
       await depositAddressTransactionQueuePoller['processDepositAddressTransaction'](CurrencyCode.bitcoin, address, transactionId)
 
       expect(getTransactionStub.calledOnce).to.eql(true)
-      expect(recordDepositTransactionStub.calledOnce).to.eql(false)
+      expect(recordDepositTransactionStub.calledOnce).to.eql(true)
       expect(processHoldingsTransactionStub.calledOnce).to.eql(true)
     })
   })
