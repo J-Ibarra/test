@@ -105,6 +105,13 @@ export class Kinesis implements OnChainCurrencyGateway {
   }
 
   public async getLatestTransactions(lastSeenTransactionHash?: string, transactionAcc: DepositTransaction[] = []): Promise<DepositTransaction[]> {
+    await this.getServer()
+    .operations()
+    .stream()
+
+    await this.getServer()
+    .()
+    .
     const payments = await this.getServer()
       .payments()
       .order('desc')

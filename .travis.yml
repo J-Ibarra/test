@@ -53,22 +53,22 @@ jobs:
 
       # Build and publishes a new docker image for the services where a change was observed
     - stage: Deploy
-      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and tag IS present
+      if:  tag =~ /^beta.+/
       script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/exchange-deposit-service,@abx/exchange-reference-data-service}'
       name: Deploy Deposit and Reference Data Functional Areas
-      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and tag IS present
+      if:  tag =~ /^beta.+/
     - script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/exchange-withdrawal-service,@abx/exchange-balance-service}'
       name: Deploy Withdrawal and Balance Functional Areas
-      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and tag IS present
+      if:  tag =~ /^beta.+/
     - script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/exchange-scheduler-service,@abx/exchange-reports-service,@abx/exchange-account-data-service}'
       name: Deploy Scheduler, Reports and Account Functional Areas
-      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and tag IS present
+      if:  tag =~ /^beta.+/
     - script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/exchange-notification-service,@abx/admin-fund-management-service}'
       name: Deploy Notification and Admin Fund Management Functional Areas
-      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and tag IS present
+      if:  tag =~ /^beta.+/
     - script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/order-service,@abx/exchange-market-data-service}'
       name: Deploy Order and Market Data Functional Areas
-      if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and tag IS present
+      if:  tag =~ /^beta.+/
 
      # Rebuild and publish API Docs on develop branch tag
     - stage: API Docs update
