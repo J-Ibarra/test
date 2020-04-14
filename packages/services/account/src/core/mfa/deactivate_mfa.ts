@@ -1,6 +1,6 @@
 import * as speakeasy from 'speakeasy'
 
-import { findUserById, updateUser } from '../users'
+import { findUserById, findUserByAccountHin, updateUser } from '../users'
 import { ValidationError } from '@abx-types/error'
 
 export async function deactivateMfa(userId: string, token: string): Promise<void> {
@@ -33,12 +33,12 @@ export async function deactivateMfa(userId: string, token: string): Promise<void
   } as any)
 }
 
-export async function deactivateMfaAdmin(request: { userId: string; suspended: boolean }): Promise<void> {
+export async function deactivateMfaAdmin(request: { hin: string; suspended: boolean }): Promise<void> {
 
-  const user = await findUserById(request.userId)
+  const user = await findUserByAccountHin(request.hin)
 
   if (!user) {
-    throw new Error(`User not found for id ${request.userId}`)
+    throw new Error(`User not found for id ${request.hin}`)
   }
 
   const { mfaSecret, mfaTempSecret } = user
@@ -49,7 +49,7 @@ export async function deactivateMfaAdmin(request: { userId: string; suspended: b
     await updateUser({
       mfaSecret: null,
       mfaTempSecret: null,
-      id: request.userId,
+      id: user![0].id,
     } as any)
   }
 

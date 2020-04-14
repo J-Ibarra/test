@@ -1,4 +1,4 @@
-import { Body, Controller, Patch, Delete, Get, Post, Query, Request, Response, Route, Security, SuccessResponse, Tags } from 'tsoa'
+import { Body, Controller, Delete, Get, Post, Query, Request, Response, Route, Security, SuccessResponse, Tags } from 'tsoa'
 import { activateMfa, deactivateMfa, deactivateMfaAdmin, verifyMfa, MFA, findUserByEmail } from '../../../core'
 import { OverloadedRequest } from '@abx-types/account'
 
@@ -72,10 +72,10 @@ export class MFAController extends Controller {
     cookieAuth: [],
     adminAuth: [],
   })
-  @Patch('{id}/disableMFA')
-  public async disableMfaByAdmin(id: string, @Body() { suspended }: UserDisableMFAAdminRequest): Promise<{ message: string } | void> {
+  @Delete('admin/{accountHin}')
+  public async disableMfaByAdmin(accountHin: string, @Request() { suspended }: UserDisableMFAAdminRequest): Promise<{ message: string } | void> {
     try {
-      await deactivateMfaAdmin({ userId: id, suspended })
+      await deactivateMfaAdmin({ hin: accountHin, suspended })
       this.setStatus(200)
       return { message: '2FA was disabled' }
     } catch (e) {

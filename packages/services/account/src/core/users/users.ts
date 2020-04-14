@@ -131,6 +131,24 @@ export async function findUserById(id: string, trans?: Transaction) {
   })
 }
 
+export async function findUserByAccountHin(hin: string, trans?: Transaction) {
+  return wrapInTransaction(sequelize, trans, async t => {
+    const user = await getModel<User>('user').findOne({ 
+      transaction: t,
+      include: [
+        {
+          model: getModel<Account>('account'),
+          as: 'account',
+          where: {
+            $or: [{ hin: { $like: `${hin}%` } }],
+          },
+        },
+      ],
+    })
+    return user ? user.get() : null
+  })
+}
+
 export function findUserPublicView(id: string, trans?: Transaction): Promise<UserPublicView> {
   return wrapInTransaction(sequelize, trans, async t => {
     const user = await getModel<User>('user').findOne({ where: { id }, transaction: t })

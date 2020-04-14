@@ -33,8 +33,9 @@ export async function getAccountSummary(hin: string): Promise<FundManagementAcco
     lastName: userDetails.lastName || '',
     status: account.status,
     suspended: account.suspended,
-    balances: transformToBalanceSummaries(balances),
     mfaEnabled: enabledMFA,
+    mfaTempSecretCreated: userDetails.mfaTempSecretCreated,
+    balances: transformToBalanceSummaries(balances),
   }
 }
 
