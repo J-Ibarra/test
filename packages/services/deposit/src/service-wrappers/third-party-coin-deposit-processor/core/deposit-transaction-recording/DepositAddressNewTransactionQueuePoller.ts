@@ -12,6 +12,7 @@ import { NewTransactionRecorder } from './NewTransactionRecorder'
 import { Environment, CurrencyCode } from '@abx-types/reference-data'
 import { HoldingsTransactionDispatcher } from '../holdings-transaction-creation/HoldingsTransactionDispatcher'
 import { DepositAddress } from '@abx-types/deposit'
+import { DepositCompleter } from '../deposit-completion/DepositCompleter'
 
 /**
  * Handles the first step of the deposit processing flow where new unconfirmed transaction
@@ -65,6 +66,16 @@ export class DepositAddressNewTransactionQueuePoller {
 
     if (!!depositTransactionDetails && depositTransactionDetails.receiverAddress === address) {
       await this.handleDepositAddressTransaction(depositTransactionDetails, depositAddress, txid, currency)
+    } else if (!!depositTransactionDetails && depositTransactionDetails.senderAddress === address && 
+      depositTransactionDetails.receiverAddress === process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS) {
+        await this.handleHoldingsConfirmation(depositTransactionDetails, currency, txid)
+      }
+  }
+
+  private async handleHoldingsConfirmation(depositTransactionDetails: Transaction, currency: CurrencyCode, txid: string) {
+    if ((depositTransactionDetails.confirmations || 0) >= this.getRequiredConfirmationsForDepositTransaction(currency)) { 
+      const depositCompleter = new DepositCompleter()
+      await depositCompleter.completeDepositRequest(txid)
     }
   }
 

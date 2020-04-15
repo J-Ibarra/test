@@ -4,7 +4,7 @@ import { createPendingDeposit, createPendingWithdrawal } from '@abx-service-clie
 import { SourceEventType } from '@abx-types/balance'
 import { TransactionResponse, OnChainCurrencyGateway, getOnChainCurrencyManagerForEnvironment } from '@abx-utils/blockchain-currency-gateway'
 import { decryptValue } from '@abx-utils/encryption'
-import { updateDepositRequest, updateAllDepositRequests, findDepositRequestByDepositTransactionHash, findDepositRequestsWithInsufficientAmount, findDepositRequestsByHoldingsTransactionHash } from '../../../../core'
+import { updateDepositRequest, updateAllDepositRequests, findDepositRequestByDepositTransactionHash, findDepositRequestsWithInsufficientAmount, findDepositRequestsByHoldingsTransactionHash, findDepositRequestsForStatus } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode, Environment } from '@abx-types/reference-data'
 import { getDepositTransactionFeeCurrencyId } from '../utils'
@@ -23,6 +23,13 @@ export class HoldingsTransactionDispatcher {
       return
     }
 
+    if (await this.checkIfPendingHoldingsTransactionIsAvailable(depositRequest)) {
+      await updateDepositRequest(depositRequest.id!, {
+        status: DepositRequestStatus.blockedForHoldingsTransactionConfirmation,
+      })
+      return
+    }
+
     const { totalAmount: totalAmountToTransfer, depositsRequestsWithInsufficientStatus } = await this.computeTotalAmountToTransfer(depositRequest)
 
     const currencyManager = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment, [currency])
@@ -38,8 +45,13 @@ export class HoldingsTransactionDispatcher {
 
     if (holdingsTransactionHash) {
       this.logger.info(`Starting completion for deposit request with holdings transaction hash ${txid} for completion`)
-      this.completeDepositRequest(holdingsTransactionHash)
+      this.processDepositRequest(holdingsTransactionHash)
     }
+  }
+
+  private async checkIfPendingHoldingsTransactionIsAvailable(depositRequest: DepositRequest): Promise<boolean> {
+    const depositRequests = await findDepositRequestsForStatus(depositRequest.depositAddressId!, DepositRequestStatus.pendingHoldingsTransaction)
+    return depositRequests.length > 0
   }
 
   /**
@@ -162,16 +174,8 @@ export class HoldingsTransactionDispatcher {
     )
   }
 
-  private async completeDepositRequest(txid: string) {
-    const depositRequests = await findDepositRequestsByHoldingsTransactionHash(txid)
-
-    if (depositRequests.length === 0) {
-      this.logger.warn(`Deposit request not found for holdings transaction ${txid}, not processing any further`)
-      return
-    }
-
+  private async processDepositRequest(txid: string) {
     const depositCompleter = new DepositCompleter()
-    await depositCompleter.completeDepositRequests(depositRequests)
-    this.logger.info(`Completed deposit requests ${JSON.stringify(depositRequests)}`)
+    await depositCompleter.processPendingHoldingsForDepositRequest(txid)
   }
 }

@@ -262,3 +262,14 @@ export function getDepositMinimumForCurrency(currency: CurrencyCode): number {
       return 0
   }
 }
+
+export async function findDepositRequestsForStatus(depositAddressId: number, status: DepositRequestStatus): Promise<DepositRequest[]> {
+  const depositInstances = await getModel<DepositRequest>('depositRequest').findAll({
+    where: {
+      status,
+      depositAddressId,
+    }
+  })
+
+  return depositInstances.map(req => req.get({ plain: true }))
+}

@@ -10,4 +10,6 @@ export enum DepositRequestStatus {
   pendingDepositTransactionConfirmation = 'pendingDepositTransactionConfirmation',
   // The deposit request amount is below the minimum allowed amount for the currency
   insufficientAmount = 'insufficientAmount',
+
+  blockedForHoldingsTransactionConfirmation = 'blockedForHoldingsTransactionConfirmation',
 }

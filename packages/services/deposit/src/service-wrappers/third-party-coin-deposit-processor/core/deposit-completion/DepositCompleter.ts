@@ -1,5 +1,5 @@
 import { DepositRequest, DepositRequestStatus, DepositAddress } from '@abx-types/deposit'
-import { updateAllDepositRequests, sendDepositConfirmEmail } from '../../../../core'
+import { updateAllDepositRequests, sendDepositConfirmEmail, findDepositRequestsByHoldingsTransactionHash } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
 import { createCurrencyTransaction } from '@abx-service-clients/order'
 import { triggerMultipleBalanceChanges, BalanceAsyncRequestType } from '@abx-service-clients/balance'
@@ -28,7 +28,7 @@ export class DepositCompleter {
    *
    * @param depositRequests the deposit requests to complete
    */
-  async completeDepositRequests(depositRequests: DepositRequest[]) {
+  async processPendingHoldingsForDepositRequest(depositRequests: DepositRequest[]) {
     return wrapInTransaction(sequelize, null, async (transaction) => {
       this.logger.info(`Completing deposit requests ${JSON.stringify(depositRequests)}`)
 
@@ -41,7 +41,7 @@ export class DepositCompleter {
       await Promise.all([
         updateAllDepositRequests(
           depositRequests.map(({ id }) => id!),
-          { status: DepositRequestStatus.completed },
+          { status: DepositRequestStatus.pendingHoldingsTransaction },
           transaction,
         ),
         createCurrencyTransaction({
@@ -61,6 +61,30 @@ export class DepositCompleter {
       )
 
       return sendDepositConfirmEmail(depositAddress.accountId, totalAmount, depositCurrency.code)
+    })
+  }
+
+  public async completeDepositRequest(txid: string) {
+    const depositRequests = await findDepositRequestsByHoldingsTransactionHash(txid)
+
+    if (depositRequests.length === 0) {
+      this.logger.warn(`Deposit request not found for holdings transaction ${txid}, not processing any further`)
+      return
+    }
+
+    await this.completeDepositRequests(depositRequests)
+    this.logger.info(`Completed deposit requests ${JSON.stringify(depositRequests)}`)
+  }
+
+  private async completeDepositRequests(depositRequests: DepositRequest[]) {
+    return wrapInTransaction(sequelize, null, async (transaction) => {
+      
+      // create new holdings consolidated transaction for blocked deposit requests
+
+      updateAllDepositRequests(
+        depositRequests.map(({ id }) => id!),
+        { status: DepositRequestStatus.completed },
+        transaction)
     })
   }
 
