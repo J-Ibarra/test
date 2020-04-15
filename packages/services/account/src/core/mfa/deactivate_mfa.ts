@@ -1,6 +1,6 @@
 import * as speakeasy from 'speakeasy'
 
-import { findUserById, findUserByAccountId, findUserByAccountHin, updateUser } from '../users'
+import { findUserById, findUserByAccountHin, updateUser } from '../users'
 import { ValidationError } from '@abx-types/error'
 
 export async function deactivateMfa(userId: string, token: string): Promise<void> {
@@ -33,29 +33,19 @@ export async function deactivateMfa(userId: string, token: string): Promise<void
   } as any)
 }
 
-export async function deactivateMfaAdmin(request: { hin: string }): Promise<void> {
-
-  const account = await findUserByAccountHin(request.hin)
-
-  if (!account) {
-    throw new Error(`User Account not found for Hin ${request.hin}`)
-  }
-
-  const { mfaSecret, mfaTempSecret } = account
-
-  if (!mfaSecret && !mfaTempSecret) {
-    throw new ValidationError('Multifactor authentication has already been disabled' )
-  }
-
-  const user = await findUserByAccountId(account!.accountId)
+export async function deactivateUserMfa(request: { hin: string }): Promise<void> {
+  const user = await findUserByAccountHin(request.hin)
 
   if (!user) {
-    throw new Error(`User not found for accountId ` + account!.accountId)
-  } else {
-    await updateUser({
-      mfaSecret: null,
-      mfaTempSecret: null,
-      id: user!.id,
-    } as any)
+    throw new Error(`User Account not found for Hin ${request.hin}`)
+  } else if (!user.mfaSecret && !user.mfaTempSecret) {
+    throw new ValidationError('Multifactor authentication has already been disabled')
   }
+
+  await updateUser({
+    mfaSecret: null,
+    mfaTempSecret: null,
+    qrcodeUrl: null,
+    id: user!.id,
+  } as any)
 }

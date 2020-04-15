@@ -58,7 +58,7 @@ export async function createUser(
     referredBy = referrerAccount!!.id
   }
 
-  return wrapInTransaction(sequelize, trans, async transaction => {
+  return wrapInTransaction(sequelize, trans, async (transaction) => {
     const passwordHash = await createHashedPassword(password)
     return getModel<User>('user')
       .create(
@@ -78,7 +78,7 @@ export async function createUser(
 }
 
 export async function changePassword({ accountId, currentPassword, newPassword }) {
-  return wrapInTransaction(sequelize, null, async transaction => {
+  return wrapInTransaction(sequelize, null, async (transaction) => {
     const user = await findUserByAccountId(accountId)
     const isCurrentPasswordValid = await validatePassword(currentPassword, user!.passwordHash)
 
@@ -117,7 +117,7 @@ export async function findUsersByEmail(emails: string[]): Promise<User[]> {
     where: { email: { $in: emails } } as any,
   })
 
-  return users.map(userInstance => userInstance.get())
+  return users.map((userInstance) => userInstance.get())
 }
 
 export async function findUserByEmailWithAccount(email: string, trans?: Transaction): Promise<User | null> {
@@ -125,23 +125,21 @@ export async function findUserByEmailWithAccount(email: string, trans?: Transact
 }
 
 export async function findUserById(id: string, trans?: Transaction) {
-  return wrapInTransaction(sequelize, trans, async t => {
+  return wrapInTransaction(sequelize, trans, async (t) => {
     const user = await getModel<User>('user').findOne({ where: { id }, transaction: t })
     return user ? user.get() : null
   })
 }
 
 export async function findUserByAccountHin(hin: string, trans?: Transaction) {
-  return wrapInTransaction(sequelize, trans, async t => {
-    const user = await getModel<User>('user').findOne({ 
+  return wrapInTransaction(sequelize, trans, async (t) => {
+    const user = await getModel<User>('user').findOne({
       transaction: t,
       include: [
         {
           model: getModel<Account>('account'),
           as: 'account',
-          where: {
-            $or: [{ hin: { $like: `${hin}%` } }],
-          },
+          where: { hin },
         },
       ],
     })
@@ -150,13 +148,13 @@ export async function findUserByAccountHin(hin: string, trans?: Transaction) {
 }
 
 export function findUserPublicView(id: string, trans?: Transaction): Promise<UserPublicView> {
-  return wrapInTransaction(sequelize, trans, async t => {
+  return wrapInTransaction(sequelize, trans, async (t) => {
     const user = await getModel<User>('user').findOne({ where: { id }, transaction: t })
     return user ? user.get('publicView') : null
   })
 }
 export async function findUserByAccountId(accountId: string, trans?: Transaction) {
-  return wrapInTransaction(sequelize, trans, async t => {
+  return wrapInTransaction(sequelize, trans, async (t) => {
     const user = await getModel<User>('user').findOne({ where: { accountId }, transaction: t })
     return user ? user.get() : null
   })
@@ -172,7 +170,7 @@ export async function findUserByIdWithAccount(id: string) {
 
 export async function findUsersByAccountId(accountId: string, trans?: Transaction): Promise<User[]> {
   const users = await getModel<User>('user').findAll({ where: { accountId }, transaction: trans })
-  return users.map(user => user.get())
+  return users.map((user) => user.get())
 }
 
 /**
@@ -184,7 +182,7 @@ export async function findUsersByAccountId(accountId: string, trans?: Transactio
  * @throws {ValidationError} when input credentials do not match records
  */
 export async function validateUserCredentials(email: string, password: string, trans?: Transaction): Promise<UserPublicView> {
-  return wrapInTransaction(sequelize, trans, async t => {
+  return wrapInTransaction(sequelize, trans, async (t) => {
     const formattedEmail = email.toLocaleLowerCase()
     const user = await findUserByEmailWithAccount(formattedEmail, t)
     if (!!user) {
@@ -211,7 +209,7 @@ export async function validateUserCredentials(email: string, password: string, t
 }
 
 export async function updateUser(request: Partial<User>, t?: Transaction): Promise<[number, UserInstance[]]> {
-  return wrapInTransaction(sequelize, t, async transaction => {
+  return wrapInTransaction(sequelize, t, async (transaction) => {
     return (await getModel<User>('user').update(request as User, {
       where: { id: request.id } as any,
       transaction,
@@ -221,7 +219,7 @@ export async function updateUser(request: Partial<User>, t?: Transaction): Promi
 }
 
 async function findUser(criteria: Partial<User>, includeAccountDetails: boolean, trans?: Transaction): Promise<User | null> {
-  return wrapInTransaction(sequelize, trans, async t => {
+  return wrapInTransaction(sequelize, trans, async (t) => {
     const user = await getModel<User>('user').findOne({
       where: { ...criteria } as any,
       transaction: t,
@@ -247,7 +245,7 @@ export async function findAllUsersForHin(hin: string, t?: Transaction): Promise<
     ],
   })
 
-  return userInstances.map(user => ({
+  return userInstances.map((user) => ({
     ...user.get('publicView'),
     hin: (user as any).account.hin,
   }))
