@@ -14,15 +14,8 @@ export async function getAccountSummary(hin: string): Promise<FundManagementAcco
   const balances = await findAllBalancesForAccount(account.id)
 
   const { mfaSecret } = account.users![0]
-
-  let enabledMFA
-  if (mfaSecret) {
-    enabledMFA = true
-  }  else {
-    enabledMFA = false
-  }
-
   const userDetails = account.users![0]
+
   return {
     id: account.id,
     email: userDetails.email,
@@ -33,14 +26,14 @@ export async function getAccountSummary(hin: string): Promise<FundManagementAcco
     lastName: userDetails.lastName || '',
     status: account.status,
     suspended: account.suspended,
-    mfaEnabled: enabledMFA,
+    mfaEnabled: !!mfaSecret,
     mfaTempSecretCreated: userDetails.mfaTempSecretCreated,
     balances: transformToBalanceSummaries(balances),
   }
 }
 
 function transformToBalanceSummaries(balances: Balance[]): BalanceSummary[] {
-  return balances.map(balance => ({
+  return balances.map((balance) => ({
     currency: balance.currency!,
     available: get(balance, 'available.value', 0),
     reserved: get(balance, 'reserved.value', 0),
