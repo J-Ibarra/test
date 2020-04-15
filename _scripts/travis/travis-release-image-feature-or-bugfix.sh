@@ -1,6 +1,6 @@
 ./_scripts/travis/travis-build-branch-checkout.sh
 
-export DOCKER_IMAGE_TAG=`echo "$TRAVIS_BRANCH-$TRAVIS_TAG" | sed -r 's/[\/_]+/-/g'`
+export DOCKER_IMAGE_TAG=`echo "$TRAVIS_TAG" | sed -r 's/[\/_]+/-/g'`
 echo $DOCKER_IMAGE_TAG
 
 # Authenticating with ECR
