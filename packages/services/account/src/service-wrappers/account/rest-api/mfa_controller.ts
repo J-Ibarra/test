@@ -5,11 +5,6 @@ import { OverloadedRequest } from '@abx-types/account'
 interface MfaStatusResponse {
   enabled: boolean
 }
-
-interface UserDisableMFAAdminRequest {
-  suspended: boolean
-}
-
 @Tags('accounts')
 @Route('mfa')
 export class MFAController extends Controller {
@@ -73,9 +68,9 @@ export class MFAController extends Controller {
     adminAuth: [],
   })
   @Delete('admin/{accountHin}')
-  public async disableMfaByAdmin(accountHin: string, @Request() { suspended }: UserDisableMFAAdminRequest): Promise<{ message: string } | void> {
+  public async disableMfaByAdmin(accountHin: string): Promise<{ message: string } | void> {
     try {
-      await deactivateMfaAdmin({ hin: accountHin, suspended })
+      await deactivateMfaAdmin({ hin: accountHin })
       this.setStatus(200)
       return { message: '2FA was disabled' }
     } catch (e) {

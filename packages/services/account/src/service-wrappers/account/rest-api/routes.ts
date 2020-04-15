@@ -488,7 +488,6 @@ export function RegisterRoutes(app: express.Express) {
     function(request: any, response: any, next: any) {
       const args = {
         accountHin: { "in": "path", "name": "accountHin", "required": true, "dataType": "string" },
-        undefined: { "in": "request", "required": true, "dataType": "object" },
       };
 
       let validatedArgs: any[] = [];
