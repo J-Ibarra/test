@@ -13,7 +13,6 @@ import { depthPrefix } from '../../../order-matcher/core/order-match-handling/de
 export const orderTestAccountEmails = ['order-user-1@abx.com', 'order-user-2@abx.com']
 
 @Route('test-automation')
-@Hidden()
 export class E2eTestingDataSetupController {
   private logger = Logger.getInstance('api', 'E2eTestDataCleanerController')
 

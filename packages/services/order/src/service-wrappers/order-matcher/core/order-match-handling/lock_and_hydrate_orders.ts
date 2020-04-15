@@ -7,6 +7,7 @@ import { CancelOrderQueueRequest, OrderQueueRequest, PlaceOrderQueueRequest } fr
 import { addToQueue } from '../../../order-gateway/core/add_to_queue'
 import { findOrders } from '../../../../core'
 import { getDepthFromCache } from './depth/redis'
+import { SymbolPairStateFilter } from '@abx-types/reference-data'
 
 const redisCacheGateway = getCacheClient()
 
@@ -76,16 +77,16 @@ async function getOrdersNotInOrderQueue(statuses: OrderStatus[]): Promise<Array<
 }
 
 async function getCurrentOrderIdsForQueuedOrders(): Promise<number[]> {
-  const symbols = await getAllSymbolPairSummaries()
+  const symbols = await getAllSymbolPairSummaries(SymbolPairStateFilter.all)
   const orderQueueRequestsForAllSymbols = await Promise.all(
     symbols.map(({ id }) => redisCacheGateway.getList<OrderQueueRequest>(`exchange:orders:queue:${id}`)),
   )
 
-  return _.flatMap(orderQueueRequestsForAllSymbols, placeOrderRequests => placeOrderRequests.map(({ order }) => order.id!))
+  return _.flatMap(orderQueueRequestsForAllSymbols, (placeOrderRequests) => placeOrderRequests.map(({ order }) => order.id!))
 }
 
 async function getCurrentOrderIdsForOrdersInDepth(): Promise<number[]> {
-  const symbols = await getAllSymbolPairSummaries()
+  const symbols = await getAllSymbolPairSummaries(SymbolPairStateFilter.all)
   const depthForSymbols = await Promise.all(symbols.map(({ id }) => getDepthFromCache(id)))
 
   return _.flatMap(depthForSymbols, ({ buy, sell }) => buy.concat(sell).map(({ id }) => id!))

@@ -19,6 +19,7 @@ import './boundaries_controller'
 import './currencies_controller'
 import './feature_flags_controller'
 import './symbols_controller'
+import './E2eTestingDataSetupController'
 import { REFERENCE_DATA_REST_API_PORT } from '@abx-service-clients/reference-data'
 
 const logger = Logger.getInstance('api', 'bootstrapRestApi')

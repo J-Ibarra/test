@@ -6,6 +6,7 @@ import * as blockchainCurrencyGateway from '@abx-utils/blockchain-currency-gatew
 import { CurrencyCode } from '@abx-types/reference-data'
 import { DepositAddressNewTransactionQueuePoller } from '../deposit-transaction-recording/DepositAddressNewTransactionQueuePoller'
 import { NewTransactionRecorder } from '../../core/deposit-transaction-recording/NewTransactionRecorder'
+import { HoldingsTransactionDispatcher } from '../holdings-transaction-creation/HoldingsTransactionDispatcher'
 
 describe('DepositAddressNewTransactionQueuePoller', () => {
   const depositAddressTransactionQueuePoller = new DepositAddressNewTransactionQueuePoller()
@@ -14,6 +15,7 @@ describe('DepositAddressNewTransactionQueuePoller', () => {
   const testDepositTransactionQueue = 'local-deposit-transaction-queue'
   let recordDepositTransactionStub
   let getTransactionStub
+  let processHoldingsTransactionStub
 
   const depositRequest = {
     id: 1,
@@ -25,10 +27,15 @@ describe('DepositAddressNewTransactionQueuePoller', () => {
 
   const transactionDetails = {
     transactionHash: 'txHash',
-    receiverAddress: 'receiver-address-1',
+    receiverAddress: address,
     senderAddress: 'sender-address-2',
     amount: 3,
     time: new Date(),
+  }
+
+  const confirmedTransactionDetails = {
+    ...transactionDetails,
+    confirmations: 1
   }
 
   beforeEach(() => {
@@ -41,6 +48,7 @@ describe('DepositAddressNewTransactionQueuePoller', () => {
       }),
     } as any
     recordDepositTransactionStub = sinon.stub(NewTransactionRecorder.prototype, 'recordDepositTransaction').resolves(depositRequest)
+    processHoldingsTransactionStub = sinon.stub(HoldingsTransactionDispatcher.prototype, 'processDepositAddressTransaction').resolves()
     process.env.DEPOSIT_CONFIRMED_TRANSACTION_CALLBACK_URL = testDepositTransactionQueue
   })
 
@@ -68,6 +76,15 @@ describe('DepositAddressNewTransactionQueuePoller', () => {
       expect(getTransactionStub.calledOnce).to.eql(false)
     })
 
+    it('should not process transaction when the receiver is not the current address', async () => {
+      stubAllDependencies()
+
+      await depositAddressTransactionQueuePoller['processDepositAddressTransaction'](CurrencyCode.bitcoin, 'test', transactionId)
+
+      expect(getTransactionStub.calledOnce).to.eql(true)
+      expect(recordDepositTransactionStub.calledOnce).to.eql(false)
+    })
+
     it('should process transaction when deposit address found', async () => {
       stubAllDependencies()
 
@@ -76,6 +93,32 @@ describe('DepositAddressNewTransactionQueuePoller', () => {
       expect(
         recordDepositTransactionStub.calledWith({ currency: CurrencyCode.bitcoin, depositAddress, depositTransactionDetails: transactionDetails }),
       )
+    })
+
+    it('should not process holdings transaction when deposit amount is low', async () => {
+      stubAllDependencies()
+      getTransactionStub.resolves({...confirmedTransactionDetails, amount: 0.00001})
+      const bitcoinConfirmationsRequired = 1
+      process.env.BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS = `${bitcoinConfirmationsRequired}`
+
+      await depositAddressTransactionQueuePoller['processDepositAddressTransaction'](CurrencyCode.bitcoin, address, transactionId)
+
+      expect(getTransactionStub.calledOnce).to.eql(true)
+      expect(recordDepositTransactionStub.calledOnce).to.eql(true)
+      expect(processHoldingsTransactionStub.calledOnce).to.eql(false)
+    })
+
+    it('should process holdings transaction when deposit amount is big enough', async () => {
+      stubAllDependencies()
+      getTransactionStub.resolves(confirmedTransactionDetails)
+      const bitcoinConfirmationsRequired = 1
+      process.env.BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS = `${bitcoinConfirmationsRequired}`
+
+      await depositAddressTransactionQueuePoller['processDepositAddressTransaction'](CurrencyCode.bitcoin, address, transactionId)
+
+      expect(getTransactionStub.calledOnce).to.eql(true)
+      expect(recordDepositTransactionStub.calledOnce).to.eql(true)
+      expect(processHoldingsTransactionStub.calledOnce).to.eql(true)
     })
   })
 

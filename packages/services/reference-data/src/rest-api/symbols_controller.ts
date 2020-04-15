@@ -1,19 +1,20 @@
-import { Controller, Get, Route, Query, Security, Request } from 'tsoa'
+import { Controller, Get, Route, Query, Security, Request, Tags } from 'tsoa'
 import { getAllCompleteSymbolDetails, getExcludedAccountTypesFromOrderRangeValidations, findCurrenciesByAccountId } from '../core'
-import { SymbolPairApiResponse, SymbolPair } from '@abx-types/reference-data'
+import { SymbolPairApiResponse, SymbolPair, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { OverloadedRequest } from '@abx-types/account'
 import { ApiErrorPayload } from '@abx-types/error'
 
+@Tags('reference-data')
 @Route()
 export class SymbolsController extends Controller {
   @Get('/symbols')
   public async getSymbols(@Request() request: OverloadedRequest, @Query() includeOrderRange?: boolean) {
-    const symbols = await getAllCompleteSymbolDetails()
-
+    const symbols = await getAllCompleteSymbolDetails({ state: SymbolPairStateFilter.all })
     const allowedCurrencies = await findCurrenciesByAccountId(request.account!.id)
 
-    const allowedSymbols = symbols.filter(s => allowedCurrencies.some(c => c.code === s.base.code) 
-      && allowedCurrencies.some(c => c.code === s.quote.code))
+    const allowedSymbols = symbols.filter(
+      (s) => allowedCurrencies.some((c) => c.code === s.base.code) && allowedCurrencies.some((c) => c.code === s.quote.code),
+    )
 
     const sortableSymbols = allowedSymbols.map(
       ({ id, base, quote, fee, orderRange, sortOrder }: SymbolPair): SymbolPairApiResponse => {

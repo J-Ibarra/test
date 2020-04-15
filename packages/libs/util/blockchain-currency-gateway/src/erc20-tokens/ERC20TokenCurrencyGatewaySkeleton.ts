@@ -6,7 +6,7 @@ import * as util from 'util'
 
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 
-import { CurrencyCode, Environment } from '@abx-types/reference-data'
+import { CurrencyCode, Environment, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { Logger } from '@abx-utils/logging'
 import { decryptValue } from '@abx-utils/encryption'
 import { Erc20ApiProviderFacade } from './Erc20ApiProviderFacade'
@@ -122,7 +122,7 @@ export abstract class ERC20TokenCurrencyGatewaySkeleton implements OnChainCurren
   }
 
   public getId() {
-    return getCurrencyId(this.ticker)
+    return getCurrencyId(this.ticker, SymbolPairStateFilter.all)
   }
 
   public async getHoldingPublicAddress(): Promise<string> {

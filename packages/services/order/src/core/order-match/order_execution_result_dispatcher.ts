@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js'
 import { Transaction } from 'sequelize'
-import { Environment, SymbolPair } from '@abx-types/reference-data'
+import { Environment, SymbolPair, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { Logger } from '@abx-utils/logging'
 import { sequelize, wrapInTransaction, getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { findOrder } from '../order'
@@ -34,7 +34,7 @@ export function publishOrderExecutionResultEvent(orderId: number, parentTransact
     return
   }
 
-  return wrapInTransaction(sequelize, parentTransaction, async transaction => {
+  return wrapInTransaction(sequelize, parentTransaction, async (transaction) => {
     logger.info(`Publishing order execution result for ${orderId}`)
 
     const { order, allMatchesSettled } = await allMatchesSettledForOrder(orderId, transaction)
@@ -43,7 +43,7 @@ export function publishOrderExecutionResultEvent(orderId: number, parentTransact
       logger.info(`All matches settled for order ${orderId}`)
       const { rows: orderTradeTransactions } = await findTradeTransactions({ where: { orderId }, transaction })
 
-      const tradedSymbol = symbolDictionary[order.symbolId] || (await getCompleteSymbolDetails(order.symbolId))
+      const tradedSymbol = symbolDictionary[order.symbolId] || (await getCompleteSymbolDetails(order.symbolId, SymbolPairStateFilter.all))
       symbolDictionary[order.symbolId] = tradedSymbol
 
       const currencyReceived = order.direction === OrderDirection.buy ? tradedSymbol.base : tradedSymbol.quote

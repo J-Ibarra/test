@@ -3,37 +3,37 @@ import { getModel } from '@abx-utils/db-connection-utils'
 import { findCurrencies } from '../core/symbols/currency_in_memory_cache'
 
 export async function updateCurrencyEnabledStatus(code: CurrencyCode, value: boolean) {
-  return getModel('currency').update(
+  await getModel('currency').update(
     {
-      isEnabled: value
+      isEnabled: value,
     },
     {
       where: {
-        code
-      }
-    }
+        code,
+      },
+    },
   )
 }
 
 export async function updateSymbolsForCurrencyWithStatus(code: CurrencyCode, value: boolean) {
   const currencies = await findCurrencies()
-    
-  const currencyForCode = currencies.find(c => c.code === code)!.id
-  const currencyIds = currencies.map(c => c.id)
 
-  return getModel('symbol').update(
+  const currencyForCode = currencies.find((c) => c.code === code)!.id
+  const currencyIds = currencies.map((c) => c.id)
+
+  await getModel('symbol').update(
     {
-      isEnabled: value
+      isEnabled: value,
     },
     {
       where: {
-        'baseId': currencyIds,
-        'quoteId': currencyIds,
+        baseId: currencyIds,
+        quoteId: currencyIds,
         $or: {
-          'baseId': currencyForCode,
-          'quoteId': currencyForCode
-        }
-      }
-    }
+          baseId: currencyForCode,
+          quoteId: currencyForCode,
+        },
+      },
+    },
   )
 }

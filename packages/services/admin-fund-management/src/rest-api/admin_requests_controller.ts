@@ -1,9 +1,16 @@
-import { Body, Controller, Get, Patch, Post, Request, Route, Security } from 'tsoa'
+import { Body, Controller, Get, Patch, Post, Request, Route, Security, Tags, Hidden, Query } from 'tsoa'
 
 import { AdminRequest, AdminRequestStatus, AdminRequestType } from '@abx-service-clients/admin-fund-management'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode } from '@abx-types/reference-data'
-import { findAllAdminRequests, findAllAdminRequestsForAccountHin, rejectAdminRequest, approveAdminRequest, createAdminRequest } from '../core'
+import {
+  countAllAdminRequests,
+  findAllAdminRequests,
+  findAllAdminRequestsForAccountHin,
+  rejectAdminRequest,
+  approveAdminRequest,
+  createAdminRequest,
+} from '../core'
 import { OverloadedRequest } from '@abx-types/account'
 import { ApiErrorPayload } from '@abx-types/error'
 
@@ -23,22 +30,36 @@ interface AdminRequestParams {
 
 const logger = Logger.getInstance('api', 'AdminRequestsController')
 
+@Tags('admin-funds-management')
 @Route('admin/fund-management/admin-requests')
 export class AdminRequestsController extends Controller {
   @Security('adminAuth')
+  @Get('count')
+  public async retrieveAdminRequestsCount(@Query() accountHin?: string): Promise<{ total: number }> {
+    const total = await countAllAdminRequests(accountHin)
+
+    return {
+      total,
+    }
+  }
+
+  @Security('adminAuth')
   @Get()
-  public async retrieveAllAdminRequests(): Promise<AdminRequest[]> {
-    return findAllAdminRequests()
+  @Hidden()
+  public async retrieveAllAdminRequests(@Query() limit?: number, @Query() offset?: number): Promise<AdminRequest[]> {
+    return findAllAdminRequests({ limit, offset })
   }
 
   @Security('adminAuth')
   @Get('{accountHin}')
-  public async getAdminRequestsForAccountHin(accountHin: string): Promise<AdminRequest[]> {
-    return findAllAdminRequestsForAccountHin(accountHin)
+  @Hidden()
+  public async getAdminRequestsForAccountHin(accountHin: string, @Query() limit?: number, @Query() offset?: number): Promise<AdminRequest[]> {
+    return findAllAdminRequestsForAccountHin({ accountHin, limit, offset })
   }
 
   @Security('adminAuth')
   @Patch('{id}')
+  @Hidden()
   public async updateAdminRequestStatus(
     id: number,
     @Body() { status, updatedAt }: AdminRequestStatusUpdateParams,
@@ -75,6 +96,7 @@ export class AdminRequestsController extends Controller {
 
   @Security('adminAuth')
   @Post()
+  @Hidden()
   public async createAdminRequest(
     @Body() requestBody: AdminRequestParams,
     @Request() request: OverloadedRequest,

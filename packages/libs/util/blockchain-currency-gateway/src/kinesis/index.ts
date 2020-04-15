@@ -96,7 +96,7 @@ export class Kinesis implements OnChainCurrencyGateway {
     try {
       const acc = await this.getServer().loadAccount(address)
       const allOperations = await this.getOperationsForAccount(acc)
-      return allOperations.filter(op => ['create_account', 'payment'].includes(op.type)).map(this.apiToDepositTransaction)
+      return allOperations.filter((op) => ['create_account', 'payment'].includes(op.type)).map(this.apiToDepositTransaction)
     } catch (error) {
       // We swallow this error as not to disrupt the deposits flow
       logger.debug(`Error with getting deposit transactions for currency ${this.ticker}. Message: ${error.message}`)
@@ -105,12 +105,7 @@ export class Kinesis implements OnChainCurrencyGateway {
   }
 
   public async getLatestTransactions(lastSeenTransactionHash?: string, transactionAcc: DepositTransaction[] = []): Promise<DepositTransaction[]> {
-    const payments = await this.getServer()
-      .payments()
-      .order('desc')
-      .limit(100)
-      .cursor('')
-      .call()
+    const payments = await this.getServer().payments().order('desc').limit(100).cursor('').call()
     const newTransactions: PaymentOperationRecord[] = []
 
     for (const payment of payments.records) {
@@ -137,10 +132,7 @@ export class Kinesis implements OnChainCurrencyGateway {
   }
 
   public async checkConfirmationOfTransaction(txHash: string) {
-    const transaction = await this.getServer()
-      .transactions()
-      .transaction(txHash)
-      .call()
+    const transaction = await this.getServer().transactions().transaction(txHash).call()
 
     return !!transaction
   }
@@ -187,10 +179,7 @@ export class Kinesis implements OnChainCurrencyGateway {
       .build()
 
     return {
-      txEnvelope: transaction
-        .toEnvelope()
-        .toXDR()
-        .toString('base64'),
+      txEnvelope: transaction.toEnvelope().toXDR().toString('base64'),
       nextSequenceNumber,
     }
   }
@@ -298,7 +287,7 @@ export class Kinesis implements OnChainCurrencyGateway {
       transaction.sign(sender)
     }
 
-    const receipt = await server.submitTransaction(transaction).catch(e => {
+    const receipt = await server.submitTransaction(transaction).catch((e) => {
       console.error(e.data.extras.result_codes)
     })
 
@@ -345,13 +334,9 @@ export class Kinesis implements OnChainCurrencyGateway {
       .ledgers()
       .order('desc')
       .call()
-      .then(res => res.records[0])
+      .then((res) => res.records[0])
 
-    const fee = new Decimal(amount)
-      .mul(base_percentage_fee)
-      .mul(this.STROOPS_IN_ONE_KINESIS)
-      .div(this.BASIS_POINTS_TO_PERCENT)
-      .toNumber()
+    const fee = new Decimal(amount).mul(base_percentage_fee).mul(this.STROOPS_IN_ONE_KINESIS).div(this.BASIS_POINTS_TO_PERCENT).toNumber()
 
     return String(Math.ceil(fee + base_fee_in_stroops))
   }
@@ -371,7 +356,7 @@ export class Kinesis implements OnChainCurrencyGateway {
 
   private async getOperationsForAccount(acc: AccountResponse) {
     const firstPage = await acc.operations({ order: 'desc', limit: 100 })
-    const isLastPageOrLastSeenTransactionHashFound = (ops: CollectionPage<OperationRecord>) => ops.records.some(op => op.type === 'create_account')
+    const isLastPageOrLastSeenTransactionHashFound = (ops: CollectionPage<OperationRecord>) => ops.records.some((op) => op.type === 'create_account')
 
     const getAllOperationsSinceLastWithdrawal = async (
       page: CollectionPage<OperationRecord>,

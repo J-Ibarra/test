@@ -5,7 +5,7 @@ import { v4 } from 'node-uuid'
 import { Logger } from '@abx-utils/logging'
 import { sequelize, getModel, getCacheClient, wrapInTransaction, getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { Order, OrderQueueRequest, OrderQueueStatus } from '@abx-types/order'
-import { SymbolPairSummary } from '@abx-types/reference-data'
+import { SymbolPairSummary, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { OrderPubSubChannels } from '@abx-service-clients/order'
 import { QueueInfo, Gate } from './model'
 import { publishDbOrdersToQueue } from '../order-match-handling/lock_and_hydrate_orders'
@@ -38,7 +38,7 @@ export function addToQueue(symbolId: string, orderRequest: OrderQueueRequest): P
     symbolId,
   })
 
-  return new Promise(async resolve => {
+  return new Promise(async (resolve) => {
     await redisClient.addValueToHeadOfList<OrderQueueRequest>(`exchange:orders:queue:${symbolId}`, orderRequest)
     await redisClient.incrementHashField(`orderQueueLength`, `contract:${symbolId}`, 1)
     resolve(orderRequest.order)
@@ -91,7 +91,7 @@ export async function processQueue(orderRequestFn: () => void) {
 
   let ids
   if (contractsWithWork.length > 0) {
-    ids = await wrapInTransaction(sequelize, null, async t => {
+    ids = await wrapInTransaction(sequelize, null, async (t) => {
       const openGates = await getModel<OrderQueueStatus>('orderQueueStatus').findAll({
         where: {
           processing: false,
@@ -107,8 +107,8 @@ export async function processQueue(orderRequestFn: () => void) {
       }
 
       const firstTwentyOpenGates = _(openGates)
-        .map(o => o.get())
-        .sortBy(o => new Date(o.lastProcessed))
+        .map((o) => o.get())
+        .sortBy((o) => new Date(o.lastProcessed))
         .take(20)
         .value()
 
@@ -160,12 +160,12 @@ export async function hydrateGateKeeper(symbols: SymbolPairSummary[]) {
   )
 
   const orderQueueStatuses = await getModel<OrderQueueStatus>('orderQueueStatus').bulkCreate(hydratedStatuses as OrderQueueStatus[])
-  return orderQueueStatuses.map(o => o.get())
+  return orderQueueStatuses.map((o) => o.get())
 }
 // This function allows us to stop the working from any further processing
 export function disableProcessing() {
   logger.warn(`disableProcessing: Disable procesing request received`)
-  return new Promise(res => {
+  return new Promise((res) => {
     queueEmitter.once(`queueEmitter:shutdown`, res)
     disable = true
     return getModel<OrderQueueStatus>('orderQueueStatus').update(
@@ -179,7 +179,7 @@ export function disableProcessing() {
 }
 export async function initializeGatekeeper() {
   const epicurus = getEpicurusInstance()
-  const symbolPairs = await getAllSymbolPairSummaries()
+  const symbolPairs = await getAllSymbolPairSummaries(SymbolPairStateFilter.all)
 
   logger.debug('Adding orders to queue')
   await publishDbOrdersToQueue()
@@ -188,7 +188,7 @@ export async function initializeGatekeeper() {
   await hydrateGateKeeper(symbolPairs)
   logger.debug('Gate keeper hydrated')
 
-  return epicurus.subscribe(OrderPubSubChannels.exchangeOrderEvents, message => {
+  return epicurus.subscribe(OrderPubSubChannels.exchangeOrderEvents, (message) => {
     const jobId = message.order.jobId
     queueEmitter.emit(`queueEmitter:job:${jobId}`, message.order)
   })

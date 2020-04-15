@@ -7,6 +7,7 @@ import { getAllCompleteSymbolDetails } from '@abx-service-clients/reference-data
 import { DepthMidPrice, MarketDataTimeFrame, MidPricesForSymbolsRequest, OHLCMarketData } from '@abx-types/market-data'
 import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-data'
 import { CacheFirstMidPriceRepository } from './repository/mid-price/cache_first_mid_price_repository'
+import { SymbolPairStateFilter } from '@abx-types/reference-data'
 
 /**
  * Computes the open, high, close and low depth prices for all symbols within an given time frame.
@@ -19,14 +20,12 @@ import { CacheFirstMidPriceRepository } from './repository/mid-price/cache_first
  * @param timeFrame
  */
 export async function reconcileOHCLMarketData(timeFrame: MarketDataTimeFrame): Promise<any> {
-  const symbols = await getAllCompleteSymbolDetails()
+  const symbols = await getAllCompleteSymbolDetails(SymbolPairStateFilter.all)
 
   const symbolIdToDepthMidPrices = await CacheFirstMidPriceRepository.getInstance().getOHLCOrderedMidPricesForSymbols(
     new MidPricesForSymbolsRequest(
       symbols.map(({ id }) => id),
-      moment()
-        .subtract(timeFrame, 'minutes')
-        .toDate(),
+      moment().subtract(timeFrame, 'minutes').toDate(),
     ),
   )
 
@@ -75,7 +74,7 @@ async function computeOHCLForSymbol({
     limit: 1,
     order: [['createdAt', DBOrder.DESC]],
   })
-  const ohlcMarketDataSet = ohlcMarketData.map(marketData => marketData.get())
+  const ohlcMarketDataSet = ohlcMarketData.map((marketData) => marketData.get())
   const lastOHLCMarketData = last(ohlcMarketDataSet)
 
   logger.debug(`Mid-price updates for ${symbolId} found`)
@@ -104,7 +103,7 @@ async function computeOHCLForSymbol({
  * @returns the OHLC market data
  */
 export function getOHLCMarketData(symbolId: string, timeFrame: MarketDataTimeFrame, fromDate: Date, t?: Transaction): Promise<OHLCMarketData[]> {
-  return wrapInTransaction(sequelize, t, async transaction => {
+  return wrapInTransaction(sequelize, t, async (transaction) => {
     const ohlcMarketData = await getModel<OHLCMarketData>('ohlc_market_data').findAll({
       where: {
         symbolId,
@@ -114,7 +113,7 @@ export function getOHLCMarketData(symbolId: string, timeFrame: MarketDataTimeFra
       transaction,
     })
 
-    const ohlcMarketDataSet = ohlcMarketData.map(marketData => marketData.get())
+    const ohlcMarketDataSet = ohlcMarketData.map((marketData) => marketData.get())
     const lastOHLCMarketData = last(ohlcMarketDataSet)
     const realtimeOHLCMarketData = await generateRealTimeOHLCMarketData(symbolId, timeFrame, lastOHLCMarketData, transaction)
 
@@ -167,11 +166,7 @@ export function generateOneMinuteRealTimeOHLCMarketData(
   currentMidPrice: number,
 ): OHLCMarketData {
   const open = !!lastOHLCMarketData ? lastOHLCMarketData.close : currentMidPrice
-  const createdAt = !!lastOHLCMarketData
-    ? moment(lastOHLCMarketData.createdAt)
-        .add(1, 'minute')
-        .toDate()
-    : moment().toDate()
+  const createdAt = !!lastOHLCMarketData ? moment(lastOHLCMarketData.createdAt).add(1, 'minute').toDate() : moment().toDate()
 
   return {
     symbolId,
@@ -209,9 +204,7 @@ async function generateNonOneMinuteRealTimeOHLCMarketData(
   createdAt: Date,
   transaction: Transaction,
 ) {
-  const fromDate = moment(createdAt)
-    .subtract(timeFrame, 'minutes')
-    .toDate()
+  const fromDate = moment(createdAt).subtract(timeFrame, 'minutes').toDate()
   const interval = getCalculateIntervalForTimeFrame(timeFrame)
   const ohlcMarketData = await getModel<OHLCMarketData>('ohlc_market_data').findAll({
     where: {
@@ -222,20 +215,16 @@ async function generateNonOneMinuteRealTimeOHLCMarketData(
     transaction,
   })
 
-  const newCreatedAt = !!lastOHLCMarketData
-    ? moment(lastOHLCMarketData.createdAt)
-        .add(timeFrame, 'minutes')
-        .toDate()
-    : moment().toDate()
+  const newCreatedAt = !!lastOHLCMarketData ? moment(lastOHLCMarketData.createdAt).add(timeFrame, 'minutes').toDate() : moment().toDate()
 
-  const ohlcDataSet = ohlcMarketData.map(marketData => marketData.get())
+  const ohlcDataSet = ohlcMarketData.map((marketData) => marketData.get())
   const open = !!lastOHLCMarketData ? lastOHLCMarketData.close : currentMidPrice
   const close = currentMidPrice
 
-  const dataWithHighestValue = maxBy(ohlcDataSet, data => data.high)
+  const dataWithHighestValue = maxBy(ohlcDataSet, (data) => data.high)
   const high = !!dataWithHighestValue ? dataWithHighestValue.high : max([open, close])
 
-  const dataWithLowestValue = minBy(ohlcDataSet, data => data.low)
+  const dataWithLowestValue = minBy(ohlcDataSet, (data) => data.low)
   const low = !!dataWithLowestValue ? dataWithLowestValue.low : min([open, close])
   return {
     symbolId,

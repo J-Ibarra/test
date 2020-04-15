@@ -2,7 +2,7 @@ import { WithdrawalTransactionSent } from './model'
 import { findWithdrawalRequestByIdWithFeeRequest, updateWithdrawalRequest } from '../../../../core'
 import { WithdrawalState, WithdrawalRequest, CurrencyEnrichedWithdrawalRequest } from '@abx-types/withdrawal'
 import { WITHDRAWAL_TRANSACTION_COMPLETION_PENDING_QUEUE_URL } from '@abx-service-clients/withdrawal'
-import { CurrencyCode, Environment } from '@abx-types/reference-data'
+import { CurrencyCode, Environment, SymbolPairStateFilter, Currency } from '@abx-types/reference-data'
 import { getOnChainCurrencyManagerForEnvironment } from '@abx-utils/blockchain-currency-gateway'
 import { findCryptoCurrencies, findCurrencyForId } from '@abx-service-clients/reference-data'
 import { sendAsyncChangeMessage } from '@abx-utils/async-message-publisher'
@@ -10,12 +10,13 @@ import { deductOnChainTransactionFeeFromRevenueBalance } from '../withdrawal-tra
 import { WithdrawalCompletionPendingPayload } from '../withdrawal-completion/model'
 import { Logger } from '@abx-utils/logging'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
-import { nativelyImplementedCoins } from '../common'
+import { holdingsAddressTransactionNotificationEnabledCurrencies } from '../common'
 import { QueueConsumerOutput } from '@abx-utils/async-message-consumer'
 import { Transaction } from 'sequelize'
 
 const currencyToCoverOnChainFeeFor = [CurrencyCode.ethereum, CurrencyCode.kvt, CurrencyCode.bitcoin]
 const logger = Logger.getInstance('withdrawal-processor', 'withdrawal_transaction_request_recorder')
+let cryptoCurrencies: Currency[]
 
 export async function recordWithdrawalOnChainTransaction({
   withdrawalRequestId,
@@ -24,7 +25,7 @@ export async function recordWithdrawalOnChainTransaction({
 }: WithdrawalTransactionSent): Promise<void | QueueConsumerOutput> {
   logger.info(`Recording on chain transaction details for withdrawal request ${withdrawalRequestId}`)
 
-  return wrapInTransaction(sequelize, null, async transaction => {
+  return wrapInTransaction(sequelize, null, async (transaction) => {
     const withdrawalRequest = await findWithdrawalRequestByIdWithFeeRequest(withdrawalRequestId, transaction)
 
     if (!withdrawalRequest) {
@@ -35,6 +36,7 @@ export async function recordWithdrawalOnChainTransaction({
     const { withdrawalCurrency, onChainCurrencyGateway } = await getOnChainCurrencyGatewayAndWithdrawnCurrency(withdrawalRequest.currencyId)
     const feeCurrency = await findCurrencyForId(
       !!withdrawalRequest.feeRequest ? withdrawalRequest.feeRequest.currencyId : withdrawalRequest.currencyId,
+      SymbolPairStateFilter.all,
     )
     await deductOnChainTransactionFeeFromRevenueBalance(withdrawalRequest.id!, transactionFee, onChainCurrencyGateway, feeCurrency)
 
@@ -51,12 +53,15 @@ export async function recordWithdrawalOnChainTransaction({
 }
 
 async function getOnChainCurrencyGatewayAndWithdrawnCurrency(currencyId: number) {
-  const currencies = await findCryptoCurrencies()
+  if (!cryptoCurrencies) {
+    cryptoCurrencies = await findCryptoCurrencies(SymbolPairStateFilter.all)
+  }
+
   const currencyManager = getOnChainCurrencyManagerForEnvironment(
     process.env.NODE_ENV as Environment,
-    currencies.map(({ code }) => code),
+    cryptoCurrencies.map(({ code }) => code),
   )
-  const withdrawalCurrency = currencies.find(({ id }) => id === currencyId)!
+  const withdrawalCurrency = cryptoCurrencies.find(({ id }) => id === currencyId)!
 
   return { withdrawalCurrency, onChainCurrencyGateway: currencyManager.getCurrencyFromTicker(withdrawalCurrency.code) }
 }
@@ -91,11 +96,11 @@ async function updateRequestStatuses(
 }
 
 async function queueForCompletion(withdrawalRequestId: number, txid: string, currency: CurrencyCode) {
-  if (nativelyImplementedCoins.includes(currency)) {
+  if (!holdingsAddressTransactionNotificationEnabledCurrencies.includes(currency)) {
     logger.debug(`Queuing request for completion ${withdrawalRequestId}`)
 
     await sendAsyncChangeMessage<WithdrawalCompletionPendingPayload>({
-      type: 'withdrawal-transaction-sent',
+      type: 'withdrawal-completion-pending',
       target: {
         local: WITHDRAWAL_TRANSACTION_COMPLETION_PENDING_QUEUE_URL!,
         deployedEnvironment: WITHDRAWAL_TRANSACTION_COMPLETION_PENDING_QUEUE_URL!,

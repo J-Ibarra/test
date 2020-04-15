@@ -14,7 +14,7 @@ export function cancelAllOrdersForAccount(accountId: string) {
   return internalApiRequestDispatcher.fireRequestToInternalApi<void>(OrderGatewayEndpoints.cancelAllOrdersForAccount, { accountId })
 }
 
-export function cancelOrder(orderId: string, cancellationReason: string) {
+export function cancelOrder(orderId: number, cancellationReason: string) {
   return internalApiRequestDispatcher.fireRequestToInternalApi<void>(OrderGatewayEndpoints.cancelOrder, { orderId, cancellationReason })
 }
 

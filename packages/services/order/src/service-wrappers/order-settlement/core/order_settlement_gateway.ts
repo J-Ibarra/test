@@ -8,7 +8,7 @@ import { SourceEventType } from '@abx-types/balance'
 import { findBoundaryForCurrency, getVatRate, getCompleteSymbolDetails, isFiatCurrency } from '@abx-service-clients/reference-data'
 import { Logger } from '@abx-utils/logging'
 import { OrderMatch, UsdMidPriceEnrichedOrderMatch } from '@abx-types/order'
-import { CurrencyCode, FiatCurrency, SymbolPair, Currency } from '@abx-types/reference-data'
+import { CurrencyCode, FiatCurrency, SymbolPair, Currency, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { Tax, TradeTransactionCall } from '@abx-types/order'
 import { BuyerOrderSettlementHandler, FeeDetail, SellerOrderSettlementHandler } from './handler'
 import { getVatFees } from './vat_handler'
@@ -38,7 +38,7 @@ export class OrderSettlementGateway {
 
   public async settleOrderMatch(orderMatch: UsdMidPriceEnrichedOrderMatch, transaction: Transaction) {
     this.logger.info(`Settling order match ${orderMatch.id}`)
-    const matchedSymbol = await getCompleteSymbolDetails(orderMatch.symbolId)
+    const matchedSymbol = await getCompleteSymbolDetails(orderMatch.symbolId, SymbolPairStateFilter.all)
 
     const [buyerFeeDetail, sellerFeeDetail] = await this.calculateFees(orderMatch, matchedSymbol, transaction)
     const [buyerTax, sellerTax] = await this.calculateTax(buyerFeeDetail.fee, sellerFeeDetail.fee, orderMatch, matchedSymbol)
@@ -160,10 +160,7 @@ export class OrderSettlementGateway {
     const operator = await findOrCreateOperatorAccount()
     const { maxDecimals: maxFeeDecimals } = await findBoundaryForCurrency(feeCurrencyCode!)
 
-    const opFees = new Decimal(buyerFee)
-      .plus(sellerFee)
-      .toDP(maxFeeDecimals, Decimal.ROUND_DOWN)
-      .toNumber()
+    const opFees = new Decimal(buyerFee).plus(sellerFee).toDP(maxFeeDecimals, Decimal.ROUND_DOWN).toNumber()
 
     const feesToOperator = {
       accountId: operator.id,

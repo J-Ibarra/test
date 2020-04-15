@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Request, Route, Security, SuccessResponse } from 'tsoa'
+import { Body, Controller, Get, Post, Request, Route, Security, SuccessResponse, Tags } from 'tsoa'
 
 import { prepareWithdrawalRequestEmail } from '../../../core'
 import { Logger } from '@abx-utils/logging'
@@ -9,6 +9,7 @@ import { CurrencyCode } from '@abx-types/reference-data'
 import { WithdrawalRequestParams } from '@abx-types/withdrawal'
 import { initialiseWithdrawal } from '../core/withdrawals_gateway'
 
+@Tags('withdrawal')
 @Route('/withdrawals')
 export class WithdrawalsController extends Controller {
   private logger = Logger.getInstance('api', 'WithdrawalsController')

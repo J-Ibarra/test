@@ -1,7 +1,7 @@
 import { getModel } from '@abx-utils/db-connection-utils'
 import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-data'
 import { OrderMatch, OrderMatchStatus, UsdMidPriceEnrichedOrderMatch } from '@abx-types/order'
-import { CurrencyCode } from '@abx-types/reference-data'
+import { CurrencyCode, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { getAllCompleteSymbolDetails, getAllSymbolPairSummaries } from '@abx-service-clients/reference-data'
 import { addOrderToSettleQueue, settleOrderMatchForPair } from './core'
 import { runOrderDataMigrations } from '../../migrations/migration-runner'
@@ -35,7 +35,7 @@ export async function bootstrapSettlementService() {
   await runOrderDataMigrations()
   await bootstrapInternalApi()
 
-  const symbols = await getAllSymbolPairSummaries()
+  const symbols = await getAllSymbolPairSummaries(SymbolPairStateFilter.all)
   symbols.forEach(({ id }) => setTimeout(() => settleOrderMatchForPair(id), 100))
 
   await addAllMatchesPendingCompletionToQueue()
@@ -48,10 +48,10 @@ async function addAllMatchesPendingCompletionToQueue() {
     },
   })
 
-  const allMatchesPendingSettlement = omInstances.map(omInstance => omInstance.get())
+  const allMatchesPendingSettlement = omInstances.map((omInstance) => omInstance.get())
   const symbolIdToFeeCurrencyMidPrice = await computeMidPriceForAllSymbolFeeCurrencies(allMatchesPendingSettlement.map(({ symbolId }) => symbolId))
 
-  const feeCurrencyUsdMidPriceEnrichedMatches = allMatchesPendingSettlement.map(orderMatch =>
+  const feeCurrencyUsdMidPriceEnrichedMatches = allMatchesPendingSettlement.map((orderMatch) =>
     enrichOrderMatchWithUsdMidPrice(orderMatch, symbolIdToFeeCurrencyMidPrice[orderMatch.symbolId]),
   )
 
@@ -59,11 +59,11 @@ async function addAllMatchesPendingCompletionToQueue() {
 }
 
 async function computeMidPriceForAllSymbolFeeCurrencies(symbolIds: string[]): Promise<Record<string, OrderMatchFeeCurrencyMidPriceDetails>> {
-  const allSymbols = await getAllCompleteSymbolDetails()
+  const allSymbols = await getAllCompleteSymbolDetails(SymbolPairStateFilter.all)
   const uniqueSymbolIds = symbolIds.reduce((symbolIdAcc, symbolId) => symbolIdAcc.add(symbolId), new Set<string>())
 
-  const symbolFeeCurrencies = Array.from(uniqueSymbolIds).map(orderMatchSymbol => allSymbols.find(({ id }) => id === orderMatchSymbol)!.fee.code)
-  const realTimeMidPrices = await Promise.all(symbolFeeCurrencies.map(feeCurrency => calculateRealTimeMidPriceForSymbol(`${feeCurrency}_USD`)))
+  const symbolFeeCurrencies = Array.from(uniqueSymbolIds).map((orderMatchSymbol) => allSymbols.find(({ id }) => id === orderMatchSymbol)!.fee.code)
+  const realTimeMidPrices = await Promise.all(symbolFeeCurrencies.map((feeCurrency) => calculateRealTimeMidPriceForSymbol(`${feeCurrency}_USD`)))
 
   return Array.from(uniqueSymbolIds).reduce((symbolFeeCurrencyMidPriceData, orderMatchSymbolId, index) => {
     symbolFeeCurrencyMidPriceData[orderMatchSymbolId] = {

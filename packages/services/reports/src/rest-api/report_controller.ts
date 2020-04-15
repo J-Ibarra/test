@@ -1,7 +1,8 @@
-import { Controller, Get, Query, Request, Route, Security } from 'tsoa'
+import { Controller, Get, Query, Request, Route, Security, Tags } from 'tsoa'
 import { OverloadedRequest } from '@abx-types/account'
 import { getTradeTransactionInvoicePreSignedUrl } from '../core'
 
+@Tags('reports')
 @Route('reports')
 export class ReportsController extends Controller {
   @Security('cookieAuth')

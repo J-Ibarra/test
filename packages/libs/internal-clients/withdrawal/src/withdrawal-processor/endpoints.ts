@@ -1,3 +1,3 @@
 export enum WithdrawalProcessorEndpoints {
-  completeFiatWithdrawal = 'withdrawals/completeFiatWithdrawal',
+  completeFiatWithdrawal = 'withdrawal-processor/completeFiatWithdrawal',
 }

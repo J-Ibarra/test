@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Response, Route, Security, SuccessResponse } from 'tsoa'
+import { Controller, Get, Query, Response, Route, Security, SuccessResponse, Tags } from 'tsoa'
 
 import moment from 'moment'
 import { Logger } from '@abx-utils/logging'
@@ -6,6 +6,7 @@ import { MarketDataTimeFrame, MidPricesForSymbolRequest } from '@abx-types/marke
 import { CacheFirstMidPriceRepository, convertRealTimeMidPriceForSymbolsToObject } from '../core'
 import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-data'
 
+@Tags('market-data')
 @Route('mid-price')
 export class MidPriceController extends Controller {
   private logger = Logger.getInstance('api', 'MidPriceController')

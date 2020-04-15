@@ -6,6 +6,7 @@ import { Server } from 'http'
 import { bootstrapRestApi } from '../../rest-api'
 import { REFERENCE_DATA_REST_API_PORT } from '@abx-service-clients/reference-data'
 import * as currencies from '../../core/symbols/currency_in_memory_cache'
+import { createAccountAndSession } from '@abx-utils/account'
 
 describe('api:boundaries', () => {
   let app: Server
@@ -22,7 +23,10 @@ describe('api:boundaries', () => {
   })
 
   it('retrieves all boundaries', async () => {
-    const { body: boundaryMap, status } = await request(app).get('/api/boundaries')
+    const { cookie } = await createAccountAndSession()
+    const { body: boundaryMap, status } = await request(app)
+      .get('/api/boundaries')
+      .set('Cookie', cookie)
 
     expect(status).to.eql(200)
 

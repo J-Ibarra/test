@@ -78,7 +78,7 @@ function queueChangeInSQS<T>({ target, payload, type, id }: AsyncMessage<T>): Pr
 
 function publishChangeThroughRedis<T>({ target, payload }: AsyncMessage<T>): Promise<void> {
   const epicurus = getEpicurusInstance()
-  epicurus.publish(target.local, payload)
+  epicurus.publish(target.local, { payload })
 
   return Promise.resolve()
 }

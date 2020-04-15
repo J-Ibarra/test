@@ -1,7 +1,8 @@
-import { Controller, Get, Request, Route } from 'tsoa'
+import { Controller, Get, Request, Route, Tags } from 'tsoa'
 import { OverloadedRequest } from '@abx-types/account'
 import { findCurrenciesByAccountId } from '../core'
 
+@Tags('reference-data')
 @Route('currencies')
 export class CurrenciesController extends Controller {
   @Get()

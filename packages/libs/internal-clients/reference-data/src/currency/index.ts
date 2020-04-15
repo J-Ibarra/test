@@ -6,14 +6,14 @@ import { REFERENCE_DATA_REST_API_PORT } from '../boundaries'
 
 const internalApiRequestDispatcher = new InternalApiRequestDispatcher(REFERENCE_DATA_REST_API_PORT)
 
-export async function findAllCurrencyCodes(): Promise<CurrencyCode[]> {
-  const currencies = await findAllCurrencies()
+export async function findAllCurrencyCodes(filter = SymbolPairStateFilter.enabled): Promise<CurrencyCode[]> {
+  const currencies = await findAllCurrencies(filter)
 
   return currencies.map(({ code }) => code)
 }
 
-export async function findCryptoCurrencies(): Promise<Currency[]> {
-  const allCurrencies = await findAllCurrencies()
+export async function findCryptoCurrencies(filter = SymbolPairStateFilter.enabled): Promise<Currency[]> {
+  const allCurrencies = await findAllCurrencies(filter)
 
   return allCurrencies.filter(({ code }) => isCryptoCurrency(code))
 }
@@ -21,32 +21,36 @@ export async function findCryptoCurrencies(): Promise<Currency[]> {
 export async function findCurrencyForCodes(currencyCodes: CurrencyCode[], state?: SymbolPairStateFilter): Promise<Currency[]> {
   const allCurrencies = await findAllCurrencies(state)
 
-  return currencyCodes.map(currencyCode => allCurrencies.find(({ code }) => currencyCode === code)!)
+  return currencyCodes.map((currencyCode) => allCurrencies.find(({ code }) => currencyCode === code)!)
 }
 
-export async function findCurrencyForCode(currencyCode: CurrencyCode): Promise<Currency> {
-  return internalApiRequestDispatcher.fireRequestToInternalApi<Currency>(CurrencyEndpoints.findCurrencyForCode, { currencyCode })
+export async function findCurrencyForCode(currencyCode: CurrencyCode, state?: SymbolPairStateFilter): Promise<Currency> {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<Currency>(CurrencyEndpoints.findCurrencyForCode, { currencyCode, state })
 }
 
-export async function findCurrencyForId(currencyId: number): Promise<Currency> {
-  const allCurrencies = await findAllCurrencies()
+export async function findCurrencyForId(currencyId: number, state?: SymbolPairStateFilter): Promise<Currency> {
+  const allCurrencies = await findAllCurrencies(state)
 
   return allCurrencies.find(({ id }) => id === currencyId)!
 }
 
-export async function getCurrencyId(currencyCode: CurrencyCode): Promise<number> {
-  const allCurrencies = await findAllCurrencies()
+export async function getCurrencyId(currencyCode: CurrencyCode, state?: SymbolPairStateFilter): Promise<number> {
+  const allCurrencies = await findAllCurrencies(state)
   const currency = allCurrencies.find(({ code }) => code === currencyCode)!
 
   return currency.id
 }
 
-export async function getCurrencyCode(currencyId: number): Promise<CurrencyCode> {
-  return internalApiRequestDispatcher.fireRequestToInternalApi<CurrencyCode>(CurrencyEndpoints.getCurrencyCode, { currencyId })
+export async function getCurrencyCode(currencyId: number, state: SymbolPairStateFilter = SymbolPairStateFilter.enabled): Promise<CurrencyCode> {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<CurrencyCode>(CurrencyEndpoints.getCurrencyCode, { currencyId, state })
 }
 
 export async function findAllCurrencies(state: SymbolPairStateFilter = SymbolPairStateFilter.enabled): Promise<Currency[]> {
   return internalApiRequestDispatcher.fireRequestToInternalApi<Currency[]>(CurrencyEndpoints.getAllCurrencies, { state })
+}
+
+export async function getAllCurrenciesEligibleForAccount(accountId: string) {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<Currency[]>(CurrencyEndpoints.getAllCurrenciesEligibleForAccount, { accountId })
 }
 
 export * from './endpoints'

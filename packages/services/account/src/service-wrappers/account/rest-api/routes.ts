@@ -153,6 +153,7 @@ const models: TsoaRoute.Models = {
       "enableMfa": { "dataType": "boolean" },
       "hasTriggeredKycCheck": { "dataType": "boolean" },
       "suspended": { "dataType": "boolean" },
+      "hasLogged": { "dataType": "boolean" },
     },
   },
 };
@@ -719,7 +720,7 @@ export function RegisterRoutes(app: express.Express) {
       const promise = controller.updateAccountStatus.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
-  app.get('/api/test-automation/accounts/details/:publicKey',
+  app.get('/api/test-automation/accounts/eth-details/:publicKey',
     function(request: any, response: any, next: any) {
       const args = {
         publicKey: { "in": "path", "name": "publicKey", "required": true, "dataType": "string" },

@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Route, Security } from 'tsoa'
+import { Controller, Get, Query, Route, Security, Tags } from 'tsoa'
 import { Logger } from '@abx-utils/logging'
 import { MarketDataTimeFrame, OHLCMarketData, SymbolMarketDataSnapshot } from '@abx-types/market-data'
 import { CurrencyCode } from '@abx-types/reference-data'
@@ -7,6 +7,7 @@ import { ApiErrorPayload } from '@abx-types/error'
 import { getOHLCMarketData } from '../core'
 import { wrapWithErrorHandling } from '@abx-utils/express-middleware'
 
+@Tags('market-data')
 @Route('market-data')
 export class MarketDataController extends Controller {
   private logger = Logger.getInstance('api', 'MarketDataController')

@@ -3,6 +3,9 @@ import { isErc20Token } from '../../../core'
 
 export const nativelyImplementedCoins = [CurrencyCode.kag, CurrencyCode.kau, CurrencyCode.ethereum, CurrencyCode.kvt, CurrencyCode.tether]
 
+/** The currencies where we received CryptoAPIs Kinesis holdings address transaction notifications. */
+export const holdingsAddressTransactionNotificationEnabledCurrencies = [CurrencyCode.bitcoin]
+
 /**
  * Responsible for returning the actual coin that the transaction fee is paid into.
  * For example, for ERC20 tokens running on the Ethereum blockchain, the transaction fees are paid in ETH.

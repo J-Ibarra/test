@@ -87,7 +87,7 @@ export class Erc20ApiProviderFacade implements BlockchainApiProviderFacade {
     return this.cryptoApiProviderProxyEth.createAddressTokenTransactiontEventSubscription({
       address,
       confirmations,
-      callbackURL: process.env.DEPOSIT_ADDRESS_UNCONFIRMED_TRANSACTION_CALLBACK_URL!,
+      callbackURL: process.env.DEPOSIT_ADDRESS_TRANSACTION_CALLBACK_URL!,
     })
   }
 }

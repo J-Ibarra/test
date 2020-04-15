@@ -1,7 +1,8 @@
-import { Controller, Get, Query, Route } from 'tsoa'
+import { Controller, Get, Query, Route, Tags } from 'tsoa'
 import { Logger } from '@abx-utils/logging'
 import { findOrderMatchTransactions } from '../../../core'
 
+@Tags('order')
 @Route('order-matches')
 export class OrderMatchesController extends Controller {
   private logger = Logger.getInstance('api', 'OrderMatchesController')

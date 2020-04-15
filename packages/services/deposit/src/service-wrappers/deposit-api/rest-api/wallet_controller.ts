@@ -1,12 +1,13 @@
-import { Controller, Get, Request, Route, Security, Post, Body } from 'tsoa'
+import { Controller, Get, Request, Route, Security, Post, Body, Tags } from 'tsoa'
 
 import { Logger } from '@abx-utils/logging'
 import { OverloadedRequest } from '@abx-types/account'
 import { findDepositAddressAndListenForEvents } from '../../../core'
-import { CurrencyCode } from '@abx-types/reference-data'
+import { CurrencyCode, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { findDepositAddressesForAccount } from '../../../core'
 import { findCryptoCurrencies } from '@abx-service-clients/reference-data'
 
+@Tags('deposit')
 @Route('/wallets')
 export class WalletsController extends Controller {
   private logger = Logger.getInstance('api', 'WalletsController')
@@ -20,11 +21,14 @@ export class WalletsController extends Controller {
     try {
       this.logger.debug(`Fetching wallets for account: ${account!.id}`)
 
-      const [wallets, cryptoCurrencies] = await Promise.all([findDepositAddressesForAccount(account!.id), findCryptoCurrencies()])
+      const [wallets, cryptoCurrencies] = await Promise.all([
+        findDepositAddressesForAccount(account!.id),
+        findCryptoCurrencies(SymbolPairStateFilter.all),
+      ])
       const currencyIdToCurrency = cryptoCurrencies.reduce((acc, { code, id }) => acc.set(id, code), new Map<number, string>())
       this.logger.debug(`Retrieved ${wallets.length} wallets for account ${account!.id}`)
 
-      return wallets.map(wallet => ({
+      return wallets.map((wallet) => ({
         publicKey: wallet.address || wallet.publicKey,
         currency: { id: wallet.currencyId, code: currencyIdToCurrency.get(wallet.currencyId) },
         transactionTrackingActivated: wallet.transactionTrackingActivated!,
