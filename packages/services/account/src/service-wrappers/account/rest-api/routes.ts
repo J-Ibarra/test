@@ -484,6 +484,26 @@ export function RegisterRoutes(app: express.Express) {
       const promise = controller.verifyMfaForUser.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
+  app.delete('/api/mfa/admin/:accountHin',
+    authenticateMiddleware([{ "cookieAuth": [], "adminAuth": [] }]),
+    function(request: any, response: any, next: any) {
+      const args = {
+        accountHin: { "in": "path", "name": "accountHin", "required": true, "dataType": "string" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new MFAController();
+
+
+      const promise = controller.disableMfaByAdmin.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
   app.post('/api/reset-password',
     function(request: any, response: any, next: any) {
       const args = {

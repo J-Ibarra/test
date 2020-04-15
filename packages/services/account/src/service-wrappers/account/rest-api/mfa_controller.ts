@@ -1,11 +1,10 @@
 import { Body, Controller, Delete, Get, Post, Query, Request, Response, Route, Security, SuccessResponse, Tags } from 'tsoa'
-import { activateMfa, deactivateMfa, verifyMfa, MFA, findUserByEmail } from '../../../core'
+import { activateMfa, deactivateMfa, deactivateUserMfa, verifyMfa, MFA, findUserByEmail } from '../../../core'
 import { OverloadedRequest } from '@abx-types/account'
 
 interface MfaStatusResponse {
   enabled: boolean
 }
-
 @Tags('accounts')
 @Route('mfa')
 export class MFAController extends Controller {
@@ -62,6 +61,21 @@ export class MFAController extends Controller {
       return {
         message: error.message,
       }
+    }
+  }
+  @Security({
+    cookieAuth: [],
+    adminAuth: [],
+  })
+  @Delete('admin/{accountHin}')
+  public async disableMfaByAdmin(accountHin: string): Promise<{ message: string } | void> {
+    try {
+      await deactivateUserMfa({ hin: accountHin })
+      this.setStatus(200)
+      return { message: '2FA was disabled' }
+    } catch (e) {
+      this.setStatus(400)
+      return { message: e.message }
     }
   }
 }
