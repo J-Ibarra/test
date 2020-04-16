@@ -18,6 +18,7 @@ import { RegisterRoutes } from './routes'
 import './vault_controller'
 import './wallet_controller'
 import './E2eTestingController'
+import './deposit_reference_data_controller'
 import { DEPOSIT_API_PORT } from '@abx-service-clients/deposit'
 
 const logger = Logger.getInstance('api', 'bootstrapRestApi')
@@ -58,7 +59,7 @@ export function bootstrapRestApi(): express.Express {
     })
   })
 
-  app.on('unhandledRejection', e => logger.error(e as any))
+  app.on('unhandledRejection', (e) => logger.error(e as any))
 
   console.log(`Deposit Data API on port ${DEPOSIT_API_PORT}`)
   return app
