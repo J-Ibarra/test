@@ -18,8 +18,8 @@ export class DepositCompleter {
 
   private DEFAULT_REQUIRED_DEPOSIT_TRANSACTION_CONFIRMATIONS = 1
   /**
-   * Carries out the final step of the deposit process where:
-   * - all deposit requests are updated with 'completed' status
+   * Carries out a step of the deposit process where:
+   * - all deposit requests are updated with 'pendingHoldingsTransaction' status
    * - a single deposit currency transaction is created with the total amount
    * - balances (of the deposit user and kinesis revenue) are updated
    * - a deposit success email is dispatched.
@@ -27,11 +27,18 @@ export class DepositCompleter {
    * The function will be invoked with multiple requests when there have been some
    * pre-existing deposit requests where the amount was lower than the minimum deposit amount.
    *
-   * @param depositRequests the deposit requests to complete
+   * @param holdingsTxHash the uncofirmed holdings transaction hash
    */
-  async processPendingHoldingsForDepositRequest(depositRequests: DepositRequest[]) {
+  async processDepositRequestsForPendingHoldingsTransaction(holdingsTxHash: string) {
     return wrapInTransaction(sequelize, null, async (transaction) => {
-      this.logger.info(`Completing deposit requests ${JSON.stringify(depositRequests)}`)
+      const depositRequests = await findDepositRequestsByHoldingsTransactionHash(holdingsTxHash)
+
+      if (depositRequests.length === 0) {
+        this.logger.warn(`Deposit requests not found for holdings transaction ${holdingsTxHash}, not processing any further`)
+        return
+      }
+
+      this.logger.info(`Processing deposit requests ${JSON.stringify(depositRequests)} after holdings transaction is sent`)
 
       const depositAddress = depositRequests[0].depositAddress
       const depositRequestWhereHoldingsFeeWasRecorded = depositRequests.find(({ holdingsTxFee }) => !!holdingsTxFee)!
@@ -65,7 +72,15 @@ export class DepositCompleter {
     })
   }
 
-  public async completeDepositRequest(txid: string) {
+  /**
+   * Carries out the final step of the deposit process where:
+   * - all deposit requests are updated with 'completed' status
+   * - all blocked deposit requests for the same deposit address are batched 
+   * -     and sent in a new holgings transaction
+   *
+   * @param txid the confirmed holdings transaction id
+   */
+  public async processDepositRequestsForConfirmedHoldingsTransaction(txid: string, currencyCode: CurrencyCode) {
     const depositRequests = await findDepositRequestsByHoldingsTransactionHash(txid)
 
     if (depositRequests.length === 0) {
@@ -73,30 +88,24 @@ export class DepositCompleter {
       return
     }
 
-    await this.completeDepositRequests(depositRequests)
+    await this.completeDepositRequests(depositRequests, currencyCode)
     this.logger.info(`Completed deposit requests ${JSON.stringify(depositRequests)}`)
   }
 
-  private async completeDepositRequests(depositRequests: DepositRequest[]) {
-    return wrapInTransaction(sequelize, null, async (transaction) => {
-      
+  private async completeDepositRequests(depositRequests: DepositRequest[], currencyCode: CurrencyCode) {
+    updateAllDepositRequests(
+      depositRequests.map(({ id }) => id!),
+      { status: DepositRequestStatus.completed })
+    
       // create new holdings consolidated transaction for blocked deposit requests
-      const depositAddressId = depositRequests[0].depositAddressId
-      const currencyCode = depositRequests[0].depositAddress.currency
+    const depositAddressId = depositRequests[0].depositAddressId
+    const blockedDepositRequests = await findDepositRequestsForStatus(depositAddressId!, DepositRequestStatus.blockedForHoldingsTransactionConfirmation)
 
-      const blockedDepositRequests = await findDepositRequestsForStatus(depositAddressId!, DepositRequestStatus.blockedForHoldingsTransactionConfirmation)
-
-      const holdingsTransactionDispatcher = new HoldingsTransactionDispatcher()
-      await holdingsTransactionDispatcher.dispatchHoldingsTransactionForDepositRequests(
-        blockedDepositRequests,
-        currencyCode,
-      )
-      
-      updateAllDepositRequests(
-        depositRequests.map(({ id }) => id!),
-        { status: DepositRequestStatus.completed },
-        transaction)
-    })
+    const holdingsTransactionDispatcher = new HoldingsTransactionDispatcher()
+    await holdingsTransactionDispatcher.dispatchHoldingsTransactionForDepositRequests(
+      blockedDepositRequests,
+      currencyCode,
+    )
   }
 
   public getRequiredConfirmationsForDepositTransaction(currency: CurrencyCode) {

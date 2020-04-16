@@ -75,7 +75,7 @@ export class DepositAddressNewTransactionQueuePoller {
   private async handleHoldingsConfirmation(depositTransactionDetails: Transaction, currency: CurrencyCode, txid: string) {
     if ((depositTransactionDetails.confirmations || 0) >= this.getRequiredConfirmationsForDepositTransaction(currency)) { 
       const depositCompleter = new DepositCompleter()
-      await depositCompleter.completeDepositRequest(txid)
+      await depositCompleter.processDepositRequestsForConfirmedHoldingsTransaction(txid, currency)
     }
   }
 

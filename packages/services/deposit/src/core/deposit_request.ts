@@ -268,7 +268,8 @@ export async function findDepositRequestsForStatus(depositAddressId: number, sta
     where: {
       status,
       depositAddressId,
-    }
+    },
+    include: [getModel<DepositAddress>('depositAddress')],
   })
 
   return depositInstances.map(req => req.get({ plain: true }))

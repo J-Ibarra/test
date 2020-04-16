@@ -4,7 +4,7 @@ import { createPendingDeposit, createPendingWithdrawal } from '@abx-service-clie
 import { SourceEventType } from '@abx-types/balance'
 import { TransactionResponse, OnChainCurrencyGateway, getOnChainCurrencyManagerForEnvironment } from '@abx-utils/blockchain-currency-gateway'
 import { decryptValue } from '@abx-utils/encryption'
-import { updateDepositRequest, updateAllDepositRequests, findDepositRequestByDepositTransactionHash, findDepositRequestsWithInsufficientAmount, findDepositRequestsByHoldingsTransactionHash, findDepositRequestsForStatus } from '../../../../core'
+import { updateDepositRequest, updateAllDepositRequests, findDepositRequestByDepositTransactionHash, findDepositRequestsWithInsufficientAmount, findDepositRequestsForStatus } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode, Environment } from '@abx-types/reference-data'
 import { getDepositTransactionFeeCurrencyId } from '../utils'
@@ -53,7 +53,8 @@ export class HoldingsTransactionDispatcher {
 
     if (holdingsTransactionHash) {
       this.logger.info(`Starting completion for deposit request with holdings transaction hash ${holdingsTransactionHash} for completion`)
-      this.processDepositRequest(holdingsTransactionHash)
+      const depositCompleter = new DepositCompleter()
+      await depositCompleter.processDepositRequestsForPendingHoldingsTransaction(holdingsTransactionHash)
     }
   }
 
@@ -76,7 +77,7 @@ export class HoldingsTransactionDispatcher {
     )
 
     this.logger.info(
-      `Found ${preExistingDepositRequestsWithInsufficientBalance} pre existing deposits for deposit address ${firstDepositAddressId} while processing deposit request ${depositRequestId}, total amount of pre existing deposit requests ${totalAmounOfDepositsWithInsufficientBalance}`,
+      `Found ${preExistingDepositRequestsWithInsufficientBalance} pre existing deposits for deposit address ${firstDepositAddressId}, total amount of pre existing deposit requests ${totalAmounOfDepositsWithInsufficientBalance}`,
     )
 
     const totalRequestsAmount = depositRequests.reduce(
@@ -185,10 +186,5 @@ export class HoldingsTransactionDispatcher {
     this.logger.info(
       `A ${transactionFee} on chain fee has been paid for deposit request ${depositRequestId} and deducted from revenue balance for currency ${currencyId}`,
     )
-  }
-
-  private async processDepositRequest(txid: string) {
-    const depositCompleter = new DepositCompleter()
-    await depositCompleter.processPendingHoldingsForDepositRequest(txid)
   }
 }
