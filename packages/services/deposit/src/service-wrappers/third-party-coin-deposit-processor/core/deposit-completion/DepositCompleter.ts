@@ -1,5 +1,5 @@
 import { DepositRequest, DepositRequestStatus, DepositAddress } from '@abx-types/deposit'
-import { updateAllDepositRequests, sendDepositConfirmEmail, findDepositRequestsByHoldingsTransactionHash } from '../../../../core'
+import { updateAllDepositRequests, sendDepositConfirmEmail, findDepositRequestsByHoldingsTransactionHash, findDepositRequestsForStatus } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
 import { createCurrencyTransaction } from '@abx-service-clients/order'
 import { triggerMultipleBalanceChanges, BalanceAsyncRequestType } from '@abx-service-clients/balance'
@@ -11,6 +11,7 @@ import { findOrCreateKinesisRevenueAccount } from '@abx-service-clients/account'
 import Decimal from 'decimal.js'
 import { getDepositTransactionFeeCurrencyId } from '../utils'
 import { CurrencyCode, SymbolPairStateFilter } from '@abx-types/reference-data'
+import { HoldingsTransactionDispatcher } from '../holdings-transaction-creation/HoldingsTransactionDispatcher'
 
 export class DepositCompleter {
   private readonly logger = Logger.getInstance('third-party-coin-deposit-processor', 'DepositCompleter')
@@ -80,7 +81,17 @@ export class DepositCompleter {
     return wrapInTransaction(sequelize, null, async (transaction) => {
       
       // create new holdings consolidated transaction for blocked deposit requests
+      const depositAddressId = depositRequests[0].depositAddressId
+      const currencyCode = depositRequests[0].depositAddress.currency
 
+      const blockedDepositRequests = await findDepositRequestsForStatus(depositAddressId!, DepositRequestStatus.blockedForHoldingsTransactionConfirmation)
+
+      const holdingsTransactionDispatcher = new HoldingsTransactionDispatcher()
+      await holdingsTransactionDispatcher.dispatchHoldingsTransactionForDepositRequests(
+        blockedDepositRequests,
+        currencyCode,
+      )
+      
       updateAllDepositRequests(
         depositRequests.map(({ id }) => id!),
         { status: DepositRequestStatus.completed },

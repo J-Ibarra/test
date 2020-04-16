@@ -98,7 +98,7 @@ export class DepositAddressNewTransactionQueuePoller {
     const depositAmountAboveMinimumForCurrency = getMinimumDepositAmountForCurrency(currency) <= depositAmount
     if (depositAmountAboveMinimumForCurrency) {
       const holdingsTransactionDispatcher = new HoldingsTransactionDispatcher()
-      await holdingsTransactionDispatcher.processDepositAddressTransaction(txid, currency)
+      await holdingsTransactionDispatcher.dispatchHoldingsTransactionForConfirmedDepositRequest(txid, currency)
     }
   }
 
