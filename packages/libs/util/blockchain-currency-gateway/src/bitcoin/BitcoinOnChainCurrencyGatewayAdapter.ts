@@ -3,7 +3,7 @@ import { CurrencyCode, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { RuntimeError } from '@abx-types/error'
 import { BitcoinApiProviderFacade } from './BitcoinApiProviderFacade'
-import { CryptoAddress, Transaction } from '../model'
+import { CryptoAddress, Transaction, MultiTargetCreateTransactionPayload, MultiTargetTransactionCreationResult } from '../model'
 import { DepositAddress } from '@abx-types/deposit'
 import { Logger } from '@abx-utils/logging'
 import { decryptValue } from '@abx-utils/encryption'
@@ -90,26 +90,15 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
     return false
   }
 
-  transferToExchangeHoldingsFrom(
-    fromAddress: CryptoAddress | Pick<CryptoAddress, 'privateKey'>,
-    amount: number,
-    transactionConfirmationWebhookUrl: string,
-  ): Promise<TransactionResponse> {
+  transferToExchangeHoldingsFrom(fromAddress: CryptoAddress | Pick<CryptoAddress, 'privateKey'>, amount: number): Promise<TransactionResponse> {
     return this.bitcoinBlockchainFacade.createTransaction({
       senderAddress: fromAddress as CryptoAddress,
       receiverAddress: process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS!,
       amount,
-      webhookCallbackUrl: transactionConfirmationWebhookUrl,
     })
   }
 
-  async transferFromExchangeHoldingsTo({
-    toAddress,
-    amount,
-    memo,
-    transactionConfirmationWebhookUrl,
-    feeLimit,
-  }: ExchangeHoldingsTransfer): Promise<TransactionResponse> {
+  async transferFromExchangeHoldingsTo({ toAddress, amount, memo, feeLimit }: ExchangeHoldingsTransfer): Promise<TransactionResponse> {
     const [holdingsPrivateKey, holdingsWif] = await Promise.all([
       decryptValue(process.env.KINESIS_BITCOIN_HOLDINGS_PRIVATE_KEY!),
       decryptValue(process.env.KINESIS_BITCOIN_HOLDINGS_WIF!),
@@ -124,8 +113,27 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
       receiverAddress: toAddress,
       amount,
       memo,
-      webhookCallbackUrl: transactionConfirmationWebhookUrl,
       feeLimit,
+    })
+  }
+
+  async transferFromExchangeHoldingsToMultipleReceivers({
+    receivers,
+    memo,
+  }: Pick<MultiTargetCreateTransactionPayload, 'receivers' | 'memo'>): Promise<MultiTargetTransactionCreationResult> {
+    const [holdingsPrivateKey, holdingsWif] = await Promise.all([
+      decryptValue(process.env.KINESIS_BITCOIN_HOLDINGS_PRIVATE_KEY!),
+      decryptValue(process.env.KINESIS_BITCOIN_HOLDINGS_WIF!),
+    ])
+
+    return this.bitcoinBlockchainFacade.createMultiReceiverTransaction({
+      senderAddress: {
+        privateKey: holdingsPrivateKey!,
+        address: process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS!,
+        wif: holdingsWif,
+      },
+      receivers,
+      memo,
     })
   }
 

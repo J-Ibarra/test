@@ -2,7 +2,7 @@ import {
   WithdrawalStatusChangeRequestType,
   FiatWithdrawalCreationRequest,
   AsyncWithdrawalStatusChangeRequest,
-  CryptoWithdrawalRequestWrapper,
+  SingleCryptoWithdrawalRequestWrapper,
 } from './async_change_model'
 import { sendAsyncChangeMessage } from '@abx-utils/async-message-publisher'
 import {
@@ -44,13 +44,13 @@ export function createFiatWithdrawal(fiatWithdrawalCreationParams: FiatWithdrawa
 }
 
 export function pushNewCryptoWithdrawalRequestForProcessing(withdrawalRequestId: number) {
-  return sendAsyncChangeMessage<CryptoWithdrawalRequestWrapper>({
+  return sendAsyncChangeMessage<SingleCryptoWithdrawalRequestWrapper>({
     id: `pushNewCryptoWithdrawalRequestForProcessing-${withdrawalRequestId}`,
     type: WithdrawalStatusChangeRequestType.createCryptoWithdrawal,
     target: {
       local: WITHDRAWAL_NEW_TRANSACTION_QUEUE_URL!,
       deployedEnvironment: WITHDRAWAL_NEW_TRANSACTION_QUEUE_URL!,
     },
-    payload: { id: withdrawalRequestId },
+    payload: { isBatch: false, id: withdrawalRequestId },
   })
 }

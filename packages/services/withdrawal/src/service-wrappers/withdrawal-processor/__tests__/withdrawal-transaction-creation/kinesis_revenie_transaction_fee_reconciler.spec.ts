@@ -5,7 +5,7 @@ import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import * as balanceOperations from '@abx-service-clients/balance'
 
 import { CurrencyCode } from '@abx-types/reference-data'
-import { deductOnChainTransactionFeeFromRevenueBalance } from '../../core/withdrawal-transaction-creation/kinesis_revenie_transaction_fee_reconciler'
+import { deductOnChainTransactionFeeFromRevenueBalance } from '../../core/withdrawal-transaction-sent-recorder/kinesis_revenie_transaction_fee_reconciler'
 import { SourceEventType } from '@abx-types/balance'
 
 describe('deductOnChainTransactionFeeFromRevenueBalance', () => {
@@ -29,6 +29,8 @@ describe('deductOnChainTransactionFeeFromRevenueBalance', () => {
     updateAvailableStub = sinon.stub(balanceOperations, 'updateAvailable').resolves()
     denyPendingDepositStub = sinon.stub(balanceOperations, 'denyPendingDeposit').resolves()
   })
+
+  afterEach(() => sinon.restore())
 
   it('should not execute any logic when on chain fee not covered for currency', async () => {
     await deductOnChainTransactionFeeFromRevenueBalance(
