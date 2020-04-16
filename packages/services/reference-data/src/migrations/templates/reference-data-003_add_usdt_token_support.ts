@@ -7,8 +7,8 @@ const usdtSymbols = [
   ['KAG_USDT', 3, 9, 3, 0.3, 28],
   ['ETH_USDT', 1, 9, 9, 0.3, 29],
   ['BTC_USDT', 8, 9, 9, 0.3, 30],
-  ['EUR_USDT', 6, 9, 9, 0.3, 31],
-  ['USD_USDT', 5, 9, 5, 0.3, 32],
+  ['USDT_EUR', 9, 6, 9, 0.3, 31],
+  ['USDT_USD', 9, 5, 5, 0.3, 32],
 ]
 const tablesWithForeignKeyToSymbolId = [
   'trade_transaction',
@@ -24,7 +24,7 @@ const tablesWithForeignKeyToSymbolId = [
 export async function up({ sequelize }: { sequelize: Sequelize }) {
   const usdtPairDefaultSymbols = usdtSymbols
     .map(
-      symbol => `
+      (symbol) => `
   INSERT INTO public.symbol(id, "baseId", "quoteId", "feeId", "isEnabled", "createdAt", "updatedAt","orderRange","sortOrder")
   VALUES ('${symbol[0]}', ${symbol[1]}, ${symbol[2]}, ${symbol[3]}, FALSE, now(), now(), ${symbol[4]}, ${symbol[5]});
   `,
@@ -35,7 +35,7 @@ export async function up({ sequelize }: { sequelize: Sequelize }) {
 
   const alterAllForeignKeyColumnTypes = tablesWithForeignKeyToSymbolId
     .map(
-      table => `
+      (table) => `
   ALTER TABLE public.${table}
   ALTER COLUMN "symbolId" TYPE varchar(8);
   `,
@@ -62,9 +62,9 @@ export async function up({ sequelize }: { sequelize: Sequelize }) {
 
 export async function down({ sequelize }: { sequelize: Sequelize }) {
   return sequelize.query(`
-    DELETE FROM public.default_execution_fee where code in [${usdtSymbols.map(symbol => symbol[0]).join(', ')}];
+    DELETE FROM public.default_execution_fee where code in [${usdtSymbols.map((symbol) => symbol[0]).join(', ')}];
     DELETE FROM public.boundary where code = 'USDT';
-    DELETE FROM public.symbol where id in [${usdtSymbols.map(symbol => symbol[0]).join(', ')}];
+    DELETE FROM public.symbol where id in [${usdtSymbols.map((symbol) => symbol[0]).join(', ')}];
 
     DELETE FROM public.currency where code = 'USDT';
   `)
