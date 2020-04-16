@@ -3,10 +3,18 @@ import { TransactionResponse } from '../currency_gateway'
 import { Environment, CurrencyCode } from '@abx-types/reference-data'
 import { Logger } from '@abx-utils/logging'
 
-import { CreateTransactionPayload, Transaction, CryptoAddress } from '../model'
-import { BitcoinTransactionDispatcher } from './BitcoinTransactionDispatcher'
+import {
+  Transaction,
+  CryptoAddress,
+  SingleTargetCreateTransactionPayload,
+  MultiTargetCreateTransactionPayload,
+  MultiTargetTransactionCreationResult,
+} from '../model'
+import { BitcoinTransactionDispatcher } from './transaction-dipsatchers/BitcoinTransactionDispatcher'
 import { ENetworkTypes, IAddressTransaction } from '../api-provider/crypto-apis'
 import { BtcCryptoApisProviderProxy } from '../api-provider'
+import { SingleTargetTransactionDispatcher } from './transaction-dipsatchers/single-target/SingleTargetTransactionDispatcher'
+import { MultiTargetTransactionDispatcher } from './transaction-dipsatchers/multi-target/MultiTargetTransactionDispatcher'
 
 export const mainnetEnvironments = [Environment.production]
 
@@ -14,7 +22,8 @@ export class BitcoinApiProviderFacade implements BlockchainApiProviderFacade {
   private readonly LOGGER = Logger.getInstance('blockchain-currency-gateway', 'BitcoinApiProviderFacade')
 
   private cryptoApiProviderProxy: BtcCryptoApisProviderProxy
-  private bitcoinTransactionDispatcher: BitcoinTransactionDispatcher
+  private singleTargetTransactionDispatcher: BitcoinTransactionDispatcher
+  private multiTargetTransactionDispatcher: BitcoinTransactionDispatcher
 
   constructor() {
     this.cryptoApiProviderProxy = new BtcCryptoApisProviderProxy(
@@ -23,7 +32,8 @@ export class BitcoinApiProviderFacade implements BlockchainApiProviderFacade {
       process.env.CRYPTO_APIS_TOKEN!,
     )
 
-    this.bitcoinTransactionDispatcher = new BitcoinTransactionDispatcher(this.cryptoApiProviderProxy)
+    this.singleTargetTransactionDispatcher = new SingleTargetTransactionDispatcher(this.cryptoApiProviderProxy)
+    this.multiTargetTransactionDispatcher = new MultiTargetTransactionDispatcher(this.cryptoApiProviderProxy)
   }
 
   async getAddressBalance(address: string): Promise<number> {
@@ -32,10 +42,23 @@ export class BitcoinApiProviderFacade implements BlockchainApiProviderFacade {
     return Number(addressDetails.balance)
   }
 
-  createTransaction(params: CreateTransactionPayload): Promise<TransactionResponse> {
+  createTransaction(params: SingleTargetCreateTransactionPayload): Promise<TransactionResponse> {
     this.LOGGER.debug(`Creating transaction of ${params.amount} from ${params.senderAddress.address} to ${params.receiverAddress}`)
 
-    return this.bitcoinTransactionDispatcher.createTransaction(params)
+    return this.singleTargetTransactionDispatcher.createTransaction(params)
+  }
+
+  /**
+   * Used for batched withdrawals, when we need to dispatch a transaction to multiple addresses.
+   *
+   * @param params
+   */
+  createMultiReceiverTransaction(params: MultiTargetCreateTransactionPayload): Promise<MultiTargetTransactionCreationResult> {
+    this.LOGGER.debug(
+      `Creating a multi receiver transaction ${params.senderAddress.address} to ${JSON.stringify(params.receivers.map(({ address }) => address))}`,
+    )
+
+    return this.multiTargetTransactionDispatcher.createTransaction(params) as Promise<MultiTargetTransactionCreationResult>
   }
 
   async getTransaction(transactionHash: string, targetAddress: string): Promise<Transaction> {

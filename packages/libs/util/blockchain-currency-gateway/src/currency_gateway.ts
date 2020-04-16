@@ -33,8 +33,6 @@ export interface ExchangeHoldingsTransfer {
   amount: number
   memo?: string
   feeLimit?: number
-  /** Defines if a transaction confirmation web-hook to the {@code callbackUrl} should be created. */
-  transactionConfirmationWebhookUrl?: string
   /** The transaction confirmations for specify when creating the transaction confirmations webhook. */
   transactionConfirmations?: number
 }
@@ -60,11 +58,7 @@ export interface OnChainCurrencyGateway {
   getHoldingBalance(): Promise<number>
   getHoldingPublicAddress(): Promise<string>
   checkConfirmationOfTransaction(txHash: string): Promise<boolean>
-  transferToExchangeHoldingsFrom(
-    fromAddress: CryptoAddress | Pick<CryptoAddress, 'privateKey'>,
-    amount: number,
-    transactionConfirmationWebhookUrl?: string,
-  ): Promise<TransactionResponse>
+  transferToExchangeHoldingsFrom(fromAddress: CryptoAddress | Pick<CryptoAddress, 'privateKey'>, amount: number): Promise<TransactionResponse>
   transferFromExchangeHoldingsTo(params: ExchangeHoldingsTransfer): Promise<TransactionResponse>
   kinesisManagesConfirmations(): boolean
   transferTo(parameters: { privateKey: string; amount: number; toAddress: string; signerKey?: string }): Promise<TransactionResponse>
