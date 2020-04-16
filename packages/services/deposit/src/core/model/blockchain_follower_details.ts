@@ -20,8 +20,8 @@ export default function blockchainFollowerDetailsModel(sequelize: Sequelize.Sequ
       },
       unique: true,
     },
-    lastBlockNumberProcessed: {
-      type: Sequelize.STRING,
+    lastEntityProcessedIdentifier: {
+      type: Sequelize.CHAR,
       allowNull: false,
     },
   })

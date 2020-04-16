@@ -27,14 +27,14 @@ export async function triggerKVTBlockFollower(onChainCurrencyManager: CurrencyMa
   try {
     const { id: currencyId } = await findCurrencyForCode(CurrencyCode.kvt)
     const depositAddresses = await findKycOrEmailVerifiedDepositAddresses(currencyId)
-    const { lastBlockNumberProcessed } = (await getBlockchainFollowerDetailsForCurrency(currencyId)) as BlockchainFollowerDetails
+    const { lastEntityProcessedIdentifier } = (await getBlockchainFollowerDetailsForCurrency(currencyId)) as BlockchainFollowerDetails
 
-    if (Number(lastBlockNumberProcessed) === 0 && !testEnvironments.includes(process.env.NODE_ENV as string)) {
+    if (Number(lastEntityProcessedIdentifier) === 0 && !testEnvironments.includes(process.env.NODE_ENV as string)) {
       throw new Error('Waiting for lastProcessedBlockNumber to be updated from 0')
     }
 
     const currentBlockNumber = await kvt.getLatestBlockNumber()
-    let blockDifference = currentBlockNumber - ETHEREUM_BLOCK_DELAY - Number(lastBlockNumberProcessed)
+    let blockDifference = currentBlockNumber - ETHEREUM_BLOCK_DELAY - Number(lastEntityProcessedIdentifier)
 
     // Only process 5 blocks at a time
     if (blockDifference > 5) {
@@ -56,7 +56,7 @@ export async function triggerKVTBlockFollower(onChainCurrencyManager: CurrencyMa
       await Promise.all(
         blockIterable.map(async (_, index) => {
           await wrapInTransaction(sequelize, null, async t => {
-            const blockNumberToProcess = Number(lastBlockNumberProcessed) + (index + 1)
+            const blockNumberToProcess = Number(lastEntityProcessedIdentifier) + (index + 1)
             logger.debug(`Processing Block #${blockNumberToProcess}`)
 
             const KVTEvents = await kvt.contract.getPastEvents('Transfer', { fromBlock: blockNumberToProcess, toBlock: blockNumberToProcess })
@@ -64,7 +64,10 @@ export async function triggerKVTBlockFollower(onChainCurrencyManager: CurrencyMa
           })
         }),
       )
-      await updateBlockchainFollowerDetailsForCurrency(currencyId, (lastBlockNumberProcessed + blockDifference).toString())
+      await updateBlockchainFollowerDetailsForCurrency(
+        currencyId, 
+        (Number(lastEntityProcessedIdentifier) + blockDifference).toString()
+      )
     }
   } catch (e) {
     logger.error('Ran into an error while processing block data')

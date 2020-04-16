@@ -124,6 +124,30 @@ export class Kinesis implements OnChainCurrencyGateway {
     return this.getLatestTransactions(lastSeenTransactionHash, transactionAcc.concat(newTransactionDepositTransactions))
   }
 
+  public async getLatestPaymentOperations(lastSeenTransactionHash?: string, transactionAcc: PaymentOperationRecord[] = []): Promise<PaymentOperationRecord[]> {
+    const payments = await this.getServer()
+      .payments()
+      .order('desc')
+      .limit(100)
+      .cursor('')
+      .call()
+    const newTransactions: PaymentOperationRecord[] = []
+
+    for (const payment of payments.records) {
+      if (payment.transaction_hash === lastSeenTransactionHash) {
+        return transactionAcc.concat(newTransactions)
+      }
+
+      newTransactions.push(payment)
+    }
+
+    if (newTransactions.length < 100) {
+      return transactionAcc.concat(newTransactions)
+    }
+
+    return this.getLatestPaymentOperations(lastSeenTransactionHash, transactionAcc.concat(newTransactions))
+  }
+
   public async getHoldingBalance() {
     const holdingsSecret = await this.getHoldingsSecret(this.ticker)
     const holdingAddress = this.getAddressFromPrivateKey(holdingsSecret)
@@ -346,7 +370,7 @@ export class Kinesis implements OnChainCurrencyGateway {
     return new Server(this.config.url)
   }
 
-  private apiToDepositTransaction(operation: PaymentOperationRecord | CreateAccountOperationRecord): DepositTransaction {
+  public apiToDepositTransaction(operation: PaymentOperationRecord | CreateAccountOperationRecord): DepositTransaction {
     return {
       txHash: operation.transaction_hash,
       amount: operation.type === 'create_account' ? Number(operation.starting_balance) : Number(operation.amount),
@@ -392,21 +416,5 @@ export class Kinesis implements OnChainCurrencyGateway {
     hash.update(feeSeedString)
 
     return Keypair.fromRawEd25519Seed(hash.digest())
-  }
-
-  public subscribeForNewDepositRequests(
-    newDepositHandler: (message: PaymentOperationRecord) => void
-  ): void {
-    this.getServer()
-      .payments()
-      .cursor('now')
-      .stream({
-        onmessage: (message: PaymentOperationRecord) => {
-          newDepositHandler(message)
-        },
-        onerror: () => {
-          this.subscribeForNewDepositRequests(newDepositHandler)
-        }
-      })
   }
 }
