@@ -23,6 +23,7 @@ export class E2eTestingController {
     CurrencyCode.kvt,
     CurrencyCode.ethereum,
     CurrencyCode.tether,
+    CurrencyCode.bitcoin,
   ])
 
   @Post('/transaction/eth')

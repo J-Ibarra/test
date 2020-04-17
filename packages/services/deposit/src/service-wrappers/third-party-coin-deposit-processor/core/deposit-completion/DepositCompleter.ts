@@ -29,7 +29,7 @@ export class DepositCompleter {
    *
    * @param holdingsTxHash the uncofirmed holdings transaction hash
    */
-  async processDepositRequestsForPendingHoldingsTransaction(holdingsTxHash: string) {
+  async processDepositRequestsForPendingHoldingsTransaction(holdingsTxHash: string, depositRequestsAmounts: number[]) {
     return wrapInTransaction(sequelize, null, async (transaction) => {
       const depositRequests = await findDepositRequestsByHoldingsTransactionHash(holdingsTxHash)
 
@@ -68,7 +68,9 @@ export class DepositCompleter {
         depositRequestWhereHoldingsFeeWasRecorded.holdingsTxFee!,
       )
 
-      return sendDepositConfirmEmail(depositAddress.accountId, totalAmount, depositCurrency.code)
+      return Promise.all(
+        depositRequestsAmounts.map(amount => sendDepositConfirmEmail(depositAddress.accountId, amount, depositCurrency.code))
+      )
     })
   }
 

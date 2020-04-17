@@ -54,7 +54,10 @@ export class HoldingsTransactionDispatcher {
     if (holdingsTransactionHash) {
       this.logger.info(`Starting completion for deposit request with holdings transaction hash ${holdingsTransactionHash} for completion`)
       const depositCompleter = new DepositCompleter()
-      await depositCompleter.processDepositRequestsForPendingHoldingsTransaction(holdingsTransactionHash)
+      await depositCompleter.processDepositRequestsForPendingHoldingsTransaction(
+        holdingsTransactionHash,
+        depositRequests.map(deposit => deposit.amount)
+      )
     }
   }
 
