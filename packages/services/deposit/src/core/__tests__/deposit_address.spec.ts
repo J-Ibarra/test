@@ -15,7 +15,7 @@ import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import { truncateTables } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import * as onChainIntegration from '@abx-utils/blockchain-currency-gateway'
-import { findDepositAddressByAddressOrPublicKey } from '../deposit_address'
+import { findDepositAddressByAddressOrPublicKey } from '../deposit-address'
 
 describe('Deposit Address module', () => {
   let ACCOUNT_ID: string

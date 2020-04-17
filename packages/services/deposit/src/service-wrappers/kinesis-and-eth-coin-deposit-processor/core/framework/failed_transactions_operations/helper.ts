@@ -45,7 +45,7 @@ export async function cleanOldDepositFailures(
   pendingHoldingsTransferGatekeeper: DepositGatekeeper,
 ) {
   return Promise.all(
-    Array.from(currencyCodeToFailedDepositRequests.keys()).map(currencyCode =>
+    Array.from(currencyCodeToFailedDepositRequests.keys()).map((currencyCode) =>
       cleanOldDepositFailuresForCurrency(pendingHoldingsTransferGatekeeper, currencyCode, currencyCodeToFailedDepositRequests),
     ),
   )
@@ -74,7 +74,7 @@ export async function cleanOldDepositFailuresForCurrency(
     moment(failureRecordedAt).isBefore(moment().subtract(EXPIRY_TIME_IN_MINUTES, 'minutes')),
   )
 
-  return wrapInTransaction(sequelize, null, async transaction => {
+  return wrapInTransaction(sequelize, null, async (transaction) => {
     await updateAllDepositRequests(
       expiredDepositRequests.map(({ id }) => id!),
       { status: DepositRequestStatus.pendingHoldingsTransaction },

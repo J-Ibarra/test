@@ -9,6 +9,7 @@ import {
   updateBlockchainFollowerDetailsForCurrency,
   convertTransactionToDepositRequest,
   FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION,
+  pushRequestForProcessing,
 } from '../../../core'
 import { BlockchainFollowerDetails, DepositAddress } from '@abx-types/deposit'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
@@ -55,7 +56,7 @@ export async function triggerKVTBlockFollower(onChainCurrencyManager: CurrencyMa
       const blockIterable = Array.from(new Array(blockDifference), (_, i) => i + 1)
       await Promise.all(
         blockIterable.map(async (_, index) => {
-          await wrapInTransaction(sequelize, null, async t => {
+          await wrapInTransaction(sequelize, null, async (t) => {
             const blockNumberToProcess = Number(lastEntityProcessedIdentifier) + (index + 1)
             logger.debug(`Processing Block #${blockNumberToProcess}`)
 
@@ -64,10 +65,7 @@ export async function triggerKVTBlockFollower(onChainCurrencyManager: CurrencyMa
           })
         }),
       )
-      await updateBlockchainFollowerDetailsForCurrency(
-        currencyId, 
-        (Number(lastEntityProcessedIdentifier) + blockDifference).toString()
-      )
+      await updateBlockchainFollowerDetailsForCurrency(currencyId, (Number(lastEntityProcessedIdentifier) + blockDifference).toString())
     }
   } catch (e) {
     logger.error('Ran into an error while processing block data')
@@ -93,10 +91,12 @@ export async function handleKVTTransactions(
 
   if (potentialDepositTransactions.length > 0) {
     logger.debug(`Found Potential Deposits: ${potentialDepositTransactions}`)
-    const depositRequests = potentialDepositTransactions.map(tx => {
+    const depositRequests = potentialDepositTransactions.map((tx) => {
       const depositTransaction = onChainCurrencyGateway.apiToDepositTransaction(tx.event)
       return convertTransactionToDepositRequest(tx.depositAddress, depositTransaction, fiatValueOfOneCryptoCurrency, currencyBoundary)
     })
+
     await storeDepositRequests(depositRequests, t)
+    await pushRequestForProcessing(depositRequests)
   }
 }

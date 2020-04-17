@@ -1,89 +1,79 @@
 import * as Sequelize from 'sequelize'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { Logger } from '@abx-utils/logging'
-import { CurrencyManager, Kinesis } from '@abx-utils/blockchain-currency-gateway'
-import { getBlockchainFollowerDetailsForCurrency } from '../../../core'
-import { BlockchainFollowerDetails, DepositAddress } from '@abx-types/deposit'
-import { findKycOrEmailVerifiedDepositAddresses, storeDepositRequests } from '../../../core'
-import { CurrencyCode, CurrencyBoundary } from '@abx-types/reference-data'
-import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-data'
-import { findCurrencyForCode, findBoundaryForCurrency } from '@abx-service-clients/reference-data'
-import { FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION, convertTransactionToDepositRequest } from '../../../core'
-import { PaymentOperationRecord } from 'js-kinesis-sdk'
+import { Kinesis, DepositTransaction } from '@abx-utils/blockchain-currency-gateway'
+import { getBlockchainFollowerDetailsForCurrency, updateBlockchainFollowerDetailsForCurrency, pushRequestForProcessing } from '../../../core'
+import { BlockchainFollowerDetails } from '@abx-types/deposit'
+import { storeDepositRequests } from '../../../core'
+import { CurrencyCode, CurrencyBoundary, Environment } from '@abx-types/reference-data'
+import { findCurrencyForCode } from '@abx-service-clients/reference-data'
+import { convertTransactionToDepositRequest } from '../../../core'
+import {
+  createPublicKeyToDepositorDetailsMap,
+  DepositAddressAccountStatusPair,
+  getBoundaryAndLatestFiatValuePair,
+} from './kinesis_coin_deposit_follower_helpers'
 
 const logger = Logger.getInstance('services', 'kinesis_coin_deposit_follower')
 
-export async function triggerKinesisCoinDepositFollower(onChainCurrencyManager: CurrencyManager, currencyCode: CurrencyCode) {
-  const currency: Kinesis = (await onChainCurrencyManager.getCurrencyFromTicker(currencyCode)) as Kinesis
-
+export async function triggerKinesisCoinDepositFollower(onChainCurrencyGateway: Kinesis, currencyCode: CurrencyCode) {
   try {
     const { id: currencyId } = await findCurrencyForCode(currencyCode)
 
-    const depositAddresses = await findKycOrEmailVerifiedDepositAddresses(currencyId)
-    const publicKeyToDepositAddress = depositAddresses.reduce(
-      (acc, depositAddress) => acc.set(depositAddress.publicKey, depositAddress),
-      new Map<string, DepositAddress>(),
-    )
-
     const { lastEntityProcessedIdentifier } = (await getBlockchainFollowerDetailsForCurrency(currencyId)) as BlockchainFollowerDetails
-    const latestPaymentOperations = await currency.getLatestPaymentOperations(lastEntityProcessedIdentifier)
+    const depositCandidateOperations = await onChainCurrencyGateway.getLatestTransactions(lastEntityProcessedIdentifier)
 
-    const [fiatValueOfOneCryptoCurrency, currencyBoundary] = await Promise.all([
-      calculateRealTimeMidPriceForSymbol(`${currency.ticker}_${FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION}`),
-      findBoundaryForCurrency(currency.ticker),
-    ])
+    if (depositCandidateOperations.length > 0) {
+      const { fiatValueOfOneCryptoCurrency, currencyBoundary } = await getBoundaryAndLatestFiatValuePair(currencyCode)
+      const publicKeyToDepositAddress = await createPublicKeyToDepositorDetailsMap(depositCandidateOperations)
 
-    await wrapInTransaction(sequelize, null, t => {
-      return this.handleKinesisPaymentOperations(
-        latestPaymentOperations,
-        publicKeyToDepositAddress,
-        currency,
-        fiatValueOfOneCryptoCurrency,
-        currencyBoundary,
-        t,
-      )
-    })
+      await wrapInTransaction(sequelize, null, async (t) => {
+        await handleKinesisPaymentOperations(depositCandidateOperations, publicKeyToDepositAddress, fiatValueOfOneCryptoCurrency, currencyBoundary, t)
+
+        await updateBlockchainFollowerDetailsForCurrency(currencyId, depositCandidateOperations[0].txHash)
+      })
+    }
   } catch (e) {
     logger.error('Ran into an error while processing kinesis payment operations')
     logger.error(e)
   }
 
-  setTimeout(() => triggerKinesisCoinDepositFollower(onChainCurrencyManager, currencyCode), 5_000)
+  retriggerOnTimeout(onChainCurrencyGateway, currencyCode)
 }
 
 export async function handleKinesisPaymentOperations(
-  paymentOperations: PaymentOperationRecord[],
-  publicKeyToDepositAddress: Map<string, DepositAddress>,
-  onChainCurrencyGateway: Kinesis,
+  depositCandidateOperations: DepositTransaction[],
+  publicKeyToDepositAddress: Map<string, DepositAddressAccountStatusPair>,
   fiatValueOfOneCryptoCurrency: number,
   currencyBoundary: CurrencyBoundary,
   t: Sequelize.Transaction,
 ) {
-  const potentialDepositTransactions = paymentOperations
-    .filter(({ type }) => type === 'payment' || type === 'create_account')
-    .filter(operation => publicKeyToDepositAddress.has(getAddressForOperation(operation)))
-    .map(operation => {
-      return {
-        tx: operation,
-        depositAddress: publicKeyToDepositAddress.get(
-          getAddressForOperation(operation)
-        )!,
-      }
-    }) as { tx: PaymentOperationRecord; depositAddress: DepositAddress }[]
+  const depositTransactions = depositCandidateOperations.filter(({ to }) => publicKeyToDepositAddress.has(to!))
 
+  if (depositTransactions.length > 0) {
+    logger.debug(`Found Potential Deposits: ${depositTransactions.length}`)
+    const depositRequests = depositTransactions.map((depositTransaction) =>
+      mapDepositTransactionToDepositRequest(depositTransaction, publicKeyToDepositAddress, fiatValueOfOneCryptoCurrency, currencyBoundary),
+    )
 
-  if (potentialDepositTransactions.length > 0) {
-    logger.debug(`Found Potential Deposits: ${potentialDepositTransactions}`)
-    const depositRequests = potentialDepositTransactions.map(tx => {
-      const depositTransaction = onChainCurrencyGateway.apiToDepositTransaction(tx.tx)
-      return convertTransactionToDepositRequest(tx.depositAddress, depositTransaction, fiatValueOfOneCryptoCurrency, currencyBoundary)
-    })
-    await storeDepositRequests(depositRequests, t)
-  }
-
-  function getAddressForOperation(operation: PaymentOperationRecord): string {
-    return operation.type === 'payment' ? operation.to : (operation as any).account 
+    const storedDepositRequests = await storeDepositRequests(depositRequests, t)
+    await pushRequestForProcessing(storedDepositRequests)
   }
 }
 
+function mapDepositTransactionToDepositRequest(
+  depositTransaction: DepositTransaction,
+  publicKeyToDepositAddress: Map<string, DepositAddressAccountStatusPair>,
+  fiatValueOfOneCryptoCurrency: number,
+  currencyBoundary: CurrencyBoundary,
+) {
+  const { depositAddress } = publicKeyToDepositAddress.get(depositTransaction.to!)!
 
+  return convertTransactionToDepositRequest(depositAddress, depositTransaction, fiatValueOfOneCryptoCurrency, currencyBoundary)
+}
+
+function retriggerOnTimeout(onChainCurrencyGateway: Kinesis, currencyCode: CurrencyCode) {
+  if (process.env.NODE_ENV !== Environment.test) {
+    setTimeout(() => triggerKinesisCoinDepositFollower(onChainCurrencyGateway, currencyCode))
+  }
+}

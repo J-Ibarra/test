@@ -1,33 +1,30 @@
-import { DepositPollingFrequency, CryptoCurrency, Currency, CurrencyCode } from '@abx-types/reference-data'
+import { CryptoCurrency, Currency, CurrencyCode } from '@abx-types/reference-data'
 import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 import {
-  checkForNewDepositsForCurrency,
   processNewestDepositRequestForCurrency,
   cleanExpiredFailedRequests,
   loadAllHoldingsTransactionFailedRequestsInMemory,
-  loadLastSeenTransactionHashes,
   processCheckingSuspendedDepositRequest,
   processSuspendedDepositRequestForCurrency,
   DepositGatekeeper,
   processCompletionPendingDepositRequestForCurrency,
 } from './core'
-import { DepositRequestStatus } from '@abx-types/deposit'
-import { getAllPendingDepositRequestsForCurrencyAboveMinimumAmount, loadAllPendingDepositRequestsAboveMinimumAmount } from '../../core'
-import { findCurrencyForCodes } from '@abx-service-clients/reference-data'
+import { DepositRequestStatus, DepositRequest } from '@abx-types/deposit'
+import { loadAllPendingDepositRequestsAboveMinimumAmount, NEW_ETH_AND_KINESIS_DEPOSIT_REQUESTS } from '../../core'
+import { getQueuePoller } from '@abx-utils/async-message-consumer'
+import { findCurrencyForId } from '@abx-service-clients/reference-data'
 
 const onChainCurrencyManager = new CurrencyManager()
 
-export async function configureDepositHandler(depositPollingFrequencyConfig: DepositPollingFrequency[]) {
+export async function configureDepositHandler() {
   const [
     pendingHoldingsTransferGatekeeper,
     pendingCompletionDepositsGatekeeper,
     pendingSuspendedDepositGatekeeper,
     checkingSuspendedDepositGatekeeper,
   ] = await setupDepositRequestGatekeepers()
+  subscribeToNewDepositRequestsQueue(pendingHoldingsTransferGatekeeper)
 
-  await loadLastSeenTransactionHashes()
-
-  triggerNewDepositPoller(depositPollingFrequencyConfig, pendingHoldingsTransferGatekeeper)
   triggerPendingHoldingsTransferRequestProcessor(
     pendingHoldingsTransferGatekeeper,
     pendingCompletionDepositsGatekeeper,
@@ -37,10 +34,6 @@ export async function configureDepositHandler(depositPollingFrequencyConfig: Dep
   triggerSuspendedDepositChecker(pendingSuspendedDepositGatekeeper, checkingSuspendedDepositGatekeeper, pendingHoldingsTransferGatekeeper)
 
   await triggerFailedHoldingsTransactionChecker(pendingHoldingsTransferGatekeeper)
-
-  const [ethereum, kvt] = await findCurrencyForCodes([CurrencyCode.ethereum, CurrencyCode.kvt])
-  hydrateGatekeeperWithNewDeposits(pendingHoldingsTransferGatekeeper, ethereum)
-  hydrateGatekeeperWithNewDeposits(pendingHoldingsTransferGatekeeper, kvt)
 }
 
 async function setupDepositRequestGatekeepers() {
@@ -104,28 +97,9 @@ function triggerDepositCompletionProcessor(pendingCompletionDepositsGatekeeper: 
   )
 }
 
-function triggerNewDepositPoller(depositPollingFrequencyConfig: DepositPollingFrequency[], pendingHoldingsTransferGatekeeper: DepositGatekeeper) {
-  depositPollingFrequencyConfig.forEach(({ currency, frequency }) =>
-    setInterval(async () => await checkForNewDepositsForCurrency(pendingHoldingsTransferGatekeeper, currency, onChainCurrencyManager), frequency),
-  )
-}
-
 async function triggerFailedHoldingsTransactionChecker(pendingHoldingsTransferGatekeeper: DepositGatekeeper) {
   await loadAllHoldingsTransactionFailedRequestsInMemory()
-  setInterval(async () => await cleanExpiredFailedRequests(pendingHoldingsTransferGatekeeper), 50_000)
-}
-
-/** This mechanism is required in order to take all the deposit requests recorded by the block followers (currently ETH and KVT). */
-async function hydrateGatekeeperWithNewDeposits(pendingHoldingsTransferGatekeeper: DepositGatekeeper, currency: Currency) {
-  const newPendingDeposits = await getAllPendingDepositRequestsForCurrencyAboveMinimumAmount(currency)
-
-  const depositIdsInGatekeeper = pendingHoldingsTransferGatekeeper.getAllDepositsForCurrency(currency.code).map(({ id }) => id)
-  pendingHoldingsTransferGatekeeper.addNewDepositsForCurrency(
-    currency.code,
-    newPendingDeposits.filter((newDeposit) => !depositIdsInGatekeeper.includes(newDeposit.id)),
-  )
-
-  setTimeout(() => hydrateGatekeeperWithNewDeposits(pendingHoldingsTransferGatekeeper, currency), 30_000)
+  setInterval(async () => await cleanExpiredFailedRequests(pendingHoldingsTransferGatekeeper), 15_000)
 }
 
 function triggerSuspendedDepositChecker(
@@ -153,4 +127,13 @@ function triggerSuspendedDepositChecker(
       ),
     )
   }, 1_800_000)
+}
+
+function subscribeToNewDepositRequestsQueue(pendingHoldingsTransferGatekeeper: DepositGatekeeper) {
+  const queuePoller = getQueuePoller()
+
+  queuePoller.subscribeToQueueMessages<DepositRequest[]>(NEW_ETH_AND_KINESIS_DEPOSIT_REQUESTS, async (depositRequests) => {
+    const currency = await findCurrencyForId(depositRequests[0].depositAddress.currencyId)
+    pendingHoldingsTransferGatekeeper.addNewDepositsForCurrency(currency.code, depositRequests)
+  })
 }

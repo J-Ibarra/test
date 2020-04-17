@@ -1,38 +1,21 @@
-import { QueryInterface, Sequelize } from 'sequelize'
+import { Sequelize } from 'sequelize'
 
-export async function up(queryInterface: QueryInterface, sequelize: Sequelize) {
-	await queryInterface.renameColumn(
-		'blockchain_follower_details', 
-		'lastBlockNumberProcessed', 
-		'lastEntityProcessedIdentifier'
-	)
-
+export async function up({ sequelize }: { sequelize: Sequelize }) {
   await sequelize.query(
-    `ALTER TABLE public.blockchain_follower_details
-      ALTER COLUMN "lastEntityProcessedIdentifier" TYPE character varying(200);`
+    `
+    ALTER TABLE public.blockchain_follower_details RENAME COLUMN "lastBlockNumberProcessed" to "lastEntityProcessedIdentifier";
+
+    ALTER TABLE public.blockchain_follower_details
+      ALTER COLUMN "lastEntityProcessedIdentifier" TYPE character varying(200);`,
   )
-	// 	'blockchain_follower_details', 
-	// 	'lastEntityProcessedIdentifier', {
-  //   type: sequelize.Sequelize.TEXT,
-  // })
 }
 
-export async function down(queryInterface: QueryInterface, sequelize: Sequelize) {
-	await queryInterface.renameColumn(
-		'blockchain_follower_details', 
-		'lastEntityProcessedIdentifier', 
-		'lastBlockNumberProcessed'
-  )
-  
+export async function down({ sequelize }: { sequelize: Sequelize }) {
   return sequelize.query(
-    `ALTER TABLE public.blockchain_follower_details
-      ALTER COLUMN "lastBlockNumberProcessed" TYPE numeric;`
+    `
+    ALTER TABLE public.blockchain_follower_details RENAME COLUMN "lastEntityProcessedIdentifier" to "lastBlockNumberProcessed";
+
+    ALTER TABLE public.blockchain_follower_details
+      ALTER COLUMN "lastBlockNumberProcessed" TYPE numeric;`,
   )
-
-  // return queryInterface.changeColumn(
-	// 	'blockchain_follower_details', 
-	// 	'lastBlockNumberProcessed', {
-  //   type: sequelize.Sequelize.INTEGER,
-  // })
 }
-
