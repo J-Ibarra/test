@@ -10,7 +10,7 @@ import {
   processCompletionPendingDepositRequestForCurrency,
 } from './core'
 import { DepositRequestStatus, DepositRequest } from '@abx-types/deposit'
-import { loadAllPendingDepositRequestsAboveMinimumAmount, NEW_ETH_AND_KINESIS_DEPOSIT_REQUESTS } from '../../core'
+import { loadAllPendingDepositRequestsAboveMinimumAmount, NEW_ETH_AND_KINESIS_DEPOSIT_REQUESTS_QUEUE_URL } from '../../core'
 import { getQueuePoller } from '@abx-utils/async-message-consumer'
 import { findCurrencyForId } from '@abx-service-clients/reference-data'
 
@@ -132,7 +132,7 @@ function triggerSuspendedDepositChecker(
 function subscribeToNewDepositRequestsQueue(pendingHoldingsTransferGatekeeper: DepositGatekeeper) {
   const queuePoller = getQueuePoller()
 
-  queuePoller.subscribeToQueueMessages<DepositRequest[]>(NEW_ETH_AND_KINESIS_DEPOSIT_REQUESTS, async (depositRequests) => {
+  queuePoller.subscribeToQueueMessages<DepositRequest[]>(NEW_ETH_AND_KINESIS_DEPOSIT_REQUESTS_QUEUE_URL, async (depositRequests) => {
     const currency = await findCurrencyForId(depositRequests[0].depositAddress.currencyId)
     pendingHoldingsTransferGatekeeper.addNewDepositsForCurrency(currency.code, depositRequests)
   })

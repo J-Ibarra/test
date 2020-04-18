@@ -24,6 +24,7 @@ export async function triggerKinesisCoinDepositFollower(onChainCurrencyGateway: 
     const depositCandidateOperations = await onChainCurrencyGateway.getLatestTransactions(lastEntityProcessedIdentifier)
 
     if (depositCandidateOperations.length > 0) {
+      logger.debug(`Found ${depositCandidateOperations.length} ${currencyCode} deposit candidate transactions`)
       const { fiatValueOfOneCryptoCurrency, currencyBoundary } = await getBoundaryAndLatestFiatValuePair(currencyCode)
       const publicKeyToDepositAddress = await createPublicKeyToDepositorDetailsMap(depositCandidateOperations)
 
@@ -51,13 +52,16 @@ export async function handleKinesisPaymentOperations(
   const depositTransactions = depositCandidateOperations.filter(({ to }) => publicKeyToDepositAddress.has(to!))
 
   if (depositTransactions.length > 0) {
-    logger.debug(`Found Potential Deposits: ${depositTransactions.length}`)
+    logger.info(`${depositTransactions.length} of the ${depositCandidateOperations.length} ${currencyBoundary.currencyCode} candidates are valid`)
     const depositRequests = depositTransactions.map((depositTransaction) =>
       mapDepositTransactionToDepositRequest(depositTransaction, publicKeyToDepositAddress, fiatValueOfOneCryptoCurrency, currencyBoundary),
     )
 
     const storedDepositRequests = await storeDepositRequests(depositRequests, t)
+    logger.debug(`${depositRequests.length} new ${currencyBoundary.currencyCode} deposits requests stored`)
+
     await pushRequestForProcessing(storedDepositRequests)
+    logger.debug(`${storedDepositRequests.length} new ${currencyBoundary.currencyCode} deposits requests pushed for processing`)
   }
 }
 
