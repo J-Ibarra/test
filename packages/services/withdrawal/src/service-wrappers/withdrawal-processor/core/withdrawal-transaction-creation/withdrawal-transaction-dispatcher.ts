@@ -35,6 +35,8 @@ export async function dispatchWithdrawalTransaction(
 
     await handleTransactionCreationError(withdrawalRequestId, onChainCurrencyGateway.ticker!, e)
   }
+
+  await recordTransactionSent(withdrawalRequestId!, withdrawalTxHash, Number(withdrawalTransactionFee || 0))
 }
 
 const kinesisCoins = [CurrencyCode.kau, CurrencyCode.kag]
