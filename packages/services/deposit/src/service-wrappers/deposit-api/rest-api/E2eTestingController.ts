@@ -3,12 +3,13 @@ const CryptoApis = require('cryptoapis.io')
 import { Route, Body, Post, Get, Hidden } from 'tsoa'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode, getEnvironment, SymbolPairStateFilter } from '@abx-types/reference-data'
-import { CurrencyManager, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
+import { CurrencyManager, OnChainCurrencyGateway, BtcCryptoApisProviderProxy, ENetworkTypes } from '@abx-utils/blockchain-currency-gateway'
 import { Account, User } from '@abx-types/account'
 import { findDepositAddressesForAccount } from '@abx-service-clients/deposit'
 import { findCurrencyForCode } from '@abx-service-clients/reference-data'
 import { wrapInTransaction, getModel, sequelize } from '@abx-utils/db-connection-utils'
 import { VaultAddress } from '@abx-types/deposit'
+import { BitcoinTransactionFeeEstimator } from '@abx-utils/blockchain-currency-gateway/src/bitcoin/BitcoinTransactionFeeEstimator'
 
 const caClient = new CryptoApis(process.env.CRYPTO_APIS_TOKEN!)
 caClient.BC.ETH.switchNetwork(caClient.BC.ETH.NETWORKS.ROPSTEN)
@@ -22,6 +23,7 @@ export class E2eTestingController {
     CurrencyCode.kvt,
     CurrencyCode.ethereum,
     CurrencyCode.tether,
+    CurrencyCode.bitcoin,
   ])
 
   @Post('/transaction/eth')
@@ -40,11 +42,26 @@ export class E2eTestingController {
     this.logger.info('Creating new BTC transaction.')
 
     caClient.BC.BTC.switchNetwork(caClient.BC.BTC.NETWORKS.TESTNET)
+
+    //calculate fee
+    const cryptoApisProviderProxy = new BtcCryptoApisProviderProxy(
+      CurrencyCode.bitcoin, ENetworkTypes.TESTNET, process.env.CRYPTO_APIS_TOKEN!)
+    const bitcoinTransactionFeeEstimator = new BitcoinTransactionFeeEstimator(cryptoApisProviderProxy)
+    const fee = await bitcoinTransactionFeeEstimator.estimateTransactionFee({
+      senderAddress: {
+        privateKey: '',
+        address: fromAddress
+      },
+      receiverAddress: toAddress,
+      amount: value,
+      feeLimit: 0.00005
+    })
+
     try {
       await caClient.BC.BTC.transaction.newTransaction(
         [{ address: fromAddress, value }],
         [{ address: toAddress, value }],
-        { address: fromAddress, value: 0.000004 },
+        { address: fromAddress, value: fee },
         [wif],
       )
     } catch (e) {

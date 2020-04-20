@@ -43,6 +43,7 @@ export class WalletsController extends Controller {
       }
     }
   }
+
   @Security('cookieAuth')
   @Security('tokenAuth')
   @Post('/address/activation')

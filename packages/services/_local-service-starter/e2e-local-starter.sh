@@ -22,6 +22,7 @@ export KVT_INFURA_PROJECT_ID='c2ea3bc13d094d3a824322a7628f4882'
 export TETHER_INFURA_PROJECT_ID='eb156d80cb244c4488044c60dc9d0c05'
 export KVT_FEE_HOLDINGS_SECRET='B7AFD4671093505A4C1197099270F77532DF63959676824E88B91C86688C8CFA'
 export ETHERSCAN_API_DOMAIN_ROOT='ropsten'
+export CRYPTO_APIS_TOKEN='xxx'
 
 export ENV=integration
 export API_PORT=3031
@@ -50,6 +51,6 @@ export CONTIS_API_ROOT=https://sandboxapi.contis.com
 export CONTIS_CARD_ORDER_FEE=5
 export CONTIS_CARD_ORDER_VALIDATION_SLA=5
 
-./dev-withdrawal-deposit-env-vars.sh
+. dev-withdrawal-deposit-env-vars.sh
 
 npm run start

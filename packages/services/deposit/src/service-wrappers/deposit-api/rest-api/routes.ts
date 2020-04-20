@@ -3,6 +3,7 @@ import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute } 
 import { VaultController } from './vault_controller';
 import { WalletsController } from './wallet_controller';
 import { E2eTestingController } from './E2eTestingController';
+import { DepositController } from './deposit_reference_data_controller';
 import { expressAuthentication } from './middleware/authentication';
 import * as express from 'express';
 
@@ -10,6 +11,11 @@ const models: TsoaRoute.Models = {
   "VaultPersistRequest": {
     "properties": {
       "publicKey": { "dataType": "string", "required": true },
+    },
+  },
+  "Record": {
+    "properties": {
+      "_links": { "dataType": "any", "required": true },
     },
   },
 };
@@ -231,6 +237,25 @@ export function RegisterRoutes(app: express.Express) {
 
 
       const promise = controller.removeVaultAddress.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.get('/api/deposits/minimum-amounts',
+    authenticateMiddleware([{ "cookieAuth": [] }, { "tokenAuth": [] }]),
+    function(request: any, response: any, next: any) {
+      const args = {
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new DepositController();
+
+
+      const promise = controller.getMinimumDepositAmounts.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
 

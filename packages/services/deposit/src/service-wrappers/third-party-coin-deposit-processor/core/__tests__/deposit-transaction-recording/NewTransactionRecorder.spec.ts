@@ -1,6 +1,6 @@
-import { NewTransactionRecorder } from '../../core/deposit-transaction-recording/NewTransactionRecorder'
+import { NewTransactionRecorder } from '../../deposit-transaction-recording/NewTransactionRecorder'
 import { CurrencyCode } from '@abx-types/reference-data'
-import * as coreOperations from '../../../../core'
+import * as coreOperations from '../../../../../core'
 import sinon from 'sinon'
 import { expect } from 'chai'
 import * as marketDataOperations from '@abx-service-clients/market-data'
