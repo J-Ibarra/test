@@ -4,12 +4,13 @@ import { createPendingDeposit, createPendingWithdrawal } from '@abx-service-clie
 import { SourceEventType } from '@abx-types/balance'
 import { TransactionResponse, OnChainCurrencyGateway, getOnChainCurrencyManagerForEnvironment } from '@abx-utils/blockchain-currency-gateway'
 import { decryptValue } from '@abx-utils/encryption'
-import { updateAllDepositRequests } from '../../../../core'
+import { updateAllDepositRequests, findDepositRequestsForIds } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode, Environment } from '@abx-types/reference-data'
 import { getDepositTransactionFeeCurrencyId } from '../utils'
 import { DepositCompleter } from '../deposit-completion/DepositCompleter'
 import { DepositAmountCalculator } from './DepositAmountCalculator'
+import Decimal from '@abx-service-clients/reference-data/node_modules/decimal.js'
 
 export class HoldingsTransactionDispatcher {
   private readonly logger = Logger.getInstance('public-coin-deposit-processor', 'HoldingsTransactionDispatcher')
@@ -37,7 +38,9 @@ export class HoldingsTransactionDispatcher {
     if (holdingsTransactionHash) {
       this.logger.info(`Starting completion for deposit request with holdings transaction hash ${holdingsTransactionHash} for completion`)
 
-      await this.depositCompleter.completeDepositRequests(depositRequests.concat(depositsRequestsWithInsufficientStatus), currency)
+      const updatedDepositRequests = await findDepositRequestsForIds(depositRequests.concat(depositsRequestsWithInsufficientStatus).map(({ id }) => id!))
+
+      await this.depositCompleter.completeDepositRequests(updatedDepositRequests, currency)
     }
   }
 
@@ -86,7 +89,7 @@ export class HoldingsTransactionDispatcher {
       await Promise.all([
         updateAllDepositRequests(depositRequestIds, {
           holdingsTxHash: holdingsTransactionHash,
-          holdingsTxFee: Number(holdingsTransactionFee),
+          holdingsTxFee: new Decimal(holdingsTransactionFee!).dividedBy(depositRequestIds.length).toNumber(),
           status: DepositRequestStatus.pendingCompletion,
         }),
         joinedDepositRequestsWithInsufficientBalance.length > 0

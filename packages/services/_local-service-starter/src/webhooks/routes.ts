@@ -8,7 +8,8 @@ export function RegisterRoutes(app: express.Express) {
   const ADDRESS_KEY = 'ADDRESS_KEY'
   const addressCache = MemoryCache.getInstance()
 
-  app.post('/api/webhooks/crypto/deposits/address/transactions/unconfirmed', function (request: any, response: any) {
+  app.post('/api/webhooks/crypto/deposits/address/transactions', function (request: any, response: any) {
+           '/api/webhooks/crypto/deposits/address/transactions'
     console.log(`Received deposit address transaction unconfirmed webhook`)
     response.status(200).end()
 

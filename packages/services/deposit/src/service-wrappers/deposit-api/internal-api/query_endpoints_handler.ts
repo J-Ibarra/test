@@ -2,7 +2,7 @@ import { DepositQueryEndpoints } from '@abx-service-clients/deposit'
 import {
   findDepositRequestById,
   findDepositAddressesForAccount,
-  findDepositAddressForIds,
+  findDepositRequestsForIds,
   getDepositRequestsForAccountAndCurrency,
 } from '../../../core'
 import { InternalRoute, setupInternalApi } from '@abx-utils/internal-api-tools'
@@ -20,7 +20,7 @@ function createQueryEndpointHandlers(): InternalRoute<any, any>[] {
     },
     {
       path: DepositQueryEndpoints.findDepositRequestsByIds,
-      handler: ({ ids }) => findDepositAddressForIds(ids),
+      handler: ({ ids }) => findDepositRequestsForIds(ids),
     },
     {
       path: DepositQueryEndpoints.findDepositRequestsForAccountAndCurrency,

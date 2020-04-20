@@ -12,7 +12,7 @@ export KINESIS_BITCOIN_HOLDINGS_ADDRESS='n38x83CNLcKqNWAgKSzfdvfaEMAT4CiLr8'
 export KINESIS_BITCOIN_HOLDINGS_PRIVATE_KEY='d423a7abfa4752c3e99ba1e755356511f82887f73b40e0bedafef140993100e4'
 export BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS=1
 
-export DEPOSIT_ADDRESS_TRANSACTION_CALLBACK_URL="https://$PROXY_URL/api/webhooks/crypto/deposits/address/transactions/unconfirmed"
+export DEPOSIT_ADDRESS_TRANSACTION_CALLBACK_URL="https://$PROXY_URL/api/webhooks/crypto/deposits/address/transactions"
 # export DEPOSIT_ADDRESS_TRANSACTION_QUEUE_URL='https://sqs.ap-southeast-2.amazonaws.com/884998542479/int-kbe-deposits-new-address-transactions'
 
 # export WITHDRAWAL_STATUS_CHANGE_QUEUE_URL='https://sqs.ap-southeast-2.amazonaws.com/884998542479/int-kbe-withdrawal-change.fifo'
