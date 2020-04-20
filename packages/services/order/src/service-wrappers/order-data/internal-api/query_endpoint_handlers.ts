@@ -6,6 +6,7 @@ import {
   findTradeTransaction,
   findLastOrderMatchForSymbol,
   generateReportForTradeTransaction,
+  findLastOrderMatchForSymbols,
 } from '../../../core'
 import { OrderDataEndpoints } from '@abx-service-clients/order'
 import { InternalRoute } from '@abx-utils/internal-api-tools'
@@ -22,7 +23,7 @@ export function createOrderQueryEndpointHandlers(): InternalRoute<any, any>[] {
     },
     {
       path: OrderDataEndpoints.findOrderMatch,
-      handler: async queries => {
+      handler: async (queries) => {
         const orderMatches = await findOrderMatchTransaction(queries)
 
         return orderMatches[0]
@@ -30,7 +31,7 @@ export function createOrderQueryEndpointHandlers(): InternalRoute<any, any>[] {
     },
     {
       path: OrderDataEndpoints.findOrderMatches,
-      handler: queries => findOrderMatchTransactions(queries),
+      handler: (queries) => findOrderMatchTransactions(queries),
     },
     {
       path: OrderDataEndpoints.findLastOrderMatchForSymbol,
@@ -38,7 +39,7 @@ export function createOrderQueryEndpointHandlers(): InternalRoute<any, any>[] {
     },
     {
       path: OrderDataEndpoints.findLastOrderMatchForSymbols,
-      handler: ({ symbolIds }) => findOrderMatchTransactions({ where: { symbolId: { $in: symbolIds } }, order: [['createdAt', 'DESC']] }),
+      handler: ({ symbolIds }) => findLastOrderMatchForSymbols(symbolIds),
     },
     {
       path: OrderDataEndpoints.findTradeTransaction,
