@@ -78,8 +78,8 @@ describe('HoldingsTransactionDispatcher', () => {
         totalAmount: depositRequest.amount,
         depositsRequestsWithInsufficientStatus: [],
       })
-      const completeDepositRequestsStub = sinon.stub(DepositCompleter.prototype, 'completeDepositRequests').resolves()
       sinon.stub(depositRequestOperations, 'findDepositRequestsForIds').resolves([depositRequest])
+      const completeDepositRequestsStub = sinon.stub(DepositCompleter.prototype, 'completeDepositRequests').resolves()
 
       await holdingsTransactionDispatcher.dispatchHoldingsTransactionForDepositRequests([depositRequest], CurrencyCode.bitcoin)
 
