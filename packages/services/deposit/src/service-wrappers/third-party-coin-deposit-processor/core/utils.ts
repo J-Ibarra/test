@@ -27,3 +27,13 @@ export async function getDepositTransactionFeeCurrencyId(
 
   return transactionFeeCurrencyId
 }
+
+const DEFAULT_REQUIRED_DEPOSIT_TRANSACTION_CONFIRMATIONS = 1
+
+export function getRequiredConfirmationsForDepositTransaction(currency: CurrencyCode) {
+  if (currency === CurrencyCode.bitcoin) {
+    return Number(process.env.BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS)
+  }
+
+  return DEFAULT_REQUIRED_DEPOSIT_TRANSACTION_CONFIRMATIONS
+}

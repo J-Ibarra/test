@@ -52,9 +52,7 @@ const withdrawalRoutes = ['/internal-api/withdrawals', '/api/withdrawals', '/api
 const depositRoutes = ['/internal-api/deposit', '/api/deposits', '/api/vault', '/api/wallets', '/api/test-automation/deposit']
 
 const webhookRoutes = [
-  '/api/webhooks/crypto/deposits/address/transactions/unconfirmed',
-  '/api/webhooks/crypto/deposits/address/transactions/confirmed',
-  '/api/webhooks/crypto/deposits/holdings-transactions/confirmations',
+  '/api/webhooks/crypto/deposits/address/transactions',
   '/api/webhooks/crypto/withdrawals/confirmations',
 ]
 const reportRoutes = ['/api/reports']
