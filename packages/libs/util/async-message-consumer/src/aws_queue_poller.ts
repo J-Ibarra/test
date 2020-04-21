@@ -20,7 +20,7 @@ export class AwsQueueObserver implements QueuePoller {
         if (err!!) {
           this.logger.error(`${JSON.stringify(err)}`)
         } else if (!!data && !!data.Messages) {
-          this.invokeMessageHandler(data.Messages[0], queueUrl, handler)
+          await this.invokeMessageHandler(data.Messages[0], queueUrl, handler)
         }
 
         return this.subscribeToQueueMessages(queueUrl, handler)
@@ -48,7 +48,7 @@ export class AwsQueueObserver implements QueuePoller {
           QueueUrl: queueUrl,
           ReceiptHandle: messageReceiptHandle,
         },
-        err => {
+        (err) => {
           if (err!!) {
             this.logger.error(`Unable to remove message from queue with receipt handle ${messageReceiptHandle}`)
             reject()
