@@ -58,10 +58,10 @@ export async function handleKinesisPaymentOperations(
     )
 
     const storedDepositRequests = await storeDepositRequests(depositRequests, t)
-    logger.debug(`${depositRequests.length} new ${currencyBoundary.currencyCode} deposits requests stored`)
+    logger.debug(`${depositRequests.length} new ${currencyBoundary.currencyCode} deposit requests stored`)
 
     await pushRequestForProcessing(storedDepositRequests)
-    logger.debug(`${storedDepositRequests.length} new ${currencyBoundary.currencyCode} deposits requests pushed for processing`)
+    logger.debug(`${storedDepositRequests.length} new ${currencyBoundary.currencyCode} deposit requests pushed for processing`)
   }
 }
 
