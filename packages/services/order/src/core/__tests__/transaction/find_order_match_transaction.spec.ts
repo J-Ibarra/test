@@ -6,7 +6,7 @@ import { createDumbOrder, createDumbOrderMatchTransaction } from '../utils'
 import { OrderDirection } from '@abx-types/order'
 
 describe('find_order_match_transaction', () => {
-  it('findLastOrderMatchForSymbol', async () => {
+  it('findLastOrderMatchForSymbol should return the latest order match price', async () => {
     const account1 = await createTemporaryTestingAccount()
     const account2 = await createTemporaryTestingAccount()
 
@@ -20,7 +20,7 @@ describe('find_order_match_transaction', () => {
     expect(lastOrderMatch.matchPrice).to.eql(14)
   })
 
-  it('findLastOrderMatchForSymbols', async () => {
+  it('findLastOrderMatchForSymbols should return the latest order match price for each symbol', async () => {
     const account1 = await createTemporaryTestingAccount()
     const account2 = await createTemporaryTestingAccount()
 
