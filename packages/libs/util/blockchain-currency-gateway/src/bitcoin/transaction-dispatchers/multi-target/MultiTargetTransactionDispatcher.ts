@@ -1,6 +1,5 @@
 import {
   CryptoAddress,
-  ApiProviderError,
   MultiTargetCreateTransactionPayload,
   MultiTargetTransactionReceiver,
   MultiTargetTransactionCreationResult,
@@ -57,7 +56,7 @@ export class MultiTargetTransactionDispatcher implements BitcoinTransactionDispa
       } to ${receivers.map(({ address }) => address).join(',')}`
       this.LOGGER.error(`${errorMessage} ${JSON.stringify(util.inspect(e))}`)
 
-      throw new ApiProviderError(errorMessage)
+      throw e
     }
 
     try {
@@ -79,7 +78,7 @@ export class MultiTargetTransactionDispatcher implements BitcoinTransactionDispa
       const errorMessage = `An error has ocurred while trying to send transaction for transaction of ${totalAmountToSend} from ${senderAddress.address}`
       this.LOGGER.error(`${errorMessage} ${JSON.stringify(util.inspect(e))}`)
 
-      throw new ApiProviderError(errorMessage)
+      throw e
     }
   }
 

@@ -52,12 +52,12 @@ export class MultiTargetTransactionFeeEstimator {
       .toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
       .toNumber()
 
-    const totalFeeLimitForAllTargets = new Decimal(receivers.length)
+    const totalAcceptedFeeLimitForAllTargets = new Decimal(receivers.length)
       .times(MultiTargetTransactionFeeEstimator.MAXIMUM_TX_FEE)
       .toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
       .toNumber()
 
-    return Math.min(estimatedMinimumTransactionFee, totalFeeLimitForAllTargets)
+    return Math.min(estimatedMinimumTransactionFee, totalAcceptedFeeLimitForAllTargets)
   }
 
   private async getAverageFee(): Promise<{ averageFeePerByte: string; averageFeePerTransaction?: string }> {

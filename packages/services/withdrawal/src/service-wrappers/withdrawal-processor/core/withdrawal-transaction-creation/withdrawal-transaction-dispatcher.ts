@@ -78,7 +78,7 @@ export async function recordTransactionSent(withdrawalRequestId: number, txHash:
   })
 }
 
-export const INSUFFICIENT_UTXO_ERROR_CODE = '2328'
+export const INSUFFICIENT_UTXO_ERROR_CODE = 2328
 
 /**
  * Checks if the transaction creation failure happened for BTC
@@ -98,5 +98,5 @@ async function handleTransactionCreationError(withdrawalRequestId: number, curre
     })
   }
 
-  throw error
+  return
 }

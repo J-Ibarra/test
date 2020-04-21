@@ -2,7 +2,7 @@ import { WithdrawalCompletionPendingPayload } from './model'
 import { getOnChainCurrencyManagerForEnvironment } from '@abx-utils/blockchain-currency-gateway'
 import { findCurrencyForCode } from '@abx-service-clients/reference-data'
 import { Environment, CurrencyCode } from '@abx-types/reference-data'
-import { findWithdrawalRequestByTxHashWithFeeRequest, findWithdrawalRequests } from '../../../../core'
+import { findWithdrawalRequests, findWithdrawalRequestsByTxHashWithFeeRequest } from '../../../../core'
 import { completeCryptoWithdrawal } from './crypto'
 import { Logger } from '@abx-utils/logging'
 import { nativelyImplementedCoins } from '../common'
@@ -48,17 +48,27 @@ export async function completeWithdrawalRequest({ txid, currency }: WithdrawalCo
 
 async function completeRequest(transactionId: string): Promise<{ success: boolean; skipMessageDeletion?: boolean }> {
   return wrapInTransaction(sequelize, null, async (transaction) => {
-    const withdrawalRequestToComplete = await findWithdrawalRequestByTxHashWithFeeRequest(transactionId, transaction)
+    const withdrawalRequestsToComplete = await findWithdrawalRequestsByTxHashWithFeeRequest(transactionId, transaction)
 
-    if (!withdrawalRequestToComplete) {
+    if (withdrawalRequestsToComplete.length === 0) {
       logger.warn(`Attempted to complete withdrawal request with txid ${transactionId} that could not be found`)
       return { success: false }
-    } else if (withdrawalRequestToComplete.state !== WithdrawalState.holdingsTransactionCompleted) {
-      logger.warn(`Attempted to complete withdrawal request with txid ${transactionId} where the holdings transaction has not yet been recorded.`)
+    }
+
+    const withdrawalRequestWithInvalidStatusFound = withdrawalRequestsToComplete.find(
+      ({ state }) => state !== WithdrawalState.holdingsTransactionCompleted,
+    )
+    if (withdrawalRequestWithInvalidStatusFound) {
+      logger.warn(
+        `Attempted to complete withdrawal request with txid ${transactionId} where the holdings transaction has not yet been recorded. Withdrawal request id: ${withdrawalRequestWithInvalidStatusFound.id}`,
+      )
       return { success: false, skipMessageDeletion: true }
     }
 
-    await completeCryptoWithdrawal(withdrawalRequestToComplete, transaction, withdrawalRequestToComplete.feeRequest)
+    await Promise.all(
+      withdrawalRequestsToComplete.map((withdrawalRequest) => completeCryptoWithdrawal(withdrawalRequest, transaction, withdrawalRequest.feeRequest)),
+    )
+
     return { success: true }
   })
 }

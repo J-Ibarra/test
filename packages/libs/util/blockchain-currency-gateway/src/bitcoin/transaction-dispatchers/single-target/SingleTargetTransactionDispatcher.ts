@@ -1,4 +1,4 @@
-import { CryptoAddress, ApiProviderError, SingleTargetCreateTransactionPayload } from '../../../model'
+import { CryptoAddress, SingleTargetCreateTransactionPayload } from '../../../model'
 import { TransactionResponse } from '../../../currency_gateway'
 import Decimal from 'decimal.js'
 import util from 'util'
@@ -46,7 +46,7 @@ export class SingleTargetTransactionDispatcher implements BitcoinTransactionDisp
       const errorMessage = `An error has ocurred while trying to calculate fee for transaction of ${amount} from ${senderAddress.address} to ${receiverAddress}`
       this.LOGGER.error(`${errorMessage} ${JSON.stringify(util.inspect(e))}`)
 
-      throw new ApiProviderError(errorMessage)
+      throw e
     }
 
     let transactionHash
@@ -57,7 +57,7 @@ export class SingleTargetTransactionDispatcher implements BitcoinTransactionDisp
       const errorMessage = `An error has ocurred while trying to send transaction for transaction of ${amount} from ${senderAddress.address} to ${receiverAddress}`
       this.LOGGER.error(`${errorMessage} ${JSON.stringify(util.inspect(e))}`)
 
-      throw new ApiProviderError(errorMessage)
+      throw e
     }
 
     return {

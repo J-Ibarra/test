@@ -9,7 +9,7 @@ import { findDepositAddressesForAccount } from '@abx-service-clients/deposit'
 import { findCurrencyForCode } from '@abx-service-clients/reference-data'
 import { wrapInTransaction, getModel, sequelize } from '@abx-utils/db-connection-utils'
 import { VaultAddress } from '@abx-types/deposit'
-import { BitcoinTransactionFeeEstimator } from '@abx-utils/blockchain-currency-gateway/src/bitcoin/BitcoinTransactionFeeEstimator'
+import { SingleTargetTransactionFeeEstimator } from '@abx-utils/blockchain-currency-gateway'
 
 const caClient = new CryptoApis(process.env.CRYPTO_APIS_TOKEN!)
 caClient.BC.ETH.switchNetwork(caClient.BC.ETH.NETWORKS.ROPSTEN)
@@ -44,17 +44,16 @@ export class E2eTestingController {
     caClient.BC.BTC.switchNetwork(caClient.BC.BTC.NETWORKS.TESTNET)
 
     //calculate fee
-    const cryptoApisProviderProxy = new BtcCryptoApisProviderProxy(
-      CurrencyCode.bitcoin, ENetworkTypes.TESTNET, process.env.CRYPTO_APIS_TOKEN!)
-    const bitcoinTransactionFeeEstimator = new BitcoinTransactionFeeEstimator(cryptoApisProviderProxy)
+    const cryptoApisProviderProxy = new BtcCryptoApisProviderProxy(CurrencyCode.bitcoin, ENetworkTypes.TESTNET, process.env.CRYPTO_APIS_TOKEN!)
+    const bitcoinTransactionFeeEstimator = new SingleTargetTransactionFeeEstimator(cryptoApisProviderProxy)
     const fee = await bitcoinTransactionFeeEstimator.estimateTransactionFee({
       senderAddress: {
         privateKey: '',
-        address: fromAddress
+        address: fromAddress,
       },
       receiverAddress: toAddress,
       amount: value,
-      feeLimit: 0.00005
+      feeLimit: 0.00005,
     })
 
     try {
