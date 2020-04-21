@@ -2,13 +2,15 @@ import { CryptoAddress } from './CryptoAddress'
 
 export interface CreateTransactionPayload {
   senderAddress: Pick<CryptoAddress, 'privateKey' | 'address' | 'wif'>
+  /** The transaction description/data attach to the transaction. */
+  memo?: string
+  /** When set to true the actual amount sent will be {@code amount - calculatedFee} */
+  subtractFeeFromAmountSent?: boolean
 }
 
 export interface SingleTargetCreateTransactionPayload extends CreateTransactionPayload {
   receiverAddress: string
   amount: number
-  /** The transaction description/data attach to the transaction. */
-  memo?: string
   /**
    * The maximum amount of fee that it is acceptable to pay for the transaction.
    * This is used mostly for withdrawals where we want to make sure kinesis remains profitable.
@@ -18,8 +20,6 @@ export interface SingleTargetCreateTransactionPayload extends CreateTransactionP
 
 export interface MultiTargetCreateTransactionPayload extends CreateTransactionPayload {
   receivers: MultiTargetTransactionReceiver[]
-  /** The transaction description/data attach to the transaction. */
-  memo?: string
 }
 
 export interface MultiTargetTransactionReceiver {

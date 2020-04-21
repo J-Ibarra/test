@@ -33,6 +33,7 @@ export class MultiTargetTransactionDispatcher implements BitcoinTransactionDispa
     senderAddress,
     receivers,
     memo,
+    subtractFeeFromAmountSent = true,
   }: MultiTargetCreateTransactionPayload): Promise<MultiTargetTransactionCreationResult> {
     let estimatedTransactionFee = 0
     const totalAmountToSend = new Decimal(receivers.reduce((acc, { amount }) => acc + amount, 0))
@@ -66,6 +67,7 @@ export class MultiTargetTransactionDispatcher implements BitcoinTransactionDispa
         totalAmountToSend,
         estimatedTransactionFee,
         memo,
+        subtractFeeFromAmountSent,
       )
       this.LOGGER.info(`Successfully sent transaction with hash ${txid} for ${totalAmountToSend} from ${senderAddress.address}`)
 
@@ -88,6 +90,7 @@ export class MultiTargetTransactionDispatcher implements BitcoinTransactionDispa
     amount: number,
     fee: number,
     memo: string | undefined,
+    subtractFeeFromAmountSent: boolean,
   ): Promise<{ txid: string; averageFeePaidByEachReceiver: number }> {
     let amountAfterFee = new Decimal(amount).minus(fee).toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN).toNumber()
     const averageFeePaidByEachReceiver = new Decimal(fee)
@@ -96,14 +99,16 @@ export class MultiTargetTransactionDispatcher implements BitcoinTransactionDispa
       .toNumber()
 
     const { hex: transactionHex } = await this.cryptoApisProviderProxy.createTransaction({
-      inputs: [BitcoinTransactionCreationUtils.createTransactionAddress(senderAddress.address!, amountAfterFee)],
-      outputs: receivers.map(({ address, amount }) =>
+      inputs: [BitcoinTransactionCreationUtils.createTransactionAddress(senderAddress.address!, subtractFeeFromAmountSent ? amountAfterFee : amount)],
+      outputs: receivers.map(({ address, amount: receiverAmount }) =>
         BitcoinTransactionCreationUtils.createTransactionAddress(
           address,
-          new Decimal(amount)
-            .minus(averageFeePaidByEachReceiver)
-            .toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
-            .toNumber(),
+          subtractFeeFromAmountSent
+            ? new Decimal(receiverAmount)
+                .minus(averageFeePaidByEachReceiver)
+                .toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
+                .toNumber()
+            : receiverAmount,
         ),
       ),
       fee: {

@@ -114,6 +114,7 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
       amount,
       memo,
       feeLimit,
+      subtractFeeFromAmountSent: false,
     })
   }
 
@@ -134,6 +135,7 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
       },
       receivers,
       memo,
+      subtractFeeFromAmountSent: false,
     })
   }
 

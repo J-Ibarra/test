@@ -1,21 +1,23 @@
-const CryptoApis = require('cryptoapis.io')
+import CryptoApis from 'cryptoapis.io'
+import Decimal from 'decimal.js'
 
 import { Route, Body, Post, Get, Hidden } from 'tsoa'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode, getEnvironment, SymbolPairStateFilter } from '@abx-types/reference-data'
-import { CurrencyManager, OnChainCurrencyGateway, BtcCryptoApisProviderProxy, ENetworkTypes } from '@abx-utils/blockchain-currency-gateway'
+import { CurrencyManager, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
 import { Account, User } from '@abx-types/account'
 import { findDepositAddressesForAccount } from '@abx-service-clients/deposit'
 import { findCurrencyForCode } from '@abx-service-clients/reference-data'
 import { wrapInTransaction, getModel, sequelize } from '@abx-utils/db-connection-utils'
 import { VaultAddress } from '@abx-types/deposit'
-import { SingleTargetTransactionFeeEstimator } from '@abx-utils/blockchain-currency-gateway'
 
 const caClient = new CryptoApis(process.env.CRYPTO_APIS_TOKEN!)
 caClient.BC.ETH.switchNetwork(caClient.BC.ETH.NETWORKS.ROPSTEN)
 
 @Route('test-automation/deposit')
 export class E2eTestingController {
+  private readonly BTC_TESTNET_FEE = 0.00005
+
   private logger = Logger.getInstance('api', 'E2eTestingController')
   private currencyManager = new CurrencyManager(getEnvironment(), [
     CurrencyCode.kau,
@@ -43,24 +45,12 @@ export class E2eTestingController {
 
     caClient.BC.BTC.switchNetwork(caClient.BC.BTC.NETWORKS.TESTNET)
 
-    //calculate fee
-    const cryptoApisProviderProxy = new BtcCryptoApisProviderProxy(CurrencyCode.bitcoin, ENetworkTypes.TESTNET, process.env.CRYPTO_APIS_TOKEN!)
-    const bitcoinTransactionFeeEstimator = new SingleTargetTransactionFeeEstimator(cryptoApisProviderProxy)
-    const fee = await bitcoinTransactionFeeEstimator.estimateTransactionFee({
-      senderAddress: {
-        privateKey: '',
-        address: fromAddress,
-      },
-      receiverAddress: toAddress,
-      amount: value,
-      feeLimit: 0.00005,
-    })
-
+    const valueAfterFee = new Decimal(value).minus(this.BTC_TESTNET_FEE).toNumber()
     try {
       await caClient.BC.BTC.transaction.newTransaction(
-        [{ address: fromAddress, value }],
-        [{ address: toAddress, value }],
-        { address: fromAddress, value: fee },
+        [{ address: fromAddress, value: valueAfterFee }],
+        [{ address: toAddress, value: valueAfterFee }],
+        { address: fromAddress, value: this.BTC_TESTNET_FEE },
         [wif],
       )
     } catch (e) {
@@ -88,7 +78,7 @@ export class E2eTestingController {
   public async getBalanceByCurrencyAndPublicKey(address: string, currencyCode: CurrencyCode): Promise<number> {
     const currency: OnChainCurrencyGateway = this.currencyManager.getCurrencyFromTicker(currencyCode)
     const result = await currency.balanceAt(address)
-    return result
+    return result || 0
   }
 
   @Get('/address/{email}/{currencyCode}')

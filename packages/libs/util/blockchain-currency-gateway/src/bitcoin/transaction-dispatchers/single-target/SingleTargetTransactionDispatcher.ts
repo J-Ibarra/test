@@ -31,6 +31,7 @@ export class SingleTargetTransactionDispatcher implements BitcoinTransactionDisp
     amount,
     memo,
     feeLimit,
+    subtractFeeFromAmountSent = true,
   }: SingleTargetCreateTransactionPayload): Promise<TransactionResponse> {
     let estimatedTransactionFee
     try {
@@ -51,7 +52,7 @@ export class SingleTargetTransactionDispatcher implements BitcoinTransactionDisp
 
     let transactionHash
     try {
-      transactionHash = await this.sendTransaction(senderAddress, receiverAddress, amount, estimatedTransactionFee, memo)
+      transactionHash = await this.sendTransaction(senderAddress, receiverAddress, amount, estimatedTransactionFee, memo, subtractFeeFromAmountSent)
       this.LOGGER.info(`Successfully sent transaction with hash ${transactionHash} for ${amount} from ${senderAddress.address} to ${receiverAddress}`)
     } catch (e) {
       const errorMessage = `An error has ocurred while trying to send transaction for transaction of ${amount} from ${senderAddress.address} to ${receiverAddress}`
@@ -72,12 +73,15 @@ export class SingleTargetTransactionDispatcher implements BitcoinTransactionDisp
     amount: number,
     fee: number,
     memo: string | undefined,
+    subtractFeeFromAmountSent: boolean,
   ): Promise<string> {
-    let amountAfterFee = new Decimal(amount).minus(fee).toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN).toNumber()
+    let amountToSend = subtractFeeFromAmountSent
+      ? new Decimal(amount).minus(fee).toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN).toNumber()
+      : amount
 
     const { hex: transactionHex } = await this.cryptoApisProviderProxy.createTransaction({
-      inputs: [BitcoinTransactionCreationUtils.createTransactionAddress(senderAddress.address!, amountAfterFee)],
-      outputs: [BitcoinTransactionCreationUtils.createTransactionAddress(receiverAddress, amountAfterFee)],
+      inputs: [BitcoinTransactionCreationUtils.createTransactionAddress(senderAddress.address!, amountToSend)],
+      outputs: [BitcoinTransactionCreationUtils.createTransactionAddress(receiverAddress, amountToSend)],
       fee: {
         address: senderAddress.address!,
         value: fee,
