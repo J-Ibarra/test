@@ -52,11 +52,11 @@ export async function cleanOldDepositFailures(
 }
 
 const logger = Logger.getInstance('helper', 'cleanOldDepositFailuresForCurrency')
-// Deposits where the failure was recorded more than 3 minutes ago will be removed from the failed requests
-const EXPIRY_TIME_IN_MINUTES = 3
+// Deposits where the failure was recorded more than 5 seconds ago will be removed from the failed requests
+const EXPIRY_TIME_IN_SECONDS = 5
 
 /**
- * Moves all failed deposit requests recorded more than 10 minutes ago in the pendingHoldingsTransferGatekeeper,
+ * Moves all failed deposit requests recorded more than 5 seconds ago in the pendingHoldingsTransferGatekeeper,
  * allowing them to be processed again.
  *
  * @param pendingHoldingsTransferGatekeeper the pending holdings gatekeeper which the deposit
@@ -71,7 +71,7 @@ export async function cleanOldDepositFailuresForCurrency(
   const failedDepositRequestsForCurrency = currencyCodeToFailedDepositRequests.get(currencyCode) || []
   logger.debug(`Failed deposit requests for ${currencyCode}: ${JSON.stringify(failedDepositRequestsForCurrency)}`)
   const expiredDepositRequests = failedDepositRequestsForCurrency.filter(({ failureRecordedAt }) =>
-    moment(failureRecordedAt).isBefore(moment().subtract(EXPIRY_TIME_IN_MINUTES, 'minutes')),
+    moment(failureRecordedAt).isBefore(moment().subtract(EXPIRY_TIME_IN_SECONDS, 'seconds')),
   )
 
   return wrapInTransaction(sequelize, null, async (transaction) => {

@@ -77,7 +77,7 @@ function triggerPendingHoldingsTransferRequestProcessor(
           ),
         ),
       ),
-    5_000,
+    3_000,
   )
 }
 
@@ -99,7 +99,7 @@ function triggerDepositCompletionProcessor(pendingCompletionDepositsGatekeeper: 
 
 async function triggerFailedHoldingsTransactionChecker(pendingHoldingsTransferGatekeeper: DepositGatekeeper) {
   await loadAllHoldingsTransactionFailedRequestsInMemory()
-  setInterval(async () => await cleanExpiredFailedRequests(pendingHoldingsTransferGatekeeper), 15_000)
+  setInterval(async () => await cleanExpiredFailedRequests(pendingHoldingsTransferGatekeeper), 5_000)
 }
 
 function triggerSuspendedDepositChecker(

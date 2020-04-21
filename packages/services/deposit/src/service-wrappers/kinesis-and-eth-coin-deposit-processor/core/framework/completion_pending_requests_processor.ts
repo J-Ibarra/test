@@ -9,7 +9,7 @@ import { DepositRequest } from '@abx-types/deposit'
 import { completePendingDeposit } from '../../../../core'
 import { DepositGatekeeper } from './deposit_gatekeeper'
 
-const secondsToWaitBeforeAnotherAttempt = 60
+const SECONDS_TO_WAIT_BEFORE_ANOTHER_ATTEMPT = 5
 const logger = Logger.getInstance('completion_pending_deposit_requests_processor', 'processCompletionPendingDepositRequestForCurrency')
 
 export async function processCompletionPendingDepositRequestForCurrency(
@@ -51,7 +51,7 @@ export async function processCompletionPendingDepositRequestForCurrency(
 
 function postponeDepositCompletion(gateKeeper: DepositGatekeeper, currency: CurrencyCode, depositRequest: DepositRequest) {
   gateKeeper.removeRequest(currency, depositRequest.id!)
-  gateKeeper.addNewDepositsForCurrency(currency, [depositRequest], secondsToWaitBeforeAnotherAttempt)
+  gateKeeper.addNewDepositsForCurrency(currency, [depositRequest], SECONDS_TO_WAIT_BEFORE_ANOTHER_ATTEMPT)
 }
 
 async function completeDeposit(depositRequest: DepositRequest) {
