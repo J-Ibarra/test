@@ -98,7 +98,7 @@ export async function handleEthereumTransactions(
       return convertTransactionToDepositRequest(tx.depositAddress, depositTransaction, fiatValueOfOneCryptoCurrency, currencyBoundary)
     })
 
-    await storeDepositRequests(depositRequests, t)
-    await pushRequestForProcessing(depositRequests)
+    const storedDepositRequests = await storeDepositRequests(depositRequests, t)
+    await pushRequestForProcessing(storedDepositRequests)
   }
 }
