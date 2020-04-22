@@ -16,12 +16,15 @@ export class DepositAddressTransactionHandler {
   private blockedDepositRequestsHandler = new BlockedDepositRequestsHandler()
 
   public async handleDepositAddressTransaction(txid: string, depositAddress: DepositAddress, currency: CurrencyCode) {
-    const onChainCurrencyManager = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment, [currency])
-    const depositTransactionDetails = await onChainCurrencyManager.getCurrencyFromTicker(currency).getTransaction(txid, depositAddress.address!)
+    const onChainCurrencyGateway = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment, [currency]).getCurrencyFromTicker(
+      currency,
+    )
+
+    const depositTransactionDetails = await onChainCurrencyGateway.getTransaction(txid, depositAddress.address!)
+    const holdingsPublicAddress = await onChainCurrencyGateway.getHoldingPublicAddress()
 
     const isOutgoingTransactionToKinesisHoldings =
-      !!depositTransactionDetails &&
-      depositTransactionDetails.receiverAddress.toLowerCase() === process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS!.toLowerCase()
+      !!depositTransactionDetails && depositTransactionDetails.receiverAddress.toLowerCase() === holdingsPublicAddress.toLowerCase()
 
     if (!!depositTransactionDetails && depositTransactionDetails.receiverAddress.toLowerCase() === depositAddress.address!.toLowerCase()) {
       await this.handleNewDepositAddressTransaction(depositTransactionDetails, depositAddress, txid, currency)

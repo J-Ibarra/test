@@ -13,6 +13,7 @@ import * as coreOperations from '../../../../../core'
 describe('DepositAddressTransactionHandler', () => {
   const getTransactionStub = sinon.stub()
   const txid = 'txid-1'
+  const holdingsAddress = 'holdings address'
   const depositAddress = {
     id: 1,
     address: 'deposit-address',
@@ -23,6 +24,7 @@ describe('DepositAddressTransactionHandler', () => {
     const onChainCurrencyManagerStub = {
       getCurrencyFromTicker: () => ({
         getTransaction: getTransactionStub,
+        getHoldingPublicAddress: () => Promise.resolve(holdingsAddress),
       }),
     } as any
 
@@ -111,11 +113,6 @@ describe('DepositAddressTransactionHandler', () => {
   })
 
   describe('outgoing', () => {
-    const holdingsAddress = 'holdings address'
-    beforeEach(() => {
-      process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS = holdingsAddress
-    })
-
     it('should not trigger blocked deposit requests processing when confirmations not enough', async () => {
       const depositTransactionDetails = {
         receiverAddress: holdingsAddress,
