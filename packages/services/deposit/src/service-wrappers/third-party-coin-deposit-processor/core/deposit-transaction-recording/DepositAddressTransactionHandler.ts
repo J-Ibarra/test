@@ -20,9 +20,10 @@ export class DepositAddressTransactionHandler {
     const depositTransactionDetails = await onChainCurrencyManager.getCurrencyFromTicker(currency).getTransaction(txid, depositAddress.address!)
 
     const isOutgoingTransactionToKinesisHoldings =
-      !!depositTransactionDetails && depositTransactionDetails.receiverAddress === process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS
+      !!depositTransactionDetails &&
+      depositTransactionDetails.receiverAddress.toLowerCase() === process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS!.toLowerCase()
 
-    if (!!depositTransactionDetails && depositTransactionDetails.receiverAddress === depositAddress.address) {
+    if (!!depositTransactionDetails && depositTransactionDetails.receiverAddress.toLowerCase() === depositAddress.address!.toLowerCase()) {
       await this.handleNewDepositAddressTransaction(depositTransactionDetails, depositAddress, txid, currency)
     } else if (isOutgoingTransactionToKinesisHoldings) {
       await this.handleHoldingsConfirmation(depositTransactionDetails!, currency, depositAddress.id!)
