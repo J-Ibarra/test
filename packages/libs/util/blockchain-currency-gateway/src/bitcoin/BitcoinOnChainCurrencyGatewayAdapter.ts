@@ -40,7 +40,10 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
         this.logger.warn(`We have already activated transaction events for this address: ${depositAddressDetails.address}`)
         return true
       }
-      await this.bitcoinBlockchainFacade.subscribeToAddressTransactionEvents(depositAddressDetails.address, this.UNCONFIRMED_TRANSACTIONS)
+      await this.bitcoinBlockchainFacade.subscribeToAddressTransactionEvents(
+        depositAddressDetails.address,
+        Number(process.env.BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS || this.UNCONFIRMED_TRANSACTIONS),
+      )
       this.logger.info(`Activated transaction events for this address: ${depositAddressDetails.address}`)
       return true
     } catch (e) {
