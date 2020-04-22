@@ -76,7 +76,6 @@ export async function up({ sequelize }: { sequelize: Sequelize }) {
     )
     .join(' ')
 
-  console.log(updateSymbolOrder)
   try {
     await sequelize.query(`
       ALTER TABLE public.symbol ALTER COLUMN id TYPE varchar(8);
