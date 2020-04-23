@@ -23,7 +23,7 @@ export class HoldingsTransactionDispatcher {
       depositsRequestsWithInsufficientStatus,
     } = await this.depositAmountCalculator.computeTotalAmountToTransfer(depositRequests)
 
-    const currencyManager = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment, [currency])
+    const currencyManager = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment)
 
     const holdingsTransactionHash = await this.transferTransactionAmountToHoldingsWallet(
       {
@@ -38,7 +38,9 @@ export class HoldingsTransactionDispatcher {
     if (holdingsTransactionHash) {
       this.logger.info(`Starting completion for deposit request with holdings transaction hash ${holdingsTransactionHash} for completion`)
 
-      const updatedDepositRequests = await findDepositRequestsForIds(depositRequests.concat(depositsRequestsWithInsufficientStatus).map(({ id }) => id!))
+      const updatedDepositRequests = await findDepositRequestsForIds(
+        depositRequests.concat(depositsRequestsWithInsufficientStatus).map(({ id }) => id!),
+      )
 
       await this.depositCompleter.completeDepositRequests(updatedDepositRequests, currency)
     }

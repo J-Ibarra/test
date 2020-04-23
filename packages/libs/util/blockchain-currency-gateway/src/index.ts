@@ -1,4 +1,4 @@
-import { Environment, CurrencyCode } from '@abx-types/reference-data'
+import { Environment } from '@abx-types/reference-data'
 import { TestCurrencyManager } from './test_currency_gateway'
 import { CurrencyManager } from './currency_manager'
 
@@ -14,7 +14,7 @@ export * from './kinesis'
 export * from './bitcoin'
 
 let currencyManager
-export function getOnChainCurrencyManagerForEnvironment(environment: Environment, currencies: CurrencyCode[]) {
+export function getOnChainCurrencyManagerForEnvironment(environment: Environment) {
   if (!currencyManager) {
     currencyManager = environment === Environment.test ? new TestCurrencyManager() : new CurrencyManager()
   }

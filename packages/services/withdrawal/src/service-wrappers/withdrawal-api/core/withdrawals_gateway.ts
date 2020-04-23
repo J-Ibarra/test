@@ -5,13 +5,12 @@ import { InitialiseWithdrawalParams } from '@abx-types/withdrawal'
 import { validateWithdrawal, initialiseCryptoWithdrawalRequest } from '../../../core'
 import { Currency, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { findCurrencyAvailableBalances } from '@abx-service-clients/balance'
-import { getEnvironment } from '@abx-types/reference-data'
 import { findAccountWithUserDetails } from '@abx-service-clients/account'
 import { pushNewCryptoWithdrawalRequestForProcessing } from '@abx-service-clients/withdrawal'
 import { handleFiatCurrencyWithdrawalRequest } from './fiat_new_withdrawal_request_handler'
 
 const logger = Logger.getInstance('withdrawals_gateway', 'initialiseWithdrawal')
-const onChainCurrencyManager = new CurrencyManager(getEnvironment())
+const onChainCurrencyManager = new CurrencyManager()
 
 export async function initialiseWithdrawal(params: InitialiseWithdrawalParams): Promise<void> {
   const { amount, currencyCode } = params

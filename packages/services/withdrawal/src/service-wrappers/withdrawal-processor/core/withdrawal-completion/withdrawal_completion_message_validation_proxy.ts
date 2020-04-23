@@ -36,7 +36,7 @@ export function processWithdrawalCompletionRequest(message: WithdrawalCompletion
  * @param notificationPayload the address transaction CryptoApis notification
  */
 async function completeWithdrawalRequestIfOutgoingTransactionConfirmed({ currency, address, txid, confirmations }: IAddressTransactionEventPayload) {
-  const onChainCurrencyManager = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment, [currency])
+  const onChainCurrencyManager = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment)
 
   const [transactionDetails, withdrawalRequest] = await Promise.all([
     onChainCurrencyManager.getCurrencyFromTicker(currency).getTransaction(txid, address),

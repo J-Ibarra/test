@@ -15,7 +15,7 @@ import { triggerMultipleBalanceChanges, BalanceAsyncRequestType } from '@abx-ser
 const logger = Logger.getInstance('redemption_approval_handler', 'approveRedemption')
 
 export function approveRedemption(adminRequest: AdminRequest, adminId: string, transaction: Transaction): Promise<AdminRequest> {
-  return wrapInTransaction(sequelize, transaction, async t => {
+  return wrapInTransaction(sequelize, transaction, async (t) => {
     logger.info(
       `Processing redemption request approval(${adminRequest.id}) for account hin ${adminRequest.hin} and amount ${adminRequest.amount} and fee ${adminRequest.fee} `,
     )
@@ -24,7 +24,7 @@ export function approveRedemption(adminRequest: AdminRequest, adminId: string, t
     await updateClientAndKinesisRevenueAccountBalances(adminRequest, clientAccount!.id, currencyId!)
 
     logger.debug(`Burning ${adminRequest.amount} ${adminRequest.asset} for redemption request ${adminRequest.id}`)
-    const kauKagOnChainGateway: Kinesis = getOnChainCurrencyManagerForEnvironment(getEnvironment(), [adminRequest.asset]).getCurrencyFromTicker(
+    const kauKagOnChainGateway: Kinesis = getOnChainCurrencyManagerForEnvironment(getEnvironment()).getCurrencyFromTicker(
       adminRequest.asset,
     ) as Kinesis
 
@@ -49,10 +49,7 @@ async function updateClientAndKinesisRevenueAccountBalances(adminRequest: AdminR
         sourceEventId: adminRequest.id,
         currencyId,
         accountId: clientAccountId,
-        amount: new Decimal(adminRequest.amount)
-          .plus(adminRequest.fee!)
-          .toDecimalPlaces(boundaryForCurrency.maxDecimals)
-          .toNumber(),
+        amount: new Decimal(adminRequest.amount).plus(adminRequest.fee!).toDecimalPlaces(boundaryForCurrency.maxDecimals).toNumber(),
       },
     },
     {

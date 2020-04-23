@@ -57,10 +57,7 @@ async function getOnChainCurrencyGatewayAndWithdrawnCurrency(currencyId: number)
     cryptoCurrencies = await findCryptoCurrencies(SymbolPairStateFilter.all)
   }
 
-  const currencyManager = getOnChainCurrencyManagerForEnvironment(
-    process.env.NODE_ENV as Environment,
-    cryptoCurrencies.map(({ code }) => code),
-  )
+  const currencyManager = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment)
   const withdrawalCurrency = cryptoCurrencies.find(({ id }) => id === currencyId)!
 
   return { withdrawalCurrency, onChainCurrencyGateway: currencyManager.getCurrencyFromTicker(withdrawalCurrency.code) }

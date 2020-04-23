@@ -16,9 +16,7 @@ export class DepositAddressTransactionHandler {
   private holdingsTransactionConfirmationHandler = new HoldingsTransactionConfirmationHandler()
 
   public async handleDepositAddressTransaction(txid: string, depositAddress: DepositAddress, currency: CurrencyCode) {
-    const onChainCurrencyGateway = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment, [currency]).getCurrencyFromTicker(
-      currency,
-    )
+    const onChainCurrencyGateway = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment).getCurrencyFromTicker(currency)
 
     const depositTransactionDetails = await onChainCurrencyGateway.getTransaction(txid, depositAddress.address!)
     const holdingsPublicAddress = await onChainCurrencyGateway.getHoldingPublicAddress()

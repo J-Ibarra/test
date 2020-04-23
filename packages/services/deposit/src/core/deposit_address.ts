@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize'
-import { getEnvironment, CurrencyCode, Currency, SymbolPairStateFilter } from '@abx-types/reference-data'
+import { CurrencyCode, Currency, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyManager, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
 import { getModel, sequelize } from '@abx-utils/db-connection-utils'
@@ -172,10 +172,7 @@ export async function createMissingDepositAddressesForAccount(
 
   logger.debug(`Crypto currencies for account ${accountId}: ${filteredCryptoCurrencies.join(', ')}`)
 
-  const manager = new CurrencyManager(
-    getEnvironment(),
-    filteredCryptoCurrencies.map(({ code }) => code),
-  )
+  const manager = new CurrencyManager()
 
   const currencyIdToDepositAddress = groupBy(existingDepositAddresses, 'currencyId')
 
@@ -219,7 +216,7 @@ export const findDepositAddressAndListenForEvents = async ({ id }: Account, curr
     return depositAddress
   }
 
-  const manager = new CurrencyManager(getEnvironment(), [currencyCode])
+  const manager = new CurrencyManager()
 
   const successfulEventCreation = await manager.getCurrencyFromTicker(currencyCode).createAddressTransactionSubscription(depositAddress)
 

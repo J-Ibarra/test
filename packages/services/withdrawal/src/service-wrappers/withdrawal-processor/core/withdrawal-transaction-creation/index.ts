@@ -20,10 +20,7 @@ export function bootstrapNewWithdrawalRequestQueueProcessor() {
 
 export async function processNewWithdrawalRequest(cryptoWithdrawalRequest: CryptoWithdrawalRequestWrapper) {
   const currencies = await findCryptoCurrencies(SymbolPairStateFilter.all)
-  const currencyManager = getOnChainCurrencyManagerForEnvironment(
-    process.env.NODE_ENV as Environment,
-    currencies.map(({ code }) => code),
-  )
+  const currencyManager = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment)
 
   if ((cryptoWithdrawalRequest as BatchCryptoWithdrawalRequestWrapper).isBatch) {
     const currency = (cryptoWithdrawalRequest as BatchCryptoWithdrawalRequestWrapper).currency

@@ -21,7 +21,7 @@ const logger = Logger.getInstance('withdrawal-processor', 'withdrawal-completion
 export async function completeWithdrawalRequest({ txid, currency }: WithdrawalCompletionPendingPayload): Promise<void | QueueConsumerOutput> {
   logger.debug(`Received withdrawal completion request for currency ${currency} and transaction ${txid}`)
 
-  const currencyManager = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment, [currency])
+  const currencyManager = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment)
 
   // We only need to verify the confirmation for natively implemented
   // coin integrations since the the ones implemented with Crypto API

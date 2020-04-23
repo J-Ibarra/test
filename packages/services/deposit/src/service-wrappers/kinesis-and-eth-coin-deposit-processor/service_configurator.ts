@@ -1,4 +1,4 @@
-import { getEnvironment, DepositPollingFrequency, CryptoCurrency, Currency, CurrencyCode } from '@abx-types/reference-data'
+import { DepositPollingFrequency, CryptoCurrency, Currency, CurrencyCode } from '@abx-types/reference-data'
 import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 import {
   checkForNewDepositsForCurrency,
@@ -15,7 +15,7 @@ import { DepositRequestStatus } from '@abx-types/deposit'
 import { getAllPendingDepositRequestsForCurrencyAboveMinimumAmount, loadAllPendingDepositRequestsAboveMinimumAmount } from '../../core'
 import { findCurrencyForCodes } from '@abx-service-clients/reference-data'
 
-const onChainCurrencyManager = new CurrencyManager(getEnvironment())
+const onChainCurrencyManager = new CurrencyManager()
 
 export async function configureDepositHandler(depositPollingFrequencyConfig: DepositPollingFrequency[]) {
   const [
@@ -74,7 +74,7 @@ function triggerPendingHoldingsTransferRequestProcessor(
   setInterval(
     async () =>
       await Promise.all(
-        Object.values(CryptoCurrency).map(currency =>
+        Object.values(CryptoCurrency).map((currency) =>
           processNewestDepositRequestForCurrency(
             pendingHoldingsTransferGatekeeper,
             pendingCompletionDepositsGatekeeper,
@@ -92,7 +92,7 @@ function triggerDepositCompletionProcessor(pendingCompletionDepositsGatekeeper: 
   setInterval(
     async () =>
       await Promise.all(
-        Object.values(CryptoCurrency).map(currency =>
+        Object.values(CryptoCurrency).map((currency) =>
           processCompletionPendingDepositRequestForCurrency(
             pendingCompletionDepositsGatekeeper,
             (currency as unknown) as CurrencyCode,
@@ -122,7 +122,7 @@ async function hydrateGatekeeperWithNewDeposits(pendingHoldingsTransferGatekeepe
   const depositIdsInGatekeeper = pendingHoldingsTransferGatekeeper.getAllDepositsForCurrency(currency.code).map(({ id }) => id)
   pendingHoldingsTransferGatekeeper.addNewDepositsForCurrency(
     currency.code,
-    newPendingDeposits.filter(newDeposit => !depositIdsInGatekeeper.includes(newDeposit.id)),
+    newPendingDeposits.filter((newDeposit) => !depositIdsInGatekeeper.includes(newDeposit.id)),
   )
 
   setTimeout(() => hydrateGatekeeperWithNewDeposits(pendingHoldingsTransferGatekeeper, currency), 30_000)
@@ -135,7 +135,7 @@ function triggerSuspendedDepositChecker(
 ) {
   setInterval(async () => {
     await Promise.all(
-      Object.values(CryptoCurrency).map(currency =>
+      Object.values(CryptoCurrency).map((currency) =>
         processSuspendedDepositRequestForCurrency(
           pendingSuspendedDepositGatekeeper,
           checkingSuspendedDepositGatekeeper,
@@ -144,7 +144,7 @@ function triggerSuspendedDepositChecker(
       ),
     )
     await Promise.all(
-      Object.values(CryptoCurrency).map(currency =>
+      Object.values(CryptoCurrency).map((currency) =>
         processCheckingSuspendedDepositRequest(
           checkingSuspendedDepositGatekeeper,
           pendingHoldingsTransferGatekeeper,
