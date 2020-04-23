@@ -1,5 +1,5 @@
 import { DepositRequest, DepositRequestStatus } from '@abx-types/deposit'
-import { updateDepositRequest, findDepositRequestByDepositTransactionHash, findDepositRequestsForStatus } from '../../../../core'
+import { updateDepositRequest, findDepositRequestByDepositTransactionHash, findDepositRequestsForStatuses } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { HoldingsTransactionDispatcher } from './HoldingsTransactionDispatcher'
@@ -35,7 +35,10 @@ export class HoldingsTransactionGateway {
   }
 
   private async checkIfPendingHoldingsTransactionIsAvailable(depositRequest: DepositRequest): Promise<boolean> {
-    const depositRequests = await findDepositRequestsForStatus(depositRequest.depositAddressId!, DepositRequestStatus.pendingHoldingsTransaction)
+    const depositRequests = await findDepositRequestsForStatuses(depositRequest.depositAddressId!, [
+      DepositRequestStatus.pendingHoldingsTransaction,
+      DepositRequestStatus.pendingHoldingsTransactionConfirmation,
+    ])
 
     return depositRequests.length > 0
   }

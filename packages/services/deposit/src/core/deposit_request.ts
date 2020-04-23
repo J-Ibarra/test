@@ -15,20 +15,20 @@ export async function storeDepositRequests(deposits: DepositRequest[], transacti
     new Map(),
   )
 
-  const existingDepositRequests = await findAllDepositRequestsByTxHashes(deposits.map(deposit => deposit.depositTxHash))
-  const existingDepositRequestIds: Set<string> = new Set<string>(existingDepositRequests.map(request => request.depositTxHash))
+  const existingDepositRequests = await findAllDepositRequestsByTxHashes(deposits.map((deposit) => deposit.depositTxHash))
+  const existingDepositRequestIds: Set<string> = new Set<string>(existingDepositRequests.map((request) => request.depositTxHash))
 
   const depositRequestInstances = await getModel<DepositRequest>('depositRequest').bulkCreate(
     deposits
-      .filter(deposit => !existingDepositRequestIds.has(deposit.depositTxHash))
-      .map(depositRequest => ({
+      .filter((deposit) => !existingDepositRequestIds.has(deposit.depositTxHash))
+      .map((depositRequest) => ({
         ...depositRequest,
         depositAddressId: depositRequest.depositAddress.id,
       })),
     { transaction, returning: true },
   )
 
-  return depositRequestInstances.map(requestInstance => {
+  return depositRequestInstances.map((requestInstance) => {
     const persistedDepositRequest = requestInstance.get({ plain: true })
 
     return {
@@ -69,7 +69,7 @@ export async function getAllDepositRequests(query: Partial<DepositRequest>, pare
     transaction: parentTransaction,
   })
 
-  return depositInstances.map(req => req.get({ plain: true }))
+  return depositInstances.map((req) => req.get({ plain: true }))
 }
 
 export async function loadAllPendingDepositRequestsAboveMinimumAmount(): Promise<DepositRequest[]> {
@@ -80,11 +80,11 @@ export async function loadAllPendingDepositRequestsAboveMinimumAmount(): Promise
   // In case the CryptoCurrency is not enabled yet it would show as undefined here
   const depositRequestsForAllCurrenciesPromise = cachedCryptoCurrencies
     .filter(Boolean)
-    .map(cryptoCurrency => getAllPendingDepositRequestsForCurrencyAboveMinimumAmount(cryptoCurrency))
+    .map((cryptoCurrency) => getAllPendingDepositRequestsForCurrencyAboveMinimumAmount(cryptoCurrency))
 
   const depositRequestsForAllCurrencies = await Promise.all(depositRequestsForAllCurrenciesPromise)
 
-  return flatMap(depositRequestsForAllCurrencies, requests => requests)
+  return flatMap(depositRequestsForAllCurrencies, (requests) => requests)
 }
 
 export async function findDepositRequestsByHoldingsTransactionHash(txHash: string): Promise<DepositRequest[]> {
@@ -93,7 +93,7 @@ export async function findDepositRequestsByHoldingsTransactionHash(txHash: strin
     include: [getModel<DepositAddress>('depositAddress')],
   })
 
-  return depositInstances.map(req => req.get({ plain: true }))
+  return depositInstances.map((req) => req.get({ plain: true }))
 }
 
 export async function getAllPendingDepositRequestsForCurrencyAboveMinimumAmount(
@@ -114,7 +114,7 @@ export async function getAllPendingDepositRequestsForCurrencyAboveMinimumAmount(
     transaction: parentTransaction,
   })
 
-  return depositInstances.map(req => req.get({ plain: true }))
+  return depositInstances.map((req) => req.get({ plain: true }))
 }
 
 export async function findMostRecentlyUpdatedDepositRequest(
@@ -143,7 +143,7 @@ export async function findDepositRequestsWithInsufficientAmount(depositAddressId
     },
   })
 
-  return depositInstances.map(req => req.get({ plain: true }))
+  return depositInstances.map((req) => req.get({ plain: true }))
 }
 
 export async function findDepositRequestsWhereTransactionHashPresent(transactionHash: string): Promise<DepositRequest[]> {
@@ -158,7 +158,7 @@ export async function findDepositRequestsWhereTransactionHashPresent(transaction
     ],
   })
 
-  return depositInstances.map(req => req.get({ plain: true }))
+  return depositInstances.map((req) => req.get({ plain: true }))
 }
 
 export async function getPendingDepositRequests(currencyId: number, parentTransaction?: Transaction) {
@@ -172,7 +172,7 @@ export async function getPendingDepositRequests(currencyId: number, parentTransa
     transaction: parentTransaction,
   })
 
-  return depositInstances.map(req => req.get({ plain: true }))
+  return depositInstances.map((req) => req.get({ plain: true }))
 }
 
 export async function getPersistedPendingDepositRequests(ids: number[], parentTransaction?: Transaction) {
@@ -183,7 +183,7 @@ export async function getPersistedPendingDepositRequests(ids: number[], parentTr
     limit: 100,
   })
 
-  return depositInstances.map(req => req.get({ plain: true }))
+  return depositInstances.map((req) => req.get({ plain: true }))
 }
 
 export async function getDepositRequestsForAccountAndCurrency(accountId: string, currencyId: number) {
@@ -196,7 +196,7 @@ export async function getDepositRequestsForAccountAndCurrency(accountId: string,
     ],
   })
 
-  return depositInstances.map(req => req.get({ plain: true }))
+  return depositInstances.map((req) => req.get({ plain: true }))
 }
 
 export async function findDepositRequestByDepositTransactionHash(txHash: string): Promise<DepositRequest | null> {
@@ -213,7 +213,7 @@ export async function findAllDepositRequestsByTxHashes(depositTxHashes: string[]
     where: { depositTxHash: { $in: depositTxHashes } },
   })
 
-  return depositRequests.map(depositRequest => depositRequest.get({ plain: true }))
+  return depositRequests.map((depositRequest) => depositRequest.get({ plain: true }))
 }
 
 export async function findDepositRequestById(id: number): Promise<DepositRequest | null> {
@@ -245,7 +245,7 @@ export async function updateAllDepositRequests(id: number[], update: Partial<Dep
     transaction,
   })
 
-  return updatedDepositRequests.map(updatedDepositRequest => updatedDepositRequest.get())
+  return updatedDepositRequests.map((updatedDepositRequest) => updatedDepositRequest.get())
 }
 
 export async function updateDepositRequest(id: number, update: Partial<DepositRequest>, transaction?: Transaction) {
@@ -267,14 +267,24 @@ export function getDepositMinimumForCurrency(currency: CurrencyCode): number {
   }
 }
 
-export async function findDepositRequestsForStatus(depositAddressId: number, status: DepositRequestStatus): Promise<DepositRequest[]> {
+export async function findDepositRequestsForStatuses(depositAddressId: number, statuses: DepositRequestStatus[]): Promise<DepositRequest[]> {
   const depositInstances = await getModel<DepositRequest>('depositRequest').findAll({
     where: {
-      status,
+      status: { $in: statuses },
       depositAddressId,
     },
     include: [getModel<DepositAddress>('depositAddress')],
   })
 
-  return depositInstances.map(req => req.get({ plain: true }))
+  return depositInstances.map((req) => req.get({ plain: true }))
+}
+
+export async function updateDepositRequestForHoldingsTxHash(holdingsTxHash: string, update: Partial<DepositRequest>, transaction?: Transaction) {
+  const [, [confirmedDeposit]] = await getModel<DepositRequest>('depositRequest').update({ ...update } as DepositRequest, {
+    where: { holdingsTxHash },
+    returning: true,
+    transaction,
+  })
+
+  return confirmedDeposit && confirmedDeposit.get()
 }

@@ -7,7 +7,7 @@ import { NewTransactionRecorder } from '../../deposit-transaction-recording/NewT
 import { CurrencyCode } from '@abx-types/reference-data'
 import { HoldingsTransactionGateway } from '../../holdings-transaction-creation/HoldingsTransactionGateway'
 import * as utilOperations from '../../utils'
-import { BlockedDepositRequestsHandler } from '../../deposit-transaction-recording/BlockedDepositRequestsHandler'
+import { HoldingsTransactionConfirmationHandler } from '../../deposit-transaction-recording/HoldingsTransactionConfirmationHandler'
 import * as coreOperations from '../../../../../core'
 
 describe('DepositAddressTransactionHandler', () => {
@@ -129,13 +129,13 @@ describe('DepositAddressTransactionHandler', () => {
       ]
       getTransactionStub.resolves(depositTransactionDetails)
       sinon.stub(coreOperations, 'findAllDepositRequestsByTxHashes').resolves(depositRequests)
-      const dispatchHoldingsTransactionForBlockedRequestsStub = sinon
-        .stub(BlockedDepositRequestsHandler.prototype, 'dispatchHoldingsTransactionForBlockedRequests')
+      const handleHoldingsTransactionConfirmationStub = sinon
+        .stub(HoldingsTransactionConfirmationHandler.prototype, 'handleHoldingsTransactionConfirmation')
         .resolves()
 
       await depositAddressTransactionHandler.handleDepositAddressTransaction(txid, depositAddress, CurrencyCode.bitcoin)
 
-      expect(dispatchHoldingsTransactionForBlockedRequestsStub.notCalled).to.eql(true)
+      expect(handleHoldingsTransactionConfirmationStub.notCalled).to.eql(true)
     })
 
     it('should trigger blocked deposit requests processing when confirmations not enough', async () => {
@@ -143,6 +143,7 @@ describe('DepositAddressTransactionHandler', () => {
         receiverAddress: holdingsAddress,
         confirmations: 1,
         amount: 1,
+        transactionHash: txid,
       } as any
       const depositRequests = [
         {
@@ -155,13 +156,13 @@ describe('DepositAddressTransactionHandler', () => {
 
       getTransactionStub.resolves(depositTransactionDetails)
       sinon.stub(coreOperations, 'findAllDepositRequestsByTxHashes').resolves(depositRequests)
-      const dispatchHoldingsTransactionForBlockedRequestsStub = sinon
-        .stub(BlockedDepositRequestsHandler.prototype, 'dispatchHoldingsTransactionForBlockedRequests')
+      const handleHoldingsTransactionConfirmationStub = sinon
+        .stub(HoldingsTransactionConfirmationHandler.prototype, 'handleHoldingsTransactionConfirmation')
         .resolves()
 
       await depositAddressTransactionHandler.handleDepositAddressTransaction(txid, depositAddress, CurrencyCode.bitcoin)
 
-      expect(dispatchHoldingsTransactionForBlockedRequestsStub.calledWith(depositAddress.id, CurrencyCode.bitcoin)).to.eql(true)
+      expect(handleHoldingsTransactionConfirmationStub.calledWith(txid, depositAddress.id, CurrencyCode.bitcoin)).to.eql(true)
     })
   })
 })

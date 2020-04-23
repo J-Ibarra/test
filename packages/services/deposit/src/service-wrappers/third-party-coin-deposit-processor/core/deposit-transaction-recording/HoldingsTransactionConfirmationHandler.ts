@@ -1,18 +1,19 @@
-import { findDepositRequestsForStatus } from '../../../../core'
+import { findDepositRequestsForStatuses, updateDepositRequestForHoldingsTxHash } from '../../../../core'
 import { DepositRequestStatus } from '@abx-types/deposit'
 import { HoldingsTransactionDispatcher } from '../holdings-transaction-creation/HoldingsTransactionDispatcher'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode } from '@abx-types/reference-data'
 
-export class BlockedDepositRequestsHandler {
+export class HoldingsTransactionConfirmationHandler {
   private readonly logger = Logger.getInstance('public-coin-deposit-processor', 'BlockedDepositRequestsHandler')
   private readonly holdingsTransactionDispatcher = new HoldingsTransactionDispatcher()
 
-  public async dispatchHoldingsTransactionForBlockedRequests(depositAddressId: number, currencyCode: CurrencyCode) {
-    const blockedDepositRequests = await findDepositRequestsForStatus(
-      depositAddressId!,
+  public async handleHoldingsTransactionConfirmation(txid: string, depositAddressId: number, currencyCode: CurrencyCode) {
+    const blockedDepositRequests = await findDepositRequestsForStatuses(depositAddressId!, [
       DepositRequestStatus.blockedForHoldingsTransactionConfirmation,
-    )
+    ])
+
+    await updateDepositRequestForHoldingsTxHash(txid, { status: DepositRequestStatus.completed })
 
     if (blockedDepositRequests.length > 0) {
       this.logger.info(

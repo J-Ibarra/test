@@ -6,14 +6,14 @@ import { getMinimumDepositAmountForCurrency } from '../../../../core'
 import { NewTransactionRecorder } from './NewTransactionRecorder'
 import { HoldingsTransactionGateway } from '../holdings-transaction-creation/HoldingsTransactionGateway'
 import { Logger } from '@abx-utils/logging'
-import { BlockedDepositRequestsHandler } from './BlockedDepositRequestsHandler'
+import { HoldingsTransactionConfirmationHandler } from './HoldingsTransactionConfirmationHandler'
 
 export class DepositAddressTransactionHandler {
   private readonly logger = Logger.getInstance('public-coin-deposit-processor', 'DepositAddressTransactionHandler')
 
   private newTransactionRecorder = new NewTransactionRecorder()
   private holdingsTransactionGateway = new HoldingsTransactionGateway()
-  private blockedDepositRequestsHandler = new BlockedDepositRequestsHandler()
+  private holdingsTransactionConfirmationHandler = new HoldingsTransactionConfirmationHandler()
 
   public async handleDepositAddressTransaction(txid: string, depositAddress: DepositAddress, currency: CurrencyCode) {
     const onChainCurrencyGateway = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment, [currency]).getCurrencyFromTicker(
@@ -39,7 +39,11 @@ export class DepositAddressTransactionHandler {
         `Confirmation received for ${currency} holdings transaction ${depositTransactionDetails.transactionHash}, triggering completion`,
       )
 
-      await this.blockedDepositRequestsHandler.dispatchHoldingsTransactionForBlockedRequests(depositAddressId, currency)
+      await this.holdingsTransactionConfirmationHandler.handleHoldingsTransactionConfirmation(
+        depositTransactionDetails.transactionHash,
+        depositAddressId,
+        currency,
+      )
     }
   }
 
@@ -49,7 +53,7 @@ export class DepositAddressTransactionHandler {
     txid: string,
     currency: CurrencyCode,
   ) {
-    this.logger.info(`Handling new ${currency} deposit address ${depositAddress} transaction with id ${txid}`)
+    this.logger.info(`Handling new ${currency} deposit address ${depositAddress.address!} transaction with id ${txid}`)
     // the deposit request will be created only once
     await this.newTransactionRecorder.recordDepositTransaction({
       currency,

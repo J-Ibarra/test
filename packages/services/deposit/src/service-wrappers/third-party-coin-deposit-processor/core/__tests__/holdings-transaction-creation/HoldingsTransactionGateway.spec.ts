@@ -31,7 +31,7 @@ describe('HoldingsTransactionGateway', () => {
       id: 1,
     } as any
     sinon.stub(coreOperations, 'findDepositRequestByDepositTransactionHash').resolves(depositRequest)
-    sinon.stub(coreOperations, 'findDepositRequestsForStatus').resolves([{ id: 2 }, { id: 3 }])
+    sinon.stub(coreOperations, 'findDepositRequestsForStatuses').resolves([{ id: 2 }, { id: 3 }])
 
     const dispatchHoldingsTransactionForDepositRequestsStub = sinon
       .stub(HoldingsTransactionDispatcher.prototype, 'dispatchHoldingsTransactionForDepositRequests')
@@ -53,7 +53,7 @@ describe('HoldingsTransactionGateway', () => {
     sinon.stub(coreOperations, 'findDepositRequestByDepositTransactionHash').resolves({
       id: depositRequestId,
     })
-    sinon.stub(coreOperations, 'findDepositRequestsForStatus').resolves([])
+    sinon.stub(coreOperations, 'findDepositRequestsForStatuses').resolves([])
 
     const dispatchHoldingsTransactionForDepositRequestsStub = sinon
       .stub(HoldingsTransactionDispatcher.prototype, 'dispatchHoldingsTransactionForDepositRequests')

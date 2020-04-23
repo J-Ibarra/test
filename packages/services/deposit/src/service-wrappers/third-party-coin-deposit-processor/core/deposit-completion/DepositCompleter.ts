@@ -51,7 +51,7 @@ export class DepositCompleter {
 
     await updateAllDepositRequests(
       depositRequests.map(({ id }) => id!),
-      { status: DepositRequestStatus.completed },
+      { status: DepositRequestStatus.pendingHoldingsTransactionConfirmation },
     )
     this.logger.info(`Completed ${currencyCode} deposit requests: ${depositRequests.map(({ id }) => id).join(',')}`)
   }
