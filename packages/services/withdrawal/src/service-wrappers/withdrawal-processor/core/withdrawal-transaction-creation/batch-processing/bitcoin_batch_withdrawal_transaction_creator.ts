@@ -10,7 +10,7 @@ import { Logger } from '@abx-utils/logging'
 const logger = Logger.getInstance('crypto_currency_request_handler', 'processWaitingBitcoinWithdrawalRequests')
 
 export async function processWaitingBitcoinWithdrawalRequests(onChainCurrencyGateway: BitcoinOnChainCurrencyGatewayAdapter) {
-  let bitcoin = await findCurrencyForCode(CurrencyCode.bitcoin)
+  const bitcoin = await findCurrencyForCode(CurrencyCode.bitcoin)
 
   const withdrawalRequests = await findWithdrawalRequests({ currencyId: bitcoin.id!, state: WithdrawalState.waiting })
   const totalWithdrawalAmount = withdrawalRequests.reduce((acc, { amount }) => acc + amount, 0)

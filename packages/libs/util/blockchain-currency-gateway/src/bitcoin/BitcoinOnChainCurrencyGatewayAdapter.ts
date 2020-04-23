@@ -35,11 +35,11 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
       if (!depositAddressDetails.address) {
         this.logger.warn('Received deposit address details have no address field. Please consider that you are passing in the wrong currency asset.')
         return false
-      }
-      if (depositAddressDetails.transactionTrackingActivated) {
+      } else if (depositAddressDetails.transactionTrackingActivated) {
         this.logger.warn(`We have already activated transaction events for this address: ${depositAddressDetails.address}`)
         return true
       }
+
       await this.bitcoinBlockchainFacade.subscribeToAddressTransactionEvents(
         depositAddressDetails.address,
         Number(process.env.BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS || this.UNCONFIRMED_TRANSACTIONS),

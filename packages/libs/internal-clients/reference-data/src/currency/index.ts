@@ -6,7 +6,7 @@ import { REFERENCE_DATA_REST_API_PORT } from '../boundaries'
 
 const internalApiRequestDispatcher = new InternalApiRequestDispatcher(REFERENCE_DATA_REST_API_PORT)
 const currencyCodeToCurrency: Record<CurrencyCode, Currency> = {} as any
-const currencyIdToCurrency: Record<CurrencyCode, Currency> = {} as any
+const currencyIdToCurrency: Record<number, Currency> = {} as any
 
 export async function findAllCurrencyCodes(filter = SymbolPairStateFilter.enabled): Promise<CurrencyCode[]> {
   const currencies = await findAllCurrencies(filter)

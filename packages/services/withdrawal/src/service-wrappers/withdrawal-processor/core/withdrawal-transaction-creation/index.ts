@@ -25,7 +25,7 @@ export async function processNewWithdrawalRequest(cryptoWithdrawalRequest: Crypt
     currencies.map(({ code }) => code),
   )
 
-  if (cryptoWithdrawalRequest.isBatch) {
+  if ((cryptoWithdrawalRequest as BatchCryptoWithdrawalRequestWrapper).isBatch) {
     const currency = (cryptoWithdrawalRequest as BatchCryptoWithdrawalRequestWrapper).currency
 
     await processWaitingWithdrawalBatch(currency, currencyManager.getCurrencyFromTicker(currency))

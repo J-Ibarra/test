@@ -40,11 +40,11 @@ export async function generateTradeTransactionReportData(orderMatchData: OrderMa
     isBuying,
   })
 
-  const { [quoteCurrency]: quoteCurrencyBoundary, [paidCurrencyCode]: paidCurrencyBoundary } = await getBoundariesForCurrencies([
-    quoteCurrency,
-    feeCurrency!,
-    paidCurrencyCode,
-  ])
+  const {
+    [quoteCurrency]: quoteCurrencyBoundary,
+    [paidCurrencyCode]: paidCurrencyBoundary,
+    [totalReceived.currencyCode]: receivedCurrencyBoundary,
+  } = await getBoundariesForCurrencies([quoteCurrency, feeCurrency!, paidCurrencyCode, baseCurrency])
 
   const feeCurrencyBoundary = feeCurrency === paidCurrencyCode ? paidCurrencyBoundary : quoteCurrencyBoundary
 
@@ -87,7 +87,7 @@ export async function generateTradeTransactionReportData(orderMatchData: OrderMa
           appendCurrencyCode: true,
         }),
         totalPaid: await formatCurrencyValue({ value: totalPaid, boundary: paidCurrencyBoundary, appendCurrencyCode: true }),
-        totalReceived: await formatCurrencyValue({ value: totalReceived, boundary: paidCurrencyBoundary, appendCurrencyCode: true }),
+        totalReceived: await formatCurrencyValue({ value: totalReceived, boundary: receivedCurrencyBoundary, appendCurrencyCode: true }),
       },
       transactionFee: {
         fee: await formatCurrencyValue({
