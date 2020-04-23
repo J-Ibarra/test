@@ -25,7 +25,7 @@ const models: TsoaRoute.Models = {
     },
   },
   "SupportedFeatureFlags": {
-    "enums": ["debit_card", "BTC", "TETHER", "BTC_KAU", "BTC_KAG", "BTC_ETH", "BTC_USD", "BTC_EUR", "BTC_GBP", "KVT_BTC", "KVT_USDT", "KAU_USDT", "KAG_USDT", "ETH_USDT", "BTC_USDT", "USDT_EUR", "USDT_USD"],
+    "enums": ["debit_card", "BTC", "TETHER", "BTC_KAU", "BTC_KAG", "ETH_BTC", "BTC_USD", "BTC_EUR", "BTC_GBP", "KVT_BTC", "KVT_USDT", "KAU_USDT", "KAG_USDT", "ETH_USDT", "BTC_USDT", "USDT_EUR", "USDT_USD"],
   },
   "FeatureFlag": {
     "properties": {

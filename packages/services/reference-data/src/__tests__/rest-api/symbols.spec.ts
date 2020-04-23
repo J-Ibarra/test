@@ -93,7 +93,7 @@ describe('api:symbols', () => {
     await updateOrCreateExchangeConfig({
       featureFlags: [
         { name: SupportedFeatureFlags.bitcoin, enabled: [account.id] },
-        { name: SupportedFeatureFlags.BTC_ETH, enabled: [account.id] },
+        { name: SupportedFeatureFlags.ETH_BTC, enabled: [account.id] },
       ],
     })
     const { body, status } = await request(app).get('/api/symbols').set('Cookie', cookie)
@@ -109,7 +109,7 @@ describe('api:symbols', () => {
       expect(symbol).to.have.property('fee')
     })
 
-    const btcEthSymbol = body.find(({ id }) => id === 'BTC_ETH')
+    const btcEthSymbol = body.find(({ id }) => id === 'ETH_BTC')
 
     expect(btcEthSymbol).to.not.eql(undefined)
     await updateCurrencyEnabledStatus(CurrencyCode.bitcoin, currency.isEnabled!)
