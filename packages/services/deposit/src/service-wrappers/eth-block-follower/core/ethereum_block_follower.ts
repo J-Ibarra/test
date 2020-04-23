@@ -8,7 +8,7 @@ import {
   pushRequestForProcessing, 
   NEW_ETH_AND_KVT_DEPOSIT_REQUESTS_QUEUE_URL
 } from '../../../core'
-import { BlockchainFollowerDetails, DepositAddress } from '@abx-types/deposit'
+import { BlockchainFollowerDetails, DepositAddress, DepositRequestStatus } from '@abx-types/deposit'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { findKycOrEmailVerifiedDepositAddresses, storeDepositRequests } from '../../../core'
 import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-data'
@@ -109,6 +109,10 @@ export async function handleEthereumTransactions(
     })
 
     const storedDepositRequests = await storeDepositRequests(depositRequests, t)
-    await pushRequestForProcessing(storedDepositRequests, NEW_ETH_AND_KVT_DEPOSIT_REQUESTS_QUEUE_URL)
+    const depositRequestsWithSufficientAmount = storedDepositRequests.filter(req => req.status !== DepositRequestStatus.insufficientAmount)
+
+    if (depositRequestsWithSufficientAmount.length > 0) {
+      await pushRequestForProcessing(depositRequestsWithSufficientAmount, NEW_ETH_AND_KVT_DEPOSIT_REQUESTS_QUEUE_URL)
+    }
   }
 }

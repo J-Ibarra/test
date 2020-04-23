@@ -13,6 +13,7 @@ import { handlerDepositError } from './new_deposit_error_handler'
 import { createPendingDeposit, createPendingWithdrawal } from '@abx-service-clients/balance'
 import { decryptValue } from '@abx-utils/encryption'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
+import { HoldingsTransactionDispatcher } from 'services/deposit/src/service-wrappers/third-party-coin-deposit-processor/core/holdings-transaction-creation/HoldingsTransactionDispatcher'
 
 const logger = Logger.getInstance('deposit_request_processor', 'processNewestDepositRequestForCurrency')
 
@@ -46,11 +47,14 @@ export async function processNewestDepositRequestForCurrency(
       return addToSuspendedAccountGatekeeper(currency, depositRequest, pendingCompletionGatekeeper, suspendedAccountDepositGatekeeper)
     }
 
-    const updatedRequest = await transferAmountIntoHoldingsAndUpdateDepositRequest(depositRequest, currency, onChainCurrencyManager)
+    const dispatcher = new HoldingsTransactionDispatcher()
 
-    logger.debug(`Pending holdings transfer for currency ${currency} and deposit ${depositRequest.id} completed successfully`)
+    //const updatedRequest = await transferAmountIntoHoldingsAndUpdateDepositRequest(depositRequest, currency, onChainCurrencyManager)
+    await dispatcher.dispatchHoldingsTransactionForDepositRequests([depositRequest], currency)
+
+    //logger.debug(`Pending holdings transfer for currency ${currency} and deposit ${depositRequest.id} completed successfully`)
     pendingHoldingsTransferGatekeeper.removeRequest(currency, depositRequest.id!)
-    pendingCompletionGatekeeper.addNewDepositsForCurrency(currency, [updatedRequest])
+    //pendingCompletionGatekeeper.addNewDepositsForCurrency(currency, [updatedRequest])
   } catch (e) {
     await handlerDepositError(e, currency, depositRequest, pendingHoldingsTransferGatekeeper)
   }
@@ -145,10 +149,17 @@ async function transferDepositAmountToExchangeHoldings(currency: OnChainCurrency
     }
   }
 
+  // consolidate
+
   const decryptedPrivateKey = await decryptValue(confirmedRequest.depositAddress.encryptedPrivateKey)
   logger.info(`Decrypted private key for address: ${confirmedRequest.depositAddress.publicKey}`)
 
-  return currency.transferToExchangeHoldingsFrom({ privateKey: decryptedPrivateKey! }, confirmedRequest.amount)
+  return currency.transferToExchangeHoldingsFrom(
+    {
+      privateKey: decryptedPrivateKey!
+    },
+    confirmedRequest.amount
+  )
 }
 
 export async function createKinesisRevenueFeeWithdrawal({ id: depositId }: DepositRequest, transactionFee: number, currencyId: number) {

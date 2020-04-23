@@ -1,4 +1,4 @@
-import { findDepositRequestsWithInsufficientAmount } from '../../../../core'
+import { findDepositRequestsWithInsufficientAmount } from '.'
 import { DepositRequest } from '@abx-types/deposit'
 import Decimal from 'decimal.js'
 import { Logger } from '@abx-utils/logging'

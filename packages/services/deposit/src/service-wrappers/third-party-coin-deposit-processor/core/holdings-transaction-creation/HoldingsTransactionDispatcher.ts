@@ -9,7 +9,7 @@ import { Logger } from '@abx-utils/logging'
 import { CurrencyCode, Environment } from '@abx-types/reference-data'
 import { getDepositTransactionFeeCurrencyId } from '../utils'
 import { DepositCompleter } from '../deposit-completion/DepositCompleter'
-import { DepositAmountCalculator } from './DepositAmountCalculator'
+import { DepositAmountCalculator } from '../../../../core/DepositAmountCalculator'
 import Decimal from '@abx-service-clients/reference-data/node_modules/decimal.js'
 
 export class HoldingsTransactionDispatcher {
@@ -119,8 +119,9 @@ export class HoldingsTransactionDispatcher {
     return onChainCurrencyManager.transferToExchangeHoldingsFrom(
       {
         privateKey: decryptedPrivateKey!,
-        wif: decryptedWif!,
-        address: depositAddress.address!,
+        wif: decryptedWif,
+        address: depositAddress.address,
+        publicKey: depositAddress.publicKey,
       },
       amount,
     )
