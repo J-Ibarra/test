@@ -12,7 +12,7 @@ import { updateCurrencyEnabledStatus, updateSymbolsForCurrencyWithStatus } from 
 import rewire from 'rewire'
 const symbolsCache = rewire('../../core/symbols/symbol_in_memory_cache')
 
-describe('api:symbols', () => {
+describe.only('api:symbols', () => {
   let app
   let findAllCurrenciesStub
   let fetchAllSymbolsStub
@@ -49,7 +49,7 @@ describe('api:symbols', () => {
 
     expect(status).to.eql(200)
     expect(body).to.be.an('array')
-    expect(body).to.have.lengthOf(21)
+    expect(body).to.have.lengthOf(22)
 
     body.forEach((symbol) => {
       expect(symbol).to.have.property('id')
@@ -63,10 +63,39 @@ describe('api:symbols', () => {
   it('retrieves all symbols excluding orderRange enabled=false', async () => {
     const currency = await findCurrencyForCode(CurrencyCode.bitcoin)
     await updateCurrencyEnabledStatus(CurrencyCode.bitcoin, false)
+    await updateSymbolsForCurrencyWithStatus(CurrencyCode.bitcoin, false)
     await updateOrCreateExchangeConfig({
       featureFlags: [{ name: SupportedFeatureFlags.bitcoin, enabled: false }],
     })
     const { cookie } = await createAccountAndSession()
+    const { body, status } = await request(app).get('/api/symbols').set('Cookie', cookie)
+
+    expect(status).to.eql(200)
+    expect(body).to.be.an('array')
+    expect(body).to.have.lengthOf(14)
+
+    body.forEach((symbol) => {
+      expect(symbol).to.have.property('id')
+      expect(symbol).to.have.property('base')
+      expect(symbol).to.have.property('quote')
+      expect(symbol).to.have.property('fee')
+    })
+
+    await updateCurrencyEnabledStatus(CurrencyCode.bitcoin, currency.isEnabled!)
+  })
+
+  it('retrieves all symbols enabled for specific account id', async () => {
+    const currency = await findCurrencyForCode(CurrencyCode.bitcoin)
+    await updateCurrencyEnabledStatus(CurrencyCode.bitcoin, false)
+    await updateSymbolsForCurrencyWithStatus(CurrencyCode.bitcoin, false)
+
+    const { cookie, account } = await createAccountAndSession()
+    await updateOrCreateExchangeConfig({
+      featureFlags: [
+        { name: SupportedFeatureFlags.bitcoin, enabled: [account.id] },
+        { name: SupportedFeatureFlags.BTC_ETH, enabled: [account.id] },
+      ],
+    })
     const { body, status } = await request(app).get('/api/symbols').set('Cookie', cookie)
 
     expect(status).to.eql(200)
@@ -80,15 +109,19 @@ describe('api:symbols', () => {
       expect(symbol).to.have.property('fee')
     })
 
+    const btcEthSymbol = body.find(({ id }) => id === 'BTC_ETH')
+
+    expect(btcEthSymbol).to.not.eql(undefined)
     await updateCurrencyEnabledStatus(CurrencyCode.bitcoin, currency.isEnabled!)
   })
 
   it('retrieves all symbols including orderRange', async () => {
     const { cookie } = await createAccountAndSession()
+
     const { body, status } = await request(app).get('/api/symbols').query({ includeOrderRange: true }).set('Cookie', cookie)
     expect(status).to.eql(200)
     expect(body).to.be.an('array')
-    expect(body).to.have.lengthOf(21)
+    expect(body).to.have.lengthOf(22)
     body.forEach((symbol) => {
       expect(symbol).to.have.property('id')
       expect(symbol).to.have.property('base')
@@ -103,7 +136,7 @@ describe('api:symbols', () => {
     const { body, status } = await request(app).get('/api/symbols').set('Cookie', cookie)
     expect(status).to.eql(200)
     expect(body).to.be.an('array')
-    expect(body).to.have.lengthOf(21)
+    expect(body).to.have.lengthOf(22)
 
     body.forEach((symbol) => {
       expect(symbol).to.have.property('id')

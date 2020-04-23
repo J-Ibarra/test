@@ -1,7 +1,8 @@
 import { Transaction } from 'sequelize'
-import { CurrencyCode, SymbolPair, SymbolPairSummary, SymbolPairStateFilter } from '@abx-types/reference-data'
+import { CurrencyCode, SymbolPair, SymbolPairSummary, SymbolPairStateFilter, FeatureFlag } from '@abx-types/reference-data'
 import { fetchAllSymbols } from './symbol_in_memory_cache'
 import { transformToSummary } from '@abx-service-clients/reference-data'
+import { getFeatureFlags } from '../config'
 
 export interface GetAllSymbolsRequestPayload {
   state?: SymbolPairStateFilter
@@ -53,4 +54,17 @@ export function getAllCompleteSymbolDetails(
   { state, transaction }: GetAllSymbolsRequestPayload = { state: SymbolPairStateFilter.enabled },
 ): Promise<SymbolPair[]> {
   return fetchAllSymbols({ state, transaction })
+}
+
+export async function findSymbolsByAccountId(accountId: string): Promise<SymbolPair[]> {
+  const allSymbols = await getAllCompleteSymbolDetails({ state: SymbolPairStateFilter.all })
+  const featureFlags = await getFeatureFlags()
+
+  return allSymbols.filter((symbol) => symbol.isEnabled || isAccountEligibleForSymbol(accountId, symbol, featureFlags))
+}
+
+function isAccountEligibleForSymbol(accountId: string, symbol: SymbolPair, featureFlags: FeatureFlag[]): boolean {
+  const featureFlagForSymbol = featureFlags.find((flag) => flag.name.toString() === symbol.id.toString())
+
+  return !!featureFlagForSymbol && (featureFlagForSymbol.enabled as string[]).some((enabledAccountId) => enabledAccountId.includes(accountId))
 }

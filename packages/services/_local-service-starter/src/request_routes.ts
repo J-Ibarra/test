@@ -51,10 +51,7 @@ const orderSettlementRoutes = ['/internal-api/order-settlement']
 const withdrawalRoutes = ['/internal-api/withdrawals', '/api/withdrawals', '/api/contacts', '/api/crypto']
 const depositRoutes = ['/internal-api/deposit', '/api/deposits', '/api/vault', '/api/wallets', '/api/test-automation/deposit']
 
-const webhookRoutes = [
-  '/api/webhooks/crypto/deposits/address/transactions',
-  '/api/webhooks/crypto/withdrawals/confirmations',
-]
+const webhookRoutes = ['/api/webhooks/crypto/deposits/address/transactions', '/api/webhooks/crypto/withdrawals/confirmations']
 const reportRoutes = ['/api/reports']
 const emailRoutes = ['/api/test-automation/emails']
 

@@ -5,6 +5,7 @@ import { CurrenciesController } from './currencies_controller';
 import { FeatureFlagsController } from './feature_flags_controller';
 import { SymbolsController } from './symbols_controller';
 import { E2eTestingDataSetupController } from './E2eTestingDataSetupController';
+import { AdminSymbolsController } from './symbols_admin_controller';
 import { expressAuthentication } from './middleware/authentication';
 import * as express from 'express';
 
@@ -24,7 +25,7 @@ const models: TsoaRoute.Models = {
     },
   },
   "SupportedFeatureFlags": {
-    "enums": ["debit_card", "BTC"],
+    "enums": ["debit_card", "BTC", "TETHER", "BTC_KAU", "BTC_KAG", "BTC_ETH", "BTC_USD", "BTC_EUR", "BTC_GBP", "KVT_BTC", "KVT_USDT", "KAU_USDT", "KAG_USDT", "ETH_USDT", "BTC_USDT", "USDT_EUR", "USDT_USD"],
   },
   "FeatureFlag": {
     "properties": {
@@ -197,6 +198,27 @@ export function RegisterRoutes(app: express.Express) {
 
 
       const promise = controller.updateCurrencyStatus.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.patch('/api/symbols/admin/:symbolId',
+    authenticateMiddleware([{ "cookieAuth": [], "adminAuth": [] }]),
+    function(request: any, response: any, next: any) {
+      const args = {
+        symbolId: { "in": "path", "name": "symbolId", "required": true, "dataType": "string" },
+        undefined: { "in": "body", "required": true, "dataType": "any" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new AdminSymbolsController();
+
+
+      const promise = controller.setOrderRangeForSymbol.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
 

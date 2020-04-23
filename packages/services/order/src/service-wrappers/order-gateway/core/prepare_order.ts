@@ -1,6 +1,6 @@
 import { Logger } from '@abx-utils/logging'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
-import { getCompleteSymbolDetails, getAllCurrenciesEligibleForAccount } from '@abx-service-clients/reference-data'
+import { getCompleteSymbolDetails, findSymbolsByAccountId } from '@abx-service-clients/reference-data'
 import { Order } from '@abx-types/order'
 import { saveOrder } from '../../../core'
 import { allocateReserveBalance } from '../../../core/reserve-balance-allocators'
@@ -11,12 +11,10 @@ const logger = Logger.getInstance('contract_exchange', 'prepareOrder')
 
 export async function prepareOrder(order: Order): Promise<Order> {
   const symbol = await getCompleteSymbolDetails(order.symbolId, SymbolPairStateFilter.all)
-  const allCurrencyCodesEligibleForAccount = (await getAllCurrenciesEligibleForAccount(order.accountId)).map(({ code }) => code)
+  const eligibleSymbols = await findSymbolsByAccountId(order.accountId)
 
-  if (!allCurrencyCodesEligibleForAccount.includes(symbol.base.code) || !allCurrencyCodesEligibleForAccount.includes(symbol.quote.code)) {
-    logger.error(
-      `Error validating available balance for ${order.direction} order for ${order.amount} ${order.symbolId} and account ${order.accountId}`,
-    )
+  if (!eligibleSymbols.some(({ id }) => id === symbol.id)) {
+    logger.error(`Account ${order.accountId} is not eligible for trading ${symbol.id!}`)
 
     throw new ValidationError(`Account ${order.accountId} is not eligible for symbol ${order.symbolId}`)
   }
