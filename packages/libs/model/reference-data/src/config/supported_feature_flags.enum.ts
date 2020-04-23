@@ -8,7 +8,7 @@ export enum SupportedFeatureFlags {
   // currency pairs
   BTC_KAU = 'BTC_KAU',
   BTC_KAG = 'BTC_KAG',
-  BTC_ETH = 'BTC_ETH',
+  ETH_BTC = 'ETH_BTC',
   BTC_USD = 'BTC_USD',
   BTC_EUR = 'BTC_EUR',
   BTC_GBP = 'BTC_GBP',
