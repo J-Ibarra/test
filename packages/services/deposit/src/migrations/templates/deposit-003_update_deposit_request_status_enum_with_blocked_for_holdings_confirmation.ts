@@ -15,7 +15,8 @@ export async function up({ sequelize }: { sequelize: Sequelize }) {
     'suspended',
     'pendingDepositTransactionConfirmation',
     'insufficientAmount',
-    'blockedForHoldingsTransactionConfirmation'
+    'blockedForHoldingsTransactionConfirmation',
+    'pendingHoldingsTransactionConfirmation'
   );
 
   ALTER TABLE public.deposit_request ALTER COLUMN status TYPE deposit_request_state_v2 USING ('completed'::deposit_request_state_v2);

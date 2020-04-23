@@ -3,7 +3,7 @@ import { CurrencyCode, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { RuntimeError } from '@abx-types/error'
 import { BitcoinApiProviderFacade } from './BitcoinApiProviderFacade'
-import { CryptoAddress, Transaction } from '../model'
+import { CryptoAddress, Transaction, MultiTargetCreateTransactionPayload, MultiTargetTransactionCreationResult } from '../model'
 import { DepositAddress } from '@abx-types/deposit'
 import { Logger } from '@abx-utils/logging'
 import { decryptValue } from '@abx-utils/encryption'
@@ -35,12 +35,15 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
       if (!depositAddressDetails.address) {
         this.logger.warn('Received deposit address details have no address field. Please consider that you are passing in the wrong currency asset.')
         return false
-      }
-      if (depositAddressDetails.transactionTrackingActivated) {
+      } else if (depositAddressDetails.transactionTrackingActivated) {
         this.logger.warn(`We have already activated transaction events for this address: ${depositAddressDetails.address}`)
         return true
       }
-      await this.bitcoinBlockchainFacade.subscribeToAddressTransactionEvents(depositAddressDetails.address, this.UNCONFIRMED_TRANSACTIONS)
+
+      await this.bitcoinBlockchainFacade.subscribeToAddressTransactionEvents(
+        depositAddressDetails.address,
+        Number(process.env.BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS || this.UNCONFIRMED_TRANSACTIONS),
+      )
       this.logger.info(`Activated transaction events for this address: ${depositAddressDetails.address}`)
       return true
     } catch (e) {
@@ -90,26 +93,15 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
     return false
   }
 
-  transferToExchangeHoldingsFrom(
-    fromAddress: CryptoAddress | Pick<CryptoAddress, 'privateKey'>,
-    amount: number,
-    transactionConfirmationWebhookUrl: string,
-  ): Promise<TransactionResponse> {
+  transferToExchangeHoldingsFrom(fromAddress: CryptoAddress | Pick<CryptoAddress, 'privateKey'>, amount: number): Promise<TransactionResponse> {
     return this.bitcoinBlockchainFacade.createTransaction({
       senderAddress: fromAddress as CryptoAddress,
       receiverAddress: process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS!,
       amount,
-      webhookCallbackUrl: transactionConfirmationWebhookUrl,
     })
   }
 
-  async transferFromExchangeHoldingsTo({
-    toAddress,
-    amount,
-    memo,
-    transactionConfirmationWebhookUrl,
-    feeLimit,
-  }: ExchangeHoldingsTransfer): Promise<TransactionResponse> {
+  async transferFromExchangeHoldingsTo({ toAddress, amount, memo, feeLimit }: ExchangeHoldingsTransfer): Promise<TransactionResponse> {
     const [holdingsPrivateKey, holdingsWif] = await Promise.all([
       decryptValue(process.env.KINESIS_BITCOIN_HOLDINGS_PRIVATE_KEY!),
       decryptValue(process.env.KINESIS_BITCOIN_HOLDINGS_WIF!),
@@ -124,8 +116,29 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
       receiverAddress: toAddress,
       amount,
       memo,
-      webhookCallbackUrl: transactionConfirmationWebhookUrl,
       feeLimit,
+      subtractFeeFromAmountSent: false,
+    })
+  }
+
+  async transferFromExchangeHoldingsToMultipleReceivers({
+    receivers,
+    memo,
+  }: Pick<MultiTargetCreateTransactionPayload, 'receivers' | 'memo'>): Promise<MultiTargetTransactionCreationResult> {
+    const [holdingsPrivateKey, holdingsWif] = await Promise.all([
+      decryptValue(process.env.KINESIS_BITCOIN_HOLDINGS_PRIVATE_KEY!),
+      decryptValue(process.env.KINESIS_BITCOIN_HOLDINGS_WIF!),
+    ])
+
+    return this.bitcoinBlockchainFacade.createMultiReceiverTransaction({
+      senderAddress: {
+        privateKey: holdingsPrivateKey!,
+        address: process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS!,
+        wif: holdingsWif,
+      },
+      receivers,
+      memo,
+      subtractFeeFromAmountSent: false,
     })
   }
 

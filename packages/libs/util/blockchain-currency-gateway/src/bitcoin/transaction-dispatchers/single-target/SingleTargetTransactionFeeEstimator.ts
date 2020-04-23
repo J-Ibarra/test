@@ -1,10 +1,10 @@
 import { MemoryCache } from '@abx-utils/db-connection-utils'
-import { CreateTransactionPayload } from '../model'
-import { BitcoinTransactionCreationUtils } from './BitcoinTransactionCreationUtils'
+import { BitcoinTransactionCreationUtils } from '../../BitcoinTransactionCreationUtils'
 import Decimal from 'decimal.js'
-import { BtcCryptoApisProviderProxy } from '../api-provider/crypto-apis/BtcCryptoApisProviderProxy'
+import { BtcCryptoApisProviderProxy } from '../../../api-provider/crypto-apis/BtcCryptoApisProviderProxy'
+import { SingleTargetCreateTransactionPayload } from '../../../model'
 
-export class BitcoinTransactionFeeEstimator {
+export class SingleTargetTransactionFeeEstimator {
   public static MAXIMUM_TX_FEE = 0.00005 // As per the business requirements required by operations
 
   readonly AVERAGE_FEE_PER_BYTE_KEY = 'avg-fee-per-byte'
@@ -34,8 +34,8 @@ export class BitcoinTransactionFeeEstimator {
     receiverAddress,
     amount,
     memo,
-    feeLimit = BitcoinTransactionFeeEstimator.MAXIMUM_TX_FEE,
-  }: Pick<CreateTransactionPayload, 'senderAddress' | 'receiverAddress' | 'amount' | 'memo' | 'feeLimit'>): Promise<number> {
+    feeLimit = SingleTargetTransactionFeeEstimator.MAXIMUM_TX_FEE,
+  }: Pick<SingleTargetCreateTransactionPayload, 'senderAddress' | 'receiverAddress' | 'amount' | 'memo' | 'feeLimit'>): Promise<number> {
     let averageFeePerByte = this.MEMORY_CACHE.get<string>(this.AVERAGE_FEE_PER_BYTE_KEY)
     let averageFeePerTransaction = this.MEMORY_CACHE.get<string>(this.AVERAGE_FEE_PER_TRANSACTION_KEY)
 

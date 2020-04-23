@@ -11,6 +11,7 @@ export * from './model'
 export * from './ethereum'
 export * from './erc20-tokens/KvtOnChainCurrencyGateway'
 export * from './kinesis'
+export * from './bitcoin'
 
 export function getOnChainCurrencyManagerForEnvironment(environment: Environment, currencies: CurrencyCode[]) {
   return environment === Environment.test ? new TestCurrencyManager(currencies) : new CurrencyManager(environment, currencies)

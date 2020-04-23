@@ -23,5 +23,6 @@ export CONTIS_PASSWORD=myaqcd34
 export CONTIS_API_ROOT=https://sandboxapi.contis.com
 export CONTIS_CARD_ORDER_FEE=5
 export CONTIS_CARD_ORDER_VALIDATION_SLA=5
+export CRYPTO_APIS_TOKEN='xxx'
 
 npm run start

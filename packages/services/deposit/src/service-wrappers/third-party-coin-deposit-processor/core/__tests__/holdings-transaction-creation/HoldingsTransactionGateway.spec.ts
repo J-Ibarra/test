@@ -26,34 +26,12 @@ describe('HoldingsTransactionGateway', () => {
     expect(dispatchHoldingsTransactionForDepositRequestsStub.notCalled).to.eql(true)
   })
 
-  it('should not dispatch transaction and update request status to blockedForHoldingsTransactionConfirmation if a request in pendingHoldingsTransaction status present', async () => {
-    const depositRequest = {
-      id: 1,
-    } as any
-    sinon.stub(coreOperations, 'findDepositRequestByDepositTransactionHash').resolves(depositRequest)
-    sinon.stub(coreOperations, 'findDepositRequestsForStatus').resolves([{ id: 2 }, { id: 3 }])
-
-    const dispatchHoldingsTransactionForDepositRequestsStub = sinon
-      .stub(HoldingsTransactionDispatcher.prototype, 'dispatchHoldingsTransactionForDepositRequests')
-      .resolves()
-    const updateDepositRequestStub = sinon.stub(coreOperations, 'updateDepositRequest').resolves()
-
-    await holdingsTransactionGateway.dispatchHoldingsTransactionForConfirmedDepositRequest(txId, CurrencyCode.bitcoin)
-
-    expect(
-      updateDepositRequestStub.calledWith(depositRequest.id, {
-        status: DepositRequestStatus.blockedForHoldingsTransactionConfirmation,
-      }),
-    ).to.eql(true)
-    expect(dispatchHoldingsTransactionForDepositRequestsStub.notCalled).to.eql(true)
-  })
-
   it('should update deposit request in pendingHoldingsTransaction and dispatch transaction', async () => {
     const depositRequestId = 1
     sinon.stub(coreOperations, 'findDepositRequestByDepositTransactionHash').resolves({
       id: depositRequestId,
     })
-    sinon.stub(coreOperations, 'findDepositRequestsForStatus').resolves([])
+    sinon.stub(coreOperations, 'findDepositRequestsForStatuses').resolves([])
 
     const dispatchHoldingsTransactionForDepositRequestsStub = sinon
       .stub(HoldingsTransactionDispatcher.prototype, 'dispatchHoldingsTransactionForDepositRequests')
@@ -64,5 +42,32 @@ describe('HoldingsTransactionGateway', () => {
 
     expect(updateDepositRequestStub.calledWith(depositRequestId, { status: DepositRequestStatus.pendingHoldingsTransaction })).to.eql(true)
     expect(dispatchHoldingsTransactionForDepositRequestsStub.calledWith([{ id: depositRequestId } as any], CurrencyCode.bitcoin)).to.eql(true)
+  })
+
+  it('should update deposit request to blockedForHoldingsTransactionConfirmation when an UTXO error occurs while trying to send transaction', async () => {
+    const depositRequestId = 1
+    sinon.stub(coreOperations, 'findDepositRequestByDepositTransactionHash').resolves({
+      id: depositRequestId,
+    })
+    sinon.stub(coreOperations, 'findDepositRequestsForStatuses').resolves([])
+
+    const dispatchHoldingsTransactionForDepositRequestsStub = sinon
+      .stub(HoldingsTransactionDispatcher.prototype, 'dispatchHoldingsTransactionForDepositRequests')
+      .throws({
+        meta: {
+          error: {
+            code: HoldingsTransactionGateway.BTC_INSUFFICIENT_UTXO_ERROR_CODE,
+          },
+        },
+      })
+    const updateDepositRequestStub = sinon.stub(coreOperations, 'updateDepositRequest').resolves()
+
+    await holdingsTransactionGateway.dispatchHoldingsTransactionForConfirmedDepositRequest(txId, CurrencyCode.bitcoin)
+
+    expect(updateDepositRequestStub.calledWith(depositRequestId, { status: DepositRequestStatus.pendingHoldingsTransaction })).to.eql(true)
+    expect(dispatchHoldingsTransactionForDepositRequestsStub.calledWith([{ id: depositRequestId } as any], CurrencyCode.bitcoin)).to.eql(true)
+    expect(updateDepositRequestStub.calledWith(depositRequestId, { status: DepositRequestStatus.blockedForHoldingsTransactionConfirmation })).to.eql(
+      true,
+    )
   })
 })

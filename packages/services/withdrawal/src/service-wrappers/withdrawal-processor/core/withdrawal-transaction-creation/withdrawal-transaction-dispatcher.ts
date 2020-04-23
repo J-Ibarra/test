@@ -6,6 +6,9 @@ import { wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { transferWithdrawalFundsForKinesisCurrency } from './kinesis_currency_transferrer'
 import { WITHDRAWAL_TRANSACTION_SENT_QUEUE_URL } from '@abx-service-clients/withdrawal'
+import { updateWithdrawalRequest } from '../../../../core'
+import { WithdrawalState } from '@abx-types/withdrawal'
+import util from 'util'
 
 const logger = Logger.getInstance('withdrawal', 'withdrawal-transaction-dispatcher')
 export const DEFAULT_NUMBER_OF_CONFIRMATION_FOR_WITHDRAWAL = 1
@@ -17,14 +20,20 @@ export async function dispatchWithdrawalTransaction(
   onChainCurrencyGateway: OnChainCurrencyGateway,
   memo: string,
 ) {
+  let withdrawalTxHash
+  let withdrawalTransactionFee
   try {
     logger.debug(`Creating on-chain transaction for withdrawal request ${withdrawalRequestId}`)
     const { txHash, transactionFee } = await transferFunds(withdrawalRequestId!, onChainCurrencyGateway, targetAddress, memo, amount)
 
-    await recordTransactionSent(withdrawalRequestId!, txHash, Number(transactionFee || 0))
+    withdrawalTxHash = txHash
+    withdrawalTransactionFee = transactionFee
+    await recordTransactionSent(withdrawalRequestId!, withdrawalTxHash, Number(withdrawalTransactionFee || 0))
   } catch (e) {
     logger.error(`Unable to create withdrawal transaction for withdrawal request ${withdrawalRequestId}`)
-    throw e
+    logger.error(util.inspect(e))
+
+    await handleTransactionCreationError(withdrawalRequestId, onChainCurrencyGateway.ticker!, e)
   }
 }
 
@@ -53,7 +62,7 @@ async function transferFunds(withdrawalRequestId: number, currencyGateway: OnCha
   })
 }
 
-async function recordTransactionSent(withdrawalRequestId: number, txHash: string, transactionFee: number): Promise<void> {
+export async function recordTransactionSent(withdrawalRequestId: number, txHash: string, transactionFee: number): Promise<void> {
   await sendAsyncChangeMessage<WithdrawalTransactionSent>({
     id: `withdrawal-transaction-sent-${withdrawalRequestId}`,
     type: 'withdrawal-transaction-sent',
@@ -67,4 +76,27 @@ async function recordTransactionSent(withdrawalRequestId: number, txHash: string
       transactionFee,
     },
   })
+}
+
+export const INSUFFICIENT_UTXO_ERROR_CODE = 2328
+
+/**
+ * Checks if the transaction creation failure happened for BTC
+ * and  was caused by insufficient UTXOs in the holdings account.
+ * In this case we want to wait until the preceding withdrawal transaction gets confirmed,
+ * so that the UTXOs are confirmed.
+ *
+ * @param withdrawalRequestId  the withdrawal request ID
+ * @param currency the withdrawn currency code
+ * @param error the error
+ */
+async function handleTransactionCreationError(withdrawalRequestId: number, currency: CurrencyCode, error) {
+  if (currency === CurrencyCode.bitcoin && error.meta.error.code === INSUFFICIENT_UTXO_ERROR_CODE) {
+    return updateWithdrawalRequest({
+      state: WithdrawalState.waiting,
+      id: withdrawalRequestId,
+    })
+  }
+
+  return
 }

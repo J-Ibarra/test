@@ -44,7 +44,7 @@ describe('DepositCompleter', () => {
       await depositCompleter.completeDepositRequests([testData.depositRequest], CurrencyCode.bitcoin)
 
       expect(updateDepositRequestStub.getCall(0).args[0]).to.eql([testData.depositRequest.id])
-      expect(updateDepositRequestStub.getCall(0).args[1]).to.eql({ status: DepositRequestStatus.completed })
+      expect(updateDepositRequestStub.getCall(0).args[1]).to.eql({ status: DepositRequestStatus.pendingHoldingsTransactionConfirmation })
 
       expect(
         createCurrencyTransactionsStub.calledWith([
@@ -110,7 +110,7 @@ describe('DepositCompleter', () => {
       await depositCompleter.completeDepositRequests([preExistingDepositRequest, testData.depositRequest], CurrencyCode.bitcoin)
 
       expect(updateDepositRequestStub.getCall(0).args[0]).to.eql([preExistingDepositRequest.id, testData.depositRequest.id])
-      expect(updateDepositRequestStub.getCall(0).args[1]).to.eql({ status: DepositRequestStatus.completed })
+      expect(updateDepositRequestStub.getCall(0).args[1]).to.eql({ status: DepositRequestStatus.pendingHoldingsTransactionConfirmation })
 
       expect(
         createCurrencyTransactionsStub.calledWith([

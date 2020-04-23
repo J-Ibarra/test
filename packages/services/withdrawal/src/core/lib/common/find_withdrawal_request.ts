@@ -13,7 +13,7 @@ export async function findWithdrawalRequestById(id: number, transaction?: Transa
 }
 
 export async function findWithdrawalRequestByIdWithFeeRequest(id: number, transaction?: Transaction): Promise<WithdrawalRequest | null> {
-  return wrapInTransaction(sequelize, transaction, async t => {
+  return wrapInTransaction(sequelize, transaction, async (t) => {
     const withdrawalRequestInstance = await getModel<WithdrawalRequest>('withdrawalRequest').findByPrimary(id, {
       transaction,
       lock: t.LOCK.UPDATE,
@@ -35,7 +35,7 @@ export async function findWithdrawalRequestsByIds(ids: number[], transaction?: T
     transaction,
   })
 
-  return withdrawalRequests.map(withdrawalRequestInstance => withdrawalRequestInstance.get())
+  return withdrawalRequests.map((withdrawalRequestInstance) => withdrawalRequestInstance.get())
 }
 
 export async function findWithdrawalRequestsForTransactionHashes(txHashes: string[], transaction?: Transaction) {
@@ -46,7 +46,7 @@ export async function findWithdrawalRequestsForTransactionHashes(txHashes: strin
     transaction,
   })
 
-  return withdrawalRequests.map(withdrawalRequestInstance => withdrawalRequestInstance.get())
+  return withdrawalRequests.map((withdrawalRequestInstance) => withdrawalRequestInstance.get())
 }
 
 export async function findWithdrawalRequestByAdminRequestId(adminRequestId: number, transaction?: Transaction) {
@@ -80,15 +80,13 @@ export async function findNonCancelledWithdrawalsForTheLast24Hours(accountId: st
     where: {
       accountId,
       createdAt: {
-        $gte: moment()
-          .subtract(24, 'hours')
-          .toDate(),
+        $gte: moment().subtract(24, 'hours').toDate(),
       },
       state: { $ne: WithdrawalState.cancelled },
     },
   })
 
-  return withdrawalRequests.map(withdrawalRequest => withdrawalRequest.get({ plain: true }))
+  return withdrawalRequests.map((withdrawalRequest) => withdrawalRequest.get({ plain: true }))
 }
 
 export async function findWithdrawalRequests(query: Partial<WithdrawalRequest>) {
@@ -96,7 +94,7 @@ export async function findWithdrawalRequests(query: Partial<WithdrawalRequest>) 
     where: query as any,
   })
 
-  return withdrawalRequests.map(withdrawalRequest => withdrawalRequest.get({ plain: true }))
+  return withdrawalRequests.map((withdrawalRequest) => withdrawalRequest.get({ plain: true }))
 }
 
 export const findWithdrawalRequestByTxHash = (txHash: string) => findWithdrawalRequest({ txHash })
@@ -113,6 +111,24 @@ export const findWithdrawalRequestByTxHashWithFeeRequest = async (txHash: string
   }
 
   return null
+}
+
+export const findWithdrawalRequestsByTxHashWithFeeRequest = async (txHash: string, transaction: Transaction): Promise<WithdrawalRequest[]> => {
+  const withdrawalRequestInstances = await getModel<WithdrawalRequest>('withdrawalRequest').findAll({
+    where: { txHash },
+    transaction,
+    lock: transaction.LOCK.UPDATE,
+  })
+
+  if (withdrawalRequestInstances.length > 0) {
+    return Promise.all(
+      withdrawalRequestInstances.map((withdrawalRequestInstance) =>
+        joinWithdrawalRequestWithFeeRequest(withdrawalRequestInstance.get(), transaction),
+      ),
+    )
+  }
+
+  return []
 }
 
 async function joinWithdrawalRequestWithFeeRequest(withdrawalRequest: WithdrawalRequest, transaction?: Transaction) {

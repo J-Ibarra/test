@@ -6,23 +6,27 @@ import { getMinimumDepositAmountForCurrency } from '../../../../core'
 import { NewTransactionRecorder } from './NewTransactionRecorder'
 import { HoldingsTransactionGateway } from '../holdings-transaction-creation/HoldingsTransactionGateway'
 import { Logger } from '@abx-utils/logging'
-import { BlockedDepositRequestsHandler } from './BlockedDepositRequestsHandler'
+import { HoldingsTransactionConfirmationHandler } from './HoldingsTransactionConfirmationHandler'
 
 export class DepositAddressTransactionHandler {
   private readonly logger = Logger.getInstance('public-coin-deposit-processor', 'DepositAddressTransactionHandler')
 
   private newTransactionRecorder = new NewTransactionRecorder()
   private holdingsTransactionGateway = new HoldingsTransactionGateway()
-  private blockedDepositRequestsHandler = new BlockedDepositRequestsHandler()
+  private holdingsTransactionConfirmationHandler = new HoldingsTransactionConfirmationHandler()
 
   public async handleDepositAddressTransaction(txid: string, depositAddress: DepositAddress, currency: CurrencyCode) {
-    const onChainCurrencyManager = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment, [currency])
-    const depositTransactionDetails = await onChainCurrencyManager.getCurrencyFromTicker(currency).getTransaction(txid, depositAddress.address!)
+    const onChainCurrencyGateway = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment, [currency]).getCurrencyFromTicker(
+      currency,
+    )
+
+    const depositTransactionDetails = await onChainCurrencyGateway.getTransaction(txid, depositAddress.address!)
+    const holdingsPublicAddress = await onChainCurrencyGateway.getHoldingPublicAddress()
 
     const isOutgoingTransactionToKinesisHoldings =
-      !!depositTransactionDetails && depositTransactionDetails.receiverAddress === process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS
+      !!depositTransactionDetails && depositTransactionDetails.receiverAddress.toLowerCase() === holdingsPublicAddress.toLowerCase()
 
-    if (!!depositTransactionDetails && depositTransactionDetails.receiverAddress === depositAddress.address) {
+    if (!!depositTransactionDetails && depositTransactionDetails.receiverAddress.toLowerCase() === depositAddress.address!.toLowerCase()) {
       await this.handleNewDepositAddressTransaction(depositTransactionDetails, depositAddress, txid, currency)
     } else if (isOutgoingTransactionToKinesisHoldings) {
       await this.handleHoldingsConfirmation(depositTransactionDetails!, currency, depositAddress.id!)
@@ -35,7 +39,11 @@ export class DepositAddressTransactionHandler {
         `Confirmation received for ${currency} holdings transaction ${depositTransactionDetails.transactionHash}, triggering completion`,
       )
 
-      await this.blockedDepositRequestsHandler.dispatchHoldingsTransactionForBlockedRequests(depositAddressId, currency)
+      await this.holdingsTransactionConfirmationHandler.handleHoldingsTransactionConfirmation(
+        depositTransactionDetails.transactionHash,
+        depositAddressId,
+        currency,
+      )
     }
   }
 
@@ -45,7 +53,7 @@ export class DepositAddressTransactionHandler {
     txid: string,
     currency: CurrencyCode,
   ) {
-    this.logger.info(`Handling new ${currency} deposit address ${depositAddress} transaction with id ${txid}`)
+    this.logger.info(`Handling new ${currency} deposit address ${depositAddress.address!} transaction with id ${txid}`)
     // the deposit request will be created only once
     await this.newTransactionRecorder.recordDepositTransaction({
       currency,

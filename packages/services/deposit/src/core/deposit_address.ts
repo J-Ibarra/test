@@ -45,7 +45,7 @@ export async function generateNewDepositAddress(accountId: string, currency: OnC
     currencyId,
     publicKey: cryptoAddress.publicKey,
     encryptedPrivateKey,
-    address: cryptoAddress.address,
+    address: cryptoAddress.address || cryptoAddress.publicKey,
     encryptedWif,
     transactionTrackingActivated: false,
   } as DepositAddress

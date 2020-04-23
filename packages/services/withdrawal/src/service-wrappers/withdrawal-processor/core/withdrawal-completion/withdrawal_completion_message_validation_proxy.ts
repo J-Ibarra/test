@@ -7,7 +7,7 @@ import { holdingsAddressTransactionNotificationEnabledCurrencies } from '../comm
 import { Logger } from '@abx-utils/logging'
 
 const requiredConfirmationsForCurrency = {
-  [CurrencyCode.bitcoin]: parseInt(process.env.BITCOIN_WITHDRAWAL_TRANSACTION_CONFIRMATION_BLOCKS || '1'),
+  [CurrencyCode.bitcoin]: parseInt(process.env.BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS || '1'),
 }
 const logger = Logger.getInstance('withdrawal-processor', 'withdrawal_completion_message_validation_proxy')
 

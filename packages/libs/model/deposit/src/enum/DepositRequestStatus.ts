@@ -12,4 +12,7 @@ export enum DepositRequestStatus {
   insufficientAmount = 'insufficientAmount',
 
   blockedForHoldingsTransactionConfirmation = 'blockedForHoldingsTransactionConfirmation',
+
+  // Set after the holdings transaction has been dispatched
+  pendingHoldingsTransactionConfirmation = 'pendingHoldingsTransactionConfirmation',
 }

@@ -6,7 +6,7 @@ import { CurrencyCode, Environment, SymbolPairStateFilter, Currency } from '@abx
 import { getOnChainCurrencyManagerForEnvironment } from '@abx-utils/blockchain-currency-gateway'
 import { findCryptoCurrencies, findCurrencyForId } from '@abx-service-clients/reference-data'
 import { sendAsyncChangeMessage } from '@abx-utils/async-message-publisher'
-import { deductOnChainTransactionFeeFromRevenueBalance } from '../withdrawal-transaction-creation/kinesis_revenie_transaction_fee_reconciler'
+import { deductOnChainTransactionFeeFromRevenueBalance } from './kinesis_revenie_transaction_fee_reconciler'
 import { WithdrawalCompletionPendingPayload } from '../withdrawal-completion/model'
 import { Logger } from '@abx-utils/logging'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'

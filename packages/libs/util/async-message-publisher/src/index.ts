@@ -40,6 +40,8 @@ export function sendAsyncChangeMessage<T>(message: AsyncMessage<T>): Promise<voi
     : queueChangeInSQS<T>(message)
 }
 
+const MAX_DEDUPLICATION_ID_LENGTH = 128
+
 /**
  * Sends a message to an SQS queue.
  * If and id is passed in the parameter object, it will be considered that the message needs to be
@@ -54,8 +56,8 @@ function queueChangeInSQS<T>({ target, payload, type, id }: AsyncMessage<T>): Pr
     sqs.sendMessage(
       !!id
         ? {
-            MessageGroupId: id,
-            MessageDeduplicationId: id,
+            MessageGroupId: type,
+            MessageDeduplicationId: id.length > MAX_DEDUPLICATION_ID_LENGTH ? id.substring(0, MAX_DEDUPLICATION_ID_LENGTH) : id,
             QueueUrl: target.deployedEnvironment,
             MessageBody: JSON.stringify(payload),
           }
