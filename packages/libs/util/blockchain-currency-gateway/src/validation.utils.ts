@@ -1,4 +1,4 @@
-import { CurrencyCode, getEnvironment } from '@abx-types/reference-data'
+import { CurrencyCode } from '@abx-types/reference-data'
 import { CurrencyManager } from './currency_manager'
 import { ValidationError } from '@abx-types/error'
 
@@ -8,7 +8,7 @@ export interface AddressValidationParams {
 }
 
 export async function validateCryptoAddress({ code, address }: AddressValidationParams): Promise<string> {
-  const manager = new CurrencyManager(getEnvironment(), [code])
+  const manager = new CurrencyManager()
   const onChainCurrencyGateway = manager.getCurrencyFromTicker(code)
 
   try {
@@ -20,7 +20,7 @@ export async function validateCryptoAddress({ code, address }: AddressValidation
     // validateAddress will error
     // validateAddressIsNotContractAddress just returns a boolean, so we still need to check
     // validateAddress's typing says it should return a bool, so we'll cater for if this may change
-    if (criteria.some(result => !result)) {
+    if (criteria.some((result) => !result)) {
       throw new ValidationError(getErrorCryptoAddressMessage({ code, address }))
     }
 
