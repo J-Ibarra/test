@@ -1,23 +1,15 @@
 import util from 'util'
 
-import { isAccountSuspended, findOrCreateKinesisRevenueAccount } from '@abx-service-clients/account'
-import { SourceEventType } from '@abx-types/balance'
+import { isAccountSuspended } from '@abx-service-clients/account'
 import { Logger } from '@abx-utils/logging'
-import { CurrencyManager, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
-import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
+import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 import { CurrencyCode } from '@abx-types/reference-data'
-import { DepositRequest, DepositRequestStatus } from '@abx-types/deposit'
-import { findMostRecentlyUpdatedDepositRequest, updateDepositRequest } from '../../../../../core'
+import { DepositRequest } from '@abx-types/deposit'
 import { DepositGatekeeper } from '../deposit_gatekeeper'
 import { handlerDepositError } from './new_deposit_error_handler'
-import { createPendingDeposit, createPendingWithdrawal } from '@abx-service-clients/balance'
-import { decryptValue } from '@abx-utils/encryption'
-import { getCurrencyId } from '@abx-service-clients/reference-data'
-import { HoldingsTransactionDispatcher } from 'services/deposit/src/service-wrappers/third-party-coin-deposit-processor/core/holdings-transaction-creation/HoldingsTransactionDispatcher'
+import { HoldingsTransactionDispatcher } from '../../../../../core'
 
 const logger = Logger.getInstance('deposit_request_processor', 'processNewestDepositRequestForCurrency')
-
-const currencyCodeToIdLocalCache = new Map<CurrencyCode, number>()
 
 export async function processNewestDepositRequestForCurrency(
   pendingHoldingsTransferGatekeeper: DepositGatekeeper,
@@ -48,13 +40,9 @@ export async function processNewestDepositRequestForCurrency(
     }
 
     const dispatcher = new HoldingsTransactionDispatcher()
-
-    //const updatedRequest = await transferAmountIntoHoldingsAndUpdateDepositRequest(depositRequest, currency, onChainCurrencyManager)
     await dispatcher.dispatchHoldingsTransactionForDepositRequests([depositRequest], currency)
 
-    //logger.debug(`Pending holdings transfer for currency ${currency} and deposit ${depositRequest.id} completed successfully`)
     pendingHoldingsTransferGatekeeper.removeRequest(currency, depositRequest.id!)
-    //pendingCompletionGatekeeper.addNewDepositsForCurrency(currency, [updatedRequest])
   } catch (e) {
     await handlerDepositError(e, currency, depositRequest, pendingHoldingsTransferGatekeeper)
   }
@@ -73,127 +61,6 @@ async function checkTransactionConfirmation(currency: CurrencyCode, depositReque
 
     return false
   }
-}
-
-async function transferAmountIntoHoldingsAndUpdateDepositRequest(
-  depositRequest: DepositRequest,
-  currencyCode: CurrencyCode,
-  manager: CurrencyManager,
-) {
-  return wrapInTransaction(sequelize, null, async (transaction) => {
-    const currency = await manager.getCurrencyFromId(depositRequest.depositAddress.currencyId)
-    logger.info(
-      `Transferring ${depositRequest.amount} ${currency.ticker} from address: ${depositRequest.depositAddress.publicKey} to the Exchange Holdings`,
-    )
-    const { txHash, transactionFee } = await transferDepositAmountToExchangeHoldings(currency, depositRequest)
-
-    logger.info(
-      `Successfully transferred ${depositRequest.amount} ${currency.ticker} from address: ${depositRequest.depositAddress.publicKey} to the Exchange Holdings`,
-    )
-    await createPendingDeposit({
-      accountId: depositRequest.depositAddress.accountId,
-      amount: depositRequest.amount,
-      currencyId: depositRequest.depositAddress.currencyId,
-      sourceEventId: depositRequest.id!,
-      sourceEventType: SourceEventType.currencyDepositRequest,
-    })
-
-    const updatedRequest = await updateDepositRequest(
-      depositRequest.id!,
-      {
-        holdingsTxHash: txHash,
-        status: DepositRequestStatus.pendingCompletion,
-        holdingsTxFee: Number(transactionFee),
-      },
-      transaction,
-    )
-
-    if (currencyToCoverOnChainFeeFor.includes(currencyCode)) {
-      const currencyToPayDepositFeeIn = await getDepositFeeCurrencyId(currency.ticker!)
-      await createKinesisRevenueFeeWithdrawal(depositRequest, Number(transactionFee), currencyToPayDepositFeeIn)
-    }
-
-    return { ...updatedRequest, depositAddress: depositRequest.depositAddress }
-  })
-}
-
-const kinesisCurrencies = [CurrencyCode.kag, CurrencyCode.kau]
-
-/**
- * There is a situation where there can be a kinesis currency deposit request still to be processed but the balance at the address is now 0 due to the `merge_account` operation. So:
- * * we assume we have already merged it with the most recent deposit request for this address so we find this previous deposit
- * * then we return that deposit's transaction hash to mark it as having been completed as part of it.
- */
-async function transferDepositAmountToExchangeHoldings(currency: OnChainCurrencyGateway, confirmedRequest: DepositRequest) {
-  const balanceAtAddress = await currency.balanceAt(confirmedRequest.depositAddress.publicKey)
-
-  if (balanceAtAddress === 0 && kinesisCurrencies.includes(currency.ticker!)) {
-    logger.info(
-      `Unable to retrieve balance at deposit address: ${confirmedRequest.depositAddress.publicKey}, will use an older holdings transaction hash`,
-    )
-
-    const previouslyCompletedRequestForTheSameAddress = await findMostRecentlyUpdatedDepositRequest({
-      depositAddressId: confirmedRequest.depositAddressId,
-      status: DepositRequestStatus.completed,
-    })
-
-    if (!previouslyCompletedRequestForTheSameAddress) {
-      logger.error(`Unable to find a previously completed deposit for address ${confirmedRequest.depositAddressId}`)
-
-      throw new Error(`Previously completed deposit for address ${confirmedRequest.depositAddressId} not found`)
-    }
-
-    return {
-      txHash: previouslyCompletedRequestForTheSameAddress.holdingsTxHash,
-      transactionFee: 0,
-    }
-  }
-
-  // consolidate
-
-  const decryptedPrivateKey = await decryptValue(confirmedRequest.depositAddress.encryptedPrivateKey)
-  logger.info(`Decrypted private key for address: ${confirmedRequest.depositAddress.publicKey}`)
-
-  return currency.transferToExchangeHoldingsFrom(
-    {
-      privateKey: decryptedPrivateKey!
-    },
-    confirmedRequest.amount
-  )
-}
-
-export async function createKinesisRevenueFeeWithdrawal({ id: depositId }: DepositRequest, transactionFee: number, currencyId: number) {
-  const kinesisRevenueAccount = await findOrCreateKinesisRevenueAccount()
-
-  await createPendingWithdrawal({
-    pendingWithdrawalParams: {
-      accountId: kinesisRevenueAccount.id,
-      amount: transactionFee,
-      currencyId,
-      sourceEventId: depositId!,
-      sourceEventType: SourceEventType.currencyDeposit,
-    },
-  })
-
-  logger.info(
-    `A ${transactionFee} on chain fee has been paid for deposit request ${depositId} and deducted from revenue balance for currency ${currencyId}`,
-  )
-}
-
-const currencyToCoverOnChainFeeFor = [CurrencyCode.ethereum, CurrencyCode.kvt]
-
-export async function getDepositFeeCurrencyId(currency: CurrencyCode) {
-  if (currency === CurrencyCode.kvt) {
-    const kvtId = currencyCodeToIdLocalCache.get(currency) || (await getCurrencyId(CurrencyCode.ethereum))
-    currencyCodeToIdLocalCache.set(currency, kvtId)
-
-    return kvtId
-  }
-
-  const feeCurrencyId = currencyCodeToIdLocalCache.get(currency) || (await getCurrencyId(currency))
-  currencyCodeToIdLocalCache.set(currency, feeCurrencyId)
-
-  return feeCurrencyId
 }
 
 function addToSuspendedAccountGatekeeper(currency, depositRequest, pendingHoldingsTransferGatekeeper, suspendedAccountDepositGatekeeper) {

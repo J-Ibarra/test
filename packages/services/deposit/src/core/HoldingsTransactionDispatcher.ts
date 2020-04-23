@@ -4,12 +4,12 @@ import { createPendingDeposit, createPendingWithdrawal } from '@abx-service-clie
 import { SourceEventType } from '@abx-types/balance'
 import { TransactionResponse, OnChainCurrencyGateway, getOnChainCurrencyManagerForEnvironment } from '@abx-utils/blockchain-currency-gateway'
 import { decryptValue } from '@abx-utils/encryption'
-import { updateAllDepositRequests, findDepositRequestsForIds } from '../../../../core'
+import { updateAllDepositRequests, findDepositRequestsForIds } from '.'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode, Environment } from '@abx-types/reference-data'
-import { getDepositTransactionFeeCurrencyId } from '../utils'
-import { DepositCompleter } from '../deposit-completion/DepositCompleter'
-import { DepositAmountCalculator } from '../../../../core/DepositAmountCalculator'
+import { getDepositTransactionFeeCurrencyId } from '../service-wrappers/third-party-coin-deposit-processor/core/utils'
+import { DepositCompleter } from '../service-wrappers/third-party-coin-deposit-processor/core/deposit-completion/DepositCompleter'
+import { DepositAmountCalculator } from './DepositAmountCalculator'
 import Decimal from '@abx-service-clients/reference-data/node_modules/decimal.js'
 
 export class HoldingsTransactionDispatcher {

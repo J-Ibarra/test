@@ -65,21 +65,37 @@ function triggerPendingHoldingsTransferRequestProcessor(
   pendingCompletionDepositsGatekeeper: DepositGatekeeper,
   suspendedDepositGatekeeper: DepositGatekeeper,
 ) {
-  setInterval(
-    async () =>
-      await Promise.all(
-        currenciesForProcessing.map((currency) =>
-          processNewestDepositRequestForCurrency(
-            pendingHoldingsTransferGatekeeper,
-            pendingCompletionDepositsGatekeeper,
-            suspendedDepositGatekeeper,
-            (currency as unknown) as CurrencyCode,
-            onChainCurrencyManager,
-          ),
+  setTimeout(() => executeProcessNewestDepositRequestForCurrency(
+    pendingHoldingsTransferGatekeeper,
+    pendingCompletionDepositsGatekeeper,
+    suspendedDepositGatekeeper,
+  ), 3_000)
+}
+
+async function executeProcessNewestDepositRequestForCurrency(
+  pendingHoldingsTransferGatekeeper: DepositGatekeeper,
+  pendingCompletionDepositsGatekeeper: DepositGatekeeper,
+  suspendedDepositGatekeeper: DepositGatekeeper,
+) {
+  try {
+    await Promise.all(
+      currenciesForProcessing.map((currency) =>
+        processNewestDepositRequestForCurrency(
+          pendingHoldingsTransferGatekeeper,
+          pendingCompletionDepositsGatekeeper,
+          suspendedDepositGatekeeper,
+          (currency as unknown) as CurrencyCode,
+          onChainCurrencyManager,
         ),
       ),
-    3_000,
-  )
+    )
+  } finally {
+    setTimeout(() => executeProcessNewestDepositRequestForCurrency(
+      pendingHoldingsTransferGatekeeper,
+      pendingCompletionDepositsGatekeeper,
+      suspendedDepositGatekeeper,
+    ), 3_000)
+  }
 }
 
 function triggerDepositCompletionProcessor(pendingCompletionDepositsGatekeeper: DepositGatekeeper) {
