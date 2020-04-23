@@ -9,7 +9,7 @@ import { KvtOnChainCurrencyGateway } from './erc20-tokens/KvtOnChainCurrencyGate
 import { TetherOnChainCurrencyGateway } from './erc20-tokens/TetherOnChainCurrencyGateway'
 
 export class CurrencyManager {
-  static readonly currencies = {
+  static currencies = {
     [CurrencyCode.kau]: new Kinesis(process.env.NODE_ENV as Environment, CurrencyCode.kau),
     [CurrencyCode.kag]: new Kinesis(process.env.NODE_ENV as Environment, CurrencyCode.kag),
 

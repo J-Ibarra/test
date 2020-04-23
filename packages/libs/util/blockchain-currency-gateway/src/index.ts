@@ -16,7 +16,7 @@ export * from './bitcoin'
 let currencyManager
 export function getOnChainCurrencyManagerForEnvironment(environment: Environment, currencies: CurrencyCode[]) {
   if (!currencyManager) {
-    currencyManager = environment === Environment.test ? new TestCurrencyManager(currencies) : new CurrencyManager()
+    currencyManager = environment === Environment.test ? new TestCurrencyManager() : new CurrencyManager()
   }
 
   return currencyManager

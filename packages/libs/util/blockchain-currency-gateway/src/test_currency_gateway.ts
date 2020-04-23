@@ -1,5 +1,4 @@
 import { CurrencyManager } from './currency_manager'
-import { Environment } from '@abx-types/reference-data'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { DepositTransaction, OnChainCurrencyGateway, ExchangeHoldingsTransfer } from './currency_gateway'
@@ -9,13 +8,8 @@ export const TEST_CURRENCY_TICKER = 'TST' as CurrencyCode
 export const TEST_CURRENCY_ID = 1
 
 export class TestCurrencyManager extends CurrencyManager {
-  constructor(currencies: CurrencyCode[] = []) {
-    super(Environment.test)
-    this.setupCurrencies(Environment.test, currencies)
-  }
-
   public getCurrencyFromTicker(ticker) {
-    const currency = this.currencies[ticker]
+    const currency = CurrencyManager.currencies[ticker]
     if (!currency) {
       throw new Error(`Currency ${ticker} is not implemented`)
     }
@@ -36,7 +30,7 @@ export class TestCurrencyManager extends CurrencyManager {
   }
 
   public getTestCurrency() {
-    return this.currencies[TEST_CURRENCY_TICKER] as TestCurrency
+    return CurrencyManager.currencies[TEST_CURRENCY_TICKER] as TestCurrency
   }
 
   public validateAddress() {
@@ -44,11 +38,11 @@ export class TestCurrencyManager extends CurrencyManager {
   }
 
   protected setupCurrencies(_, currencies: CurrencyCode[]) {
-    this.currencies = {
+    CurrencyManager.currencies = {
       [TEST_CURRENCY_TICKER as CurrencyCode]: new TestCurrency(),
     } as any
 
-    currencies.forEach(currency => (this.currencies[currency] = new TestCurrency() as any))
+    currencies.forEach((currency) => (CurrencyManager.currencies[currency] = new TestCurrency() as any))
   }
 }
 
@@ -151,7 +145,7 @@ export class TestCurrency implements OnChainCurrencyGateway {
   }
 
   public async getDepositTransactions(address: string) {
-    return this.transactions.filter(t => t.address === address)
+    return this.transactions.filter((t) => t.address === address)
   }
 
   public async getLatestTransactions() {
