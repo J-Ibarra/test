@@ -1,12 +1,15 @@
-import { DepositRequest, DepositRequestStatus } from '@abx-types/deposit'
-import { updateDepositRequest, findDepositRequestByDepositTransactionHash, findDepositRequestsForStatuses } from '../../../../core'
+import { DepositRequestStatus } from '@abx-types/deposit'
+import { updateDepositRequest, findDepositRequestByDepositTransactionHash } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { HoldingsTransactionDispatcher } from './HoldingsTransactionDispatcher'
+import { get } from 'lodash'
 
 export class HoldingsTransactionGateway {
   private readonly logger = Logger.getInstance('public-coin-deposit-processor', 'HoldingsTransactionGateway')
   private readonly holdingsTransactionDispatcher = new HoldingsTransactionDispatcher()
+
+  public static readonly BTC_INSUFFICIENT_UTXO_ERROR_CODE = 2328
 
   public async dispatchHoldingsTransactionForConfirmedDepositRequest(txid: string, currency: CurrencyCode) {
     this.logger.info(`Received a deposit transaction confirmation for currency ${currency} and transaction hash ${txid}`)
@@ -17,29 +20,20 @@ export class HoldingsTransactionGateway {
       return
     }
 
-    const isDepositTransactionCurrentlyProcessedForAddress = await this.checkIfPendingHoldingsTransactionIsAvailable(depositRequest)
-    if (isDepositTransactionCurrentlyProcessedForAddress) {
-      this.logger.info(
-        `Attempted to process deposit request ${depositRequest.id} but requests already exist with pendingHoldingsTransaction status for the same address, current request will not be processed`,
-      )
-      await updateDepositRequest(depositRequest.id!, {
-        status: DepositRequestStatus.blockedForHoldingsTransactionConfirmation,
-      })
-
-      return
-    }
-
     await updateDepositRequest(depositRequest.id!, { status: DepositRequestStatus.pendingHoldingsTransaction })
 
-    this.holdingsTransactionDispatcher.dispatchHoldingsTransactionForDepositRequests([depositRequest], currency)
+    try {
+      await this.holdingsTransactionDispatcher.dispatchHoldingsTransactionForDepositRequests([depositRequest], currency)
+    } catch (e) {
+      await this.handleWithdrawalTransactionDispatchError(depositRequest.id!, currency, e)
+    }
   }
 
-  private async checkIfPendingHoldingsTransactionIsAvailable(depositRequest: DepositRequest): Promise<boolean> {
-    const depositRequests = await findDepositRequestsForStatuses(depositRequest.depositAddressId!, [
-      DepositRequestStatus.pendingHoldingsTransaction,
-      DepositRequestStatus.pendingHoldingsTransactionConfirmation,
-    ])
-
-    return depositRequests.length > 0
+  private async handleWithdrawalTransactionDispatchError(depositRequestId: number, currency: CurrencyCode, error) {
+    if (currency === CurrencyCode.bitcoin && get(error, 'meta.error.code', -1) === HoldingsTransactionGateway.BTC_INSUFFICIENT_UTXO_ERROR_CODE) {
+      await updateDepositRequest(depositRequestId, {
+        status: DepositRequestStatus.blockedForHoldingsTransactionConfirmation,
+      })
+    }
   }
 }
