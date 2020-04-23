@@ -9,14 +9,19 @@ import { KvtOnChainCurrencyGateway } from './erc20-tokens/KvtOnChainCurrencyGate
 import { TetherOnChainCurrencyGateway } from './erc20-tokens/TetherOnChainCurrencyGateway'
 
 export class CurrencyManager {
-  protected currencies: { [ticker: string]: OnChainCurrencyGateway }
+  static readonly currencies = {
+    [CurrencyCode.kau]: new Kinesis(process.env.NODE_ENV as Environment, CurrencyCode.kau),
+    [CurrencyCode.kag]: new Kinesis(process.env.NODE_ENV as Environment, CurrencyCode.kag),
 
-  constructor(env: Environment, enabledCurrencies: CurrencyCode[] = []) {
-    this.setupCurrencies(env, enabledCurrencies)
+    [CurrencyCode.ethereum]: new Ethereum(process.env.NODE_ENV as Environment),
+    [CurrencyCode.bitcoin]: new BitcoinOnChainCurrencyGatewayAdapter(),
+
+    [CurrencyCode.kvt]: new KvtOnChainCurrencyGateway(process.env.NODE_ENV as Environment),
+    [CurrencyCode.tether]: new TetherOnChainCurrencyGateway(process.env.NODE_ENV as Environment),
   }
 
   public getCurrencyFromTicker(ticker: CurrencyCode): OnChainCurrencyGateway {
-    const currency = this.currencies[ticker]
+    const currency = CurrencyManager.currencies[ticker]
     if (!currency) {
       throw new Error(`Currency ${ticker} is not implemented`)
     }
@@ -26,22 +31,5 @@ export class CurrencyManager {
   public async getCurrencyFromId(id: number): Promise<OnChainCurrencyGateway> {
     const ticker = await getCurrencyCode(id)
     return this.getCurrencyFromTicker(ticker!)
-  }
-
-  protected setupCurrencies(env: Environment, enabledCurrencies: CurrencyCode[]) {
-    const currencies = {
-      [CurrencyCode.kau]: new Kinesis(env, CurrencyCode.kau),
-      [CurrencyCode.kag]: new Kinesis(env, CurrencyCode.kag),
-
-      [CurrencyCode.ethereum]: new Ethereum(env),
-      [CurrencyCode.bitcoin]: new BitcoinOnChainCurrencyGatewayAdapter(),
-
-      [CurrencyCode.kvt]: new KvtOnChainCurrencyGateway(env),
-      [CurrencyCode.tether]: new TetherOnChainCurrencyGateway(env),
-    }
-
-    this.currencies = Object.entries(currencies)
-      .filter(([key]) => enabledCurrencies.length === 0 || enabledCurrencies.includes(key as CurrencyCode))
-      .reduce((agg, entry) => ({ ...agg, [entry[0]]: entry[1] }), {})
   }
 }

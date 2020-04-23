@@ -13,6 +13,11 @@ export * from './erc20-tokens/KvtOnChainCurrencyGateway'
 export * from './kinesis'
 export * from './bitcoin'
 
+let currencyManager
 export function getOnChainCurrencyManagerForEnvironment(environment: Environment, currencies: CurrencyCode[]) {
-  return environment === Environment.test ? new TestCurrencyManager(currencies) : new CurrencyManager(environment, currencies)
+  if (!currencyManager) {
+    currencyManager = environment === Environment.test ? new TestCurrencyManager(currencies) : new CurrencyManager()
+  }
+
+  return currencyManager
 }
