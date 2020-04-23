@@ -12,7 +12,7 @@ import { updateCurrencyEnabledStatus, updateSymbolsForCurrencyWithStatus } from 
 import rewire from 'rewire'
 const symbolsCache = rewire('../../core/symbols/symbol_in_memory_cache')
 
-describe.only('api:symbols', () => {
+describe('api:symbols', () => {
   let app
   let findAllCurrenciesStub
   let fetchAllSymbolsStub
