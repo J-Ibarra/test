@@ -3,8 +3,8 @@ import { getModel, MemoryCache } from '@abx-utils/db-connection-utils'
 import { Currency, SymbolPairStateFilter, localAndTestEnvironments, Environment, CurrencyCode } from '@abx-types/reference-data'
 
 const memoryCache = MemoryCache.getInstance()
-const ENABLED_CURRENCIES_KEY = 'exchange:currencies'
-const ALL_CURRENCIES_KEY = 'exchange:currencies'
+const ENABLED_CURRENCIES_KEY = 'exchange:enabled:currencies'
+const ALL_CURRENCIES_KEY = 'exchange:all:currencies'
 
 export async function fetchAllCurrencies(status = SymbolPairStateFilter.enabled): Promise<Currency[]> {
   let filteredCurrencies = memoryCache.get<Currency[]>(status === SymbolPairStateFilter.enabled ? ENABLED_CURRENCIES_KEY : ALL_CURRENCIES_KEY)
