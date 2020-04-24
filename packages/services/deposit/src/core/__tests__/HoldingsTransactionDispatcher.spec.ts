@@ -1,16 +1,16 @@
 import sinon from 'sinon'
 import { expect } from 'chai'
-import { HoldingsTransactionDispatcher } from '../../holdings-transaction-creation/HoldingsTransactionDispatcher'
 import * as accountClientOperations from '@abx-service-clients/account'
 import * as balanceOperations from '@abx-service-clients/balance'
 import { SourceEventType } from '@abx-types/balance'
-import * as depositRequestOperations from '../../../../../core'
+import * as depositRequestOperations from '..'
 import { DepositRequestStatus } from '@abx-types/deposit'
-import * as utilsStub from '../../utils'
+import * as utilsStub from '../../service-wrappers/third-party-coin-deposit-processor/core/utils'
 import * as blockchainOperations from '@abx-utils/blockchain-currency-gateway'
 import { CurrencyCode } from '@abx-types/reference-data'
-import { DepositAmountCalculator } from '../../holdings-transaction-creation/DepositAmountCalculator'
-import { DepositCompleter } from '../../deposit-completion/DepositCompleter'
+import { DepositCompleter } from '../../service-wrappers/third-party-coin-deposit-processor/core/deposit-completion/DepositCompleter'
+import { HoldingsTransactionDispatcher } from '..'
+import { DepositAmountCalculator } from '../DepositAmountCalculator'
 
 describe('HoldingsTransactionDispatcher', () => {
   const holdingsTransactionDispatcher = new HoldingsTransactionDispatcher()
@@ -44,6 +44,7 @@ describe('HoldingsTransactionDispatcher', () => {
       encryptedPrivateKey: '10',
       encryptedWif: '12',
       address: 'addr',
+      publicKey: 'publicKey'
     },
   } as any
 
@@ -99,6 +100,7 @@ describe('HoldingsTransactionDispatcher', () => {
             privateKey: depositRequest.depositAddress.encryptedPrivateKey!,
             wif: depositRequest.depositAddress.encryptedWif!,
             address: depositRequest.depositAddress.address!,
+            publicKey: depositRequest.depositAddress.publicKey!
           },
           depositRequest.amount,
         ),
@@ -157,6 +159,7 @@ describe('HoldingsTransactionDispatcher', () => {
             privateKey: depositRequest.depositAddress.encryptedPrivateKey!,
             wif: depositRequest.depositAddress.encryptedWif!,
             address: depositRequest.depositAddress.address!,
+            publicKey: depositRequest.depositAddress.publicKey!
           },
           depositRequest.amount,
         ),

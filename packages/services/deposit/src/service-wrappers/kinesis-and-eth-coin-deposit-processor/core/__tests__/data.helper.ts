@@ -3,7 +3,7 @@ import { DepositAddress, DepositRequest, DepositRequestStatus } from '@abx-types
 import { BalanceAdjustment, RawBalance, SourceEventType } from '@abx-types/balance'
 
 export const currencyToDepositRequests = 'currencyToDepositRequests'
-export const decryptedPrivateKey = 'decryptedPrivateKey'
+export const decryptedPrivateKey = 'decrypted encryptedPrivateKey'
 export const depositAddress: DepositAddress = {
   id: 1,
   accountId: 'dab0a9f7-b4ef-4061-8dd2-423c3e3392f9',

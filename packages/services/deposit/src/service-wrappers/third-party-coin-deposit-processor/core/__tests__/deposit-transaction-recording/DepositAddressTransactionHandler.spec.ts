@@ -21,7 +21,10 @@ describe('DepositAddressTransactionHandler', () => {
   } as any
   const depositAddressTransactionHandler = new DepositAddressTransactionHandler()
 
+  const holdingsAddress = 'holdings address'
   beforeEach(() => {
+    process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS = holdingsAddress
+
     const onChainCurrencyManagerStub = {
       getCurrencyFromTicker: () => ({
         getTransaction: getTransactionStub,

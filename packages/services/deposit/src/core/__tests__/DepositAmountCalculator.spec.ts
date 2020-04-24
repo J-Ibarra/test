@@ -1,8 +1,8 @@
 import sinon from 'sinon'
 import { expect } from 'chai'
-import { DepositAmountCalculator } from '../../holdings-transaction-creation/DepositAmountCalculator'
 
-import * as coreOperations from '../../../../../core'
+import * as coreOperations from '..'
+import { DepositAmountCalculator } from '../DepositAmountCalculator'
 
 describe('DepositAmountCalculator', () => {
   const depositAmountCalculator = new DepositAmountCalculator()
