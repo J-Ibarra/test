@@ -11,6 +11,7 @@ import { handleCryptoCurrencyWithdrawalRequest } from './crypto_currency_request
 import { getQueuePoller } from '@abx-utils/async-message-consumer'
 import { findWithdrawalRequestByIdWithFeeRequest } from '../../../../core'
 import { processWaitingWithdrawalBatch } from './batch-processing/batch_withdrawal_processor'
+import { runHandlerAndSkipDeletionOnFailure } from '../common'
 
 export function bootstrapNewWithdrawalRequestQueueProcessor() {
   const queuePoller = getQueuePoller()
@@ -25,11 +26,13 @@ export async function processNewWithdrawalRequest(cryptoWithdrawalRequest: Crypt
   if ((cryptoWithdrawalRequest as BatchCryptoWithdrawalRequestWrapper).isBatch) {
     const currency = (cryptoWithdrawalRequest as BatchCryptoWithdrawalRequestWrapper).currency
 
-    await processWaitingWithdrawalBatch(currency, currencyManager.getCurrencyFromTicker(currency))
+    return runHandlerAndSkipDeletionOnFailure(() => processWaitingWithdrawalBatch(currency, currencyManager.getCurrencyFromTicker(currency)))
   } else {
     const withdrawalRequest = (await findWithdrawalRequestByIdWithFeeRequest((cryptoWithdrawalRequest as SingleCryptoWithdrawalRequestWrapper).id))!
     const currency = currencies.find(({ id }) => id === withdrawalRequest.currencyId)!
 
-    await handleCryptoCurrencyWithdrawalRequest({ ...withdrawalRequest, currency }, currencyManager.getCurrencyFromTicker(currency.code))
+    return runHandlerAndSkipDeletionOnFailure(() =>
+      handleCryptoCurrencyWithdrawalRequest({ ...withdrawalRequest, currency }, currencyManager.getCurrencyFromTicker(currency.code)),
+    )
   }
 }

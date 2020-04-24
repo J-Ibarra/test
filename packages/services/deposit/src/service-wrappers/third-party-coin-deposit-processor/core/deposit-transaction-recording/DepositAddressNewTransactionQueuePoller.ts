@@ -25,14 +25,21 @@ export class DepositAddressNewTransactionQueuePoller {
   }
 
   private processNewDepositAddressTransaction(payload: IAddressTransactionEventPayload | IAddressTokenTransactionEventPayload) {
-    // Checking if the transaction is an ECR20 token transaction
-    if (!!payload['token_symbol']) {
-      const tokenTransaction = payload as IAddressTokenTransactionEventPayload
-      return this.processDepositAddressTransaction(this.getTokenForTransaction(tokenTransaction), tokenTransaction.address, tokenTransaction.txHash)
-    }
+    try {
+      // Checking if the transaction is an ECR20 token transaction
+      if (!!payload['token_symbol']) {
+        const tokenTransaction = payload as IAddressTokenTransactionEventPayload
+        return this.processDepositAddressTransaction(this.getTokenForTransaction(tokenTransaction), tokenTransaction.address, tokenTransaction.txHash)
+      }
 
-    const coinTransaction = payload as IAddressTransactionEventPayload
-    return this.processDepositAddressTransaction(coinTransaction.currency, coinTransaction.address, coinTransaction.txid)
+      const coinTransaction = payload as IAddressTransactionEventPayload
+      return this.processDepositAddressTransaction(coinTransaction.currency, coinTransaction.address, coinTransaction.txid)
+    } catch (e) {
+      this.logger.error(`An error has ocurred while processing deposit request, skipping deletion.`)
+
+      // Skipping deletion so message can be added to DLQ
+      return { skipMessageDeletion: true }
+    }
   }
 
   /**
