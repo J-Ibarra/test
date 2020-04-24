@@ -2,7 +2,6 @@ import { CurrencyCode } from '@abx-types/reference-data'
 import { getCurrencyId } from '@abx-service-clients/reference-data'
 import { DepositAddress, DepositRequest } from '@abx-types/deposit'
 import { sendAsyncChangeMessage } from '@abx-utils/async-message-publisher'
-import { NEW_ETH_AND_KINESIS_DEPOSIT_REQUESTS_QUEUE_URL } from './constants'
 
 export async function getDepositFeeCurrencyId(currency: CurrencyCode) {
   if (currency === CurrencyCode.kvt) {
@@ -31,13 +30,13 @@ export function splitDepositAddressesIntoBatches(depositAddresses: DepositAddres
 
 export type AmountTruncationFunction = (amount: number) => number
 
-export function pushRequestForProcessing(depositRequests: DepositRequest[]) {
+export function pushRequestForProcessing(depositRequests: DepositRequest[], target: string) {
   return sendAsyncChangeMessage<DepositRequest[]>({
     id: `withdrawal-transaction-sent-${depositRequests.map(({ id }) => id!)}`,
     type: 'new-deposit-request',
     target: {
-      local: NEW_ETH_AND_KINESIS_DEPOSIT_REQUESTS_QUEUE_URL!,
-      deployedEnvironment: NEW_ETH_AND_KINESIS_DEPOSIT_REQUESTS_QUEUE_URL!,
+      local: target!,
+      deployedEnvironment: target!,
     },
     payload: depositRequests,
   })

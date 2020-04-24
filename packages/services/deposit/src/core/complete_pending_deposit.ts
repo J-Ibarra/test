@@ -14,19 +14,14 @@ import { DepositRequest, DepositRequestStatus } from '@abx-types/deposit'
 import { findDepositAddressForId } from '../core'
 import { updateDepositRequest } from './deposit_request'
 import { TransactionDirection } from '@abx-types/order'
-import { confirmPendingDeposit, confirmPendingWithdrawal } from '@abx-service-clients/balance'
+import { confirmPendingDeposit, confirmPendingWithdrawal, updateAvailable } from '@abx-service-clients/balance'
 import { createEmail } from '@abx-service-clients/notification'
 import { ValidationError } from '@abx-types/error'
 import { getDepositFeeCurrencyId } from './helpers'
 const logger = Logger.getInstance('completePendingDeposit', 'deposits')
 
-export async function completePendingDeposit(request: DepositRequest, transaction: Transaction) {
-  const confirmedRequest = request
-  if (!request.depositAddress) {
-    const addressForDeposit = await findDepositAddressForId(request.depositAddressId!)
-
-    confirmedRequest.depositAddress = addressForDeposit!
-  }
+export async function completePendingDeposit(confirmedRequest: DepositRequest, transaction: Transaction) {
+  addAddressIfMissing(confirmedRequest)
 
   await Promise.all([
     updateDepositRequest(confirmedRequest.id!, { status: DepositRequestStatus.completed }, transaction).then(() =>
@@ -67,6 +62,64 @@ export async function completePendingDeposit(request: DepositRequest, transactio
   return sendDepositConfirmEmail(depositAddress.accountId, amount, code)
 }
 
+export async function completePendingTransactionConfirmationDeposit(completedRequest: DepositRequest, transaction: Transaction) {
+  addAddressIfMissing(completedRequest)
+
+  updateDepositRequest(completedRequest.id!, { status: DepositRequestStatus.completed }, transaction).then(() =>
+    logger.debug(
+      `Received Deposit Request ${completedRequest.id} for ${completedRequest.amount} at address: ${completedRequest.depositAddress.publicKey}`,
+    ),
+  )
+}
+
+export async function completeReceivedDeposit(receivedRequest: DepositRequest, transaction: Transaction) {
+  addAddressIfMissing(receivedRequest)
+
+  const { id, amount, depositAddress } = receivedRequest
+  const { publicKey, accountId, currencyId } = depositAddress
+
+  await Promise.all([
+    updateDepositRequest(id!, { status: DepositRequestStatus.completedPendingHoldingsTransaction }, transaction).then(() =>
+      logger.debug(
+        `Received Deposit Request ${id} for ${amount} at address: ${publicKey}`,
+      ),
+    ),
+    createCurrencyTransaction({
+      accountId,
+      amount,
+      currencyId,
+      direction: TransactionDirection.deposit,
+      requestId: id!,
+    }).then(() => {
+      logger.debug(
+        `Queued currency transaction for deposit request ${id} of ${amount} at address: ${publicKey} for creation`,
+      )
+
+      return
+    }),
+  ])
+
+  await updateAvailable({
+    accountId,
+    amount,
+    currencyId,
+    sourceEventId: id!,
+    sourceEventType: SourceEventType.currencyDeposit,
+  })
+
+  logger.debug(`Confirmed pending deposit in the Database for: ${amount} at address: ${publicKey}`)
+
+  const { code } = await findCurrencyForId(currencyId)
+  return sendDepositConfirmEmail(accountId, amount, code)
+}
+
+async function addAddressIfMissing(depositRequest: DepositRequest) {
+  if (!depositRequest.depositAddress) {
+    const addressForDeposit = await findDepositAddressForId(depositRequest.depositAddressId!)
+
+    depositRequest.depositAddress = addressForDeposit!
+  }
+}
 const currencyToCoverOnChainFeeFor = [CurrencyCode.ethereum, CurrencyCode.kvt]
 
 async function rebateOnChainFeeFromKinesisRevenueAccount(confirmedRequest: DepositRequest, currencyCode: CurrencyCode) {

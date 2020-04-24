@@ -38,6 +38,10 @@ export function createQueryEndpointHandlers(): InternalRoute<any, any>[] {
       handler: ({ orderId }) => balanceAdjustmentRepository.getOrderBalanceReserveAdjustment(orderId),
     },
     {
+      path: BalanceRetrievalEndpoints.getBalanceAdjustmentForSourceEventId,
+      handler: ({ sourceEventId }) => balanceAdjustmentRepository.getBalanceAdjustmentForSourceEventId(sourceEventId),
+    },
+    {
       path: BalanceRetrievalEndpoints.getBalanceAdjustmentsForBalanceAndTradeTransactions,
       handler: ({ balanceId, tradeTransactionIds }) =>
         balanceAdjustmentRepository.getBalanceAdjustmentsForBalanceAndTradeTransactions(balanceId, tradeTransactionIds),

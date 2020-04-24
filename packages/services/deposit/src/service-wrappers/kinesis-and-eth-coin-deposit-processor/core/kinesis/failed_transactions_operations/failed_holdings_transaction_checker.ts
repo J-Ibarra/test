@@ -1,7 +1,7 @@
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { DepositRequest } from '@abx-types/deposit'
-import { DepositGatekeeper } from '../deposit_gatekeeper'
+import { DepositGatekeeper } from '../..'
 import * as helper from './helper'
 
 export interface FailedDeposit extends DepositRequest {

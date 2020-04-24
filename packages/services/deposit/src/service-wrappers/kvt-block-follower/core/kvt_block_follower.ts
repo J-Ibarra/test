@@ -10,6 +10,7 @@ import {
   convertTransactionToDepositRequest,
   FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION,
   pushRequestForProcessing,
+  NEW_ETH_AND_KVT_DEPOSIT_REQUESTS_QUEUE_URL,
 } from '../../../core'
 import { BlockchainFollowerDetails, DepositAddress } from '@abx-types/deposit'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
@@ -97,6 +98,6 @@ export async function handleKVTTransactions(
     })
 
     const storedDepositRequests = await storeDepositRequests(depositRequests, t)
-    await pushRequestForProcessing(storedDepositRequests)
+    await pushRequestForProcessing(storedDepositRequests, NEW_ETH_AND_KVT_DEPOSIT_REQUESTS_QUEUE_URL)
   }
 }

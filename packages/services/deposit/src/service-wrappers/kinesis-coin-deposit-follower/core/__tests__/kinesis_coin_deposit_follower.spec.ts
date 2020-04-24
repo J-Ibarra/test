@@ -6,7 +6,7 @@ import * as coreOperations from '../../../../core'
 import * as helperOperations from '../kinesis_coin_deposit_follower_helpers'
 import { triggerKinesisCoinDepositFollower } from '../kinesis_coin_deposit_follower'
 import { AccountStatus } from '@abx-types/account'
-import { FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION } from '../../../../core'
+import { FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION, NEW_KINESIS_DEPOSIT_REQUESTS_QUEUE_URL } from '../../../../core'
 import Decimal from 'decimal.js'
 import { DepositRequestStatus } from '@abx-types/deposit'
 
@@ -132,6 +132,6 @@ describe('triggerKinesisCoinDepositFollower', () => {
 
     expect(storeDepositRequestsStub.calledWith([depositRequest])).to.eql(true)
     expect(updateBlockchainFollowerDetailsForCurrencyStub.calledWith(kauCurrency.id, txHash)).to.eql(true)
-    expect(pushRequestForProcessingStub.calledWith([depositRequest])).to.eql(true)
+    expect(pushRequestForProcessingStub.calledWith([depositRequest], NEW_KINESIS_DEPOSIT_REQUESTS_QUEUE_URL)).to.eql(true)
   })
 })

@@ -2,7 +2,12 @@ import * as Sequelize from 'sequelize'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { Logger } from '@abx-utils/logging'
 import { Kinesis, DepositTransaction } from '@abx-utils/blockchain-currency-gateway'
-import { getBlockchainFollowerDetailsForCurrency, updateBlockchainFollowerDetailsForCurrency, pushRequestForProcessing } from '../../../core'
+import { 
+  getBlockchainFollowerDetailsForCurrency, 
+  updateBlockchainFollowerDetailsForCurrency, 
+  pushRequestForProcessing, 
+  NEW_KINESIS_DEPOSIT_REQUESTS_QUEUE_URL,
+} from '../../../core'
 import { BlockchainFollowerDetails } from '@abx-types/deposit'
 import { storeDepositRequests } from '../../../core'
 import { CurrencyCode, CurrencyBoundary, Environment } from '@abx-types/reference-data'
@@ -60,7 +65,7 @@ export async function handleKinesisPaymentOperations(
     const storedDepositRequests = await storeDepositRequests(depositRequests, t)
     logger.debug(`${depositRequests.length} new ${currencyBoundary.currencyCode} deposit requests stored`)
 
-    await pushRequestForProcessing(storedDepositRequests)
+    await pushRequestForProcessing(storedDepositRequests, NEW_KINESIS_DEPOSIT_REQUESTS_QUEUE_URL)
     logger.debug(`${storedDepositRequests.length} new ${currencyBoundary.currencyCode} deposit requests pushed for processing`)
   }
 }

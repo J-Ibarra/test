@@ -2,7 +2,12 @@ import * as Sequelize from 'sequelize'
 import { Block, Transaction } from 'web3/eth/types'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyManager, Ethereum } from '@abx-utils/blockchain-currency-gateway'
-import { getBlockchainFollowerDetailsForCurrency, updateBlockchainFollowerDetailsForCurrency, pushRequestForProcessing } from '../../../core'
+import { 
+  getBlockchainFollowerDetailsForCurrency, 
+  updateBlockchainFollowerDetailsForCurrency, 
+  pushRequestForProcessing, 
+  NEW_ETH_AND_KVT_DEPOSIT_REQUESTS_QUEUE_URL
+} from '../../../core'
 import { BlockchainFollowerDetails, DepositAddress } from '@abx-types/deposit'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { findKycOrEmailVerifiedDepositAddresses, storeDepositRequests } from '../../../core'
@@ -99,6 +104,6 @@ export async function handleEthereumTransactions(
     })
 
     const storedDepositRequests = await storeDepositRequests(depositRequests, t)
-    await pushRequestForProcessing(storedDepositRequests)
+    await pushRequestForProcessing(storedDepositRequests, NEW_ETH_AND_KVT_DEPOSIT_REQUESTS_QUEUE_URL)
   }
 }

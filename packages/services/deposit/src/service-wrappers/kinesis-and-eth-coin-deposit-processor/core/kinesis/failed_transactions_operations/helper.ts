@@ -4,7 +4,7 @@ import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { DepositRequestStatus } from '@abx-types/deposit'
 import { getAllDepositRequests, updateAllDepositRequests } from '../../../../../core'
-import { DepositGatekeeper } from '../deposit_gatekeeper'
+import { DepositGatekeeper } from '../..'
 import { FailedDeposit } from './failed_holdings_transaction_checker'
 import { findAllCurrencies } from '@abx-service-clients/reference-data'
 

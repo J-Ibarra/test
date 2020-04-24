@@ -59,6 +59,12 @@ export function getOrderBalanceReserveAdjustment(currencyCode: CurrencyCode, acc
   })
 }
 
+export function getBalanceAdjustmentForSourceEventId(sourceEventId: number): Promise<BalanceAdjustment> {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<BalanceAdjustment>(BalanceRetrievalEndpoints.getBalanceAdjustmentForSourceEventId, {
+    sourceEventId,
+  })
+}
+
 export function getBalanceAdjustmentsForBalanceAndTradeTransactions(balanceId: number, tradeTransactionIds: number[]): Promise<BalanceAdjustment[]> {
   return internalApiRequestDispatcher.fireRequestToInternalApi<BalanceAdjustment[]>(
     BalanceRetrievalEndpoints.getBalanceAdjustmentsForBalanceAndTradeTransactions,

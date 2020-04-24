@@ -1,4 +1,4 @@
-import { CryptoCurrency, Currency, CurrencyCode } from '@abx-types/reference-data'
+import { CryptoCurrency, CurrencyCode, getEnvironment } from '@abx-types/reference-data'
 import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 import {
   processNewestDepositRequestForCurrency,
@@ -10,11 +10,12 @@ import {
   processCompletionPendingDepositRequestForCurrency,
 } from './core'
 import { DepositRequestStatus, DepositRequest } from '@abx-types/deposit'
-import { loadAllPendingDepositRequestsAboveMinimumAmount, NEW_ETH_AND_KINESIS_DEPOSIT_REQUESTS_QUEUE_URL } from '../../core'
+import { loadAllPendingDepositRequestsAboveMinimumAmount, NEW_ETH_AND_KVT_DEPOSIT_REQUESTS_QUEUE_URL } from '../../core'
 import { getQueuePoller } from '@abx-utils/async-message-consumer'
 import { findCurrencyForId } from '@abx-service-clients/reference-data'
 
 const onChainCurrencyManager = new CurrencyManager()
+const currenciesForProcessing = [CryptoCurrency.ethereum, CryptoCurrency.kvt]
 
 export async function configureDepositHandler() {
   const [
@@ -67,7 +68,7 @@ function triggerPendingHoldingsTransferRequestProcessor(
   setInterval(
     async () =>
       await Promise.all(
-        Object.values(CryptoCurrency).map((currency) =>
+        currenciesForProcessing.map((currency) =>
           processNewestDepositRequestForCurrency(
             pendingHoldingsTransferGatekeeper,
             pendingCompletionDepositsGatekeeper,
@@ -85,7 +86,7 @@ function triggerDepositCompletionProcessor(pendingCompletionDepositsGatekeeper: 
   setInterval(
     async () =>
       await Promise.all(
-        Object.values(CryptoCurrency).map((currency) =>
+        currenciesForProcessing.map((currency) =>
           processCompletionPendingDepositRequestForCurrency(
             pendingCompletionDepositsGatekeeper,
             (currency as unknown) as CurrencyCode,
@@ -109,7 +110,7 @@ function triggerSuspendedDepositChecker(
 ) {
   setInterval(async () => {
     await Promise.all(
-      Object.values(CryptoCurrency).map((currency) =>
+      currenciesForProcessing.map((currency) =>
         processSuspendedDepositRequestForCurrency(
           pendingSuspendedDepositGatekeeper,
           checkingSuspendedDepositGatekeeper,
@@ -118,7 +119,7 @@ function triggerSuspendedDepositChecker(
       ),
     )
     await Promise.all(
-      Object.values(CryptoCurrency).map((currency) =>
+      currenciesForProcessing.map((currency) =>
         processCheckingSuspendedDepositRequest(
           checkingSuspendedDepositGatekeeper,
           pendingHoldingsTransferGatekeeper,
@@ -132,7 +133,7 @@ function triggerSuspendedDepositChecker(
 function subscribeToNewDepositRequestsQueue(pendingHoldingsTransferGatekeeper: DepositGatekeeper) {
   const queuePoller = getQueuePoller()
 
-  queuePoller.subscribeToQueueMessages<DepositRequest[]>(NEW_ETH_AND_KINESIS_DEPOSIT_REQUESTS_QUEUE_URL, async (depositRequests) => {
+  queuePoller.subscribeToQueueMessages<DepositRequest[]>(NEW_ETH_AND_KVT_DEPOSIT_REQUESTS_QUEUE_URL, async (depositRequests) => {
     const currency = await findCurrencyForId(depositRequests[0].depositAddress.currencyId)
     pendingHoldingsTransferGatekeeper.addNewDepositsForCurrency(currency.code, depositRequests)
   })

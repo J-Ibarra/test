@@ -87,6 +87,21 @@ export async function loadAllPendingDepositRequestsAboveMinimumAmount(): Promise
   return flatMap(depositRequestsForAllCurrencies, (requests) => requests)
 }
 
+export async function loadAllCompletedPTHDepositRequestsAboveMinimumAmount(): Promise<DepositRequest[]> {
+  if (cachedCryptoCurrencies.length === 0) {
+    cachedCryptoCurrencies = await findCurrencyForCodes(Object.values(CryptoCurrency) as any)
+  }
+
+  // In case the CryptoCurrency is not enabled yet it would show as undefined here
+  const depositRequestsForAllCurrenciesPromise = cachedCryptoCurrencies
+    .filter(Boolean)
+    .map(cryptoCurrency => getAllCompletedPTHDepositRequestsForCurrencyAboveMinimumAmount(cryptoCurrency))
+
+  const depositRequestsForAllCurrencies = await Promise.all(depositRequestsForAllCurrenciesPromise)
+
+  return flatMap(depositRequestsForAllCurrencies, requests => requests)
+}
+
 export async function findDepositRequestsByHoldingsTransactionHash(txHash: string): Promise<DepositRequest[]> {
   const depositInstances = await getModel<DepositRequest>('depositRequest').findAll({
     where: { holdingsTxHash: txHash },
@@ -115,6 +130,27 @@ export async function getAllPendingDepositRequestsForCurrencyAboveMinimumAmount(
   })
 
   return depositInstances.map((req) => req.get({ plain: true }))
+}
+
+export async function getAllCompletedPTHDepositRequestsForCurrencyAboveMinimumAmount(
+  currency: Currency,
+  parentTransaction?: Transaction,
+): Promise<DepositRequest[]> {
+  const depositInstances = await getModel<DepositRequest>('depositRequest').findAll({
+    where: {
+      amount: { $gte: getMinimumDepositAmountForCurrency(currency.code) },
+      status: DepositRequestStatus.completedPendingHoldingsTransaction,
+    },
+    include: [
+      {
+        model: getModel<DepositAddress>('depositAddress'),
+        where: { currencyId: currency.id },
+      },
+    ],
+    transaction: parentTransaction,
+  })
+
+  return depositInstances.map(req => req.get({ plain: true }))
 }
 
 export async function findMostRecentlyUpdatedDepositRequest(

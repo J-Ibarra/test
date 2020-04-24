@@ -15,4 +15,15 @@ export enum DepositRequestStatus {
 
   // Set after the holdings transaction has been dispatched
   pendingHoldingsTransactionConfirmation = 'pendingHoldingsTransactionConfirmation',
+
+
+  
+  // The deposit request is received
+  received = 'received',
+  // The deposit request is stored successfully and the transaction is being created
+  completedPendingHoldingsTransaction = 'completedPendingHoldingsTransaction',
+  // The transaction is created and we are awating for confirmation
+  // pendingHoldingsTransactionConfirmation = 'pendingHoldingsTransactionConfirmation',
+  // The deposit is fully completed
+  // completed = 'completed'
 }

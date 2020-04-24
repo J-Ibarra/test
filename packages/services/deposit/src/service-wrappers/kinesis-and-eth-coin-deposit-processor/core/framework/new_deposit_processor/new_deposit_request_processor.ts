@@ -16,7 +16,6 @@ import { getCurrencyId } from '@abx-service-clients/reference-data'
 
 const logger = Logger.getInstance('deposit_request_processor', 'processNewestDepositRequestForCurrency')
 
-const currencyToCurrentlyProcessingFlag: Map<CurrencyCode, boolean> = new Map()
 const currencyCodeToIdLocalCache = new Map<CurrencyCode, number>()
 
 export async function processNewestDepositRequestForCurrency(
@@ -31,7 +30,6 @@ export async function processNewestDepositRequestForCurrency(
   if (!depositRequest) {
     return
   }
-  currencyToCurrentlyProcessingFlag.set(currency, true)
 
   const depositTransactionConfirmed = await checkTransactionConfirmation(currency, depositRequest, onChainCurrencyManager)
   if (!depositTransactionConfirmed) {
@@ -55,8 +53,6 @@ export async function processNewestDepositRequestForCurrency(
     pendingCompletionGatekeeper.addNewDepositsForCurrency(currency, [updatedRequest])
   } catch (e) {
     await handlerDepositError(e, currency, depositRequest, pendingHoldingsTransferGatekeeper)
-  } finally {
-    currencyToCurrentlyProcessingFlag.set(currency, false)
   }
 }
 
@@ -83,12 +79,12 @@ async function transferAmountIntoHoldingsAndUpdateDepositRequest(
   return wrapInTransaction(sequelize, null, async (transaction) => {
     const currency = await manager.getCurrencyFromId(depositRequest.depositAddress.currencyId)
     logger.info(
-      `Transferring ${depositRequest.amount} ${currency.ticker} from address:  ${depositRequest.depositAddress.publicKey} to the Exchange Holdings`,
+      `Transferring ${depositRequest.amount} ${currency.ticker} from address: ${depositRequest.depositAddress.publicKey} to the Exchange Holdings`,
     )
     const { txHash, transactionFee } = await transferDepositAmountToExchangeHoldings(currency, depositRequest)
 
     logger.info(
-      `Successfully transferred ${depositRequest.amount} ${currency.ticker} from address:  ${depositRequest.depositAddress.publicKey} to the Exchange Holdings`,
+      `Successfully transferred ${depositRequest.amount} ${currency.ticker} from address: ${depositRequest.depositAddress.publicKey} to the Exchange Holdings`,
     )
     await createPendingDeposit({
       accountId: depositRequest.depositAddress.accountId,
