@@ -20,7 +20,7 @@ export class AdminSymbolsController extends Controller {
     } catch (e) {
       this.logger.error(`failed to update symbol order range ${e.message}`)
 
-      this.setStatus(400)
+      this.setStatus(500)
       return { message: `Failed to update the order range for the symbol: ${symbolId}` }
     }
   }
