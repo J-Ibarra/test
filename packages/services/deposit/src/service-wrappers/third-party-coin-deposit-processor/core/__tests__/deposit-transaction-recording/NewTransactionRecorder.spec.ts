@@ -60,7 +60,7 @@ describe('NewTransactionRecorder:recordDepositTransaction', () => {
       createNewDepositRequestStub.calledWith(
         newTransactionDetails.depositTransactionDetails,
         newTransactionDetails.depositAddress,
-        fiatValueForCryptoCurrency,
+        fiatValueForCryptoCurrency * newTransactionDetails.depositTransactionDetails.amount,
         DepositRequestStatus.insufficientAmount,
       ),
     ).to.eql(true)
@@ -84,7 +84,7 @@ describe('NewTransactionRecorder:recordDepositTransaction', () => {
       createNewDepositRequestStub.calledWith(
         newTransactionDetails.depositTransactionDetails,
         newTransactionDetails.depositAddress,
-        fiatValueForCryptoCurrency,
+        fiatValueForCryptoCurrency * newTransactionDetails.depositTransactionDetails.amount,
       ),
     ).to.eql(true)
   })

@@ -3,12 +3,13 @@ import {
   FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION,
   findDepositRequestsWhereTransactionHashPresent,
   createNewDepositRequest,
-  getMinimumDepositAmountForCurrency
+  getMinimumDepositAmountForCurrency,
 } from '../../../../core'
 import { Transaction } from '@abx-utils/blockchain-currency-gateway'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { DepositAddress, DepositRequestStatus } from '@abx-types/deposit'
 import { Logger } from '@abx-utils/logging'
+import { Decimal } from 'decimal.js'
 
 interface NewTransactionDetails {
   currency: CurrencyCode
@@ -22,7 +23,6 @@ const logger = Logger.getInstance('public-coin-deposit-processor', 'NewTransacti
  * Responsible for processing potential new deposit request transactions.
  */
 export class NewTransactionRecorder {
-
   async recordDepositTransaction({ currency, depositTransactionDetails, depositAddress }: NewTransactionDetails) {
     const transactionToBePersisted = await this.shouldPersistTransaction(depositTransactionDetails)
 
@@ -55,11 +55,13 @@ export class NewTransactionRecorder {
     const fiatValueOfOneCryptoCurrency = await calculateRealTimeMidPriceForSymbol(`${currency}_${FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION}`)
     let depositAmountAboveMinimumForCurrency = getMinimumDepositAmountForCurrency(currency) <= depositTransactionDetails.amount
 
+    const depositAmountFiatConversion = new Decimal(depositTransactionDetails.amount).times(fiatValueOfOneCryptoCurrency).toDP(2).toNumber()
+
     if (!depositAmountAboveMinimumForCurrency) {
       logger.debug(`Attempted to process deposit address transaction ${depositTransactionDetails.transactionHash} which has already been recorded`)
-      await createNewDepositRequest(depositTransactionDetails, depositAddress, fiatValueOfOneCryptoCurrency, DepositRequestStatus.insufficientAmount)
+      await createNewDepositRequest(depositTransactionDetails, depositAddress, depositAmountFiatConversion, DepositRequestStatus.insufficientAmount)
     } else {
-      await createNewDepositRequest(depositTransactionDetails, depositAddress, fiatValueOfOneCryptoCurrency)
+      await createNewDepositRequest(depositTransactionDetails, depositAddress, depositAmountFiatConversion)
     }
   }
 }
