@@ -6,7 +6,7 @@ export function createCurrencyEndpointHandlers(): InternalRoute<any, any>[] {
   return [
     {
       path: CurrencyEndpoints.getAllCurrencies,
-      handler: () => fetchAllCurrencies(),
+      handler: ({ state }) => fetchAllCurrencies(state),
     },
     {
       path: CurrencyEndpoints.getCurrencyCode,
