@@ -7,8 +7,7 @@ import { runHandlerAndSkipDeletionOnFailure } from '../common'
 export function bootstrapWithdrawalCompletionPendingQueueProcessor() {
   const queuePoller = getQueuePoller()
 
-  queuePoller.subscribeToQueueMessages<WithdrawalCompletionPendingPayload>(
-    WITHDRAWAL_TRANSACTION_COMPLETION_PENDING_QUEUE_URL!,
-    async () => (await runHandlerAndSkipDeletionOnFailure((request) => processWithdrawalCompletionRequest(request))) as any,
-  )
+  queuePoller.subscribeToQueueMessages<WithdrawalCompletionPendingPayload>(WITHDRAWAL_TRANSACTION_COMPLETION_PENDING_QUEUE_URL!, async (request) => {
+    await runHandlerAndSkipDeletionOnFailure(() => processWithdrawalCompletionRequest(request))
+  })
 }

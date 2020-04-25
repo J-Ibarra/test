@@ -1,4 +1,4 @@
-import { DepositRequest, DepositRequestStatus, DepositAddress } from '@abx-types/deposit'
+import { DepositRequest, DepositAddress } from '@abx-types/deposit'
 import { isAccountSuspended, findOrCreateKinesisRevenueAccount } from '@abx-service-clients/account'
 import { createPendingDeposit, createPendingWithdrawal } from '@abx-service-clients/balance'
 import { SourceEventType } from '@abx-types/balance'
@@ -92,12 +92,10 @@ export class HoldingsTransactionDispatcher {
         updateAllDepositRequests(depositRequestIds, {
           holdingsTxHash: holdingsTransactionHash,
           holdingsTxFee: new Decimal(holdingsTransactionFee!).dividedBy(depositRequestIds.length).toNumber(),
-          status: DepositRequestStatus.pendingCompletion,
         }),
         joinedDepositRequestsWithInsufficientBalance.length > 0
           ? updateAllDepositRequests(joinedDepositRequestsWithInsufficientBalance, {
               holdingsTxHash: holdingsTransactionHash,
-              status: DepositRequestStatus.pendingCompletion,
             })
           : (Promise.resolve() as any),
       ])

@@ -7,8 +7,7 @@ import { runHandlerAndSkipDeletionOnFailure } from '../common'
 export function bootstrapWithdrawalSentRecorderQueueProcessor() {
   const queuePoller = getQueuePoller()
 
-  queuePoller.subscribeToQueueMessages<WithdrawalTransactionSent>(
-    WITHDRAWAL_TRANSACTION_SENT_QUEUE_URL!,
-    async () => (await runHandlerAndSkipDeletionOnFailure((request) => recordWithdrawalOnChainTransaction(request))) as any,
-  )
+  queuePoller.subscribeToQueueMessages<WithdrawalTransactionSent>(WITHDRAWAL_TRANSACTION_SENT_QUEUE_URL!, async (request) => {
+    await runHandlerAndSkipDeletionOnFailure(() => recordWithdrawalOnChainTransaction(request))
+  })
 }
