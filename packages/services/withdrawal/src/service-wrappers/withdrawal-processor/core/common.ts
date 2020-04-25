@@ -39,7 +39,8 @@ export async function runHandlerAndSkipDeletionOnFailure(
     const result = await handler()
     return result
   } catch (e) {
-    logger.error(`An error has ocurred while processing deposit request, skipping deletion.`)
+    logger.error(`An error has ocurred while processing withdrawal request, skipping deletion.`)
+    logger.error(JSON.stringify(e))
 
     // Skipping deletion so message can be added to DLQ
     return { skipMessageDeletion: true }
