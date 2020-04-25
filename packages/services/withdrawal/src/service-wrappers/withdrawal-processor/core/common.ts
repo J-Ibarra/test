@@ -1,6 +1,7 @@
 import { CurrencyCode } from '@abx-types/reference-data'
 import { isErc20Token } from '../../../core'
 import { QueueConsumerOutput } from '@abx-utils/async-message-consumer'
+import { Logger } from '@abx-utils/logging'
 
 export const nativelyImplementedCoins = [CurrencyCode.kag, CurrencyCode.kau, CurrencyCode.ethereum, CurrencyCode.kvt, CurrencyCode.tether]
 
@@ -22,9 +23,14 @@ export function getTransactionFeeCurrency(currency: CurrencyCode) {
   return currency
 }
 
+const logger = Logger.getInstance('withdrawal-processor', 'runHandlerAndSkipDeletionOnFailure')
+
 /**
+ * A helper to wrap the actual message handler, adding catch logic which
+ * prevent the message from being deleted so that the message can be moved
+ * to the DLQ on failure.
  *
- * @param handler
+ * @param handler the actual message handler function
  */
 export async function runHandlerAndSkipDeletionOnFailure(
   handler: (request?: any) => Promise<void | QueueConsumerOutput>,
@@ -33,7 +39,7 @@ export async function runHandlerAndSkipDeletionOnFailure(
     const result = await handler()
     return result
   } catch (e) {
-    this.logger.error(`An error has ocurred while processing deposit request, skipping deletion.`)
+    logger.error(`An error has ocurred while processing deposit request, skipping deletion.`)
 
     // Skipping deletion so message can be added to DLQ
     return { skipMessageDeletion: true }
