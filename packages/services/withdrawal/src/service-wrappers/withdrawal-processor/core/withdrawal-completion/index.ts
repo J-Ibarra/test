@@ -9,6 +9,6 @@ export function bootstrapWithdrawalCompletionPendingQueueProcessor() {
 
   queuePoller.subscribeToQueueMessages<WithdrawalCompletionPendingPayload>(
     WITHDRAWAL_TRANSACTION_COMPLETION_PENDING_QUEUE_URL!,
-    () => runHandlerAndSkipDeletionOnFailure((request) => processWithdrawalCompletionRequest(request)) as any,
+    async () => (await runHandlerAndSkipDeletionOnFailure((request) => processWithdrawalCompletionRequest(request))) as any,
   )
 }
