@@ -9,6 +9,6 @@ export function bootstrapWithdrawalSentRecorderQueueProcessor() {
 
   queuePoller.subscribeToQueueMessages<WithdrawalTransactionSent>(
     WITHDRAWAL_TRANSACTION_SENT_QUEUE_URL!,
-    runHandlerAndSkipDeletionOnFailure((request) => recordWithdrawalOnChainTransaction(request)) as any,
+    () => runHandlerAndSkipDeletionOnFailure((request) => recordWithdrawalOnChainTransaction(request)) as any,
   )
 }
