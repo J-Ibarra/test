@@ -1,4 +1,4 @@
-import { getEnvironment, CryptoCurrency, CurrencyCode } from '@abx-types/reference-data'
+import { CryptoCurrency, CurrencyCode } from '@abx-types/reference-data'
 import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 import {
   cleanExpiredFailedRequests,
@@ -15,7 +15,7 @@ import { getQueuePoller } from '@abx-utils/async-message-consumer'
 import { findCurrencyForId } from '@abx-service-clients/reference-data'
 import { processTransactionConfirmedDepositRequestsForCurrency } from './core/kinesis/transaction_confirmed_requests_processor'
 
-const onChainCurrencyManager = new CurrencyManager(getEnvironment())
+const onChainCurrencyManager = new CurrencyManager()
 const kinesisCryptoCurrencies = [CryptoCurrency.kau, CryptoCurrency.kag]
 
 export async function configureKinesisDepositHandler() {
@@ -65,7 +65,7 @@ async function setupDepositRequestGatekeepers() {
       DepositRequestStatus.completedPendingHoldingsTransaction,
       loadAllCompletedPTHDepositRequestsAboveMinimumAmount,
     ),
-    pendingHoldingsTransactionConfirmationGatekeeper.loadGatekeeper(DepositRequestStatus.pendingHodingsTransactionConfirmation),
+    pendingHoldingsTransactionConfirmationGatekeeper.loadGatekeeper(DepositRequestStatus.pendingHoldingsTransactionConfirmation),
     checkingSuspendedDepositGatekeeper.loadGatekeeper(DepositRequestStatus.suspended),
   ])
 
@@ -130,6 +130,7 @@ function triggerTransactionConfirmedRequestsProcessor(
           processTransactionConfirmedDepositRequestsForCurrency(
             pendingHoldingsTransactionConfirmationGatekeeper,
             (currency as unknown) as CurrencyCode,
+            onChainCurrencyManager,
           ),
         ),
       ),

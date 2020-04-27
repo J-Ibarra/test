@@ -1,4 +1,4 @@
-import { CryptoCurrency, CurrencyCode, getEnvironment } from '@abx-types/reference-data'
+import { CryptoCurrency, CurrencyCode } from '@abx-types/reference-data'
 import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 import {
   processNewestDepositRequestForCurrency,

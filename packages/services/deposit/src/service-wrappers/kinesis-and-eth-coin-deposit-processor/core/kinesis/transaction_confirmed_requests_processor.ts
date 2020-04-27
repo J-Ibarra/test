@@ -1,11 +1,11 @@
 import util from 'util'
 
 import { Logger } from '@abx-utils/logging'
-import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
-import { DepositRequest } from '@abx-types/deposit'
-import { completePendingTransactionConfirmationDeposit } from '../../../../core'
+import { DepositRequest, DepositRequestStatus } from '@abx-types/deposit'
+import { updateDepositRequest } from '../../../../core'
 import { DepositGatekeeper } from '../framework/deposit_gatekeeper'
+import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 
 const logger = Logger.getInstance(
   'transaction_confirmed_deposit_requests_processor', 
@@ -15,6 +15,7 @@ const logger = Logger.getInstance(
 export async function processTransactionConfirmedDepositRequestsForCurrency(
   pendingHoldingsTransactionConfirmationGatekeeper: DepositGatekeeper,
   currency: CurrencyCode,
+  onChainCurrencyManager: CurrencyManager,
 ) {
   const depositRequest = pendingHoldingsTransactionConfirmationGatekeeper.getNewestDepositForCurrency(currency)
 
@@ -57,7 +58,11 @@ async function checkTransactionConfirmation(currency: CurrencyCode, depositReque
 }
 
 async function completeDeposit(depositRequest: DepositRequest) {
-  return wrapInTransaction(sequelize, null, async transaction => {
-    return completePendingTransactionConfirmationDeposit(depositRequest, transaction)
-  })
+  const { id, amount, depositAddress } = depositRequest
+
+  await updateDepositRequest(id!, { status: DepositRequestStatus.completed })
+
+  logger.debug(
+    `Received Deposit Request ${id} for ${amount} at address: ${depositAddress.publicKey}`,
+  )
 }

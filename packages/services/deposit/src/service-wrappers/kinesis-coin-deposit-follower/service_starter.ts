@@ -1,4 +1,4 @@
-import { getEnvironment, CurrencyCode } from '@abx-types/reference-data'
+import { CurrencyCode } from '@abx-types/reference-data'
 import { triggerKinesisCoinDepositFollower } from './core/kinesis_coin_deposit_follower'
 import { killProcessOnSignal } from '@abx-utils/internal-api-tools'
 import { CurrencyManager, Kinesis } from '@abx-utils/blockchain-currency-gateway'
@@ -10,7 +10,7 @@ const logger = Logger.getInstance('kinesis_coin_deposit_follower', 'bootstrapKin
 export async function bootstrapKinesisCoinDepositCheckerProcessor() {
   killProcessOnSignal()
 
-  const onChainCurrencyManager: CurrencyManager = new CurrencyManager(getEnvironment())
+  const onChainCurrencyManager: CurrencyManager = new CurrencyManager()
 
   const kauCurrencyGateway: Kinesis = (await onChainCurrencyManager.getCurrencyFromTicker(CurrencyCode.kau)) as Kinesis
   const kagCurrencyGateway: Kinesis = (await onChainCurrencyManager.getCurrencyFromTicker(CurrencyCode.kag)) as Kinesis

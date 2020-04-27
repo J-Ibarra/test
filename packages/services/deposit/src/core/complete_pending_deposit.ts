@@ -62,16 +62,6 @@ export async function completePendingDeposit(confirmedRequest: DepositRequest, t
   return sendDepositConfirmEmail(depositAddress.accountId, amount, code)
 }
 
-export async function completePendingTransactionConfirmationDeposit(completedRequest: DepositRequest, transaction: Transaction) {
-  addAddressIfMissing(completedRequest)
-
-  updateDepositRequest(completedRequest.id!, { status: DepositRequestStatus.completed }, transaction).then(() =>
-    logger.debug(
-      `Received Deposit Request ${completedRequest.id} for ${completedRequest.amount} at address: ${completedRequest.depositAddress.publicKey}`,
-    ),
-  )
-}
-
 export async function completeReceivedDeposit(receivedRequest: DepositRequest, transaction: Transaction) {
   addAddressIfMissing(receivedRequest)
 
@@ -90,12 +80,6 @@ export async function completeReceivedDeposit(receivedRequest: DepositRequest, t
       currencyId,
       direction: TransactionDirection.deposit,
       requestId: id!,
-    }).then(() => {
-      logger.debug(
-        `Queued currency transaction for deposit request ${id} of ${amount} at address: ${publicKey} for creation`,
-      )
-
-      return
     }),
   ])
 

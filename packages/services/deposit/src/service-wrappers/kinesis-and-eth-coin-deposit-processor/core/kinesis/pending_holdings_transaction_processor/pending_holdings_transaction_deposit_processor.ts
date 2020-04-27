@@ -55,7 +55,7 @@ async function transferAmountIntoHoldingsAndUpdateDepositRequest(
       depositRequest.id!,
       {
         holdingsTxHash: txHash,
-        status: DepositRequestStatus.pendingHodingsTransactionConfirmation,
+        status: DepositRequestStatus.pendingHoldingsTransactionConfirmation,
         holdingsTxFee: Number(transactionFee),
       },
       transaction,
