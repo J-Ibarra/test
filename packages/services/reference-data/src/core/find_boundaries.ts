@@ -11,7 +11,7 @@ let cache = {
 }
 
 export async function findAllBoundaries(currencyCodeFilter: CurrencyCode[] = []): Promise<Record<CurrencyCode, CurrencyBoundary>> {
-  const currencyCodes = currencyCodeFilter.length > 0 ? currencyCodeFilter : await findAllCurrencyCodes()
+  const currencyCodes = currencyCodeFilter.length > 0 ? currencyCodeFilter : await findAllCurrencyCodes(SymbolPairStateFilter.all)
 
   let boundaries
   if (cache.boundaries.length > 0 && moment().diff(cache.lastInvalidation, 'minute') < 20) {
@@ -30,7 +30,7 @@ export async function findAllBoundaries(currencyCodeFilter: CurrencyCode[] = [])
   return formatBoundaryMap(boundaries.filter(({ currencyCode }) => currencyCodes.includes(currencyCode)))
 }
 
-export async function findSymbolBoundaries(symbolId: string, state = SymbolPairStateFilter.enabled): Promise<SymbolBoundaries> {
+export async function findSymbolBoundaries(symbolId: string, state = SymbolPairStateFilter.all): Promise<SymbolBoundaries> {
   const { base, quote, fee } = await getCompleteSymbolDetails(symbolId, undefined, state)
   const { code: baseCode } = base
   const { code: quoteCode } = quote
