@@ -18,7 +18,7 @@
     "build-deposit-api": "npm run swagger-gen -- -c ./src/service-wrappers/deposit-api/tsoa.json && npm run routes-gen -- -c ./src/service-wrappers/deposit-api/tsoa.json",
     "build": "npm run clean && npm run build-deposit-api && tsc -p tsconfig.build.json --skipLibCheck",
     "start": "ts-node-dev src/index.ts",
-    "test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_PATH=dist ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts --require ../../../_test-setup/test_globals.js src/**/*.spec.ts --exit",
+    "test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_PATH=dist ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts --require ../../../_test-setup/test_globals.js src/**/*.spec.ts --recursive --exit",
     "build-image-deposit-api": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-deposit-api:$DOCKER_IMAGE_TAG -t $KINESIS_ECR_URL/kbe-services-deposit-api:latest -f packages/services/deposit/src/service-wrappers/deposit-api/Dockerfile . && cd packages/services/deposit ",
     "build-image-eth-block-follower": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-ethereum-block-follower:$DOCKER_IMAGE_TAG -t $KINESIS_ECR_URL/kbe-services-ethereum-block-follower:latest -f packages/services/deposit/src/service-wrappers/eth-block-follower/Dockerfile . && cd packages/services/deposit ",
     "build-image-kvt-block-follower": "cd ../../.. && docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $KINESIS_ECR_URL/kbe-services-kvt-block-follower:$DOCKER_IMAGE_TAG -t $KINESIS_ECR_URL/kbe-services-kvt-block-follower:latest -f packages/services/deposit/src/service-wrappers/kvt-block-follower/Dockerfile . && cd packages/services/deposit ",

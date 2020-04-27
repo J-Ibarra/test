@@ -8,12 +8,12 @@ import {
   DepositGatekeeper,
   processPendingHoldingsTransactionDepositRequestsForCurrency,
   processReceivedDepositRequestForCurrency,
+  processTransactionConfirmedDepositRequestsForCurrency,
 } from './core'
 import { DepositRequestStatus, DepositRequest } from '@abx-types/deposit'
 import { loadAllCompletedPTHDepositRequestsAboveMinimumAmount, NEW_KINESIS_DEPOSIT_REQUESTS_QUEUE_URL } from '../../core'
 import { getQueuePoller } from '@abx-utils/async-message-consumer'
 import { findCurrencyForId } from '@abx-service-clients/reference-data'
-import { processTransactionConfirmedDepositRequestsForCurrency } from './core/kinesis/transaction_confirmed_requests_processor'
 
 const onChainCurrencyManager = new CurrencyManager()
 const kinesisCryptoCurrencies = [CryptoCurrency.kau, CryptoCurrency.kag]

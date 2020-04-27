@@ -1,5 +1,6 @@
 import { CurrencyCode, FiatCurrency } from '@abx-types/reference-data'
 import { DepositAddress, DepositRequest, DepositRequestStatus } from '@abx-types/deposit'
+import { BalanceAdjustment, RawBalance, SourceEventType } from '@abx-types/balance'
 
 export const currencyToDepositRequests = 'currencyToDepositRequests'
 export const decryptedPrivateKey = 'decryptedPrivateKey'
@@ -21,6 +22,18 @@ export const depositRequest: DepositRequest = {
   status: DepositRequestStatus.pendingHoldingsTransaction,
   fiatConversion: 2,
   fiatCurrencyCode: FiatCurrency.usd,
+}
+
+
+export const balanceAdjustment: BalanceAdjustment = {
+  id: 1,
+  balance: {} as RawBalance,
+  balanceId: 2,
+  sourceEventType: SourceEventType.currencyDeposit,
+  sourceEventId: 1,
+  value: 10,
+  delta: 0.3,
+  createdAt: new Date()
 }
 
 export const testAccount = {
