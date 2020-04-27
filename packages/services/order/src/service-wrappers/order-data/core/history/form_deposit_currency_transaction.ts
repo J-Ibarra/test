@@ -23,7 +23,7 @@ export async function buildDepositTransactionHistory(
     )
 
     return Promise.all(
-      depositTransactions.map(depositTransaction =>
+      depositTransactions.map((depositTransaction) =>
         formFiatDepositHistoryItem(depositTransaction, selectedCurrencyCode, adminRequestIdToDescription.get(depositTransaction.requestId!)),
       ),
     )
@@ -37,11 +37,11 @@ export async function buildDepositTransactionHistory(
   const txHashToWithdrawalRequest = groupBy(withdrawalRequests, 'txHash')
 
   return Promise.all(
-    allDepositRequestsForAccount.map(depositRequest => {
+    allDepositRequestsForAccount.map((depositRequest) => {
       return formCryptoDepositHistoryItem(
         depositRequest,
         depositCurrency,
-        holdingWallets.some(holdingWallet => holdingWallet.publicKey === depositRequest.from)
+        holdingWallets.some((holdingWallet) => holdingWallet.publicKey === depositRequest.from)
           ? head(txHashToWithdrawalRequest[depositRequest.depositTxHash] || [])!
           : null,
       )
@@ -104,7 +104,8 @@ interface Result {
 
 const resultOfSenderExist = async (senderRequest: WithdrawalRequest | undefined, selectedCurrencyId: number): Promise<Result> => {
   const senderAddresses = await findDepositAddressesForAccount(senderRequest!.accountId)
-  const senderAddress = senderAddresses.find(req => req.currencyId === selectedCurrencyId)!.publicKey
+  const senderAddressEntity = senderAddresses.find((req) => req.currencyId === selectedCurrencyId)!
+  const senderAddress = senderAddressEntity.address || senderAddressEntity.publicKey
 
   const title = `${senderAddress.substring(0, 7)}...${senderAddress.substring(senderAddress.length - 4)}`
   const transactionType = TransactionType.transfer

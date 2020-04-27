@@ -65,4 +65,8 @@ function fetchSymbolsIfInMemoryCacheExpired(state: SymbolPairStateFilter = Symbo
   return internalApiRequestDispatcher.fireRequestToInternalApi<SymbolPair[]>(SymbolEndpoints.getAllCompleteSymbolDetails, { state })
 }
 
+export function findSymbolsByAccountId(accountId: string) {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<SymbolPair[]>(SymbolEndpoints.findSymbolsByAccountId, { accountId })
+}
+
 export * from './endpoints'

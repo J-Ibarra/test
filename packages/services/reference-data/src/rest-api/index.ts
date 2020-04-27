@@ -20,6 +20,7 @@ import './currencies_controller'
 import './feature_flags_controller'
 import './symbols_controller'
 import './E2eTestingDataSetupController'
+import './symbols_admin_controller'
 import { REFERENCE_DATA_REST_API_PORT } from '@abx-service-clients/reference-data'
 
 const logger = Logger.getInstance('api', 'bootstrapRestApi')
@@ -60,7 +61,7 @@ export function bootstrapRestApi(): express.Express {
     })
   })
 
-  app.on('unhandledRejection', e => logger.error(e as any))
+  app.on('unhandledRejection', (e) => logger.error(e as any))
 
   console.log(`Reference Data API on port ${REFERENCE_DATA_REST_API_PORT}`)
   return app

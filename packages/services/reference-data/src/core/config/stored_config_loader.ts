@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { e2eTestingEnvironments, Environment, ExchangeConfigValue, IExchangeConfigEntry } from '@abx-types/reference-data'
+import { Environment, ExchangeConfigValue, IExchangeConfigEntry, localAndTestEnvironments } from '@abx-types/reference-data'
 import { sequelize, getModel, wrapInTransaction } from '@abx-utils/db-connection-utils'
 
 interface ConfigInMemoryCache {
@@ -13,7 +13,7 @@ let config: ConfigInMemoryCache = {
 }
 
 const shouldInvalidateCache = (): boolean =>
-  e2eTestingEnvironments.includes(process.env.NODE_ENV as Environment) || moment(config.lastRefresh).isBefore(moment().subtract(30, 'minutes'))
+  localAndTestEnvironments.includes(process.env.NODE_ENV as Environment) || moment(config.lastRefresh).isBefore(moment().subtract(30, 'seconds'))
 
 /**
  * Uses an in-memory {@code config} cache of the {@link ExchangeConfigValue}.
@@ -22,10 +22,10 @@ const shouldInvalidateCache = (): boolean =>
 export async function findExchangeConfig(): Promise<ExchangeConfigValue> {
   if (!config.exchangeConfig || shouldInvalidateCache()) {
     const exchangeConfigInstances = await getModel<IExchangeConfigEntry>('exchangeConfig').findAll()
-    const exchangeConfigEntries = exchangeConfigInstances.map(exchangeConfigInstance => exchangeConfigInstance.get())
+    const exchangeConfigEntries = exchangeConfigInstances.map((exchangeConfigInstance) => exchangeConfigInstance.get())
     let configAccumulator = {}
 
-    exchangeConfigEntries.forEach(exchangeConfigEntry => {
+    exchangeConfigEntries.forEach((exchangeConfigEntry) => {
       configAccumulator = {
         ...configAccumulator,
         ...exchangeConfigEntry.value,
@@ -52,10 +52,10 @@ export function updateOrCreateExchangeConfig(value: { [P in keyof ExchangeConfig
     exchangeConfig: updatedExchangeConfig as any,
   }
 
-  return wrapInTransaction(sequelize, null, async transaction => {
+  return wrapInTransaction(sequelize, null, async (transaction) => {
     await sequelize.query('delete from exchange_config')
 
-    const updatedExchangeConfigEntries = Object.keys(updatedExchangeConfig).map(exchangeConfigKey => ({
+    const updatedExchangeConfigEntries = Object.keys(updatedExchangeConfig).map((exchangeConfigKey) => ({
       value: { [exchangeConfigKey]: updatedExchangeConfig[exchangeConfigKey] },
     }))
 

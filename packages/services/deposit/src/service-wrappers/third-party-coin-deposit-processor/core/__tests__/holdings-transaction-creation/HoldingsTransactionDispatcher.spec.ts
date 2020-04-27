@@ -174,7 +174,6 @@ describe('HoldingsTransactionDispatcher', () => {
           depositsRequestsWithInsufficientStatus.map(({ id }) => id),
           {
             holdingsTxHash: transactionHash,
-            status: DepositRequestStatus.pendingCompletion,
           },
         ),
       )

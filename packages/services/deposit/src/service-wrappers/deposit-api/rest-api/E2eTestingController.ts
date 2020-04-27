@@ -3,7 +3,7 @@ import Decimal from 'decimal.js'
 
 import { Route, Body, Post, Get, Hidden } from 'tsoa'
 import { Logger } from '@abx-utils/logging'
-import { CurrencyCode, getEnvironment, SymbolPairStateFilter } from '@abx-types/reference-data'
+import { CurrencyCode, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { CurrencyManager, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
 import { Account, User } from '@abx-types/account'
 import { findDepositAddressesForAccount } from '@abx-service-clients/deposit'
@@ -19,14 +19,7 @@ export class E2eTestingController {
   private readonly BTC_TESTNET_FEE = 0.00005
 
   private logger = Logger.getInstance('api', 'E2eTestingController')
-  private currencyManager = new CurrencyManager(getEnvironment(), [
-    CurrencyCode.kau,
-    CurrencyCode.kag,
-    CurrencyCode.kvt,
-    CurrencyCode.ethereum,
-    CurrencyCode.tether,
-    CurrencyCode.bitcoin,
-  ])
+  private currencyManager = new CurrencyManager()
 
   @Post('/transaction/eth')
   @Hidden()

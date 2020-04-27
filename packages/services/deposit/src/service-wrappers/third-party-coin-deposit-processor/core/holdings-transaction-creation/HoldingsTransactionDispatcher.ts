@@ -1,4 +1,4 @@
-import { DepositRequest, DepositRequestStatus, DepositAddress } from '@abx-types/deposit'
+import { DepositRequest, DepositAddress } from '@abx-types/deposit'
 import { isAccountSuspended, findOrCreateKinesisRevenueAccount } from '@abx-service-clients/account'
 import { createPendingDeposit, createPendingWithdrawal } from '@abx-service-clients/balance'
 import { SourceEventType } from '@abx-types/balance'
@@ -23,7 +23,7 @@ export class HoldingsTransactionDispatcher {
       depositsRequestsWithInsufficientStatus,
     } = await this.depositAmountCalculator.computeTotalAmountToTransfer(depositRequests)
 
-    const currencyManager = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment, [currency])
+    const currencyManager = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment)
 
     const holdingsTransactionHash = await this.transferTransactionAmountToHoldingsWallet(
       {
@@ -38,7 +38,9 @@ export class HoldingsTransactionDispatcher {
     if (holdingsTransactionHash) {
       this.logger.info(`Starting completion for deposit request with holdings transaction hash ${holdingsTransactionHash} for completion`)
 
-      const updatedDepositRequests = await findDepositRequestsForIds(depositRequests.concat(depositsRequestsWithInsufficientStatus).map(({ id }) => id!))
+      const updatedDepositRequests = await findDepositRequestsForIds(
+        depositRequests.concat(depositsRequestsWithInsufficientStatus).map(({ id }) => id!),
+      )
 
       await this.depositCompleter.completeDepositRequests(updatedDepositRequests, currency)
     }
@@ -90,12 +92,10 @@ export class HoldingsTransactionDispatcher {
         updateAllDepositRequests(depositRequestIds, {
           holdingsTxHash: holdingsTransactionHash,
           holdingsTxFee: new Decimal(holdingsTransactionFee!).dividedBy(depositRequestIds.length).toNumber(),
-          status: DepositRequestStatus.pendingCompletion,
         }),
         joinedDepositRequestsWithInsufficientBalance.length > 0
           ? updateAllDepositRequests(joinedDepositRequestsWithInsufficientBalance, {
               holdingsTxHash: holdingsTransactionHash,
-              status: DepositRequestStatus.pendingCompletion,
             })
           : (Promise.resolve() as any),
       ])
