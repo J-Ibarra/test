@@ -14,7 +14,7 @@ describe('Currency Boundary', () => {
     afterEach(async () => {
       findAllCurrenciesStub.restore()
     })
-    
+
     it('returns boundary object keyed by for given currency codes', async () => {
       const boundaries = await findBoundariesForAll([CurrencyCode.ethereum, CurrencyCode.kau, CurrencyCode.usd, CurrencyCode.kvt])
 
@@ -52,7 +52,7 @@ describe('Currency Boundary', () => {
     const boundaries = await findAllBoundaries()
     const boundaryCurrencyCodes = Object.keys(boundaries)
 
-    expect(boundaryCurrencyCodes.length).to.equal(6)
-    expect(boundaryCurrencyCodes).to.deep.equal(['KVT', 'USD', 'EUR', 'KAU', 'KAG', 'ETH'])
+    expect(boundaryCurrencyCodes.length).to.equal(9)
+    expect(boundaryCurrencyCodes).to.deep.equal(['KVT', 'USD', 'EUR', 'KAU', 'KAG', 'ETH', 'GBP', 'BTC', 'USDT'])
   })
 })
