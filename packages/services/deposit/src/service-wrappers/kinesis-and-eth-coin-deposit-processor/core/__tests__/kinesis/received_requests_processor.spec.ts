@@ -29,7 +29,7 @@ describe('received_requests_processor', () => {
 
     await triggerProcessor(currencyManager)
 
-    expect(checkConfirmationOfTransactionStub.getCalls().length).to.eql(0)
+    expect(checkConfirmationOfTransactionStub.notCalled).to.eql(true)
   })
 
   it('should not check if account is suspended if deposit transaction is not confirmed and break cycle', async () => {
@@ -43,7 +43,7 @@ describe('received_requests_processor', () => {
 
     expect(checkConfirmationOfTransactionStub.calledOnceWith(depositRequest.depositTxHash)).to.eql(true)
     expect(receivedGateKeeper[currencyToDepositRequests].get(CurrencyCode.kau)![0].isLocked).to.eql(false)
-    expect(isAccountSuspendedStub.getCalls().length).to.eql(0)
+    expect(isAccountSuspendedStub.notCalled).to.eql(true)
   })
 
   it('should add account to suspended gatekeeper if account is suspended and break cycle', async () => {
@@ -56,7 +56,7 @@ describe('received_requests_processor', () => {
     await triggerProcessor(currencyManager)
 
     expect(checkConfirmationOfTransactionStub.calledOnceWith(depositRequest.depositTxHash)).to.eql(true)
-    expect(isAccountSuspendedStub.getCalls().length).to.eql(1)
+    expect(isAccountSuspendedStub.calledOnce).to.eql(true)
     expect(receivedGateKeeper[currencyToDepositRequests].get(CurrencyCode.kau).length).to.eql(0)
     expect(pendingSuspendedDepositGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau).length).to.eql(1)
   })
@@ -74,9 +74,10 @@ describe('received_requests_processor', () => {
     await triggerProcessor(currencyManager)
 
     expect(checkConfirmationOfTransactionStub.calledOnceWith(depositRequest.depositTxHash)).to.eql(true)
-    expect(isAccountSuspendedStub.getCalls().length).to.eql(1)
-    expect(getBalanceAdjustmentStub.getCalls().length).to.eql(1)
-    expect(completeReceivedDepositStub.getCalls().length).to.eql(0)
+    expect(isAccountSuspendedStub.calledOnce).to.eql(true)
+    expect(getBalanceAdjustmentStub.calledOnce).to.eql(true)
+    expect(completeReceivedDepositStub.notCalled).to.eql(true)
+    expect(getBalanceAdjustmentStub.getCall(0).args[0]).to.eql(depositRequest.id!)
     expect(receivedGateKeeper[currencyToDepositRequests].get(CurrencyCode.kau).length).to.eql(0)
   })
 
@@ -93,10 +94,11 @@ describe('received_requests_processor', () => {
     await triggerProcessor(currencyManager)
 
     expect(checkConfirmationOfTransactionStub.calledOnceWith(depositRequest.depositTxHash)).to.eql(true)
-    expect(isAccountSuspendedStub.getCalls().length).to.eql(1)
-    expect(getBalanceAdjustmentStub.getCalls().length).to.eql(1)
-    expect(completeReceivedDepositStub.getCalls().length).to.eql(1)
-    expect(completeReceivedDepositStub.getCalls()[0].args[0]).to.eql(depositRequest)
+    expect(isAccountSuspendedStub.calledOnce).to.eql(true)
+    expect(getBalanceAdjustmentStub.calledOnce).to.eql(true)
+    expect(completeReceivedDepositStub.calledOnce).to.eql(true)
+    expect(getBalanceAdjustmentStub.getCall(0).args[0]).to.eql(depositRequest.id!)
+    expect(completeReceivedDepositStub.getCall(0).args[0]).to.eql(depositRequest)
 
     expect(receivedGateKeeper[currencyToDepositRequests].get(CurrencyCode.kau).length).to.eql(0)
     expect(

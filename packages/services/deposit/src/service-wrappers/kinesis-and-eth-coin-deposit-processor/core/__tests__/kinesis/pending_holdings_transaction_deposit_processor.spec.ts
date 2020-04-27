@@ -32,7 +32,7 @@ describe('pending_holdings_transaction_deposit_processor', () => {
 
     await triggerProcessor(new CurrencyManager())
 
-    expect(updateDepositRequestStub.getCalls().length).to.eql(0)
+    expect(updateDepositRequestStub.notCalled).to.eql(true)
   })
 
   it('should transfer amount into holdings wallet if these is a new request', async () => {
@@ -53,11 +53,11 @@ describe('pending_holdings_transaction_deposit_processor', () => {
 
     await triggerProcessor(currencyManager)
 
-    expect(transferToExchangeHoldingsFromStub.getCalls().length).to.eql(1)
+    expect(transferToExchangeHoldingsFromStub.calledOnce).to.eql(true)
 
-    expect(updateDepositRequestStub.getCalls().length).to.eql(1)
-    expect(updateDepositRequestStub.getCalls()[0].args[0]).to.eql(depositRequest.id!)
-    expect(updateDepositRequestStub.getCalls()[0].args[1]).to.eql({
+    expect(updateDepositRequestStub.calledOnce).to.eql(true)
+    expect(updateDepositRequestStub.getCall(0).args[0]).to.eql(depositRequest.id!)
+    expect(updateDepositRequestStub.getCall(0).args[1]).to.eql({
       holdingsTxHash,
       status: DepositRequestStatus.pendingHoldingsTransactionConfirmation,
       holdingsTxFee: Number(transactionFee),

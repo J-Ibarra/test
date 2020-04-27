@@ -26,7 +26,7 @@ describe('transaction_confirmed_requests_processor', () => {
 
     await triggerProcessor(currencyManager)
 
-    expect(checkConfirmationOfTransactionStub.getCalls().length).to.eql(0)
+    expect(checkConfirmationOfTransactionStub.notCalled).to.eql(true)
   })
 
   it('should not complete request if deposit transaction is not confirmed and break cycle', async () => {
