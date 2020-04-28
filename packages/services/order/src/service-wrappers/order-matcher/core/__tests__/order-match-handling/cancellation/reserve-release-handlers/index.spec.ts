@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 import * as symbolOperations from '@abx-service-clients/reference-data'
-import { CurrencyCode } from '@abx-types/reference-data'
+import { CurrencyCode, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { OrderDirection } from '@abx-types/order'
 import { releaseRemainingReserveForCancelledOrder } from '../../../../order-match-handling/cancellation/reserve-release-handlers'
 import * as buyReserveReleaseHandler from '../../../../order-match-handling/cancellation/reserve-release-handlers/buy_reserve_release_handler'
@@ -52,7 +52,7 @@ describe('releaseRemainingReserveForCancelledOrder', () => {
 
     await releaseRemainingReserveForCancelledOrder(order)
 
-    expect(getSymbolDetailsStub.calledWith(symbol.id)).to.eql(true)
+    expect(getSymbolDetailsStub.calledWith(symbol.id, SymbolPairStateFilter.all)).to.eql(true)
     expect(sellOrderReleaseStub.calledWith(symbol, order)).to.eql(true)
   })
 
@@ -61,7 +61,7 @@ describe('releaseRemainingReserveForCancelledOrder', () => {
 
     await releaseRemainingReserveForCancelledOrder(order)
 
-    expect(getSymbolDetailsStub.calledWith(symbol.id)).to.eql(true)
+    expect(getSymbolDetailsStub.calledWith(symbol.id, SymbolPairStateFilter.all)).to.eql(true)
     expect(buyOrderReleaseStub.calledWith(symbol, order)).to.eql(true)
   })
 })
