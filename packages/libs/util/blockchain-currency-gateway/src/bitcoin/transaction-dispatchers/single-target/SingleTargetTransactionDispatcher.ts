@@ -78,10 +78,6 @@ export class SingleTargetTransactionDispatcher implements BitcoinTransactionDisp
     let amountToSend = subtractFeeFromAmountSent
       ? new Decimal(amount).minus(fee).toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN).toNumber()
       : amount
-    
-      this.LOGGER.info('Amount to send ' + amountToSend)
-      this.LOGGER.info('subtractFeeFromAmountSent ' + subtractFeeFromAmountSent)
-      this.LOGGER.info('amount  ' + amount)
 
     const { hex: transactionHex } = await this.cryptoApisProviderProxy.createTransaction({
       inputs: [BitcoinTransactionCreationUtils.createTransactionAddress(senderAddress.address!, amountToSend)],
