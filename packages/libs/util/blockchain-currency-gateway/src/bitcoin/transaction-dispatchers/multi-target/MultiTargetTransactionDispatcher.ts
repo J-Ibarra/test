@@ -92,7 +92,7 @@ export class MultiTargetTransactionDispatcher implements BitcoinTransactionDispa
     memo: string | undefined,
     subtractFeeFromAmountSent: boolean,
   ): Promise<{ txid: string; averageFeePaidByEachReceiver: number }> {
-    let amountAfterFee = new Decimal(amount).minus(fee).toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN).toNumber()
+    const amountAfterFee = new Decimal(amount).minus(fee).toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN).toNumber()
     const averageFeePaidByEachReceiver = new Decimal(fee)
       .dividedBy(receivers.length)
       .toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
