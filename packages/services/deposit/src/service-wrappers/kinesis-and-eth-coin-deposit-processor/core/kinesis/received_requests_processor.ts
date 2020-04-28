@@ -74,7 +74,7 @@ async function checkTransactionConfirmation(currency: CurrencyCode, depositReque
 async function completeDeposit(depositRequest: DepositRequest) {
   return wrapInTransaction(sequelize, null, async transaction => {
     const existingBalanceAdjustment = await getBalanceAdjustmentForSourceEventId(depositRequest.id!)
-    if (existingBalanceAdjustment !== null) {
+    if (!!existingBalanceAdjustment) {
       logger.info(`Balance adjustment for deposit request ${depositRequest.depositTxHash} is already created`)
       return
     }

@@ -105,7 +105,7 @@ export class Kinesis implements OnChainCurrencyGateway {
   }
 
   public async getLatestTransactions(
-    lastSeenTransactionHash?: string,
+    lastSeenTransactionIdentifier?: string,
     pagingToken?: string,
     transactionAcc: DepositTransaction[] = [],
   ): Promise<DepositTransaction[]> {
@@ -117,8 +117,12 @@ export class Kinesis implements OnChainCurrencyGateway {
       .call()
     const newTransactions: PaymentOperationRecord[] = []
 
+    if (payments.records.length > 0 && Number(lastSeenTransactionIdentifier) > Number(payments.records[0].paging_token)) {
+      return newTransactions.map(this.apiToDepositTransaction)
+    }
+
     for (const payment of payments.records) {
-      if (payment.transaction_hash === lastSeenTransactionHash) {
+      if (payment.paging_token === lastSeenTransactionIdentifier) {
         return transactionAcc.concat(newTransactions.map(this.apiToDepositTransaction))
       }
 
@@ -132,7 +136,7 @@ export class Kinesis implements OnChainCurrencyGateway {
     }
 
     return this.getLatestTransactions(
-      lastSeenTransactionHash,
+      lastSeenTransactionIdentifier,
       newTransactions[newTransactions.length - 1].paging_token,
       transactionAcc.concat(newTransactionDepositTransactions),
     )
@@ -366,6 +370,7 @@ export class Kinesis implements OnChainCurrencyGateway {
       amount: operation.type === 'create_account' ? Number(operation.starting_balance) : Number(operation.amount),
       from: operation.type === 'create_account' ? operation.funder : operation.from,
       to: operation.type === 'create_account' ? (operation as CreateAccountOperationRecord).account : operation.to!,
+      pagingToken: operation.paging_token,
     }
   }
 

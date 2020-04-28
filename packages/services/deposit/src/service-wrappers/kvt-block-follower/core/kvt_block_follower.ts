@@ -94,7 +94,12 @@ export async function handleKVTTransactions(
     logger.debug(`Found Potential Deposits: ${potentialDepositTransactions}`)
     const depositRequests = potentialDepositTransactions.map((tx) => {
       const depositTransaction = onChainCurrencyGateway.apiToDepositTransaction(tx.event)
-      return convertTransactionToDepositRequest(tx.depositAddress, depositTransaction, fiatValueOfOneCryptoCurrency, currencyBoundary)
+      return convertTransactionToDepositRequest(
+        tx.depositAddress, 
+        depositTransaction, 
+        fiatValueOfOneCryptoCurrency, 
+        currencyBoundary,
+      )
     })
 
     const storedDepositRequests = await storeDepositRequests(depositRequests, t)

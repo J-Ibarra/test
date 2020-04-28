@@ -11,6 +11,7 @@ export function convertTransactionToDepositRequest(
   depositTransaction: DepositTransaction,
   fiatValueOfOneCryptoCurrency: number,
   currencyBoundary: CurrencyBoundary,
+  status: DepositRequestStatus = DepositRequestStatus.pendingHoldingsTransaction,
 ) {
   const truncateToCurrencyDP = truncateCurrencyDecimals(currencyBoundary) as any
   const truncatedAmount = truncateToCurrencyDP(depositTransaction.amount)
@@ -22,6 +23,6 @@ export function convertTransactionToDepositRequest(
     depositTxHash: depositTransaction.txHash,
     fiatCurrencyCode: FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION,
     fiatConversion: new Decimal(truncatedAmount).times(fiatValueOfOneCryptoCurrency).toNumber(),
-    status: DepositRequestStatus.pendingHoldingsTransaction,
+    status,
   } as DepositRequest
 }

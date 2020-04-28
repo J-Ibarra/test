@@ -7,6 +7,7 @@ export interface DepositTransaction {
   amount: number
   from: string
   to?: string
+  pagingToken?: string
 }
 
 export interface DepositTransactionWithFiatConversion {

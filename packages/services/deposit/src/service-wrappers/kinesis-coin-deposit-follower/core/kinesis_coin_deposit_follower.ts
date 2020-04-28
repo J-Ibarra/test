@@ -8,7 +8,7 @@ import {
   pushRequestForProcessing, 
   NEW_KINESIS_DEPOSIT_REQUESTS_QUEUE_URL,
 } from '../../../core'
-import { BlockchainFollowerDetails } from '@abx-types/deposit'
+import { BlockchainFollowerDetails, DepositRequestStatus } from '@abx-types/deposit'
 import { storeDepositRequests } from '../../../core'
 import { CurrencyCode, CurrencyBoundary, Environment } from '@abx-types/reference-data'
 import { findCurrencyForCode } from '@abx-service-clients/reference-data'
@@ -36,7 +36,7 @@ export async function triggerKinesisCoinDepositFollower(onChainCurrencyGateway: 
       await wrapInTransaction(sequelize, null, async (t) => {
         await handleKinesisPaymentOperations(depositCandidateOperations, publicKeyToDepositAddress, fiatValueOfOneCryptoCurrency, currencyBoundary, t)
 
-        await updateBlockchainFollowerDetailsForCurrency(currencyId, depositCandidateOperations[0].txHash)
+        await updateBlockchainFollowerDetailsForCurrency(currencyId, depositCandidateOperations[0].pagingToken!)
       })
     }
   } catch (e) {
@@ -65,8 +65,10 @@ export async function handleKinesisPaymentOperations(
     const storedDepositRequests = await storeDepositRequests(depositRequests, t)
     logger.debug(`${depositRequests.length} new ${currencyBoundary.currencyCode} deposit requests stored`)
 
-    await pushRequestForProcessing(storedDepositRequests, NEW_KINESIS_DEPOSIT_REQUESTS_QUEUE_URL)
-    logger.debug(`${storedDepositRequests.length} new ${currencyBoundary.currencyCode} deposit requests pushed for processing`)
+    if (storedDepositRequests.length !== 0) {
+      await pushRequestForProcessing(storedDepositRequests, NEW_KINESIS_DEPOSIT_REQUESTS_QUEUE_URL)
+      logger.debug(`${storedDepositRequests.length} new ${currencyBoundary.currencyCode} deposit requests pushed for processing`)
+    }
   }
 }
 
@@ -78,7 +80,13 @@ function mapDepositTransactionToDepositRequest(
 ) {
   const { depositAddress } = publicKeyToDepositAddress.get(depositTransaction.to!)!
 
-  return convertTransactionToDepositRequest(depositAddress, depositTransaction, fiatValueOfOneCryptoCurrency, currencyBoundary)
+  return convertTransactionToDepositRequest(
+    depositAddress, 
+    depositTransaction, 
+    fiatValueOfOneCryptoCurrency, 
+    currencyBoundary,
+    DepositRequestStatus.received,
+  )
 }
 
 function retriggerOnTimeout(onChainCurrencyGateway: Kinesis, currencyCode: CurrencyCode) {
