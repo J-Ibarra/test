@@ -11,6 +11,7 @@ import {
   getOperationsEmail,
   getEthereumDepositMaxBlockCheck,
   getExcludedAccountTypesFromOrderRangeValidations,
+  getDepositMimimumAmounts,
 } from '../core'
 import { InternalRoute } from '@abx-utils/internal-api-tools'
 
@@ -79,6 +80,10 @@ export function createConfigEndpointHandlers(): InternalRoute<any, any>[] {
     {
       path: ConfigEndpoints.getExcludedAccountTypesFromOrderRangeValidations,
       handler: () => getExcludedAccountTypesFromOrderRangeValidations(),
+    },
+    {
+      path: ConfigEndpoints.getDepositMimimumAmounts,
+      handler: () => getDepositMimimumAmounts(),
     },
   ]
 }

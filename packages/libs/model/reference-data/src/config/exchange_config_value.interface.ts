@@ -13,4 +13,5 @@ export interface ExchangeConfigValue {
   operationsEmail: string
   ethereumDepositMaxBlockCheck: number
   excludedAccountTypesFromOrderRanges: AccountType[]
+  depositMinimumAmounts: Record<CurrencyCode, number>
 }

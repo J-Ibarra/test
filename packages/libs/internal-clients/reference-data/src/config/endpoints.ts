@@ -10,4 +10,5 @@ export enum ConfigEndpoints {
   getOperationsEmail = 'reference-data/config/getOperationsEmail',
   getEthereumDepositMaxBlockCheck = 'reference-data/config/getEthereumDepositMaxBlockCheck',
   getExcludedAccountTypesFromOrderRangeValidations = 'reference-data/config/getExcludedAccountTypesFromOrderRangeValidations',
+  getDepositMimimumAmounts = 'reference-data/config/getDepositMimimumAmounts',
 }

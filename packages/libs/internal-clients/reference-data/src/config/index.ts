@@ -67,4 +67,17 @@ export async function getExcludedAccountTypesFromOrderRangeValidations(): Promis
   return internalApiRequestDispatcher.fireRequestToInternalApi<AccountType[]>(ConfigEndpoints.getExcludedAccountTypesFromOrderRangeValidations)
 }
 
+export async function getDepositMimimumAmounts(): Promise<Record<CurrencyCode, number>> {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<Record<CurrencyCode, number>>(ConfigEndpoints.getDepositMimimumAmounts)
+}
+
+export async function getDepositMimimumAmountForCurrency(currencyCode: CurrencyCode): Promise<number> {
+  const depositMinimumAmounts = await internalApiRequestDispatcher.fireRequestToInternalApi<Record<CurrencyCode, number>>(ConfigEndpoints.getDepositMimimumAmounts)
+  if (depositMinimumAmounts && depositMinimumAmounts[currencyCode]) {
+    return depositMinimumAmounts[currencyCode]
+  }
+
+  return 0
+}
+
 export * from './endpoints'

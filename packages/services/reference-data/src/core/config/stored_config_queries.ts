@@ -89,3 +89,8 @@ export async function getExcludedAccountTypesFromOrderRangeValidations() {
   const exchangeConfig = await findExchangeConfig()
   return exchangeConfig && exchangeConfig.excludedAccountTypesFromOrderRanges
 }
+
+export async function getDepositMimimumAmounts() : Promise<Record<CurrencyCode, number>> {
+  const exchangeConfig = await findExchangeConfig()
+  return exchangeConfig.depositMinimumAmounts
+}

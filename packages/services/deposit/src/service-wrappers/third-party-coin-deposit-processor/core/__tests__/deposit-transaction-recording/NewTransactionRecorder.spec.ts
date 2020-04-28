@@ -1,37 +1,30 @@
 import { NewTransactionRecorder } from '../../deposit-transaction-recording/NewTransactionRecorder'
 import { CurrencyCode } from '@abx-types/reference-data'
 import * as coreOperations from '../../../../../core'
+import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import sinon from 'sinon'
 import { expect } from 'chai'
 import * as marketDataOperations from '@abx-service-clients/market-data'
 import { DepositRequestStatus } from '@abx-types/deposit'
-import * as asyncMessagePublisherOperations from '@abx-utils/async-message-publisher'
-import * as blockchainGateway from '@abx-utils/blockchain-currency-gateway'
 
 describe('NewTransactionRecorder:recordDepositTransaction', () => {
   const newTransactionRecorder = new NewTransactionRecorder()
   const depositTxHash = 'foo'
-  let newTransactionDetails = {
-    currency: CurrencyCode.bitcoin,
-    depositTransactionDetails: {
-      transactionHash: depositTxHash,
-      amount: 5,
-    },
-    depositAddress: {
-      id: 1,
-    },
-  } as any
-  let subscribeToTransactionConfirmationEventsStub
-  let onChainCurrencyManagerStub
+  let newTransactionDetails
 
   beforeEach(() => {
-    subscribeToTransactionConfirmationEventsStub = sinon.stub()
-
-    onChainCurrencyManagerStub = {
-      getCurrencyFromTicker: () => ({
-        subscribeToTransactionConfirmationEvents: subscribeToTransactionConfirmationEventsStub,
-      }),
+    newTransactionDetails = {
+      currency: CurrencyCode.bitcoin,
+      depositTransactionDetails: {
+        transactionHash: depositTxHash,
+        amount: 5,
+      },
+      depositAddress: {
+        id: 1,
+      },
     } as any
+
+    sinon.stub(referenceDataOperations, 'getDepositMimimumAmountForCurrency').resolves(10)
   })
 
   afterEach(() => sinon.restore())
@@ -46,13 +39,9 @@ describe('NewTransactionRecorder:recordDepositTransaction', () => {
 
   it('should record transaction with insufficientAmount status when amount < minAmount for currency', async () => {
     sinon.stub(coreOperations, 'findDepositRequestsWhereTransactionHashPresent').resolves([])
-    sinon.stub(coreOperations, 'getMinimumDepositAmountForCurrency').resolves(200)
 
     const fiatValueForCryptoCurrency = 12
     sinon.stub(marketDataOperations, 'calculateRealTimeMidPriceForSymbol').resolves(fiatValueForCryptoCurrency)
-
-    const sendAsyncChangeMessageStub = sinon.stub(asyncMessagePublisherOperations, 'sendAsyncChangeMessage').resolves()
-
     const createNewDepositRequestStub = sinon.stub(coreOperations, 'createNewDepositRequest').resolves()
     await newTransactionRecorder.recordDepositTransaction(newTransactionDetails)
 
@@ -64,13 +53,10 @@ describe('NewTransactionRecorder:recordDepositTransaction', () => {
         DepositRequestStatus.insufficientAmount,
       ),
     ).to.eql(true)
-    expect(sendAsyncChangeMessageStub.calledOnce).to.eql(false)
-    expect(subscribeToTransactionConfirmationEventsStub.calledOnce).to.eql(false)
   })
 
   it('should record transaction when amount is big enough', async () => {
     sinon.stub(coreOperations, 'findDepositRequestsWhereTransactionHashPresent').resolves([])
-    sinon.stub(blockchainGateway, 'getOnChainCurrencyManagerForEnvironment').returns(onChainCurrencyManagerStub)
 
     const fiatValueForCryptoCurrency = 12
     const confirmedTransactionCallbackUrl = 'foo'
@@ -78,6 +64,8 @@ describe('NewTransactionRecorder:recordDepositTransaction', () => {
     sinon.stub(marketDataOperations, 'calculateRealTimeMidPriceForSymbol').resolves(fiatValueForCryptoCurrency)
 
     const createNewDepositRequestStub = sinon.stub(coreOperations, 'createNewDepositRequest').resolves()
+    
+    newTransactionDetails.depositTransactionDetails.amount = 14
     await newTransactionRecorder.recordDepositTransaction(newTransactionDetails)
 
     expect(
@@ -87,5 +75,6 @@ describe('NewTransactionRecorder:recordDepositTransaction', () => {
         fiatValueForCryptoCurrency * newTransactionDetails.depositTransactionDetails.amount,
       ),
     ).to.eql(true)
+    expect(createNewDepositRequestStub.args[0].length).to.eql(3)
   })
 })

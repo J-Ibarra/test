@@ -2,9 +2,8 @@ import { flatMap } from 'lodash'
 import { Transaction } from 'sequelize'
 import { getModel } from '@abx-utils/db-connection-utils'
 import { CurrencyCode, CryptoCurrency, Currency, FiatCurrency } from '@abx-types/reference-data'
-import { findCurrencyForCodes } from '@abx-service-clients/reference-data'
+import { findCurrencyForCodes, getDepositMimimumAmountForCurrency } from '@abx-service-clients/reference-data'
 import { DepositAddress, DepositRequest, DepositRequestStatus } from '@abx-types/deposit'
-import { getMinimumDepositAmountForCurrency } from './deposit_amount_validator'
 import { Transaction as BlockchainTransaction } from '@abx-utils/blockchain-currency-gateway'
 
 let cachedCryptoCurrencies: Currency[] = []
@@ -115,9 +114,10 @@ export async function getAllPendingDepositRequestsForCurrencyAboveMinimumAmount(
   currency: Currency,
   parentTransaction?: Transaction,
 ): Promise<DepositRequest[]> {
+  const depositMinimumAmount = await getDepositMimimumAmountForCurrency(currency.code)
   const depositInstances = await getModel<DepositRequest>('depositRequest').findAll({
     where: {
-      amount: { $gte: getMinimumDepositAmountForCurrency(currency.code) },
+      amount: { $gte: depositMinimumAmount },
       status: DepositRequestStatus.pendingHoldingsTransaction,
     },
     include: [
@@ -136,9 +136,10 @@ export async function getAllCompletedPTHDepositRequestsForCurrencyAboveMinimumAm
   currency: Currency,
   parentTransaction?: Transaction,
 ): Promise<DepositRequest[]> {
+  const depositMinimumAmount = await getDepositMimimumAmountForCurrency(currency.code)
   const depositInstances = await getModel<DepositRequest>('depositRequest').findAll({
     where: {
-      amount: { $gte: getMinimumDepositAmountForCurrency(currency.code) },
+      amount: { $gte: depositMinimumAmount },
       status: DepositRequestStatus.completedPendingHoldingsTransaction,
     },
     include: [

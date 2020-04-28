@@ -9,6 +9,7 @@ import { HoldingsTransactionGateway } from '../../holdings-transaction-creation/
 import * as utilOperations from '../../utils'
 import { HoldingsTransactionConfirmationHandler } from '../../deposit-transaction-recording/HoldingsTransactionConfirmationHandler'
 import * as coreOperations from '../../../../../core'
+import * as referenceDataOperations from '@abx-service-clients/reference-data'
 
 describe('DepositAddressTransactionHandler', () => {
   const getTransactionStub = sinon.stub()
@@ -30,6 +31,7 @@ describe('DepositAddressTransactionHandler', () => {
 
     sinon.stub(blockchainGateway, 'getOnChainCurrencyManagerForEnvironment').returns(onChainCurrencyManagerStub)
     sinon.stub(utilOperations, 'getRequiredConfirmationsForDepositTransaction').returns(1)
+    sinon.stub(referenceDataOperations, 'getDepositMimimumAmountForCurrency').resolves(0.0002)
   })
 
   afterEach(() => sinon.restore())
