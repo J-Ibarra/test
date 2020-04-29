@@ -89,11 +89,54 @@ export async function createMissingDepositAddressesForAccount(
 
   logger.debug(`Currencies to generate: ${cryptoCurrenciesToGenerateAddressFor.map((address) => JSON.stringify(address)).join(', ')}`)
 
-  return Promise.all(
-    cryptoCurrenciesToGenerateAddressFor.map(({ code }) => {
-      return createNewDepositAddress(manager, accountId, code)
-    }),
+  return createNewDepositAddresses(manager, accountId, cryptoCurrenciesToGenerateAddressFor)
+}
+
+async function createNewDepositAddresses(
+  currencyManager: CurrencyManager, 
+  accountId: string,
+  cryptoCurrenciesToGenerateAddressFor: Currency[]
+) : Promise<DepositAddress[]> {
+  const kauCurrencyId = cryptoCurrenciesToGenerateAddressFor.find((c) => c.code === CurrencyCode.kau)!.id
+  const createdDepositAddressesWithoutKau = await Promise.all(
+    cryptoCurrenciesToGenerateAddressFor
+      .filter(({ id }) => id !== kauCurrencyId)
+      .map(({ code }) => {
+        return createNewDepositAddress(currencyManager, accountId, code)
+      }),
   )
+  const kagCurrencyId = cryptoCurrenciesToGenerateAddressFor.find((c) => c.code === CurrencyCode.kag)!.id
+  const kagDepositAddress = createdDepositAddressesWithoutKau.find((address) => address.currencyId === kagCurrencyId)
+  if (kagDepositAddress) {
+    const kauDepositAddress = await reuseDepositAddress(kagDepositAddress, CurrencyCode.kau, cryptoCurrenciesToGenerateAddressFor)
+    return createdDepositAddressesWithoutKau.concat(kauDepositAddress)
+  }
+
+  return createdDepositAddressesWithoutKau
+}
+
+async function reuseDepositAddress(
+  depositAddress: DepositAddress,
+  currencyCode: CurrencyCode,
+  allCryptoCurrencies: Currency[],
+): Promise<DepositAddress> {
+  const cryptoCurrency = allCryptoCurrencies.find((c) => c.code === currencyCode)
+  if (!cryptoCurrency) {
+    throw new Error(`Cannot create a deposit address for ${currencyCode} as it is not enabled for account ${depositAddress.accountId}`)
+  }
+
+  // reuse the existing public address
+  logger.debug(`Use existing public address for ${currencyCode} and account ${depositAddress.accountId}`)
+  const newDepositAddress = {
+    ...depositAddress,
+    id: undefined,
+    currencyId: cryptoCurrency!.id,
+    createdAt: undefined,
+    transactionTrackingActivated: false,
+  }
+
+  logger.debug(`Address: ${JSON.stringify(newDepositAddress)}`)
+  return storeDepositAddress(newDepositAddress)
 }
 
 export async function createNewDepositAddress(manager: CurrencyManager, accountId: string, currencyTicker: CurrencyCode): Promise<DepositAddress> {

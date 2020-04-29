@@ -110,7 +110,7 @@ describe('Deposit Address module', () => {
       code: CurrencyCode.kau,
     })
 
-    sinon.stub(referenceDataOperations, 'findCryptoCurrencies').resolves([
+    const cryptoCurrencies = [
       {
         id: currencyId,
         code: CurrencyCode.kau,
@@ -123,26 +123,27 @@ describe('Deposit Address module', () => {
         id: 4,
         code: CurrencyCode.kag,
       },
-    ])
-    sinon.stub(referenceDataOperations, 'getAllCurrenciesEligibleForAccount').resolves([
-      {
-        id: currencyId,
-        code: CurrencyCode.kau,
-      },
-      {
-        id: ethereumCurrencyId,
-        code: CurrencyCode.ethereum,
-      },
-      {
-        id: 4,
-        code: CurrencyCode.kag,
-      },
-    ])
+    ]
+    sinon.stub(referenceDataOperations, 'findCryptoCurrencies').resolves(cryptoCurrencies)
+    sinon.stub(referenceDataOperations, 'getAllCurrenciesEligibleForAccount').resolves(cryptoCurrencies)
 
-    sinon.stub(onChainIntegration.CurrencyManager.prototype, 'getCurrencyFromTicker').returns(testCurrencyManager)
+    const testBasedOnCurrencyManager = (currency): any => {
+      return {
+        generateAddress: () => Promise.resolve({ privateKey: `private-key-${currency}`, publicKey: `publicKey${currency}` }),
+        getAddressFromPrivateKey: () => Promise.resolve('address'),
+        encryptValue: (value) => Promise.resolve(value),
+        getId: () => Promise.resolve(cryptoCurrencies.find((cc) => cc.code === currency)!.id),
+      }
+    }
+    sinon.stub(onChainIntegration.CurrencyManager.prototype, 'getCurrencyFromTicker')
+    .callsFake((currencyCode) => testBasedOnCurrencyManager(currencyCode))
 
     const newAddresses = await findOrCreateDepositAddressesForAccount(ACCOUNT_ID)
     expect(newAddresses.length).to.eql(4)
+    const kauAddress = newAddresses.find((a) => a.currencyId === currencyId)
+    const kagAddress = newAddresses.find((a) => a.currencyId === 4)
+    expect(kauAddress!.publicKey).to.eql(kagAddress!.publicKey)
+    expect(kauAddress!.encryptedPrivateKey).to.eql(kagAddress!.encryptedPrivateKey)
   })
 
   it('findKycOrEmailVerifiedDepositAddresses only gets addresses for emailVerified or KycVerified accounts', async () => {
