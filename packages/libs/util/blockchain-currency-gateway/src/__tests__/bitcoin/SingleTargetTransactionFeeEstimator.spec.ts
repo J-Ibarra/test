@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 import { MemoryCache } from '@abx-utils/db-connection-utils'
-import { BitcoinTransactionFeeEstimator } from '../../bitcoin/BitcoinTransactionFeeEstimator'
+import { SingleTargetTransactionFeeEstimator } from '../../bitcoin/transaction-dispatchers/single-target/SingleTargetTransactionFeeEstimator'
 import * as testData from './test_data'
 import { BitcoinTransactionCreationUtils } from '../../bitcoin/BitcoinTransactionCreationUtils'
 import Decimal from 'decimal.js'
@@ -17,7 +17,7 @@ describe('BitcoinTransactionFeeEstimator:estimateTransactionFee', () => {
       getTransactionsFee: sinon.stub(),
     } as any
     memoryCache = new MemoryCache()
-    bitcoinTransactionFeeEstimator = new BitcoinTransactionFeeEstimator(cryptoApisProviderProxyStub, memoryCache)
+    bitcoinTransactionFeeEstimator = new SingleTargetTransactionFeeEstimator(cryptoApisProviderProxyStub, memoryCache)
   })
 
   afterEach(() => {
