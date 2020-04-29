@@ -17,7 +17,7 @@ export class HoldingsTransactionDispatcher {
   private readonly depositCompleter = new DepositCompleter()
   private readonly depositAmountCalculator = new DepositAmountCalculator()
 
-  public async dispatchHoldingsTransactionForDepositRequests(depositRequests: DepositRequest[], currency: CurrencyCode) {
+  public async dispatchHoldingsTransactionForDepositRequests(depositRequests: DepositRequest[], currency: CurrencyCode) : Promise<DepositRequest[]> {
     const {
       totalAmount: totalAmountToTransfer,
       depositsRequestsWithInsufficientStatus,
@@ -35,6 +35,7 @@ export class HoldingsTransactionDispatcher {
       currencyManager.getCurrencyFromTicker(currency),
     )
 
+    let resultDepositRequests = depositRequests
     if (holdingsTransactionHash) {
       this.logger.info(`Starting completion for deposit request with holdings transaction hash ${holdingsTransactionHash} for completion`)
 
@@ -42,8 +43,10 @@ export class HoldingsTransactionDispatcher {
         depositRequests.concat(depositsRequestsWithInsufficientStatus).map(({ id }) => id!),
       )
 
-      await this.depositCompleter.completeDepositRequests(updatedDepositRequests, currency)
+      resultDepositRequests = await this.depositCompleter.completeDepositRequests(updatedDepositRequests, currency)
     }
+
+    return resultDepositRequests
   }
 
   /**

@@ -2,10 +2,10 @@ import sinon from 'sinon'
 import { expect } from 'chai'
 
 import { HoldingsTransactionConfirmationHandler } from '../../deposit-transaction-recording/HoldingsTransactionConfirmationHandler'
-import { HoldingsTransactionDispatcher } from '../../holdings-transaction-creation/HoldingsTransactionDispatcher'
 import * as coreOperations from '../../../../../core'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { DepositRequestStatus } from '@abx-types/deposit'
+import { HoldingsTransactionDispatcher } from '../../../../../core'
 
 describe('HoldingsTransactionConfirmationHandler', () => {
   const holdingsTransactionConfirmationHandler = new HoldingsTransactionConfirmationHandler()

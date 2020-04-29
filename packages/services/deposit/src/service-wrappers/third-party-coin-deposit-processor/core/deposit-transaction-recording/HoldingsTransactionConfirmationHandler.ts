@@ -1,6 +1,5 @@
-import { findDepositRequestsForStatuses, updateDepositRequestForHoldingsTxHash } from '../../../../core'
+import { findDepositRequestsForStatuses, updateDepositRequestForHoldingsTxHash, HoldingsTransactionDispatcher } from '../../../../core'
 import { DepositRequestStatus } from '@abx-types/deposit'
-import { HoldingsTransactionDispatcher } from '../holdings-transaction-creation/HoldingsTransactionDispatcher'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode } from '@abx-types/reference-data'
 

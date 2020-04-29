@@ -106,8 +106,7 @@ describe('new_deposit_request_processor', () => {
     expect(updateAllDepositRequestsStub.getCall(0).args[0]).to.eql([depositRequest.id])
     expect(updateAllDepositRequestsStub.getCall(0).args[1]).to.eql({
       holdingsTxHash: depositTxHash,
-      holdingsTxFee: Number(holdingsTxFee),
-      status: DepositRequestStatus.pendingCompletion,
+      holdingsTxFee: Number(holdingsTxFee)
     })
 
     expect(transferToExchangeHoldingsFromMock.calledWith({ 
@@ -180,8 +179,7 @@ describe('new_deposit_request_processor', () => {
     expect(updateAllDepositRequestsStub.getCall(0).args[0]).to.eql([depositRequest.id])
     expect(updateAllDepositRequestsStub.getCall(0).args[1]).to.eql({
       holdingsTxHash: depositTxHash,
-      holdingsTxFee: Number(holdingsTxFee),
-      status: DepositRequestStatus.pendingCompletion,
+      holdingsTxFee: Number(holdingsTxFee)
     })
     expect(transferToExchangeHoldingsFromMock.calledWith({ 
       privateKey: decryptedPrivateKey, 

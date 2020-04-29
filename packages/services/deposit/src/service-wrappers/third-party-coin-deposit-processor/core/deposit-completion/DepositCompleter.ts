@@ -22,7 +22,7 @@ export class DepositCompleter {
    *
    * @param txid the confirmed holdings transaction id
    */
-  public async completeDepositRequests(depositRequests: DepositRequest[], currencyCode: CurrencyCode) {
+  public async completeDepositRequests(depositRequests: DepositRequest[], currencyCode: CurrencyCode) : Promise<DepositRequest[]> {
     this.logger.info(
       `Completing ${currencyCode} deposit requests ${depositRequests.map(({ id }) => id).join(',')} for address ${depositRequests[0].depositAddress
         .id!}`,
@@ -49,11 +49,13 @@ export class DepositCompleter {
 
     await Promise.all(depositRequests.map(({ amount }) => sendDepositConfirmEmail(depositAddress.accountId, amount, depositCurrency.code)))
 
-    await updateAllDepositRequests(
+    const resultDepositRequests = await updateAllDepositRequests(
       depositRequests.map(({ id }) => id!),
       { status: DepositRequestStatus.pendingHoldingsTransactionConfirmation },
     )
     this.logger.info(`Completed ${currencyCode} deposit requests: ${depositRequests.map(({ id }) => id).join(',')}`)
+
+    return resultDepositRequests
   }
 
   private async triggerBalanceUpdates(

@@ -16,7 +16,7 @@ import { CurrencyCode, CurrencyBoundary } from '@abx-types/reference-data'
 import { findCurrencyForCode, findBoundaryForCurrency } from '@abx-service-clients/reference-data'
 import { FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION, convertTransactionToDepositRequest } from '../../../core'
 
-const ETHEREUM_BLOCK_DELAY = 12
+const ETHEREUM_BLOCK_DELAY = 5
 
 const logger = Logger.getInstance('services', 'ethereum_block_follower')
 

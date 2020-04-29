@@ -6,6 +6,7 @@ import * as completionOperations from '../../../../core'
 import { processCompletionPendingDepositRequestForCurrency } from '../framework/completion_pending_requests_processor'
 import { currencyToDepositRequests, depositRequest } from './data.helper'
 import { DepositGatekeeper } from '../framework'
+import { DepositRequestStatus } from '@abx-types/deposit'
 
 const holdingsTxHash = 'holdings-tx-hash'
 
@@ -51,24 +52,24 @@ describe('completion_pending_request_processor', () => {
   it('should call complete pending deposit if holdings transaction confirmed and remove request from pendingCompletionGatekeeper', async () => {
     const { currencyGateway, checkConfirmationOfTransactionSpy } = stubConfirmationCheck(pendingCompletionGatekeeper)
 
-    const completePendingDepositStub = sinon.stub(completionOperations, 'completePendingDeposit')
+    const updateDepositRequestForHoldingsTxHashStub = sinon.stub(completionOperations, 'updateDepositRequestForHoldingsTxHash')
 
     await processCompletionPendingDepositRequestForCurrency(pendingCompletionGatekeeper, CurrencyCode.kau, currencyGateway as any)
 
     expect(checkConfirmationOfTransactionSpy.calledOnceWith(completionPendingRequest.holdingsTxHash)).to.eql(true)
     expect(pendingCompletionGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau)!.length).to.eql(0)
-    expect(completePendingDepositStub.getCall(0).args[0]).to.eql(completionPendingRequest)
+    expect(updateDepositRequestForHoldingsTxHashStub.calledWith(completionPendingRequest.holdingsTxHash, { status: DepositRequestStatus.completed }))
   })
 
   it('should unlock request in pendingCompletionGatekeeper for another attempt if completePendingDeposit fails', async () => {
     const { currencyGateway, checkConfirmationOfTransactionSpy } = stubConfirmationCheck(pendingCompletionGatekeeper)
-    const completePendingDepositStub = sinon.stub(completionOperations, 'completePendingDeposit').rejects('Failure')
+    const updateDepositRequestForHoldingsTxHashStub = sinon.stub(completionOperations, 'updateDepositRequestForHoldingsTxHash').rejects('Failure')
 
     await processCompletionPendingDepositRequestForCurrency(pendingCompletionGatekeeper, CurrencyCode.kau, currencyGateway as any)
 
     expect(checkConfirmationOfTransactionSpy.calledOnceWith(completionPendingRequest.holdingsTxHash)).to.eql(true)
     expect(pendingCompletionGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau)![0].isLocked).to.eql(false)
-    expect(completePendingDepositStub.getCall(0).args[0]).to.eql(completionPendingRequest)
+    expect(updateDepositRequestForHoldingsTxHashStub.calledWith(completionPendingRequest.holdingsTxHash, { status: DepositRequestStatus.completed }))
   })
 })
 

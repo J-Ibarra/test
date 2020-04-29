@@ -1,8 +1,7 @@
 import { DepositRequestStatus } from '@abx-types/deposit'
-import { updateDepositRequest, findDepositRequestByDepositTransactionHash } from '../../../../core'
+import { updateDepositRequest, findDepositRequestByDepositTransactionHash, HoldingsTransactionDispatcher } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode } from '@abx-types/reference-data'
-import { HoldingsTransactionDispatcher } from './HoldingsTransactionDispatcher'
 import { get } from 'lodash'
 
 export class HoldingsTransactionGateway {

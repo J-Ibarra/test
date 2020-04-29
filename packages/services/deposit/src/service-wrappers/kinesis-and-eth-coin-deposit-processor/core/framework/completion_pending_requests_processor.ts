@@ -3,11 +3,10 @@ import util from 'util'
 import { noticeError } from 'newrelic'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
-import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
-import { DepositRequest } from '@abx-types/deposit'
-import { completePendingDeposit } from '../../../../core'
+import { DepositRequest, DepositRequestStatus } from '@abx-types/deposit'
 import { DepositGatekeeper } from './deposit_gatekeeper'
+import { updateDepositRequestForHoldingsTxHash } from '../../../../core'
 
 const SECONDS_TO_WAIT_BEFORE_ANOTHER_ATTEMPT = 5
 const logger = Logger.getInstance('completion_pending_deposit_requests_processor', 'processCompletionPendingDepositRequestForCurrency')
@@ -31,7 +30,7 @@ export async function processCompletionPendingDepositRequestForCurrency(
       return postponeDepositCompletion(pendingCompletionGateKeeper, currency, depositRequest)
     }
 
-    await completeDeposit(depositRequest)
+    await completeDepositsForHoldingsTransaction(depositRequest.holdingsTxHash!)
     logger.info(`Deposit request ${depositRequest.id} successfully completed`)
 
     pendingCompletionGateKeeper.removeRequest(currency, depositRequest.id!)
@@ -54,8 +53,6 @@ function postponeDepositCompletion(gateKeeper: DepositGatekeeper, currency: Curr
   gateKeeper.addNewDepositsForCurrency(currency, [depositRequest], SECONDS_TO_WAIT_BEFORE_ANOTHER_ATTEMPT)
 }
 
-async function completeDeposit(depositRequest: DepositRequest) {
-  return wrapInTransaction(sequelize, null, async transaction => {
-    return completePendingDeposit(depositRequest, transaction)
-  })
+async function completeDepositsForHoldingsTransaction(txid: string) {
+  await updateDepositRequestForHoldingsTxHash(txid, { status: DepositRequestStatus.completed })
 }
