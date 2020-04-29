@@ -1,8 +1,6 @@
 import { CryptoCurrency, CurrencyCode } from '@abx-types/reference-data'
 import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 import {
-  cleanExpiredFailedRequests,
-  loadAllHoldingsTransactionFailedRequestsInMemory,
   processCheckingSuspendedDepositRequest,
   processSuspendedDepositRequestForCurrency,
   DepositGatekeeper,
@@ -48,8 +46,6 @@ export async function configureKinesisDepositHandler() {
     checkingSuspendedDepositGatekeeper, 
     completedPendingHoldingsTransactionGatekeeper
   )
-
-  await triggerFailedHoldingsTransactionChecker(completedPendingHoldingsTransactionGatekeeper)
 }
 
 async function setupDepositRequestGatekeepers() {
@@ -136,11 +132,6 @@ function triggerTransactionConfirmedRequestsProcessor(
       ),
     5_000,
   )
-}
-
-async function triggerFailedHoldingsTransactionChecker(completedPendingHoldingsTransactionGatekeeper: DepositGatekeeper) {
-  await loadAllHoldingsTransactionFailedRequestsInMemory()
-  setInterval(async () => await cleanExpiredFailedRequests(completedPendingHoldingsTransactionGatekeeper), 5_000)
 }
 
 function triggerSuspendedDepositChecker(

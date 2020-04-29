@@ -117,7 +117,10 @@ export class Kinesis implements OnChainCurrencyGateway {
       .call()
     const newTransactions: PaymentOperationRecord[] = []
 
-    if (payments.records.length > 0 && Number(lastSeenTransactionIdentifier) > Number(payments.records[0].paging_token)) {
+    if (transactionAcc.length > 0 
+      && payments.records.length > 0
+      && Number(lastSeenTransactionIdentifier) > Number(payments.records[0].paging_token)
+    ) {
       return newTransactions.map(this.apiToDepositTransaction)
     }
 

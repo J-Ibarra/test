@@ -1,5 +1,5 @@
 import { Logger } from '@abx-utils/logging'
-import { CurrencyManager, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
+import { CurrencyManager, OnChainCurrencyGateway, EndpointInvocationUtils } from '@abx-utils/blockchain-currency-gateway'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { DepositRequest, DepositRequestStatus } from '@abx-types/deposit'
@@ -71,7 +71,11 @@ async function transferAmountIntoHoldingsAndUpdateDepositRequest(
  * * then we return that deposit's transaction hash to mark it as having been completed as part of it.
  */
 async function transferDepositAmountToExchangeHoldings(currency: OnChainCurrencyGateway, confirmedRequest: DepositRequest) {
-  const balanceAtAddress = await currency.balanceAt(confirmedRequest.depositAddress.publicKey)
+  const balanceAtAddress = await EndpointInvocationUtils.invokeEndpointWithProgressiveRetryAndResultAssert({
+    name: 'balanceAt',
+    endpointInvoker: () => currency.balanceAt(confirmedRequest.depositAddress.publicKey),
+    resultPredicate: (balanceAtAddress) => balanceAtAddress !== 0,
+  })
 
   if (balanceAtAddress === 0) {
     logger.info(

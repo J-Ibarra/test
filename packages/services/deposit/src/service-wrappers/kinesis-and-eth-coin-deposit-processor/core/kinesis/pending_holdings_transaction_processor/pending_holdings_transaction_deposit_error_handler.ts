@@ -1,10 +1,8 @@
 import util from 'util'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode } from '@abx-types/reference-data'
-import { DepositRequest, DepositRequestStatus } from '@abx-types/deposit'
-import { updateDepositRequest } from '../../../../../core'
+import { DepositRequest } from '@abx-types/deposit'
 import { DepositGatekeeper } from '../..'
-import * as FailedHoldingsTransactionChecker from '../failed_transactions_operations/failed_holdings_transaction_checker'
 
 const logger = Logger.getInstance('new_deposit_error_handler', 'handlerDepositError')
 
@@ -17,12 +15,6 @@ export async function handlerDepositError(
   logger.error(`Error encountered while transferring funds to exchange holdings for request ${depositRequest.id}`)
   logger.error(JSON.stringify(util.inspect(error)))
 
-  const updatedRequest = await updateDepositRequest(depositRequest.id!, {
-    status: DepositRequestStatus.failedHoldingsTransaction,
-  })
   completedPendingHoldingsTransactionGatekeeper.removeRequest(currency, depositRequest.id!)
-  FailedHoldingsTransactionChecker.registerFailedRequest(currency, {
-    ...updatedRequest,
-    depositAddress: depositRequest.depositAddress,
-  })
+  completedPendingHoldingsTransactionGatekeeper.addNewDepositsForCurrency(currency, [depositRequest], 10)
 }
