@@ -12,11 +12,16 @@ const logger = Logger.getInstance('withdrawal', 'queue_message_consumer_withdraw
 export async function consumeFiatWithdrawalQueueMessages(request: AsyncWithdrawalStatusChangeRequest) {
   try {
     switch (request.type) {
-      case WithdrawalStatusChangeRequestType.cancelFiatWithdrawal:
+      case WithdrawalStatusChangeRequestType.cancelFiatWithdrawal: {
         await cancelFiatWithdrawal(request)
-      case WithdrawalStatusChangeRequestType.createFiatWithdrawal:
+        break
+      }
+      case WithdrawalStatusChangeRequestType.createFiatWithdrawal: {
         await createFiatWithdrawal(request)
+        break
+      }
     }
+
     return Promise.resolve()
   } catch (e) {
     logger.error(`An error has ocurred while processing a withdrawal status change request: ${JSON.stringify(request)}`)
