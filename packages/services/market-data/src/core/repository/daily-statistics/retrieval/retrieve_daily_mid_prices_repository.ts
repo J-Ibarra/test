@@ -24,6 +24,7 @@ export const getLatestMidPrice = async (symbolId: string) => {
     latestMidPrice = await findLatestMidPriceForSymbol(symbolId)
     MemoryCache.getInstance().set<number>({
       key: MID_PRICE_LATEST_KEY(symbolId),
+      ttl: Math.abs(moment().diff(moment().subtract(1, 'day'), 'ms')),
       val: latestMidPrice,
     })
   }
@@ -38,7 +39,7 @@ export const getOldestMidPrice = async (symbolId: string) => {
     oldestMidPrice = await findOldestMidPriceForSymbol(symbolId, moment().subtract(1, 'days').toDate())
     MemoryCache.getInstance().set<number>({
       key: MID_PRICE_OLDEST_KEY(symbolId),
-      ttl: moment().diff(moment().add(1, 'day'), 'ms'),
+      ttl: Math.abs(moment().diff(moment().subtract(1, 'day'), 'ms')),
       val: oldestMidPrice,
     })
   }

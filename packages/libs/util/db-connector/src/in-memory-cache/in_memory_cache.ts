@@ -43,7 +43,7 @@ export class MemoryCache {
    * Returns true if it was successfully set
    * @param arrayToCache an array of objects we wish to cache. The value is of type T
    */
-  public set<T>({ key, ttl, val }: CachingObject<T>): boolean {
+  public set<T>({ key, ttl = 60_000, val }: CachingObject<T>): boolean {
     this.logger.debug(`setting key: ${key}, ttl: ${ttl}, value: ${val}`)
     return this.cache.set(key, val, ttl)
   }
@@ -55,7 +55,7 @@ export class MemoryCache {
    */
   public getList<T>(filteringKey: string): T[] {
     const keys = this.getKeysStartingWith(filteringKey)
-    return keys.map(key => this.get<T>(key)!).filter(k => k)
+    return keys.map((key) => this.get<T>(key)!).filter((k) => k)
   }
 
   /**
@@ -66,7 +66,7 @@ export class MemoryCache {
    * @param arrayToCache an array of objects we wish to cache. The value is of type T
    */
   public setList<T>(values: Array<CachingObject<T>>): boolean {
-    values.map(value => this.set(value))
+    values.map((value) => this.set(value))
     return true
   }
 
@@ -78,7 +78,7 @@ export class MemoryCache {
     if (!startingKeyFilter) {
       return []
     }
-    return this.cache.keys().filter(key => key.indexOf(startingKeyFilter) === 0)
+    return this.cache.keys().filter((key) => key.indexOf(startingKeyFilter) === 0)
   }
 
   public async flush(): Promise<void> {

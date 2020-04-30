@@ -12,7 +12,7 @@ export const findAndStoreOrderMatchPrices = async (symbolIds: string[], timeFilt
 
     MemoryCache.getInstance().set<number>({
       key: SYMBOL_TOTAL_TRADE_VOLUME(symbolId),
-      ttl: moment().diff(moment(timeFilter), 'ms'),
+      ttl: Math.abs(moment().diff(moment(timeFilter), 'ms')),
       val: orderMatchTotalAmount,
     })
   })
@@ -23,7 +23,7 @@ export const storeOrderMatchPrice = ({ symbolId, createdAt, amount }: Pick<Order
 
   MemoryCache.getInstance().set<number>({
     key: SYMBOL_TOTAL_TRADE_VOLUME(symbolId),
-    ttl: moment(createdAt).diff(moment(timeFilter), 'ms'),
+    ttl: Math.abs(moment(createdAt).diff(moment(timeFilter), 'ms')),
     val: new Decimal(totalRecordedTradeVolume).add(amount).toNumber(),
   })
 }
