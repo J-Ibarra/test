@@ -78,6 +78,6 @@ export function setupModel(modelSetupFn: (sequelizeClient: Sequelize.Sequelize) 
   modelSetupFn(sequelize)
 }
 
-export function getModel<T>(modelName: string) {
+export function getModel<T>(modelName) {
   return sequelize.model<Sequelize.Instance<T>, T>(modelName)
 }
