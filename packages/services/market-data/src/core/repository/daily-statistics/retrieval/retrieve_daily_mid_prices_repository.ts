@@ -18,7 +18,7 @@ const calculateDailyChangeForSymbol = async (symbolId: string): Promise<[string,
 }
 
 export const getLatestMidPrice = async (symbolId: string) => {
-  let latestMidPrice = MemoryCache.getInstance().get<number>(MID_PRICE_LATEST_KEY(symbolId)) || 0
+  let latestMidPrice = MemoryCache.getInstance().get<number>(MID_PRICE_LATEST_KEY(symbolId))
 
   if (!latestMidPrice) {
     latestMidPrice = await findLatestMidPriceForSymbol(symbolId)
@@ -33,7 +33,7 @@ export const getLatestMidPrice = async (symbolId: string) => {
 }
 
 export const getOldestMidPrice = async (symbolId: string) => {
-  let oldestMidPrice = MemoryCache.getInstance().get<number>(MID_PRICE_OLDEST_KEY(symbolId)) || 0
+  let oldestMidPrice = MemoryCache.getInstance().get<number>(MID_PRICE_OLDEST_KEY(symbolId))
 
   if (!oldestMidPrice) {
     oldestMidPrice = await findOldestMidPriceForSymbol(symbolId, moment().subtract(1, 'days').toDate())
