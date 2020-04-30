@@ -5,7 +5,7 @@ import { BtcCryptoApisProviderProxy } from '../../../api-provider/crypto-apis/Bt
 import { MultiTargetCreateTransactionPayload, MultiTargetTransactionReceiver } from '../../../model'
 
 export class MultiTargetTransactionFeeEstimator {
-  public static MAXIMUM_TX_FEE = 0.00005 // As per the business requirements required by operations
+  public static MAXIMUM_TX_FEE = 0.0003 // As per the business requirements required by operations
 
   readonly AVERAGE_FEE_PER_BYTE_KEY = 'avg-fee-per-byte'
   readonly AVERAGE_FEE_PER_TRANSACTION_KEY = 'avg-fee-per-transaction'
