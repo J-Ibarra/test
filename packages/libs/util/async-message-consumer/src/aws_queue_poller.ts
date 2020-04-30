@@ -36,8 +36,7 @@ export class AwsQueueObserver implements QueuePoller {
         await this.removeMessageFromQueue(queueUrl, message.ReceiptHandle!)
       }
     } catch (e) {
-      this.logger.error(`Error ocurred while invoking handler for message ${message.MessageId} on queue ${queueUrl}`)
-      throw e
+      this.logger.error(`Error ocurred while invoking handler for message ${message.MessageId} on queue ${queueUrl}: ${e.message}`)
     }
   }
 
