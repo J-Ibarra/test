@@ -2,6 +2,7 @@ import { findLatestMidPriceForSymbol, MID_PRICE_LATEST_KEY, MID_PRICE_OLDEST_KEY
 import { MemoryCache } from '@abx-utils/db-connection-utils'
 import { findOldestMidPriceForSymbol } from '../database'
 import moment from 'moment'
+import { isNullOrUndefined } from 'util'
 
 export const getDailyChange = async (symbolIds: string[]): Promise<Map<string, number>> => {
   const symbolDailyChange = await Promise.all(symbolIds.map(calculateDailyChangeForSymbol))
@@ -20,7 +21,7 @@ const calculateDailyChangeForSymbol = async (symbolId: string): Promise<[string,
 export const getLatestMidPrice = async (symbolId: string) => {
   let latestMidPrice = MemoryCache.getInstance().get<number>(MID_PRICE_LATEST_KEY(symbolId))
 
-  if (!latestMidPrice) {
+  if (isNullOrUndefined(latestMidPrice)) {
     latestMidPrice = await findLatestMidPriceForSymbol(symbolId)
     MemoryCache.getInstance().set<number>({
       key: MID_PRICE_LATEST_KEY(symbolId),
@@ -35,7 +36,7 @@ export const getLatestMidPrice = async (symbolId: string) => {
 export const getOldestMidPrice = async (symbolId: string) => {
   let oldestMidPrice = MemoryCache.getInstance().get<number>(MID_PRICE_OLDEST_KEY(symbolId))
 
-  if (!oldestMidPrice) {
+  if (isNullOrUndefined(oldestMidPrice)) {
     oldestMidPrice = await findOldestMidPriceForSymbol(symbolId, moment().subtract(1, 'days').toDate())
     MemoryCache.getInstance().set<number>({
       key: MID_PRICE_OLDEST_KEY(symbolId),
