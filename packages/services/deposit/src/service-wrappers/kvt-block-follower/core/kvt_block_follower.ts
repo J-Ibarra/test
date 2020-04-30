@@ -12,7 +12,7 @@ import {
   pushRequestForProcessing,
   NEW_ETH_AND_KVT_DEPOSIT_REQUESTS_QUEUE_URL,
 } from '../../../core'
-import { BlockchainFollowerDetails, DepositAddress } from '@abx-types/deposit'
+import { BlockchainFollowerDetails, DepositAddress, DepositRequestStatus } from '@abx-types/deposit'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { findKycOrEmailVerifiedDepositAddresses, storeDepositRequests } from '../../../core'
 import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-data'
@@ -99,6 +99,7 @@ export async function handleKVTTransactions(
         depositTransaction, 
         fiatValueOfOneCryptoCurrency, 
         currencyBoundary,
+        DepositRequestStatus.pendingHoldingsTransaction
       )
     })
 

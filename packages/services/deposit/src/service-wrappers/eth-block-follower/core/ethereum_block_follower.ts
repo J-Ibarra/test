@@ -105,6 +105,7 @@ export async function handleEthereumTransactions(
         depositTransaction, 
         fiatValueOfOneCryptoCurrency, 
         currencyBoundary,
+        DepositRequestStatus.pendingHoldingsTransaction
       )
     })
 

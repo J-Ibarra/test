@@ -26,6 +26,6 @@ export function convertTransactionToDepositRequest(
     depositTxHash: depositTransaction.txHash,
     fiatCurrencyCode: FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION,
     fiatConversion: new Decimal(truncatedAmount).times(fiatValueOfOneCryptoCurrency).toNumber(),
-    status: isDepositAmountAboveMinimumForCurrency ? DepositRequestStatus.pendingHoldingsTransaction : DepositRequestStatus.insufficientAmount,
+    status: isDepositAmountAboveMinimumForCurrency ? status : DepositRequestStatus.insufficientAmount,
   } as DepositRequest
 }
