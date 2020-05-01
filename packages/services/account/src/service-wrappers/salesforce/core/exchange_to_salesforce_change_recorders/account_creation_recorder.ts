@@ -57,7 +57,11 @@ export async function accountCreatedRecorder({ accountId, newDepositAddresses }:
 
         return createLinkedAddress(client, {
           salesforceReference: salesforceReference!,
-          depositAddress: { ...depositAddress, currency: currencyIdToCurrency.get(depositAddress.currencyId) },
+          depositAddress: {
+            ...depositAddress,
+            currency: currencyIdToCurrency.get(depositAddress.currencyId),
+            publicKey: depositAddress.address || depositAddress.publicKey,
+          },
         })
       }),
     )
