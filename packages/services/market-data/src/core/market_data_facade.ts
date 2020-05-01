@@ -35,11 +35,11 @@ export class MarketDataFacade {
     return this.midPriceRepository.getMidPricesForSymbol(request)
   }
 
-  public async getMarketDataSnapshotForAllSymbols(): Promise<SymbolMarketDataSnapshot[]> {
-    return getDailyMarketDataStatsForAllSymbols()
+  public async getMarketDataSnapshotForAllSymbols(accountId: string): Promise<SymbolMarketDataSnapshot[]> {
+    return getDailyMarketDataStatsForAllSymbols(accountId)
   }
 
-  public async getMarketDataSnapshotForCurrency(currency: CurrencyCode): Promise<SymbolMarketDataSnapshot[]> {
-    return getDailyMarketDataStatsForCurrency(currency)
+  public async getMarketDataSnapshotForCurrency(currency: CurrencyCode, accountId: string): Promise<SymbolMarketDataSnapshot[]> {
+    return getDailyMarketDataStatsForCurrency(currency, accountId)
   }
 }
