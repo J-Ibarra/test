@@ -5,13 +5,13 @@ import * as SalesforcePlatformCredential from '../../../../core/salesforce/objec
 import { Logger } from '@abx-utils/logging'
 import { getModel } from '@abx-utils/db-connection-utils'
 import { getSalesforceClient, createLinkedAddress, findAccountWithUserDetails } from '../../../../core'
-import { findDepositAddressesForAccount } from '@abx-service-clients/deposit'
 import { getAllCurrenciesEligibleForAccount } from '@abx-service-clients/reference-data'
 import { Currency } from '@abx-types/reference-data'
+import { DepositAddress } from '@abx-types/deposit'
 
 const logger = Logger.getInstance('salesforce', 'accountCreatedHandler')
 
-export async function accountCreatedRecorder({ accountId }: { accountId: string }) {
+export async function accountCreatedRecorder({ accountId, newDepositAddresses }: { accountId: string; newDepositAddresses: DepositAddress[] }) {
   const client = await getSalesforceClient()
   const account = (await findAccountWithUserDetails({ id: accountId }))!
   const accountUser = account.users![0]!
@@ -20,7 +20,7 @@ export async function accountCreatedRecorder({ accountId }: { accountId: string 
   logger.debug(`And account user: ${accountUser.id}`)
 
   try {
-    const salesforceAccount = await SalesforceAccount.getOrCreateAccount(client, {
+    const { salesforceAccount, newAccountCreated } = await SalesforceAccount.getOrCreateAccount(client, {
       user: accountUser,
     })
 
@@ -32,28 +32,31 @@ export async function accountCreatedRecorder({ accountId }: { accountId: string 
       `Found referrerSalesforcePlatformCredentialId: ${referrerSalesforcePlatformCredentialId} for account user's referrer ${accountUser.referredBy}`,
     )
 
-    const platformCredentialResponse = await SalesforcePlatformCredential.createPlatformCredential(client, {
-      account,
-      user: accountUser,
-      salesforceAccountId: salesforceAccount.id,
-      referrerSalesforcePlatformCredentialId,
-    })
-    logger.debug(`PlatformCredential Created ${JSON.stringify(platformCredentialResponse)}`)
+    let salesforceReference = await getSalesforceReferenceForAccount(account.id, salesforceAccount.id)
 
-    const [salesforceReference, depositAddresses] = await Promise.all([
-      createSalesforceReferenceForAccount(account.id, salesforceAccount.id, platformCredentialResponse.id),
-      findDepositAddressesForAccount(account.id),
-    ])
+    if (newAccountCreated) {
+      const platformCredentialResponse = await SalesforcePlatformCredential.createPlatformCredential(client, {
+        account,
+        user: accountUser,
+        salesforceAccountId: salesforceAccount.id,
+        referrerSalesforcePlatformCredentialId,
+      })
+      logger.debug(`PlatformCredential Created ${JSON.stringify(platformCredentialResponse)}`)
+
+      salesforceReference = await createSalesforceReferenceForAccount(account.id, salesforceAccount.id, platformCredentialResponse.id)
+    }
+
     const currencies = await getAllCurrenciesEligibleForAccount(account.id)
     const currencyIdToCurrency = currencies.reduce((acc, currency) => acc.set(currency.id, currency), new Map<number, Currency>())
 
-    logger.debug(`Deposit address currencies for account ${accountId} : ${depositAddresses.map(({ currencyId }) => currencyId).join(',')} `)
+    logger.debug(`Deposit address currencies for account ${accountId} : ${newDepositAddresses.map(({ currencyId }) => currencyId).join(',')} `)
 
     const linkedAddressResponse = await Promise.all(
-      depositAddresses.map((depositAddress) => {
+      newDepositAddresses.map((depositAddress) => {
         logger.info(`Creating a linked address for currency ${depositAddress.currencyId} and account ${accountId}`)
+
         return createLinkedAddress(client, {
-          salesforceReference,
+          salesforceReference: salesforceReference!,
           depositAddress: { ...depositAddress, currency: currencyIdToCurrency.get(depositAddress.currencyId) },
         })
       }),
@@ -69,13 +72,24 @@ async function createSalesforceReferenceForAccount(
   salesforceAccountId: string,
   platformCredentialResponseId: string,
 ): Promise<SalesforceReferenceTable> {
-  const account = await getModel<SalesforceReferenceTable>('salesforce').create({
+  const salesforceReferenceRecord = await getModel<SalesforceReferenceTable>('salesforce').create({
     accountId,
     salesforceAccountId,
     salesforcePlatformCredentialId: platformCredentialResponseId,
   })
 
-  return account.get()
+  return salesforceReferenceRecord.get()
+}
+
+async function getSalesforceReferenceForAccount(accountId: string, salesforceAccountId: string): Promise<SalesforceReferenceTable | null> {
+  const salesforceReferenceRecord = await getModel<SalesforceReferenceTable>('salesforce').findOne({
+    where: {
+      accountId,
+      salesforceAccountId,
+    },
+  })
+
+  return salesforceReferenceRecord ? salesforceReferenceRecord.get() : null
 }
 
 async function getReferrerSalesforceAccountId(referrerId: string) {
