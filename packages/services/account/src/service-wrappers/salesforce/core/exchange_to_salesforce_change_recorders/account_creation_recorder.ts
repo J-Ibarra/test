@@ -32,7 +32,7 @@ export async function accountCreatedRecorder({ accountId, newDepositAddresses }:
       `Found referrerSalesforcePlatformCredentialId: ${referrerSalesforcePlatformCredentialId} for account user's referrer ${accountUser.referredBy}`,
     )
 
-    let salesforceReference = await getSalesforceReferenceForAccount(account.id, salesforceAccount.id)
+    let salesforceReference = await getSalesforceReferenceForAccount(account.id)
 
     if (newAccountCreated) {
       const platformCredentialResponse = await SalesforcePlatformCredential.createPlatformCredential(client, {
@@ -81,11 +81,10 @@ async function createSalesforceReferenceForAccount(
   return salesforceReferenceRecord.get()
 }
 
-async function getSalesforceReferenceForAccount(accountId: string, salesforceAccountId: string): Promise<SalesforceReferenceTable | null> {
+async function getSalesforceReferenceForAccount(accountId: string): Promise<SalesforceReferenceTable | null> {
   const salesforceReferenceRecord = await getModel<SalesforceReferenceTable>('salesforce').findOne({
     where: {
       accountId,
-      salesforceAccountId,
     },
   })
 
