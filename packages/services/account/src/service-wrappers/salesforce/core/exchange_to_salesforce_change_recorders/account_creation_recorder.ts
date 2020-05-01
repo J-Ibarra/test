@@ -48,12 +48,13 @@ export async function accountCreatedRecorder({ accountId }: { accountId: string 
     const currencyIdToCurrency = currencies.reduce((acc, currency) => acc.set(currency.id, currency), new Map<number, Currency>())
 
     const linkedAddressResponse = await Promise.all(
-      depositAddresses.map((depositAddress) =>
-        createLinkedAddress(client, {
+      depositAddresses.map((depositAddress) => {
+        logger.info(`Creating a linked address for currency ${depositAddress.currencyId}`)
+        return createLinkedAddress(client, {
           salesforceReference,
           depositAddress: { ...depositAddress, currency: currencyIdToCurrency.get(depositAddress.currencyId) },
-        }),
-      ),
+        })
+      }),
     )
     logger.debug(`Linked addresses created: ${JSON.stringify(linkedAddressResponse)}`)
   } catch (e) {
