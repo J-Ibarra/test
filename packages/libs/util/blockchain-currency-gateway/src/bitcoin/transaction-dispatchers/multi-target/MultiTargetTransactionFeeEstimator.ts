@@ -10,7 +10,7 @@ export class MultiTargetTransactionFeeEstimator {
    * A static increment to add to the average bee per byte in order to
    * increase the priority of the transaction when mined.
    */
-  public static FEE_INCREMENT_CONSTANT = 0.0000003
+  public static FEE_INCREMENT_CONSTANT = 0.0000005
 
   readonly AVERAGE_FEE_PER_BYTE_KEY = 'avg-fee-per-byte'
   readonly AVERAGE_FEE_PER_TRANSACTION_KEY = 'avg-fee-per-transaction'

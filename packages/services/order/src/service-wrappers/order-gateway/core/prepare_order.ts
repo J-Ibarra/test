@@ -2,7 +2,7 @@ import { Logger } from '@abx-utils/logging'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { getCompleteSymbolDetails, findSymbolsByAccountId } from '@abx-service-clients/reference-data'
 import { Order } from '@abx-types/order'
-import { saveOrder } from '../../../core'
+import { saveOrder, validateBoundaries } from '../../../core'
 import { allocateReserveBalance } from '../../../core/reserve-balance-allocators'
 import { SymbolPairStateFilter } from '@abx-types/reference-data'
 import { ValidationError } from '@abx-types/error'
@@ -23,6 +23,7 @@ export async function prepareOrder(order: Order): Promise<Order> {
     try {
       const savedOrder = await saveOrder({ order, transaction })
 
+      await validateBoundaries({ order, transaction })
       await allocateReserveBalance(savedOrder, symbol, transaction)
 
       return savedOrder

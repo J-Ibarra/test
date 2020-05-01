@@ -76,7 +76,7 @@ const retrieveCurrencyAccountAndOrderDetails = async (
   { buyAccountId, buyOrderId, symbolId, createdAt, sellAccountId, sellOrderId }: OrderMatch,
   transaction: Transaction,
 ) => {
-  const { baseId, quoteId } = await getSymbolPairSummary(symbolId)
+  const { baseId, quoteId } = await getSymbolPairSummary(symbolId, SymbolPairStateFilter.all)
 
   const baseCurrencyPromise = getCurrencyCode(baseId, SymbolPairStateFilter.all)
   const quoteCurrencyPromise = getCurrencyCode(quoteId, SymbolPairStateFilter.all)
