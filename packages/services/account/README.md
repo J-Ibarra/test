@@ -1,1 +1,1 @@
-# The 'account' functional area services
+# The account functional area services
