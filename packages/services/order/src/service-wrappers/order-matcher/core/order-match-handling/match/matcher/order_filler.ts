@@ -99,13 +99,17 @@ async function calculateAmountMatched(
   const spreadOrLimitSellMatch =
     orderType === OrderType.limit && order.direction === OrderDirection.sell && order.limitPrice! <= matchingOrder.limitPrice!
 
+  const matchAmount = Math.min(matchingOrder.remaining, order.remaining)
+
   if (orderType === OrderType.market || spreadOrLimitBuyMatch || spreadOrLimitSellMatch) {
     const [orderWithCancellationReason, matchingOderWithCancellationReason] = await Promise.all([
-      validateOrderBoundary({ ...order, amount: order.remaining, limitPrice: matchingOrder.limitPrice, orderType: OrderType.limit }, transaction),
-      validateOrderBoundary({ ...matchingOrder, amount: matchingOrder.remaining }, transaction),
+      validateOrderBoundary(
+        { ...order, amount: order.remaining, limitPrice: matchingOrder.limitPrice, orderType: OrderType.limit },
+        matchAmount,
+        transaction,
+      ),
+      validateOrderBoundary({ ...matchingOrder, amount: matchingOrder.remaining }, matchingOrder.remaining, transaction),
     ])
-
-    const matchAmount = Math.min(matchingOrder.remaining, order.remaining)
 
     logger.debug(`Amount matched from ${order.direction} order ${order.id} and ${matchingOrder.direction} order ${matchingOrder.id}: ${matchAmount}`)
     return {
@@ -201,9 +205,13 @@ async function enrichOrderMatchWithUsdMidPrice(orderMatch: OrderMatch): Promise<
   }
 }
 
-async function validateOrderBoundary(order: OrderWithCancellationDetails, transaction: Transaction): Promise<OrderWithCancellationDetails> {
+async function validateOrderBoundary(
+  order: OrderWithCancellationDetails,
+  matchedAmount: number,
+  transaction: Transaction,
+): Promise<OrderWithCancellationDetails> {
   try {
-    await validateBoundaries({ order, transaction, includeFee: true })
+    await validateBoundaries({ order, transaction, includeFee: true, matchedAmount })
 
     return order
   } catch (e) {
