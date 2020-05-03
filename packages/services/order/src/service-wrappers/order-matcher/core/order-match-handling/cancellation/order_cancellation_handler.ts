@@ -29,7 +29,7 @@ export class OrderCancellationHandler {
   }
 
   public static refreshCurrencyToAccountIdsCancellingOrdersFor() {
-    Object.values(CurrencyCode).forEach(currencyCode => {
+    Object.values(CurrencyCode).forEach((currencyCode) => {
       currencyToAccountIdsCancellingOrdersFor[currencyCode] = new Set()
     })
   }
@@ -74,6 +74,7 @@ export class OrderCancellationHandler {
       currencyToAccountIdsCancellingOrdersFor[currencyToReleaseFundsFrom].delete(queuedOrder.accountId)
 
       this.logger.error(`Error ocurred trying to cancel order ${queuedOrder.id}`)
+      this.addOrderCancellationRequestBackToQueue(queuedOrder, cancellationReason)
       return queuedOrder
     }
   }
@@ -157,7 +158,7 @@ export class OrderCancellationHandler {
     return wrapInTransaction(
       sequelize,
       t,
-      async transaction => {
+      async (transaction) => {
         this.logger.debug(`Releasing reserves for cancelled order - id: ${order.id} - reason: ${cancellationReason}`)
         await releaseRemainingReserveForCancelledOrder(order)
 
