@@ -6,7 +6,7 @@ import { OrderMatch } from '@abx-types/order'
 import { SymbolPair } from '@abx-types/reference-data'
 import { OrderSettlementHandler } from './order_settlement_handler'
 import { feeTakenFromBase, findBoundaryForCurrency } from '@abx-service-clients/reference-data'
-import { finaliseReserve, updateAvailable } from '@abx-service-clients/balance'
+import { finaliseReserve, updateAvailableAsync } from '@abx-service-clients/balance'
 
 export class SellerOrderSettlementHandler extends OrderSettlementHandler {
   private static instance: SellerOrderSettlementHandler
@@ -34,10 +34,7 @@ export class SellerOrderSettlementHandler extends OrderSettlementHandler {
     const { maxDecimals: maxDecimalsForCurrency } = await findBoundaryForCurrency(pair.base.code)
 
     const amountPaid = feeTakenFromBase(pair)
-      ? new Decimal(amount)
-          .plus(sellerFee)
-          .toDP(maxDecimalsForCurrency, Decimal.ROUND_DOWN)
-          .toNumber()
+      ? new Decimal(amount).plus(sellerFee).toDP(maxDecimalsForCurrency, Decimal.ROUND_DOWN).toNumber()
       : amount
 
     const initialReserve = feeTakenFromBase(pair)
@@ -69,10 +66,7 @@ export class SellerOrderSettlementHandler extends OrderSettlementHandler {
 
     const sellerQuoteIncrease = feeTakenFromBase(pair)
       ? tradeValueNoFees.toDP(maxQuoteDecimals, Decimal.ROUND_DOWN).toNumber()
-      : tradeValueNoFees
-          .minus(sellerFee)
-          .toDP(maxQuoteDecimals, Decimal.ROUND_DOWN)
-          .toNumber()
+      : tradeValueNoFees.minus(sellerFee).toDP(maxQuoteDecimals, Decimal.ROUND_DOWN).toNumber()
 
     const sellerUpdateAvailableQuote: BalanceChangeParams = {
       accountId: orderMatch.sellAccountId,
@@ -82,7 +76,7 @@ export class SellerOrderSettlementHandler extends OrderSettlementHandler {
       sourceEventType: SourceEventType.orderMatch,
     }
 
-    return updateAvailable(sellerUpdateAvailableQuote)
+    return updateAvailableAsync(sellerUpdateAvailableQuote)
   }
 
   public getAccountId({ sellAccountId }: OrderMatch) {

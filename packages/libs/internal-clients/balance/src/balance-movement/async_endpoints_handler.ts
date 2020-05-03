@@ -239,3 +239,22 @@ export function recordDebitCardToExchangeWithdrawal(payload: BasicBalanceAsyncRe
     },
   })
 }
+
+export function updateAvailableAsync(payload: BasicBalanceAsyncRequestPayload) {
+  return sendAsyncChangeMessage<BalanceChangeAsyncRequestContainer>({
+    id: `${BalanceAsyncRequestType.updateAvailable}-${payload.sourceEventId}`,
+    type: BalanceAsyncRequestType.updateAvailable,
+    target: {
+      local: localRedisBalanceChangeTopic,
+      deployedEnvironment: process.env.BALANCE_CHANGE_QUEUE_URL!,
+    },
+    payload: {
+      requestedChanges: [
+        {
+          type: BalanceAsyncRequestType.updateAvailable,
+          payload,
+        },
+      ],
+    },
+  })
+}

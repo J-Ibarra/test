@@ -7,7 +7,7 @@ import { SymbolPair } from '@abx-types/reference-data'
 import { OrderSettlementHandler } from './order_settlement_handler'
 import { retrieveTotalReleasedAmountForOrder } from './shared.utils'
 import { findBoundaryForCurrency, feeTakenFromBase } from '@abx-service-clients/reference-data'
-import { finaliseReserve, updateAvailable } from '@abx-service-clients/balance'
+import { finaliseReserve, updateAvailableAsync } from '@abx-service-clients/balance'
 
 export class BuyerOrderSettlementHandler extends OrderSettlementHandler {
   private static instance: BuyerOrderSettlementHandler
@@ -79,10 +79,7 @@ export class BuyerOrderSettlementHandler extends OrderSettlementHandler {
       const initialReserve = await retrieveInitialReserveForOrder(order)
 
       return {
-        remainingReserve: new Decimal(initialReserve)
-          .minus(totalReleasedUntilNow)
-          .toDP(maxDecimalsForCurrency, Decimal.ROUND_DOWN)
-          .toNumber(),
+        remainingReserve: new Decimal(initialReserve).minus(totalReleasedUntilNow).toDP(maxDecimalsForCurrency, Decimal.ROUND_DOWN).toNumber(),
         initialReserve,
       }
     }
@@ -110,10 +107,7 @@ export class BuyerOrderSettlementHandler extends OrderSettlementHandler {
       allMatchesSettledExceptForCurrentOne &&
       order.limitPrice === orderMatch.matchPrice
     ) {
-      return new Decimal(initialReserve)
-        .minus(totalReleasedUntilNow)
-        .toDP(maxQuoteDecimals, Decimal.ROUND_DOWN)
-        .toNumber()
+      return new Decimal(initialReserve).minus(totalReleasedUntilNow).toDP(maxQuoteDecimals, Decimal.ROUND_DOWN).toNumber()
     }
 
     return this.calculateReleaseForPartiallyFilledOrder(orderMatch, pair, buyerFee, maxQuoteDecimals)
@@ -129,10 +123,7 @@ export class BuyerOrderSettlementHandler extends OrderSettlementHandler {
 
     return feeTakenFromBase(pair)
       ? tradeValueNoFees.toDP(maxQuoteDecimals, Decimal.ROUND_DOWN).toNumber()
-      : tradeValueNoFees
-          .plus(buyerFee)
-          .toDP(maxQuoteDecimals, Decimal.ROUND_DOWN)
-          .toNumber()
+      : tradeValueNoFees.plus(buyerFee).toDP(maxQuoteDecimals, Decimal.ROUND_DOWN).toNumber()
   }
 
   private async allMatchesSettledExceptForCurrentOne(currentOrderMatchId: number, orderId: number, transaction: Transaction): Promise<boolean> {
@@ -173,13 +164,10 @@ export class BuyerOrderSettlementHandler extends OrderSettlementHandler {
   public async updateAvailableBalance(orderMatch: OrderMatch, buyerFee: number, pair: SymbolPair, buyerTransactionId: number) {
     const { maxDecimals: maxBaseDecimals } = await findBoundaryForCurrency(pair.base.code)
     const amountToReceive = feeTakenFromBase(pair)
-      ? new Decimal(orderMatch.amount)
-          .minus(buyerFee)
-          .toDP(maxBaseDecimals, Decimal.ROUND_DOWN)
-          .toNumber()
+      ? new Decimal(orderMatch.amount).minus(buyerFee).toDP(maxBaseDecimals, Decimal.ROUND_DOWN).toNumber()
       : orderMatch.amount
 
-    return updateAvailable({
+    return updateAvailableAsync({
       accountId: orderMatch.buyAccountId,
       amount: amountToReceive,
       currencyId: pair.base.id,
