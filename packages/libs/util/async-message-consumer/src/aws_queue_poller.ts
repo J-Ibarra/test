@@ -30,18 +30,19 @@ export class AwsQueueObserver implements QueuePoller {
 
   private async invokeMessageHandler<T>(message: AWS.SQS.Message, queueUrl: string, handler: QueueMessageHandler<T>) {
     try {
-      const result = await handler(JSON.parse(message.Body!))
+      const payload = JSON.parse(message.Body!)
+      const result = await handler(payload)
 
       if (!result || !(result as QueueConsumerOutput).skipMessageDeletion) {
-        await this.removeMessageFromQueue(queueUrl, message.ReceiptHandle!)
+        await this.removeMessageFromQueue(queueUrl, message.ReceiptHandle!, payload)
       }
     } catch (e) {
       this.logger.error(`Error ocurred while invoking handler for message ${message.MessageId} on queue ${queueUrl}: ${e.message}`)
     }
   }
 
-  private removeMessageFromQueue(queueUrl: string, messageReceiptHandle: string) {
-    return new Promise((resolve, reject) => {
+  private removeMessageFromQueue<T>(queueUrl: string, messageReceiptHandle: string, messagePayload: T) {
+    return new Promise((resolve) => {
       sqs.deleteMessage(
         {
           QueueUrl: queueUrl,
@@ -49,8 +50,8 @@ export class AwsQueueObserver implements QueuePoller {
         },
         (err) => {
           if (err!!) {
-            this.logger.error(`Unable to remove message from queue with receipt handle ${messageReceiptHandle}`)
-            reject()
+            this.logger.error(`Unable to remove message ${JSON.stringify(messagePayload)} from queue with receipt handle ${messageReceiptHandle}`)
+            this.logger.error(JSON.stringify(err))
           }
 
           resolve()
