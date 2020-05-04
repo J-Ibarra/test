@@ -95,7 +95,7 @@ export async function generateTradeTransactionReportData(orderMatchData: OrderMa
           boundary: feeCurrencyBoundary,
           appendCurrencyCode: true,
         }),
-        feePercent: feePercent || 0,
+        feePercent: new Decimal(feePercent || 0).times(100).toDP(2).toNumber(),
         feeCurrency: feeCurrency!,
       },
       footer: {
