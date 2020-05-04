@@ -1,4 +1,4 @@
-import { findDepositAddressesForPublicKeys, FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION } from '../../../core'
+import { findDepositAddressesForPublicKeysAndCurrency, FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION } from '../../../core'
 import { findAccountsByIdWithUserDetails } from '@abx-service-clients/account'
 import { DepositAddress } from '@abx-types/deposit'
 import { AccountStatus } from '@abx-types/account'
@@ -12,8 +12,8 @@ export interface DepositAddressAccountStatusPair {
   accountStatus: AccountStatus
 }
 
-export async function createPublicKeyToDepositorDetailsMap(latestDepositOperations: DepositTransaction[]) {
-  const depositAddresses = await findDepositAddressesForPublicKeys(latestDepositOperations.map(({ to }) => to!))
+export async function createPublicKeyToDepositorDetailsMap(latestDepositOperations: DepositTransaction[], currencyId: number) {
+  const depositAddresses = await findDepositAddressesForPublicKeysAndCurrency(latestDepositOperations.map(({ to }) => to!), currencyId)
   const accountDetailsForDepositAddresses = await findAccountsByIdWithUserDetails(depositAddresses.map(({ accountId }) => accountId))
   const accountIdToAccountStatus = accountDetailsForDepositAddresses.reduce((acc, { id, status }) => ({ ...acc, [id]: status }), {})
 

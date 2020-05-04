@@ -6,10 +6,11 @@ import { getAllKycOrEmailVerifiedAccountIds } from '@abx-service-clients/account
 
 const KYC_ACCOUNTS_CACHE_EXPIRY_3_MINUTES_IN_SECONDS = 3 * 60
 
-export async function findDepositAddressesForPublicKeys(publicKeys: string[], transaction?: Transaction) {
+export async function findDepositAddressesForPublicKeysAndCurrency(publicKeys: string[], currencyId: number, transaction?: Transaction) {
   const depositAddresses = await getModel<DepositAddress>('depositAddress').findAll({
     where: {
       publicKey: { $in: publicKeys },
+      currencyId,
     },
     transaction,
   })

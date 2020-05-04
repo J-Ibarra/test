@@ -31,7 +31,7 @@ export async function triggerKinesisCoinDepositFollower(onChainCurrencyGateway: 
     if (depositCandidateOperations.length > 0) {
       logger.debug(`Found ${depositCandidateOperations.length} ${currencyCode} deposit candidate transactions`)
       const { fiatValueOfOneCryptoCurrency, currencyBoundary } = await getBoundaryAndLatestFiatValuePair(currencyCode)
-      const publicKeyToDepositAddress = await createPublicKeyToDepositorDetailsMap(depositCandidateOperations)
+      const publicKeyToDepositAddress = await createPublicKeyToDepositorDetailsMap(depositCandidateOperations, currencyId)
 
       await wrapInTransaction(sequelize, null, async (t) => {
         await handleKinesisPaymentOperations(depositCandidateOperations, publicKeyToDepositAddress, fiatValueOfOneCryptoCurrency, currencyBoundary, t)
