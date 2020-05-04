@@ -118,8 +118,7 @@ describe('triggerKinesisCoinDepositFollower', () => {
     ])
     const updateBlockchainFollowerDetailsForCurrencyStub = sinon.stub(coreOperations, 'updateBlockchainFollowerDetailsForCurrency').resolves()
     const pushRequestForProcessingStub = sinon.stub(coreOperations, 'pushRequestForProcessing').resolves()
-
-    await triggerKinesisCoinDepositFollower(onChainCurrencyGatewayStub, kauCurrency.code)
+    
     const depositRequest = {
       depositAddress: {
         publicKey: depositAddress,
@@ -131,6 +130,11 @@ describe('triggerKinesisCoinDepositFollower', () => {
       fiatConversion: new Decimal(amount).times(fiatValueOfOneCryptoCurrency).toNumber(),
       status: DepositRequestStatus.received,
     } as any
+
+    sinon.stub(coreOperations, 'convertTransactionToDepositRequest')
+      .resolves(depositRequest)
+
+    await triggerKinesisCoinDepositFollower(onChainCurrencyGatewayStub, kauCurrency.code)
 
     expect(storeDepositRequestsStub.calledWith([depositRequest])).to.eql(true)
     expect(updateBlockchainFollowerDetailsForCurrencyStub.calledWith(kauCurrency.id, pagingToken)).to.eql(true)

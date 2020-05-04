@@ -1,10 +1,10 @@
-import { DepositCompleter } from '../../deposit-completion/DepositCompleter'
-import * as depositCoreOperations from '../../../../../core'
+import { DepositCompleter } from '../DepositCompleter'
+import * as depositCoreOperations from '..'
 import * as orderOperations from '@abx-service-clients/order'
 import * as balanceOperations from '@abx-service-clients/balance'
 import * as referenceData from '@abx-service-clients/reference-data'
 import * as accountClientOperations from '@abx-service-clients/account'
-import * as utilsStub from '../../utils'
+import * as utilsStub from '../utils'
 
 import { expect } from 'chai'
 import sinon from 'sinon'
@@ -41,7 +41,7 @@ describe('DepositCompleter', () => {
 
       sinon.stub(utilsStub, 'getDepositTransactionFeeCurrencyId').resolves(feeCurrencyId)
 
-      await depositCompleter.completeDepositRequests([testData.depositRequest], CurrencyCode.bitcoin)
+      await depositCompleter.completeDepositRequests([testData.depositRequest], CurrencyCode.bitcoin, DepositRequestStatus.pendingHoldingsTransactionConfirmation)
 
       expect(updateDepositRequestStub.getCall(0).args[0]).to.eql([testData.depositRequest.id])
       expect(updateDepositRequestStub.getCall(0).args[1]).to.eql({ status: DepositRequestStatus.pendingHoldingsTransactionConfirmation })
@@ -107,7 +107,7 @@ describe('DepositCompleter', () => {
       }
       sinon.stub(utilsStub, 'getDepositTransactionFeeCurrencyId').resolves(feeCurrencyId)
 
-      await depositCompleter.completeDepositRequests([preExistingDepositRequest, testData.depositRequest], CurrencyCode.bitcoin)
+      await depositCompleter.completeDepositRequests([preExistingDepositRequest, testData.depositRequest], CurrencyCode.bitcoin, DepositRequestStatus.pendingHoldingsTransactionConfirmation)
 
       expect(updateDepositRequestStub.getCall(0).args[0]).to.eql([preExistingDepositRequest.id, testData.depositRequest.id])
       expect(updateDepositRequestStub.getCall(0).args[1]).to.eql({ status: DepositRequestStatus.pendingHoldingsTransactionConfirmation })

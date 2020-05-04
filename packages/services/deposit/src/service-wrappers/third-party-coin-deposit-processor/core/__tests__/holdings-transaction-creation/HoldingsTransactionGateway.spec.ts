@@ -4,7 +4,7 @@ import * as coreOperations from '../../../../../core'
 import { HoldingsTransactionGateway } from '../../holdings-transaction-creation/HoldingsTransactionGateway'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { DepositRequestStatus } from '@abx-types/deposit'
-import { HoldingsTransactionDispatcher } from '../../../../../core'
+import { HoldingsTransactionDispatcher, DepositCompleter } from '../../../../../core'
 
 describe('HoldingsTransactionGateway', () => {
   const holdingsTransactionGateway = new HoldingsTransactionGateway()
@@ -28,20 +28,23 @@ describe('HoldingsTransactionGateway', () => {
 
   it('should update deposit request in pendingHoldingsTransaction and dispatch transaction', async () => {
     const depositRequestId = 1
-    sinon.stub(coreOperations, 'findDepositRequestByDepositTransactionHash').resolves({
-      id: depositRequestId,
-    })
+    const depositRequest = {
+      id: depositRequestId
+    }
+    sinon.stub(coreOperations, 'findDepositRequestByDepositTransactionHash').resolves(depositRequest)
     sinon.stub(coreOperations, 'findDepositRequestsForStatuses').resolves([])
 
     const dispatchHoldingsTransactionForDepositRequestsStub = sinon
       .stub(HoldingsTransactionDispatcher.prototype, 'dispatchHoldingsTransactionForDepositRequests')
-      .resolves()
+      .resolves([depositRequest])
+    const depositCompleterStub = sinon.stub(DepositCompleter.prototype, 'completeDepositRequests').resolves()
     const updateDepositRequestStub = sinon.stub(coreOperations, 'updateDepositRequest').resolves()
 
     await holdingsTransactionGateway.dispatchHoldingsTransactionForConfirmedDepositRequest(txId, CurrencyCode.bitcoin)
 
     expect(updateDepositRequestStub.calledWith(depositRequestId, { status: DepositRequestStatus.pendingHoldingsTransaction })).to.eql(true)
-    expect(dispatchHoldingsTransactionForDepositRequestsStub.calledWith([{ id: depositRequestId } as any], CurrencyCode.bitcoin)).to.eql(true)
+    expect(dispatchHoldingsTransactionForDepositRequestsStub.calledWith([depositRequest as any], CurrencyCode.bitcoin)).to.eql(true)
+    expect(depositCompleterStub.calledWith([depositRequest as any], CurrencyCode.bitcoin, DepositRequestStatus.pendingHoldingsTransactionConfirmation)).to.eql(true)
   })
 
   it('should update deposit request to blockedForHoldingsTransactionConfirmation when an UTXO error occurs while trying to send transaction', async () => {
@@ -60,6 +63,7 @@ describe('HoldingsTransactionGateway', () => {
           },
         },
       })
+    const depositCompleterStub = sinon.stub(DepositCompleter.prototype, 'completeDepositRequests').resolves()
     const updateDepositRequestStub = sinon.stub(coreOperations, 'updateDepositRequest').resolves()
 
     await holdingsTransactionGateway.dispatchHoldingsTransactionForConfirmedDepositRequest(txId, CurrencyCode.bitcoin)
@@ -69,5 +73,6 @@ describe('HoldingsTransactionGateway', () => {
     expect(updateDepositRequestStub.calledWith(depositRequestId, { status: DepositRequestStatus.blockedForHoldingsTransactionConfirmation })).to.eql(
       true,
     )
+    expect(depositCompleterStub.notCalled).to.eql(true)
   })
 })

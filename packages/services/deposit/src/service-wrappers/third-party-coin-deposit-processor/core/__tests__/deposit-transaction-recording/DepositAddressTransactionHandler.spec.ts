@@ -6,7 +6,6 @@ import { DepositAddressTransactionHandler } from '../../deposit-transaction-reco
 import { NewTransactionRecorder } from '../../deposit-transaction-recording/NewTransactionRecorder'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { HoldingsTransactionGateway } from '../../holdings-transaction-creation/HoldingsTransactionGateway'
-import * as utilOperations from '../../utils'
 import { HoldingsTransactionConfirmationHandler } from '../../deposit-transaction-recording/HoldingsTransactionConfirmationHandler'
 import * as coreOperations from '../../../../../core'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
@@ -32,7 +31,7 @@ describe('DepositAddressTransactionHandler', () => {
     } as any
 
     sinon.stub(blockchainGateway, 'getOnChainCurrencyManagerForEnvironment').returns(onChainCurrencyManagerStub)
-    sinon.stub(utilOperations, 'getRequiredConfirmationsForDepositTransaction').returns(1)
+    sinon.stub(coreOperations, 'getRequiredConfirmationsForDepositTransaction').returns(1)
     sinon.stub(referenceDataOperations, 'getDepositMimimumAmountForCurrency').resolves(0.0002)
   })
 

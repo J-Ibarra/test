@@ -5,10 +5,8 @@ import * as balanceOperations from '@abx-service-clients/balance'
 import { SourceEventType } from '@abx-types/balance'
 import * as depositRequestOperations from '..'
 import { DepositRequestStatus } from '@abx-types/deposit'
-import * as utilsStub from '../../service-wrappers/third-party-coin-deposit-processor/core/utils'
 import * as blockchainOperations from '@abx-utils/blockchain-currency-gateway'
 import { CurrencyCode } from '@abx-types/reference-data'
-import { DepositCompleter } from '../../service-wrappers/third-party-coin-deposit-processor/core/deposit-completion/DepositCompleter'
 import { HoldingsTransactionDispatcher } from '..'
 import { DepositAmountCalculator } from '../DepositAmountCalculator'
 
@@ -57,7 +55,7 @@ describe('HoldingsTransactionDispatcher', () => {
 
     isAccountSuspendedStub = sinon.stub(accountClientOperations, 'isAccountSuspended').resolves(false)
     sinon.stub(accountClientOperations, 'findOrCreateKinesisRevenueAccount').resolves(testKinesisRevenueAccount)
-    sinon.stub(utilsStub, 'getDepositTransactionFeeCurrencyId').resolves(currencyId)
+    sinon.stub(depositRequestOperations, 'getDepositTransactionFeeCurrencyId').resolves(currencyId)
     createPendingWithdrawalStub = sinon.stub(balanceOperations, 'createPendingWithdrawal').resolves()
     createPendingDepositStub = sinon.stub(balanceOperations, 'createPendingDeposit').resolves()
   })
@@ -80,7 +78,6 @@ describe('HoldingsTransactionDispatcher', () => {
         depositsRequestsWithInsufficientStatus: [],
       })
       sinon.stub(depositRequestOperations, 'findDepositRequestsForIds').resolves([depositRequest])
-      const completeDepositRequestsStub = sinon.stub(DepositCompleter.prototype, 'completeDepositRequests').resolves()
 
       await holdingsTransactionDispatcher.dispatchHoldingsTransactionForDepositRequests([depositRequest], CurrencyCode.bitcoin)
 
@@ -125,8 +122,6 @@ describe('HoldingsTransactionDispatcher', () => {
           },
         }),
       ).to.eql(true)
-
-      expect(completeDepositRequestsStub.calledWith([depositRequest], CurrencyCode.bitcoin)).to.eql(true)
     })
 
     it('should create holdings transaction when account not suspended, with joined requests', async () => {
@@ -134,7 +129,6 @@ describe('HoldingsTransactionDispatcher', () => {
       const updateAllDepositRequestsStub = sinon.stub(depositRequestOperations, 'updateAllDepositRequests').resolves()
       const depositsRequestsWithInsufficientStatus = [{ id: 1 }, { id: 2 }] as any
 
-      const completeDepositRequestsStub = sinon.stub(DepositCompleter.prototype, 'completeDepositRequests').resolves()
       sinon.stub(DepositAmountCalculator.prototype, 'computeTotalAmountToTransfer').resolves({
         totalAmount: depositRequest.amount,
         depositsRequestsWithInsufficientStatus,
@@ -192,7 +186,6 @@ describe('HoldingsTransactionDispatcher', () => {
           },
         }),
       ).to.eql(true)
-      expect(completeDepositRequestsStub.calledWith([depositRequest, ...depositsRequestsWithInsufficientStatus], CurrencyCode.bitcoin)).to.eql(true)
     })
   })
 })
