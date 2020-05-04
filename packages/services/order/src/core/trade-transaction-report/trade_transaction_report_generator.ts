@@ -7,11 +7,12 @@ import { OrderDirection } from '@abx-types/order'
 import { CurrencyCode, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { OrderMatchData, ReportData } from '@abx-service-clients/report'
 import { findTradeTransactionFromOrderMatch } from './trade_transaction_report_helpers'
+import { getFeeRateForAccount } from '../fees'
 
 const logger = Logger.getInstance('trade transaction report', 'generate report data for rendering')
 
 export async function generateTradeTransactionReportData(orderMatchData: OrderMatchData): Promise<ReportData> {
-  const { accountId, orderMatchId, orderIds, direction, date, amount, baseCurrency, quoteCurrency, matchPrice, consideration } = orderMatchData
+  const { accountId, orderMatchId, orderIds, direction, date, amount, baseCurrency, quoteCurrency, matchPrice, consideration, s } = orderMatchData
   const orderId = direction === OrderDirection.buy ? orderIds.buyOrderId : orderIds.sellOrderId
 
   const { fee, tradeTransactionId, feeCurrencyId } = await findTradeTransactionFromOrderMatch({
@@ -24,6 +25,8 @@ export async function generateTradeTransactionReportData(orderMatchData: OrderMa
   const feeCurrency = await getCurrencyCode(feeCurrencyId, SymbolPairStateFilter.all)
 
   const formattedFee = await truncateFees(fee, feeCurrency!)
+  const feePercent = await getFeeRateForAccount({ accountId, symbolId: `${baseCurrency}_${quoteCurrency}` })
+
   logger.debug(`Fetched client data: ${accountHin!}`)
 
   const STATIC_RESOURCES = 'https://s3-ap-southeast-2.amazonaws.com/kbe-report-templates/static-resources'
@@ -47,12 +50,6 @@ export async function generateTradeTransactionReportData(orderMatchData: OrderMa
   } = await getBoundariesForCurrencies([quoteCurrency, feeCurrency!, paidCurrencyCode, baseCurrency])
 
   const feeCurrencyBoundary = feeCurrency === paidCurrencyCode ? paidCurrencyBoundary : quoteCurrencyBoundary
-
-  const feePercent: number = new Decimal(fee)
-    .div(feeCurrencyIsBase ? amount : consideration)
-    .mul(100)
-    .toDP(2)
-    .toNumber()
 
   const data: ReportData = {
     content: {
@@ -98,7 +95,7 @@ export async function generateTradeTransactionReportData(orderMatchData: OrderMa
           boundary: feeCurrencyBoundary,
           appendCurrencyCode: true,
         }),
-        feePercent,
+        feePercent: feePercent || 0,
         feeCurrency: feeCurrency!,
       },
       footer: {
