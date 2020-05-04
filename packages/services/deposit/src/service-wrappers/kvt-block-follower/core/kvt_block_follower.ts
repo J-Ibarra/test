@@ -92,7 +92,7 @@ export async function handleKVTTransactions(
 
   if (potentialDepositTransactions.length > 0) {
     logger.debug(`Found Potential Deposits: ${potentialDepositTransactions}`)
-    const depositRequests = potentialDepositTransactions.map((tx) => {
+    const depositRequests = await Promise.all(potentialDepositTransactions.map((tx) => {
       const depositTransaction = onChainCurrencyGateway.apiToDepositTransaction(tx.event)
       return convertTransactionToDepositRequest(
         tx.depositAddress, 
@@ -101,7 +101,7 @@ export async function handleKVTTransactions(
         currencyBoundary,
         DepositRequestStatus.pendingHoldingsTransaction
       )
-    })
+    }))
 
     const storedDepositRequests = await storeDepositRequests(depositRequests, t)
     await pushRequestForProcessing(storedDepositRequests, NEW_ETH_AND_KVT_DEPOSIT_REQUESTS_QUEUE_URL)

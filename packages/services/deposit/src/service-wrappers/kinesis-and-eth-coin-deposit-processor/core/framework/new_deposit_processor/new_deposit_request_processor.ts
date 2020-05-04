@@ -40,8 +40,8 @@ export async function processNewestDepositRequestForCurrency(
     }
 
     const dispatcher = new HoldingsTransactionDispatcher()
-    const updatedDepositRequests = await dispatcher.dispatchHoldingsTransactionForDepositRequests([depositRequest], currency)
-
+    const updatedDepositRequests = (await dispatcher.dispatchHoldingsTransactionForDepositRequests([depositRequest], currency))
+      .filter(dr => dr.id === depositRequest.id!)
     pendingHoldingsTransferGatekeeper.removeRequest(currency, depositRequest.id!)
     pendingCompletionGatekeeper.addNewDepositsForCurrency(currency, updatedDepositRequests)
   } catch (e) {

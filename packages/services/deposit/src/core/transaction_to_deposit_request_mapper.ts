@@ -7,7 +7,7 @@ import { depositAmountAboveMinimumForCurrency } from './deposit_amount_validator
 
 export const FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION = FiatCurrency.usd
 
-export function convertTransactionToDepositRequest(
+export async function convertTransactionToDepositRequest(
   depositAddress: DepositAddress,
   depositTransaction: DepositTransaction,
   fiatValueOfOneCryptoCurrency: number,
@@ -16,8 +16,7 @@ export function convertTransactionToDepositRequest(
 ) {
   const truncateToCurrencyDP = truncateCurrencyDecimals(currencyBoundary) as any
   const truncatedAmount = truncateToCurrencyDP(depositTransaction.amount)
-  const isDepositAmountAboveMinimumForCurrency = depositAmountAboveMinimumForCurrency(truncatedAmount, currencyBoundary.currencyCode)
-
+  const isDepositAmountAboveMinimumForCurrency = await depositAmountAboveMinimumForCurrency(truncatedAmount, currencyBoundary.currencyCode)
 
   return {
     depositAddress,

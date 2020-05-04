@@ -98,16 +98,10 @@ export async function handleEthereumTransactions(
 
   if (potentialDepositTransactions.length > 0) {
     logger.debug(`Found Potential Deposits: ${potentialDepositTransactions}`)
-    const depositRequests = potentialDepositTransactions.map((tx) => {
+    const depositRequests = await Promise.all(potentialDepositTransactions.map((tx) => {
       const depositTransaction = onChainCurrencyGateway.apiToDepositTransaction(tx.tx)
-      return convertTransactionToDepositRequest(
-        tx.depositAddress, 
-        depositTransaction, 
-        fiatValueOfOneCryptoCurrency, 
-        currencyBoundary,
-        DepositRequestStatus.pendingHoldingsTransaction
-      )
-    })
+      return convertTransactionToDepositRequest(tx.depositAddress, depositTransaction, fiatValueOfOneCryptoCurrency, currencyBoundary, DepositRequestStatus.pendingHoldingsTransaction)
+    }))
 
     const storedDepositRequests = await storeDepositRequests(depositRequests, t)
     const depositRequestsWithSufficientAmount = storedDepositRequests.filter(req => req.status !== DepositRequestStatus.insufficientAmount)

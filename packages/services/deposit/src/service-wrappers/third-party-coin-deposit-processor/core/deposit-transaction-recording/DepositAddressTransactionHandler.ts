@@ -1,7 +1,7 @@
 import { getOnChainCurrencyManagerForEnvironment, Transaction } from '@abx-utils/blockchain-currency-gateway'
 import { Environment, CurrencyCode } from '@abx-types/reference-data'
 import { DepositAddress } from '@abx-types/deposit'
-import { getRequiredConfirmationsForDepositTransaction } from '../utils'
+import { getRequiredConfirmationsForDepositTransaction } from '../../../../core'
 import { NewTransactionRecorder } from './NewTransactionRecorder'
 import { HoldingsTransactionGateway } from '../holdings-transaction-creation/HoldingsTransactionGateway'
 import { Logger } from '@abx-utils/logging'

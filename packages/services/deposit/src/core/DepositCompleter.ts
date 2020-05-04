@@ -1,5 +1,5 @@
 import { DepositRequest, DepositRequestStatus, DepositAddress } from '@abx-types/deposit'
-import { updateAllDepositRequests, sendDepositConfirmEmail } from '../../../../core'
+import { updateAllDepositRequests, sendDepositConfirmEmail } from '.'
 import { Logger } from '@abx-utils/logging'
 import { triggerMultipleBalanceChanges, BalanceAsyncRequestType } from '@abx-service-clients/balance'
 import { createCurrencyTransactions } from '@abx-service-clients/order'
@@ -7,7 +7,7 @@ import { SourceEventType } from '@abx-types/balance'
 import { findCurrencyForId } from '@abx-service-clients/reference-data'
 import { findOrCreateKinesisRevenueAccount } from '@abx-service-clients/account'
 import Decimal from 'decimal.js'
-import { getDepositTransactionFeeCurrencyId } from '../utils'
+import { getDepositTransactionFeeCurrencyId } from './utils'
 import { CurrencyCode, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { TransactionDirection } from '@abx-types/order'
 
@@ -16,13 +16,20 @@ export class DepositCompleter {
 
   /**
    * Carries out the final step of the deposit process where:
-   * - all deposit requests are updated with 'completed' status
+   * - the balance is updated
+   * - currency transactions are created
+   * - confirmation email is sent
+   * - all deposit requests are updated with 'completed | pendingHoldingsTransactionConfirmation' status
    * - all blocked deposit requests for the same deposit address are batched
    * -     and sent in a new holgings transaction
    *
    * @param txid the confirmed holdings transaction id
    */
-  public async completeDepositRequests(depositRequests: DepositRequest[], currencyCode: CurrencyCode) : Promise<DepositRequest[]> {
+  public async completeDepositRequests(
+    depositRequests: DepositRequest[], 
+    currencyCode: CurrencyCode,
+    status: DepositRequestStatus
+  ) : Promise<DepositRequest[]> {
     this.logger.info(
       `Completing ${currencyCode} deposit requests ${depositRequests.map(({ id }) => id).join(',')} for address ${depositRequests[0].depositAddress
         .id!}`,
@@ -51,7 +58,7 @@ export class DepositCompleter {
 
     const resultDepositRequests = await updateAllDepositRequests(
       depositRequests.map(({ id }) => id!),
-      { status: DepositRequestStatus.pendingHoldingsTransactionConfirmation },
+      { status },
     )
     this.logger.info(`Completed ${currencyCode} deposit requests: ${depositRequests.map(({ id }) => id).join(',')}`)
 

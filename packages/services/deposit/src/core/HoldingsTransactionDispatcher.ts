@@ -7,14 +7,12 @@ import { decryptValue } from '@abx-utils/encryption'
 import { updateAllDepositRequests, findDepositRequestsForIds } from '.'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode, Environment } from '@abx-types/reference-data'
-import { getDepositTransactionFeeCurrencyId } from '../service-wrappers/third-party-coin-deposit-processor/core/utils'
-import { DepositCompleter } from '../service-wrappers/third-party-coin-deposit-processor/core/deposit-completion/DepositCompleter'
+import { getDepositTransactionFeeCurrencyId } from './utils'
 import { DepositAmountCalculator } from './DepositAmountCalculator'
 import Decimal from '@abx-service-clients/reference-data/node_modules/decimal.js'
 
 export class HoldingsTransactionDispatcher {
   private readonly logger = Logger.getInstance('public-coin-deposit-processor', 'HoldingsTransactionDispatcher')
-  private readonly depositCompleter = new DepositCompleter()
   private readonly depositAmountCalculator = new DepositAmountCalculator()
 
   public async dispatchHoldingsTransactionForDepositRequests(depositRequests: DepositRequest[], currency: CurrencyCode) : Promise<DepositRequest[]> {
@@ -25,7 +23,7 @@ export class HoldingsTransactionDispatcher {
 
     const currencyManager = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment)
 
-    const holdingsTransactionHash = await this.transferTransactionAmountToHoldingsWallet(
+    await this.transferTransactionAmountToHoldingsWallet(
       {
         ...depositRequests[0],
         amount: totalAmountToTransfer,
@@ -35,18 +33,9 @@ export class HoldingsTransactionDispatcher {
       currencyManager.getCurrencyFromTicker(currency),
     )
 
-    let resultDepositRequests = depositRequests
-    if (holdingsTransactionHash) {
-      this.logger.info(`Starting completion for deposit request with holdings transaction hash ${holdingsTransactionHash} for completion`)
-
-      const updatedDepositRequests = await findDepositRequestsForIds(
-        depositRequests.concat(depositsRequestsWithInsufficientStatus).map(({ id }) => id!),
-      )
-
-      resultDepositRequests = await this.depositCompleter.completeDepositRequests(updatedDepositRequests, currency)
-    }
-
-    return resultDepositRequests
+    return findDepositRequestsForIds(
+      depositRequests.concat(depositsRequestsWithInsufficientStatus).map(({ id }) => id!),
+    )
   }
 
   /**

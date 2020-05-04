@@ -58,9 +58,9 @@ export async function handleKinesisPaymentOperations(
 
   if (depositTransactions.length > 0) {
     logger.info(`${depositTransactions.length} of the ${depositCandidateOperations.length} ${currencyBoundary.currencyCode} candidates are valid`)
-    const depositRequests = depositTransactions.map((depositTransaction) =>
+    const depositRequests = await Promise.all(depositTransactions.map((depositTransaction) =>
       mapDepositTransactionToDepositRequest(depositTransaction, publicKeyToDepositAddress, fiatValueOfOneCryptoCurrency, currencyBoundary),
-    )
+    ))
 
     const storedDepositRequests = await storeDepositRequests(depositRequests, t)
     logger.debug(`${depositRequests.length} new ${currencyBoundary.currencyCode} deposit requests stored`)
