@@ -12,7 +12,7 @@ import { getFeeRateForAccount } from '../fees'
 const logger = Logger.getInstance('trade transaction report', 'generate report data for rendering')
 
 export async function generateTradeTransactionReportData(orderMatchData: OrderMatchData): Promise<ReportData> {
-  const { accountId, orderMatchId, orderIds, direction, date, amount, baseCurrency, quoteCurrency, matchPrice, consideration, s } = orderMatchData
+  const { accountId, orderMatchId, orderIds, direction, date, amount, baseCurrency, quoteCurrency, matchPrice, consideration } = orderMatchData
   const orderId = direction === OrderDirection.buy ? orderIds.buyOrderId : orderIds.sellOrderId
 
   const { fee, tradeTransactionId, feeCurrencyId } = await findTradeTransactionFromOrderMatch({
