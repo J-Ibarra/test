@@ -10,8 +10,6 @@ import { DepositGatekeeper } from '../../framework'
 describe('transaction_confirmed_requests_processor', () => {
   let pendingHoldingsTransactionConfirmationGatekeeper: DepositGatekeeper
 
-
-
   beforeEach(async () => {
     pendingHoldingsTransactionConfirmationGatekeeper = new DepositGatekeeper('pendingHoldingsTransactionConfirmationGatekeeper')
   })
@@ -37,7 +35,7 @@ describe('transaction_confirmed_requests_processor', () => {
     await triggerProcessor(currencyManager)
 
     expect(checkConfirmationOfTransactionStub.calledOnceWith(depositRequest.depositTxHash)).to.eql(true)
-    expect(pendingHoldingsTransactionConfirmationGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau)![0].isLocked).to.eql(false)
+    expect(pendingHoldingsTransactionConfirmationGatekeeper[currencyToDepositRequests]!.get(CurrencyCode.kau)![0].isLocked).to.eql(false)
   })
 
   it('should complete deposit request if balance adjustment is not already created', async () => {
@@ -50,13 +48,12 @@ describe('transaction_confirmed_requests_processor', () => {
     await triggerProcessor(currencyManager)
 
     expect(checkConfirmationOfTransactionStub.calledOnceWith(depositRequest.depositTxHash)).to.eql(true)
-    expect(updateDepositRequestStub.calledOnceWith(
-      depositRequest.id,
-      {
+    expect(
+      updateDepositRequestStub.calledOnceWith(depositRequest.id!, {
         status: DepositRequestStatus.completed,
-      },
-    )).to.eql(true)
-    expect(pendingHoldingsTransactionConfirmationGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau).length).to.eql(0)
+      }),
+    ).to.eql(true)
+    expect(pendingHoldingsTransactionConfirmationGatekeeper[currencyToDepositRequests]!.get(CurrencyCode.kau)!.length).to.eql(0)
   })
 
   async function triggerProcessor(currencyManager) {

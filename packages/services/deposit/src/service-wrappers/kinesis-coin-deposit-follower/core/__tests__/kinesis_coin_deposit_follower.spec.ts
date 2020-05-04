@@ -92,6 +92,7 @@ describe('triggerKinesisCoinDepositFollower', () => {
     const depositFrom = 'from'
     const amount = 12
     const txHash = 'txhash-fal'
+    const pagingToken = '11'
 
     sinon.stub(helperOperations, 'createPublicKeyToDepositorDetailsMap').resolves(
       new Map([
@@ -112,6 +113,7 @@ describe('triggerKinesisCoinDepositFollower', () => {
         from: depositFrom,
         amount,
         txHash,
+        pagingToken,
       },
     ])
     const updateBlockchainFollowerDetailsForCurrencyStub = sinon.stub(coreOperations, 'updateBlockchainFollowerDetailsForCurrency').resolves()
@@ -127,11 +129,11 @@ describe('triggerKinesisCoinDepositFollower', () => {
       depositTxHash: txHash,
       fiatCurrencyCode: FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION,
       fiatConversion: new Decimal(amount).times(fiatValueOfOneCryptoCurrency).toNumber(),
-      status: DepositRequestStatus.pendingHoldingsTransaction,
+      status: DepositRequestStatus.received,
     } as any
 
     expect(storeDepositRequestsStub.calledWith([depositRequest])).to.eql(true)
-    expect(updateBlockchainFollowerDetailsForCurrencyStub.calledWith(kauCurrency.id, txHash)).to.eql(true)
+    expect(updateBlockchainFollowerDetailsForCurrencyStub.calledWith(kauCurrency.id, pagingToken)).to.eql(true)
     expect(pushRequestForProcessingStub.calledWith([depositRequest], NEW_KINESIS_DEPOSIT_REQUESTS_QUEUE_URL)).to.eql(true)
   })
 })

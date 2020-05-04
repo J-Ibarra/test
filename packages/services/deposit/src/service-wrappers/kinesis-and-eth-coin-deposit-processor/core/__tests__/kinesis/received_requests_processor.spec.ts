@@ -42,7 +42,7 @@ describe('received_requests_processor', () => {
     await triggerProcessor(currencyManager)
 
     expect(checkConfirmationOfTransactionStub.calledOnceWith(depositRequest.depositTxHash)).to.eql(true)
-    expect(receivedGateKeeper[currencyToDepositRequests].get(CurrencyCode.kau)![0].isLocked).to.eql(false)
+    expect(receivedGateKeeper[currencyToDepositRequests]!.get(CurrencyCode.kau)![0].isLocked).to.eql(false)
     expect(isAccountSuspendedStub.notCalled).to.eql(true)
   })
 
@@ -57,8 +57,8 @@ describe('received_requests_processor', () => {
 
     expect(checkConfirmationOfTransactionStub.calledOnceWith(depositRequest.depositTxHash)).to.eql(true)
     expect(isAccountSuspendedStub.calledOnce).to.eql(true)
-    expect(receivedGateKeeper[currencyToDepositRequests].get(CurrencyCode.kau).length).to.eql(0)
-    expect(pendingSuspendedDepositGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau).length).to.eql(1)
+    expect(receivedGateKeeper[currencyToDepositRequests]!.get(CurrencyCode.kau)!.length).to.eql(0)
+    expect(pendingSuspendedDepositGatekeeper[currencyToDepositRequests]!.get(CurrencyCode.kau)!.length).to.eql(1)
   })
 
   it('should not complete deposit request if balance adjustment is already created and break cycle', async () => {
@@ -67,8 +67,7 @@ describe('received_requests_processor', () => {
     const currencyManager = getCurrencyManager(checkConfirmationOfTransactionStub)
 
     const isAccountSuspendedStub = sinon.stub(Account, 'isAccountSuspended').resolves(false)
-    const getBalanceAdjustmentStub = sinon.stub(Balance, 'getBalanceAdjustmentForSourceEventId')
-      .resolves(balanceAdjustment)
+    const getBalanceAdjustmentStub = sinon.stub(Balance, 'getBalanceAdjustmentForSourceEventId').resolves(balanceAdjustment)
     const completeReceivedDepositStub = sinon.stub(depositRequestOperations, 'completeReceivedDeposit')
 
     await triggerProcessor(currencyManager)
@@ -78,7 +77,7 @@ describe('received_requests_processor', () => {
     expect(getBalanceAdjustmentStub.calledOnce).to.eql(true)
     expect(completeReceivedDepositStub.notCalled).to.eql(true)
     expect(getBalanceAdjustmentStub.getCall(0).args[0]).to.eql(depositRequest.id!)
-    expect(receivedGateKeeper[currencyToDepositRequests].get(CurrencyCode.kau).length).to.eql(0)
+    expect(receivedGateKeeper[currencyToDepositRequests]!.get(CurrencyCode.kau)!.length).to.eql(0)
   })
 
   it('should complete deposit request if balance adjustment is not already created', async () => {
@@ -87,8 +86,7 @@ describe('received_requests_processor', () => {
     const currencyManager = getCurrencyManager(checkConfirmationOfTransactionStub)
 
     const isAccountSuspendedStub = sinon.stub(Account, 'isAccountSuspended').resolves(false)
-    const getBalanceAdjustmentStub = sinon.stub(Balance, 'getBalanceAdjustmentForSourceEventId')
-      .resolves(null)
+    const getBalanceAdjustmentStub = sinon.stub(Balance, 'getBalanceAdjustmentForSourceEventId').resolves(null)
     const completeReceivedDepositStub = sinon.stub(depositRequestOperations, 'completeReceivedDeposit')
 
     await triggerProcessor(currencyManager)
@@ -100,11 +98,8 @@ describe('received_requests_processor', () => {
     expect(getBalanceAdjustmentStub.getCall(0).args[0]).to.eql(depositRequest.id!)
     expect(completeReceivedDepositStub.getCall(0).args[0]).to.eql(depositRequest)
 
-    expect(receivedGateKeeper[currencyToDepositRequests].get(CurrencyCode.kau).length).to.eql(0)
-    expect(
-      completedPendingHoldingsTransactionGatekeeper[currencyToDepositRequests]
-        .get(CurrencyCode.kau).length
-    ).to.eql(1)
+    expect(receivedGateKeeper[currencyToDepositRequests]!.get(CurrencyCode.kau)!.length).to.eql(0)
+    expect(completedPendingHoldingsTransactionGatekeeper[currencyToDepositRequests]!.get(CurrencyCode.kau)!.length).to.eql(1)
   })
 
   async function triggerProcessor(currencyGateway) {
