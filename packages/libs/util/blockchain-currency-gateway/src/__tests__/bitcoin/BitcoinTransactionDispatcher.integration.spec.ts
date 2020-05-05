@@ -1,6 +1,6 @@
 import { ENetworkTypes, BtcCryptoApisProviderProxy } from '../../api-provider/crypto-apis'
 import { CurrencyCode } from '@abx-types/reference-data'
-import { BitcoinTransactionDispatcher } from '../../bitcoin/BitcoinTransactionDispatcher'
+import { SingleTargetTransactionDispatcher } from '../../bitcoin/transaction-dispatchers/single-target/SingleTargetTransactionDispatcher'
 
 // Only enable when you want to do an e2e testnet transaction test
 describe.skip('BitcoinTransactionDispatcher:integration', () => {
@@ -21,7 +21,7 @@ describe.skip('BitcoinTransactionDispatcher:integration', () => {
   it('createTransaction', async () => {
     try {
       const cryptoApiProxy = new BtcCryptoApisProviderProxy(CurrencyCode.bitcoin, ENetworkTypes.TESTNET, 'xxx-INSERT-CRYPTO-API-TOKEN-HERE-xxxx')
-      const bitcoinTransactionDispatcher = new BitcoinTransactionDispatcher(cryptoApiProxy)
+      const bitcoinTransactionDispatcher = new SingleTargetTransactionDispatcher(cryptoApiProxy)
 
       const result = await bitcoinTransactionDispatcher.createTransaction({
         senderAddress: senderAddressDetails,
