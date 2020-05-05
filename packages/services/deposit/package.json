@@ -32,7 +32,8 @@
     "push-kvt-block-follower-image": "docker push $KINESIS_ECR_URL/kbe-services-kvt-block-follower",
     "push-kinesis-and-eth-coin-deposit-processor-image": "docker push $KINESIS_ECR_URL/kbe-services-kinesis-and-eth-coin-deposit-processor",
     "push-third-party-deposit-processor-image": "docker push $KINESIS_ECR_URL/kbe-services-third-party-deposit-processor",
-    "push-image": "npm run push-deposit-api-image && npm run push-eth-block-follower-image && npm run push-kvt-block-follower-image && npm run push-kinesis-and-eth-coin-deposit-processor-image && npm run push-third-party-deposit-processor-image"
+    "push-kinesis-coin-deposit-follower-image": "docker push $KINESIS_ECR_URL/kbe-services-kinesis-coin-deposit-follower",
+    "push-image": "npm run push-deposit-api-image && npm run push-eth-block-follower-image && npm run push-kvt-block-follower-image && npm run push-kinesis-and-eth-coin-deposit-processor-image && npm run push-third-party-deposit-processor-image && npm run push-kinesis-coin-deposit-follower-image"
   },
   "dependencies": {
     "@abx-service-clients/account": "^1.1.0",
