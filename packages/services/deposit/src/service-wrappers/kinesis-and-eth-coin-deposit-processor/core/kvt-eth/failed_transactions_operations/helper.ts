@@ -3,10 +3,10 @@ import { Logger } from '@abx-utils/logging'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { DepositRequestStatus } from '@abx-types/deposit'
-import { getAllDepositRequests, updateAllDepositRequests } from '../../../../../core'
-import { DepositGatekeeper } from '../deposit_gatekeeper'
 import { FailedDeposit } from './failed_holdings_transaction_checker'
 import { findAllCurrencies } from '@abx-service-clients/reference-data'
+import { getAllDepositRequests, updateAllDepositRequests } from '../../../../../core'
+import { DepositGatekeeper } from '../../common'
 
 const logger = Logger.getInstance('helper', 'cleanOldDepositFailuresForCurrency')
 // Deposits where the failure was recorded more than 5 seconds ago will be removed from the failed requests

@@ -6,8 +6,8 @@ import {
   loadAllHoldingsTransactionFailedRequestsInMemory,
   processCheckingSuspendedDepositRequest,
   processSuspendedDepositRequestForCurrency,
-  DepositGatekeeper,
   processCompletionPendingDepositRequestForCurrency,
+  DepositGatekeeper,
 } from './core'
 import { DepositRequestStatus, DepositRequest } from '@abx-types/deposit'
 import { loadAllPendingDepositRequestsAboveMinimumAmount, NEW_ETH_AND_KVT_DEPOSIT_REQUESTS_QUEUE_URL } from '../../core'
@@ -17,7 +17,7 @@ import { findCurrencyForId } from '@abx-service-clients/reference-data'
 const onChainCurrencyManager = new CurrencyManager()
 const currenciesForProcessing = [CryptoCurrency.ethereum, CryptoCurrency.kvt]
 
-export async function configureDepositHandler() {
+export async function configureKVTAndETHDepositHandler() {
   const [
     pendingHoldingsTransferGatekeeper,
     pendingCompletionDepositsGatekeeper,

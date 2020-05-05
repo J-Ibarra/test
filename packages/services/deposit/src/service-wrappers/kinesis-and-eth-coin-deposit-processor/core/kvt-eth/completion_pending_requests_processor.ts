@@ -5,9 +5,8 @@ import { Logger } from '@abx-utils/logging'
 import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { DepositRequest, DepositRequestStatus } from '@abx-types/deposit'
-import { DepositGatekeeper } from './deposit_gatekeeper'
-import { DepositCompleter } from '../../../../core/DepositCompleter'
-import { findDepositRequestsByHoldingsTransactionHash } from '../../../../core'
+import { DepositCompleter, findDepositRequestsByHoldingsTransactionHash } from '../../../../core'
+import { DepositGatekeeper } from '../common'
 
 const SECONDS_TO_WAIT_BEFORE_ANOTHER_ATTEMPT = 5
 const logger = Logger.getInstance('completion_pending_deposit_requests_processor', 'processCompletionPendingDepositRequestForCurrency')

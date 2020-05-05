@@ -1,10 +1,11 @@
 import util from 'util'
+
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { DepositRequest, DepositRequestStatus } from '@abx-types/deposit'
-import { updateDepositRequest } from '../../../../../core'
-import { DepositGatekeeper } from '../deposit_gatekeeper'
 import * as FailedHoldingsTransactionChecker from '../failed_transactions_operations/failed_holdings_transaction_checker'
+import { updateDepositRequest } from '../../../../../core'
+import { DepositGatekeeper } from '../../common'
 
 const logger = Logger.getInstance('new_deposit_error_handler', 'handlerDepositError')
 

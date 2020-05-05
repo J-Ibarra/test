@@ -3,10 +3,10 @@ import { CurrencyManager, OnChainCurrencyGateway, EndpointInvocationUtils } from
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { DepositRequest, DepositRequestStatus } from '@abx-types/deposit'
-import { findMostRecentlyUpdatedDepositRequest, updateDepositRequest } from '../../../../../core'
-import { DepositGatekeeper } from '../..'
 import { handlerDepositError } from './pending_holdings_transaction_deposit_error_handler'
 import { decryptValue } from '@abx-utils/encryption'
+import { findMostRecentlyUpdatedDepositRequest, updateDepositRequest } from '../../../../../core'
+import { DepositGatekeeper } from '../../common'
 
 const logger = Logger.getInstance(
   'pending_holdings_transaction_deposit_request_processor', 
@@ -67,8 +67,8 @@ async function transferAmountIntoHoldingsAndUpdateDepositRequest(
 
 /**
  * There is a situation where there can be a kinesis currency deposit request still to be processed but the balance at the address is now 0 due to the `merge_account` operation. So:
- * * we assume we have already merged it with the most recent deposit request for this address so we find this previous deposit
- * * then we return that deposit's transaction hash to mark it as having been completed as part of it.
+ * we assume we have already merged it with the most recent deposit request for this address so we find this previous deposit
+ * then we return that deposit's transaction hash to mark it as having been completed as part of it.
  */
 async function transferDepositAmountToExchangeHoldings(currency: OnChainCurrencyGateway, confirmedRequest: DepositRequest) {
   const balanceAtAddress = await EndpointInvocationUtils.invokeEndpointWithProgressiveRetryAndResultAssert({

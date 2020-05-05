@@ -1,8 +1,8 @@
 import '../../core'
-import { configureDepositHandler } from './service_configurator'
+import { configureKVTAndETHDepositHandler } from './kvt_eth_configurator'
 import { configureKinesisDepositHandler } from './kinesis_service_configurator'
 
 export async function bootstrapKinesisAndEthCoinDepositProcessor() {
-  await configureDepositHandler()
+  await configureKVTAndETHDepositHandler()
   await configureKinesisDepositHandler()
 }

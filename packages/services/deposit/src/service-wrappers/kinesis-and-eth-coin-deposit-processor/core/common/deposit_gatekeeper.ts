@@ -2,8 +2,8 @@ import moment from 'moment'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { DepositRequest, DepositRequestStatus, LockableDepositRequest } from '@abx-types/deposit'
-import { getAllDepositRequests } from '../../../../core'
 import { findCurrencyForCodes } from '@abx-service-clients/reference-data'
+import { getAllDepositRequests } from '../../../../core'
 
 const logger = Logger.getInstance('deposits', 'DepositGatekeeper')
 

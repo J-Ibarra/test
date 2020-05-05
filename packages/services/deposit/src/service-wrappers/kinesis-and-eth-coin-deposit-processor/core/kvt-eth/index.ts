@@ -1,5 +1,4 @@
 export * from './new_deposit_processor/new_deposit_request_processor'
-export * from './deposit_gatekeeper'
 export * from './completion_pending_requests_processor'
 export * from './failed_transactions_operations/helper'
 export * from './failed_transactions_operations/failed_holdings_transaction_checker'

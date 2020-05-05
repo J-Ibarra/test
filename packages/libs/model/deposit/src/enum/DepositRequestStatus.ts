@@ -17,13 +17,9 @@ export enum DepositRequestStatus {
   pendingHoldingsTransactionConfirmation = 'pendingHoldingsTransactionConfirmation',
 
 
-  
+  // The following states are specific to the KAU/KAG deposit flow
   // The deposit request is received
   received = 'received',
   // The deposit request is stored successfully and the transaction is being created
   completedPendingHoldingsTransaction = 'completedPendingHoldingsTransaction',
-  // The transaction is created and we are awating for confirmation
-  // pendingHoldingsTransactionConfirmation = 'pendingHoldingsTransactionConfirmation',
-  // The deposit is fully completed
-  // completed = 'completed'
 }

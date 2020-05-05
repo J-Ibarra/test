@@ -9,9 +9,9 @@ import { Logger } from '@abx-utils/logging'
 import { Email, EmailTemplates } from '@abx-types/notification'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { DepositRequest, DepositRequestStatus } from '@abx-types/deposit'
-import { updateDepositRequest } from '../../../../core'
-import { DepositGatekeeper } from './deposit_gatekeeper'
 import { createEmail } from '@abx-service-clients/notification'
+import { updateDepositRequest } from '../../../../core'
+import { DepositGatekeeper } from '../common'
 
 const suspendDepositLogger = Logger.getInstance('suspended_deposit_request_processor', 'processSuspendedDepositRequestForCurrency')
 const checkDepositLogger = Logger.getInstance('suspended_deposit_request_processor', 'processCheckingSuspendedDepositRequest')

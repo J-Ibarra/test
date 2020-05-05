@@ -1,11 +1,8 @@
-import util from 'util'
-
 import { isAccountSuspended } from '@abx-service-clients/account'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 import { CurrencyCode } from '@abx-types/reference-data'
-import { DepositRequest } from '@abx-types/deposit'
-import { DepositGatekeeper } from '../deposit_gatekeeper'
+import { DepositGatekeeper, checkTransactionConfirmation } from '../..'
 import { handlerDepositError } from './new_deposit_error_handler'
 import { HoldingsTransactionDispatcher } from '../../../../../core'
 
@@ -24,7 +21,7 @@ export async function processNewestDepositRequestForCurrency(
     return
   }
 
-  const depositTransactionConfirmed = await checkTransactionConfirmation(currency, depositRequest, onChainCurrencyManager)
+  const depositTransactionConfirmed = await checkTransactionConfirmation(currency, depositRequest, onChainCurrencyManager, logger)
   if (!depositTransactionConfirmed) {
     logger.warn(`Attempted to process request ${depositRequest.id} where the transaction is not yet confirmed`)
 
@@ -46,21 +43,6 @@ export async function processNewestDepositRequestForCurrency(
     pendingCompletionGatekeeper.addNewDepositsForCurrency(currency, updatedDepositRequests)
   } catch (e) {
     await handlerDepositError(e, currency, depositRequest, pendingHoldingsTransferGatekeeper)
-  }
-}
-
-async function checkTransactionConfirmation(currency: CurrencyCode, depositRequest: DepositRequest, onChainCurrencyManager: CurrencyManager) {
-  const onChainGateway = onChainCurrencyManager.getCurrencyFromTicker(currency)
-
-  try {
-    const depositTransactionConfirmed = await onChainGateway.checkConfirmationOfTransaction(depositRequest.depositTxHash)
-
-    return depositTransactionConfirmed
-  } catch (e) {
-    logger.error(`Error encountered while checking confirmation of deposit transaction ${depositRequest.depositTxHash}`)
-    logger.error(JSON.stringify(util.inspect(e)))
-
-    return false
   }
 }
 

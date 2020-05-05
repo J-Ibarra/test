@@ -3,10 +3,10 @@ import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
 import {
   processCheckingSuspendedDepositRequest,
   processSuspendedDepositRequestForCurrency,
-  DepositGatekeeper,
   processPendingHoldingsTransactionDepositRequestsForCurrency,
   processReceivedDepositRequestForCurrency,
   processTransactionConfirmedDepositRequestsForCurrency,
+  DepositGatekeeper,
 } from './core'
 import { DepositRequestStatus, DepositRequest } from '@abx-types/deposit'
 import { loadAllCompletedPTHDepositRequestsAboveMinimumAmount, NEW_KINESIS_DEPOSIT_REQUESTS_QUEUE_URL } from '../../core'

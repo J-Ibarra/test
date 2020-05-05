@@ -2,4 +2,4 @@
 
 ## Work Flow
 
-1. Follow all the logic from the following function: `configureDepositHandler`
+1. Follow all the logic from the following functions: `configureKinesisDepositHandler` and `configureKVTAndETHDepositHandler`

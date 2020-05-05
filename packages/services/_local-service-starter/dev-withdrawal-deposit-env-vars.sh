@@ -6,7 +6,7 @@ PROXY_URL=`curl --silent --show-error http://localhost:4040/api/tunnels | sed -n
 # All the variables required for running deposits/withdrawals locally are listed here
 # These variables will allow connecting to and consuming transaction notification messages from SQS
 # int in the URL path is to be replaced by the environment
-export CRYPTO_APIS_TOKEN='801c9ee2538cb40da9dbc03790894ea3431fb8ac'
+export CRYPTO_APIS_TOKEN='xxx'
 export KINESIS_BITCOIN_HOLDINGS_WIF='cUh5AjG5LMpQjkdjs3y22h7duzBxTukJpHvkMLydBhFDiKnj7zhn'
 export KINESIS_BITCOIN_HOLDINGS_ADDRESS='n38x83CNLcKqNWAgKSzfdvfaEMAT4CiLr8'
 export KINESIS_BITCOIN_HOLDINGS_PRIVATE_KEY='d423a7abfa4752c3e99ba1e755356511f82887f73b40e0bedafef140993100e4'

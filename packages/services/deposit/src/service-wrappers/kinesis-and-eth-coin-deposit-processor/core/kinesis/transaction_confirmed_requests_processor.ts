@@ -3,9 +3,9 @@ import util from 'util'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { DepositRequest, DepositRequestStatus } from '@abx-types/deposit'
-import { updateDepositRequest } from '../../../../core'
-import { DepositGatekeeper } from '../framework/deposit_gatekeeper'
 import { CurrencyManager } from '@abx-utils/blockchain-currency-gateway'
+import { updateDepositRequest } from '../../../../core'
+import { DepositGatekeeper, checkTransactionConfirmation } from '../common'
 
 const logger = Logger.getInstance(
   'transaction_confirmed_deposit_requests_processor', 
@@ -23,7 +23,7 @@ export async function processTransactionConfirmedDepositRequestsForCurrency(
     return
   }
 
-  const depositTransactionConfirmed = await checkTransactionConfirmation(currency, depositRequest, onChainCurrencyManager)
+  const depositTransactionConfirmed = await checkTransactionConfirmation(currency, depositRequest, onChainCurrencyManager, logger)
   if (!depositTransactionConfirmed) {
     logger.warn(`Attempted to process request ${depositRequest.id} where the transaction is not yet confirmed`)
 
@@ -39,21 +39,6 @@ export async function processTransactionConfirmedDepositRequestsForCurrency(
   } catch (e) {
     logger.error(`Error encountered while process new deposit for ${currency}: ${depositRequest.id}`)
     logger.error(JSON.stringify(util.inspect(e)))
-  }
-}
-
-async function checkTransactionConfirmation(currency: CurrencyCode, depositRequest: DepositRequest, onChainCurrencyManager: CurrencyManager) {
-  const onChainGateway = onChainCurrencyManager.getCurrencyFromTicker(currency)
-
-  try {
-    const depositTransactionConfirmed = await onChainGateway.checkConfirmationOfTransaction(depositRequest.depositTxHash)
-
-    return depositTransactionConfirmed
-  } catch (e) {
-    logger.error(`Error encountered while checking confirmation of deposit transaction ${depositRequest.depositTxHash}`)
-    logger.error(JSON.stringify(util.inspect(e)))
-
-    return false
   }
 }
 
