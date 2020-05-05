@@ -6,7 +6,7 @@ import { CurrencyCode } from '@abx-types/reference-data'
 import * as depositRequestOperations from '../../../../../core'
 import { processReceivedDepositRequestForCurrency } from '../../kinesis'
 import { currencyToDepositRequests, depositRequest, balanceAdjustment } from '../data.helper'
-import { DepositGatekeeper } from '../../framework'
+import { DepositGatekeeper } from '../../common'
 
 describe('received_requests_processor', () => {
   let receivedGateKeeper: DepositGatekeeper

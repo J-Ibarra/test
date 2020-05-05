@@ -6,7 +6,7 @@ import { DepositRequestStatus } from '@abx-types/deposit'
 import * as depositRequestOperations from '../../../../../core'
 import { processPendingHoldingsTransactionDepositRequestsForCurrency } from '../../kinesis/pending_holdings_transaction_processor/pending_holdings_transaction_deposit_processor'
 import { currencyToDepositRequests, depositRequest } from '../data.helper'
-import { DepositGatekeeper } from '../../framework'
+import { DepositGatekeeper } from '../../common'
 
 const holdingsTxHash = 'holdingsTxHash'
 const transactionFee = 0

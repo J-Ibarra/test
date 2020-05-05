@@ -2,7 +2,7 @@ import { bootstrapRestApi } from '..'
 import request from 'supertest'
 import sinon from 'sinon'
 import { expect } from 'chai'
-import { createAccountAndSession } from '../../../../../../../libs/util/account/src'
+import { createAccountAndSession } from '@abx-utils/account'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import { DEPOSIT_API_PORT } from '@abx-service-clients/deposit'
 import { Server } from 'http'
@@ -10,7 +10,7 @@ import { CurrencyCode } from '@abx-types/reference-data'
 
 describe('DepositController', () => {
   let app: Server
-  const minimumDepositAmountDictionary : Record<CurrencyCode, number> = {
+  const minimumDepositAmountDictionary: Record<CurrencyCode, number> = {
     KAU: 1,
     KAG: 2,
     KVT: 3,
@@ -19,12 +19,11 @@ describe('DepositController', () => {
     USDT: 6,
     USD: 7,
     EUR: 8,
-    GBP: 9
-  } 
+    GBP: 9,
+  }
 
   beforeEach(async () => {
-    sinon.stub(referenceDataOperations, 'getDepositMimimumAmounts')
-      .resolves(minimumDepositAmountDictionary)
+    sinon.stub(referenceDataOperations, 'getDepositMimimumAmounts').resolves(minimumDepositAmountDictionary)
 
     app = bootstrapRestApi().listen(DEPOSIT_API_PORT)
   })

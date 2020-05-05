@@ -3,9 +3,9 @@ import * as sinon from 'sinon'
 
 import { CurrencyCode } from '@abx-types/reference-data'
 import * as completionOperations from '../../../../core'
-import { processCompletionPendingDepositRequestForCurrency } from '../framework/completion_pending_requests_processor'
+import { processCompletionPendingDepositRequestForCurrency } from '../kvt-eth/completion_pending_requests_processor'
 import { currencyToDepositRequests, depositRequest } from './data.helper'
-import { DepositGatekeeper } from '../framework'
+import { DepositGatekeeper } from '../common'
 import { DepositRequestStatus } from '@abx-types/deposit'
 import { DepositCompleter } from '../../../../core'
 
@@ -53,10 +53,10 @@ describe('completion_pending_request_processor', () => {
   it('should call complete pending deposit if holdings transaction confirmed and remove request from pendingCompletionGatekeeper', async () => {
     const { currencyGateway, checkConfirmationOfTransactionSpy } = stubConfirmationCheck(pendingCompletionGatekeeper)
 
-    const findDepositRequestsByHoldingsTransactionHashStub = sinon.stub(completionOperations, 'findDepositRequestsByHoldingsTransactionHash')
+    const findDepositRequestsByHoldingsTransactionHashStub = sinon
+      .stub(completionOperations, 'findDepositRequestsByHoldingsTransactionHash')
       .resolves([completionPendingRequest])
-    const depositCompleterStub = sinon.stub(DepositCompleter.prototype, 'completeDepositRequests')
-      .resolves()
+    const depositCompleterStub = sinon.stub(DepositCompleter.prototype, 'completeDepositRequests').resolves()
 
     await processCompletionPendingDepositRequestForCurrency(pendingCompletionGatekeeper, CurrencyCode.kau, currencyGateway as any)
 

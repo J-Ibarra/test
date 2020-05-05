@@ -5,7 +5,7 @@ import { DepositRequestStatus } from '@abx-types/deposit'
 import * as depositRequestOperations from '../../../../../core'
 import { processTransactionConfirmedDepositRequestsForCurrency } from '../../'
 import { currencyToDepositRequests, depositRequest } from '../data.helper'
-import { DepositGatekeeper } from '../../framework'
+import { DepositGatekeeper } from '../../common'
 
 describe('transaction_confirmed_requests_processor', () => {
   let pendingHoldingsTransactionConfirmationGatekeeper: DepositGatekeeper
