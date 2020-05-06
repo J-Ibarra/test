@@ -79,7 +79,7 @@ export async function createMissingDepositAddressesForAccount(
     [] as Currency[],
   )
 
-  logger.debug(`Crypto currencies for account ${accountId}: ${filteredCryptoCurrencies.join(', ')}`)
+  logger.debug(`Crypto currencies for account ${accountId}: ${filteredCryptoCurrencies.map(({ code }) => code).join(', ')}`)
 
   const manager = new CurrencyManager()
 
@@ -87,17 +87,19 @@ export async function createMissingDepositAddressesForAccount(
 
   const cryptoCurrenciesToGenerateAddressFor = filteredCryptoCurrencies.filter(({ id }) => (currencyIdToDepositAddress[id] || []).length === 0)
 
-  logger.debug(`Currencies to generate: ${cryptoCurrenciesToGenerateAddressFor.map((address) => JSON.stringify(address)).join(', ')}`)
+  logger.debug(`Currencies to generate: ${cryptoCurrenciesToGenerateAddressFor.map(({ code }) => code).join(', ')}`)
 
   return createNewDepositAddresses(manager, accountId, cryptoCurrenciesToGenerateAddressFor)
 }
 
 async function createNewDepositAddresses(
-  currencyManager: CurrencyManager, 
+  currencyManager: CurrencyManager,
   accountId: string,
-  cryptoCurrenciesToGenerateAddressFor: Currency[]
-) : Promise<DepositAddress[]> {
+  cryptoCurrenciesToGenerateAddressFor: Currency[],
+): Promise<DepositAddress[]> {
   const kauCurrencyId = cryptoCurrenciesToGenerateAddressFor.find((c) => c.code === CurrencyCode.kau)!.id
+  logger.debug(`KAU currency id: ${kauCurrencyId}`)
+
   const createdDepositAddressesWithoutKau = await Promise.all(
     cryptoCurrenciesToGenerateAddressFor
       .filter(({ id }) => id !== kauCurrencyId)
@@ -106,7 +108,11 @@ async function createNewDepositAddresses(
       }),
   )
   const kagCurrencyId = cryptoCurrenciesToGenerateAddressFor.find((c) => c.code === CurrencyCode.kag)!.id
+  logger.debug(`KAG currency id: ${kauCurrencyId}`)
+
   const kagDepositAddress = createdDepositAddressesWithoutKau.find((address) => address.currencyId === kagCurrencyId)
+  logger.debug(`kagDepositAddress: ${JSON.stringify(kagDepositAddress)}`)
+
   if (kagDepositAddress) {
     const kauDepositAddress = await reuseDepositAddress(kagDepositAddress, CurrencyCode.kau, cryptoCurrenciesToGenerateAddressFor)
     return createdDepositAddressesWithoutKau.concat(kauDepositAddress)
@@ -148,6 +154,7 @@ export async function createNewDepositAddress(manager: CurrencyManager, accountI
     })
   }
 
+  logger.debug(`Generating address for ${currencyTicker} and account ${accountId}`)
   const address = await generateNewDepositAddress(accountId, manager.getCurrencyFromTicker(currencyTicker))
   logger.debug(`Generated address for account ${accountId} and currency ${currencyTicker}`)
   logger.debug(`Address: ${JSON.stringify(address)}`)
