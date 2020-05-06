@@ -107,7 +107,8 @@ export class Kinesis implements OnChainCurrencyGateway {
   /**  
     Recursively traverses the latest payment operations until the paging token 
     of the operations is larger than the paging token which we have previously recorder
-  */  
+  */
+
   public async getLatestTransactions(
     lastRecorderPagingToken?: string,
     pagingToken?: string,
@@ -121,10 +122,7 @@ export class Kinesis implements OnChainCurrencyGateway {
       .call()
     const newTransactions: PaymentOperationRecord[] = []
 
-    if (transactionAcc.length > 0 
-      && payments.records.length > 0
-      && Number(lastRecorderPagingToken) > Number(payments.records[0].paging_token)
-    ) {
+    if (transactionAcc.length > 0 && payments.records.length > 0 && Number(lastRecorderPagingToken) > Number(payments.records[0].paging_token)) {
       return newTransactions.map(this.apiToDepositTransaction)
     }
 
@@ -133,6 +131,7 @@ export class Kinesis implements OnChainCurrencyGateway {
         return transactionAcc.concat(newTransactions.map(this.apiToDepositTransaction))
       }
 
+      logger.info(`New payment operation found ${JSON.stringify(payment)}`)
       newTransactions.push(payment)
     }
 

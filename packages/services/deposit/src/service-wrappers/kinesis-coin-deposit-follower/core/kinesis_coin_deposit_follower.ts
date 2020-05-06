@@ -2,10 +2,10 @@ import * as Sequelize from 'sequelize'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { Logger } from '@abx-utils/logging'
 import { Kinesis, DepositTransaction } from '@abx-utils/blockchain-currency-gateway'
-import { 
-  getBlockchainFollowerDetailsForCurrency, 
-  updateBlockchainFollowerDetailsForCurrency, 
-  pushRequestForProcessing, 
+import {
+  getBlockchainFollowerDetailsForCurrency,
+  updateBlockchainFollowerDetailsForCurrency,
+  pushRequestForProcessing,
   NEW_KINESIS_DEPOSIT_REQUESTS_QUEUE_URL,
 } from '../../../core'
 import { BlockchainFollowerDetails, DepositRequestStatus } from '@abx-types/deposit'
@@ -26,7 +26,11 @@ export async function triggerKinesisCoinDepositFollower(onChainCurrencyGateway: 
     const { id: currencyId } = await findCurrencyForCode(currencyCode)
 
     const { lastEntityProcessedIdentifier } = (await getBlockchainFollowerDetailsForCurrency(currencyId)) as BlockchainFollowerDetails
+    logger.debug(`Last paging token processed ${lastEntityProcessedIdentifier}`)
+
     const depositCandidateOperations = await onChainCurrencyGateway.getLatestTransactions(lastEntityProcessedIdentifier)
+
+    logger.debug(`Found ${depositCandidateOperations.length} deposit candidates`)
 
     if (depositCandidateOperations.length > 0) {
       logger.debug(`Found ${depositCandidateOperations.length} ${currencyCode} deposit candidate transactions`)
@@ -58,9 +62,11 @@ export async function handleKinesisPaymentOperations(
 
   if (depositTransactions.length > 0) {
     logger.info(`${depositTransactions.length} of the ${depositCandidateOperations.length} ${currencyBoundary.currencyCode} candidates are valid`)
-    const depositRequests = await Promise.all(depositTransactions.map((depositTransaction) =>
-      mapDepositTransactionToDepositRequest(depositTransaction, publicKeyToDepositAddress, fiatValueOfOneCryptoCurrency, currencyBoundary),
-    ))
+    const depositRequests = await Promise.all(
+      depositTransactions.map((depositTransaction) =>
+        mapDepositTransactionToDepositRequest(depositTransaction, publicKeyToDepositAddress, fiatValueOfOneCryptoCurrency, currencyBoundary),
+      ),
+    )
 
     const storedDepositRequests = await storeDepositRequests(depositRequests, t)
     logger.debug(`${depositRequests.length} new ${currencyBoundary.currencyCode} deposit requests stored`)
@@ -81,9 +87,9 @@ function mapDepositTransactionToDepositRequest(
   const { depositAddress } = publicKeyToDepositAddress.get(depositTransaction.to!)!
 
   return convertTransactionToDepositRequest(
-    depositAddress, 
-    depositTransaction, 
-    fiatValueOfOneCryptoCurrency, 
+    depositAddress,
+    depositTransaction,
+    fiatValueOfOneCryptoCurrency,
     currencyBoundary,
     DepositRequestStatus.received,
   )

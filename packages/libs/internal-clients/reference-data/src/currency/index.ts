@@ -27,9 +27,15 @@ export async function findCurrencyForCodes(currencyCodes: CurrencyCode[], state?
 }
 
 export async function findCurrencyForCode(currencyCode: CurrencyCode, state?: SymbolPairStateFilter): Promise<Currency> {
-  return currencyCodeToCurrency[currencyCode]
-    ? currencyCodeToCurrency[currencyCode]
-    : internalApiRequestDispatcher.fireRequestToInternalApi<Currency>(CurrencyEndpoints.findCurrencyForCode, { currencyCode, state })
+  let currency = currencyCodeToCurrency[currencyCode]
+
+  if (!currency) {
+    currency = await internalApiRequestDispatcher.fireRequestToInternalApi<Currency>(CurrencyEndpoints.findCurrencyForCode, { currencyCode, state })
+
+    currencyCodeToCurrency[currencyCode] = currency
+  }
+
+  return currency
 }
 
 export async function findCurrencyForId(currencyId: number, state?: SymbolPairStateFilter): Promise<Currency> {
