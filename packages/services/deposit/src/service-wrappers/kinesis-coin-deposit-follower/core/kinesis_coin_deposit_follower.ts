@@ -26,7 +26,7 @@ export async function triggerKinesisCoinDepositFollower(onChainCurrencyGateway: 
     const { id: currencyId } = await findCurrencyForCode(currencyCode)
 
     const { lastEntityProcessedIdentifier } = (await getBlockchainFollowerDetailsForCurrency(currencyId)) as BlockchainFollowerDetails
-    logger.debug(`Last paging token processed ${lastEntityProcessedIdentifier}`)
+    logger.debug(`Last paging token for ${currencyCode} processed ${lastEntityProcessedIdentifier}`)
 
     const depositCandidateOperations = await onChainCurrencyGateway.getLatestTransactions(lastEntityProcessedIdentifier)
 
@@ -40,6 +40,7 @@ export async function triggerKinesisCoinDepositFollower(onChainCurrencyGateway: 
       await wrapInTransaction(sequelize, null, async (t) => {
         await handleKinesisPaymentOperations(depositCandidateOperations, publicKeyToDepositAddress, fiatValueOfOneCryptoCurrency, currencyBoundary, t)
 
+        logger.debug(`Updating ${currencyCode} follower details to identifier ${depositCandidateOperations[0].pagingToken!}`)
         await updateBlockchainFollowerDetailsForCurrency(currencyId, depositCandidateOperations[0].pagingToken!)
       })
     }

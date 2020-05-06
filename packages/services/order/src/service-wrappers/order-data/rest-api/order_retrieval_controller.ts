@@ -2,8 +2,11 @@ import { Controller, Get, Request, Route, Security, Tags } from 'tsoa'
 import { OverloadedRequest } from '@abx-types/account'
 import { Logger } from '@abx-utils/logging'
 import * as orderRetrieval from '../../../core'
-import { CoreOrderDetails, OrderWithTradeTransactions } from '@abx-types/order'
+import { CoreOrderDetails, OrderWithTradeTransactions, TradeTransaction } from '@abx-types/order'
 import { CurrencyCode } from '@abx-types/reference-data'
+import { findTradeTransactions } from '../../../core'
+
+export type OrderExecutionSummary = Pick<TradeTransaction, 'id' | 'amount' | 'matchPrice'>
 
 @Tags('order')
 @Route('orders')
@@ -17,6 +20,30 @@ export class OrderRetrievalController extends Controller {
     this.logger.debug(`Retrieving orders for ${request.account!.id}`)
 
     return orderRetrieval.findAllOrdersForAccount(request.account!.id, request.where)
+  }
+
+  @Security('cookieAuth')
+  @Security('tokenAuth')
+  @Get('{orderId}/executions')
+  public async getOrderExecutions(orderId: number, @Request() request: OverloadedRequest): Promise<OrderExecutionSummary[] | void> {
+    const requestingUserId = request.account!.id
+
+    const { rows: tradeTransactions } = await findTradeTransactions({
+      where: {
+        orderId,
+      },
+    })
+
+    if (tradeTransactions.length > 0 && tradeTransactions[0].accountId !== requestingUserId) {
+      this.setStatus(403)
+      return
+    }
+
+    return tradeTransactions.map(({ id, matchPrice, amount }) => ({
+      id: id!,
+      amount,
+      matchPrice,
+    }))
   }
 
   @Security('cookieAuth')
