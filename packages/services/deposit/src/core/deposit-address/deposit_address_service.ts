@@ -54,6 +54,9 @@ export async function findOrCreateDepositAddressesForAccount(accountId: string) 
   }
 
   if (existingDepositAddresses.length < cryptoCurrencies.length) {
+    logger.debug(
+      `${existingDepositAddresses.length} Existing deposit addresses found ${existingDepositAddresses.map(({ currencyId }) => currencyId).join(',')}`,
+    )
     const missingDepositAddresses = await createMissingDepositAddressesForAccount(accountId, existingDepositAddresses)
 
     logger.debug(`Created missing deposit addresses for currenciy ids: ${missingDepositAddresses.map((d) => d.currencyId)}`)
@@ -87,7 +90,11 @@ export async function createMissingDepositAddressesForAccount(
 
   const cryptoCurrenciesToGenerateAddressFor = filteredCryptoCurrencies.filter(({ id }) => (currencyIdToDepositAddress[id] || []).length === 0)
 
-  logger.debug(`Currencies to generate: ${cryptoCurrenciesToGenerateAddressFor.map(({ code }) => code).join(', ')}`)
+  logger.debug(
+    `Currencies to generate ${cryptoCurrenciesToGenerateAddressFor.length} : ${cryptoCurrenciesToGenerateAddressFor
+      .map(({ code }) => code)
+      .join(', ')}`,
+  )
 
   return createNewDepositAddresses(manager, accountId, cryptoCurrenciesToGenerateAddressFor)
 }
