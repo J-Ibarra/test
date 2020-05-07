@@ -33,9 +33,16 @@ export interface ExchangeHoldingsTransfer {
   toAddress: string
   amount: number
   memo?: string
+  /**
+   * The maximum amount of fee that it is acceptable to pay for the transaction.
+   * This is used mostly for withdrawals where we want to make sure kinesis remains profitable.
+   */
   feeLimit?: number
-  /** The transaction confirmations for specify when creating the transaction confirmations webhook. */
-  transactionConfirmations?: number
+  /**
+   * The increment that Kinesis want to add when calculation the fee to be paid (based on current average transaction fees),
+   *  in order to stay ahead of the competition (priority-wise).
+   */
+  transactionFeeIncrement?: number
 }
 
 export interface OnChainCurrencyGateway {
@@ -59,7 +66,21 @@ export interface OnChainCurrencyGateway {
   getHoldingBalance(): Promise<number>
   getHoldingPublicAddress(): Promise<string>
   checkConfirmationOfTransaction(txHash: string): Promise<boolean>
-  transferToExchangeHoldingsFrom(fromAddress: CryptoAddress | Pick<CryptoAddress, 'privateKey'>, amount: number): Promise<TransactionResponse>
+
+  /**
+   * Transfers a given amount from an address to the kinesis holdings account for the coin.
+   *
+   * @param fromAddress the address to transfer to the holdings account from
+   * @param amount the amount to transfer
+   * @param feeLimit the maximum fee that Kinesis is willing to pay
+   * @param transactionFeeIncrement the increment that Kinesis want to add when calculation the fee to be paid in order to stay ahead of the competition (priority-wise).
+   */
+  transferToExchangeHoldingsFrom(
+    fromAddress: CryptoAddress | Pick<CryptoAddress, 'privateKey'>,
+    amount: number,
+    feeLimit?: number,
+    transactionFeeIncrement?: number,
+  ): Promise<TransactionResponse>
   transferFromExchangeHoldingsTo(params: ExchangeHoldingsTransfer): Promise<TransactionResponse>
   kinesisManagesConfirmations(): boolean
   transferTo(parameters: { privateKey: string; amount: number; toAddress: string; signerKey?: string }): Promise<TransactionResponse>

@@ -38,7 +38,9 @@ export class MultiTargetTransactionFeeEstimator {
     senderAddress,
     receivers,
     memo,
-  }: Pick<MultiTargetCreateTransactionPayload, 'senderAddress' | 'receivers' | 'memo'>): Promise<number> {
+    feeLimit = MultiTargetTransactionFeeEstimator.MAXIMUM_TX_FEE,
+    transactionFeeIncrement = MultiTargetTransactionFeeEstimator.FEE_INCREMENT_CONSTANT,
+  }: MultiTargetCreateTransactionPayload): Promise<number> {
     let { averageFeePerByte, averageFeePerTransaction } = await this.getAverageFee()
 
     const bitcoinFeeRequest = this.createBitcoinFeeRequest(senderAddress.address!, receivers, averageFeePerTransaction!)
@@ -53,12 +55,12 @@ export class MultiTargetTransactionFeeEstimator {
     )
 
     const estimatedMinimumTransactionFee = new Decimal(tx_size_bytes)
-      .times(new Decimal(averageFeePerByte!).plus(MultiTargetTransactionFeeEstimator.FEE_INCREMENT_CONSTANT))
+      .times(new Decimal(averageFeePerByte!).plus(transactionFeeIncrement))
       .toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
       .toNumber()
 
     const totalAcceptedFeeLimitForAllTargets = new Decimal(receivers.length)
-      .times(MultiTargetTransactionFeeEstimator.MAXIMUM_TX_FEE)
+      .times(feeLimit)
       .toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
       .toNumber()
 

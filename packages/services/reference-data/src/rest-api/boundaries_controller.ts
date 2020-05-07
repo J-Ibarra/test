@@ -9,7 +9,7 @@ export class BoundariesController extends Controller {
   @Get()
   public async findAllBoundaries(@Request() request: OverloadedRequest) {
     const allowedCurrencies = await findCurrenciesByAccountId(request.account!.id)
-    const currencyCodes = allowedCurrencies.map(c => c.code)
+    const currencyCodes = allowedCurrencies.map((c) => c.code)
     return findAllBoundaries(currencyCodes)
   }
 }

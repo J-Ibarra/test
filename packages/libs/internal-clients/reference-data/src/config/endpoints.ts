@@ -5,6 +5,7 @@ export enum ConfigEndpoints {
   getExchangeDepositPollingFrequency = 'reference-data/config/getExchangeDepositPollingFrequency',
   getVatRate = 'reference-data/config/getVatRate',
   getWithdrawalConfigForCurrency = 'reference-data/config/getWithdrawalConfigForCurrency',
+  updateWithdrawalConfigForCurrency = 'reference-data/config/updateWithdrawalConfigForCurrency',
   getWithdrawalConfig = 'reference-data/config/getWithdrawalConfig',
   getWithdrawalLimit = 'reference-data/config/getWithdrawalLimit',
   getOperationsEmail = 'reference-data/config/getOperationsEmail',

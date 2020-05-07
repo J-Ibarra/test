@@ -10,12 +10,13 @@ import { CurrencyCode, Environment } from '@abx-types/reference-data'
 import { getDepositTransactionFeeCurrencyId } from './utils'
 import { DepositAmountCalculator } from './DepositAmountCalculator'
 import Decimal from '@abx-service-clients/reference-data/node_modules/decimal.js'
+import { getWithdrawalConfigForCurrency } from '@abx-service-clients/reference-data'
 
 export class HoldingsTransactionDispatcher {
   private readonly logger = Logger.getInstance('public-coin-deposit-processor', 'HoldingsTransactionDispatcher')
   private readonly depositAmountCalculator = new DepositAmountCalculator()
 
-  public async dispatchHoldingsTransactionForDepositRequests(depositRequests: DepositRequest[], currency: CurrencyCode) : Promise<DepositRequest[]> {
+  public async dispatchHoldingsTransactionForDepositRequests(depositRequests: DepositRequest[], currency: CurrencyCode): Promise<DepositRequest[]> {
     const {
       totalAmount: totalAmountToTransfer,
       depositsRequestsWithInsufficientStatus,
@@ -33,9 +34,7 @@ export class HoldingsTransactionDispatcher {
       currencyManager.getCurrencyFromTicker(currency),
     )
 
-    return findDepositRequestsForIds(
-      depositRequests.concat(depositsRequestsWithInsufficientStatus).map(({ id }) => id!),
-    )
+    return findDepositRequestsForIds(depositRequests.concat(depositsRequestsWithInsufficientStatus).map(({ id }) => id!))
   }
 
   /**
@@ -108,6 +107,8 @@ export class HoldingsTransactionDispatcher {
       decryptValue(depositAddress.encryptedWif!),
     ])
 
+    const { transactionFeeCap, transactionFeeIncrement } = await getWithdrawalConfigForCurrency({ currencyCode: onChainCurrencyManager.ticker! })
+
     return onChainCurrencyManager.transferToExchangeHoldingsFrom(
       {
         privateKey: decryptedPrivateKey!,
@@ -116,6 +117,8 @@ export class HoldingsTransactionDispatcher {
         publicKey: depositAddress.publicKey,
       },
       amount,
+      transactionFeeCap,
+      transactionFeeIncrement,
     )
   }
 

@@ -16,10 +16,19 @@ export interface SingleTargetCreateTransactionPayload extends CreateTransactionP
    * This is used mostly for withdrawals where we want to make sure kinesis remains profitable.
    */
   feeLimit?: number
+  /** The increment that Kinesis want to add when calculation the fee to be paid, in order to stay ahead of the competition (priority-wise). */
+  transactionFeeIncrement?: number
 }
 
 export interface MultiTargetCreateTransactionPayload extends CreateTransactionPayload {
   receivers: MultiTargetTransactionReceiver[]
+  /**
+   * The maximum amount of fee that it is acceptable to pay for the transaction.
+   * This is used mostly for withdrawals where we want to make sure kinesis remains profitable.
+   */
+  feeLimit?: number
+  /** The increment that Kinesis want to add when calculation the fee to be paid, in order to stay ahead of the competition (priority-wise). */
+  transactionFeeIncrement?: number
 }
 
 export interface MultiTargetTransactionReceiver {

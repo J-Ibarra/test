@@ -18,6 +18,8 @@ const models: TsoaRoute.Models = {
       "memo": { "dataType": "string" },
     },
   },
+  "PartialCurrencyWithdrawalConfig": {
+  },
   "ContactCreateRequest": {
     "properties": {
       "currency": { "ref": "CurrencyCode", "required": true },
@@ -87,6 +89,27 @@ export function RegisterRoutes(app: express.Express) {
 
 
       const promise = controller.getWithdrawalConfigForCurrency.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.post('/api/withdrawals/configs/:currency',
+    authenticateMiddleware([{ "cookieAuth": [] }, { "tokenAuth": [] }]),
+    function(request: any, response: any, next: any) {
+      const args = {
+        currency: { "in": "path", "name": "currency", "required": true, "dataType": "enum", "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USDT", "USD", "EUR", "GBP"] },
+        updatedConfig: { "in": "body", "name": "updatedConfig", "required": true, "ref": "PartialCurrencyWithdrawalConfig" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new WithdrawalsController();
+
+
+      const promise = controller.updateWithdrawalConfig.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
   app.get('/api/crypto/validate',

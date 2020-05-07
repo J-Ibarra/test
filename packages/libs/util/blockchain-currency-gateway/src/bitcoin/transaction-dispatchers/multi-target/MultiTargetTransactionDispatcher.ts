@@ -34,6 +34,8 @@ export class MultiTargetTransactionDispatcher implements BitcoinTransactionDispa
     receivers,
     memo,
     subtractFeeFromAmountSent = true,
+    feeLimit,
+    transactionFeeIncrement,
   }: MultiTargetCreateTransactionPayload): Promise<MultiTargetTransactionCreationResult> {
     let estimatedTransactionFee = 0
     const totalAmountToSend = new Decimal(receivers.reduce((acc, { amount }) => acc + amount, 0))
@@ -45,6 +47,8 @@ export class MultiTargetTransactionDispatcher implements BitcoinTransactionDispa
         senderAddress,
         receivers,
         memo,
+        feeLimit,
+        transactionFeeIncrement,
       })
       this.LOGGER.info(
         `Estimated fee of ${estimatedTransactionFee} for transaction of ${totalAmountToSend} from ${senderAddress.address} to ${receivers

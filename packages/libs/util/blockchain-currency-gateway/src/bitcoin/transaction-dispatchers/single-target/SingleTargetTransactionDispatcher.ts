@@ -32,6 +32,7 @@ export class SingleTargetTransactionDispatcher implements BitcoinTransactionDisp
     memo,
     feeLimit,
     subtractFeeFromAmountSent = true,
+    transactionFeeIncrement,
   }: SingleTargetCreateTransactionPayload): Promise<TransactionResponse> {
     let estimatedTransactionFee
     try {
@@ -41,6 +42,7 @@ export class SingleTargetTransactionDispatcher implements BitcoinTransactionDisp
         amount,
         memo,
         feeLimit,
+        transactionFeeIncrement,
       })
       this.LOGGER.info(`Estimated fee of ${estimatedTransactionFee} for transaction of ${amount} from ${senderAddress.address} to ${receiverAddress}`)
     } catch (e) {
