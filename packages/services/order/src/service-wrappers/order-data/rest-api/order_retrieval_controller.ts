@@ -5,6 +5,7 @@ import * as orderRetrieval from '../../../core'
 import { CoreOrderDetails, OrderWithTradeTransactions, TradeTransaction } from '@abx-types/order'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { findTradeTransactions } from '../../../core'
+import { DBOrder } from '@abx-utils/db-connection-utils'
 
 export type OrderExecutionSummary = Pick<TradeTransaction, 'id' | 'amount' | 'matchPrice'>
 
@@ -32,6 +33,7 @@ export class OrderRetrievalController extends Controller {
       where: {
         orderId,
       },
+      order: [['createdAt', DBOrder.ASC]],
     })
 
     if (tradeTransactions.length > 0 && tradeTransactions[0].accountId !== requestingUserId) {
