@@ -44,10 +44,11 @@ export class OrderRetrievalController extends Controller {
       return
     }
 
-    return tradeTransactions.map(({ id, matchPrice, amount }) => ({
+    return tradeTransactions.map(({ id, matchPrice, amount, createdAt }) => ({
       id: id!,
       amount,
       matchPrice,
+      createdAt,
     }))
   }
 
