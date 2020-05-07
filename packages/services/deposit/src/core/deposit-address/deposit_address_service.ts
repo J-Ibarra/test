@@ -9,6 +9,7 @@ import { groupBy } from 'lodash'
 import { Account } from '@abx-types/account'
 import { findDepositAddressesForAccount, findDepositAddress } from './data-access/deposit_address_query_handler'
 import { storeDepositAddress, updateDepositAddress } from './data-access/deposit_address_update_handler'
+import { wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 
 const logger = Logger.getInstance('lib', 'deposit_address')
 let cryptoCurrencies: Currency[] = []
@@ -174,22 +175,27 @@ export async function createNewDepositAddress(manager: CurrencyManager, accountI
 
 export const findDepositAddressAndListenForEvents = async ({ id }: Account, currencyCode: CurrencyCode): Promise<DepositAddress> => {
   const { id: currencyId } = await findCurrencyForCode(currencyCode, SymbolPairStateFilter.all)
-  const depositAddress = await findDepositAddress({ accountId: id, currencyId })
 
-  if (!depositAddress) {
-    throw new ValidationError(`Deposit address does not exist for currency id: ${currencyId} and account id: ${id}`)
-  }
+  return wrapInTransaction(sequelize, null, async (transaction) => {
+    const depositAddress = await findDepositAddress({ query: { accountId: id, currencyId }, transaction, usePessimisticLock: true })
 
-  if (depositAddress.transactionTrackingActivated) {
-    logger.debug(`Deposit address transaction tracking already activated for currency id: ${currencyId} and account id: ${id}`)
-    return depositAddress
-  }
+    if (!depositAddress) {
+      throw new ValidationError(`Deposit address does not exist for currency id: ${currencyId} and account id: ${id}`)
+    }
 
-  const manager = new CurrencyManager()
+    if (depositAddress.transactionTrackingActivated) {
+      logger.debug(`Deposit address transaction tracking already activated for currency id: ${currencyId} and account id: ${id}`)
+      return depositAddress
+    }
 
-  const successfulEventCreation = await manager.getCurrencyFromTicker(currencyCode).createAddressTransactionSubscription(depositAddress)
+    const manager = new CurrencyManager()
 
-  const updatedDepositAddress = await updateDepositAddress({ ...depositAddress, transactionTrackingActivated: successfulEventCreation })
+    const successfulEventCreation = await manager.getCurrencyFromTicker(currencyCode).createAddressTransactionSubscription(depositAddress)
+    const updatedDepositAddress = await updateDepositAddress(
+      { ...depositAddress, transactionTrackingActivated: successfulEventCreation },
+      transaction,
+    )
 
-  return updatedDepositAddress
+    return updatedDepositAddress
+  })
 }

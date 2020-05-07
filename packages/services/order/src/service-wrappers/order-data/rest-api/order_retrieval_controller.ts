@@ -27,7 +27,7 @@ export class OrderRetrievalController extends Controller {
   @Security('tokenAuth')
   @Get('{orderId}/executions')
   public async getOrderExecutions(orderId: number, @Request() request: OverloadedRequest): Promise<OrderExecutionSummary[] | void> {
-    const requestingUserId = request.account!.id
+    const requestingAccountId = request.account!.id
 
     const { rows: tradeTransactions } = await findTradeTransactions({
       where: {
@@ -36,7 +36,10 @@ export class OrderRetrievalController extends Controller {
       order: [['createdAt', DBOrder.ASC]],
     })
 
-    if (tradeTransactions.length > 0 && tradeTransactions[0].accountId !== requestingUserId) {
+    if (tradeTransactions.length > 0 && tradeTransactions[0].accountId !== requestingAccountId) {
+      this.logger.warn(
+        `Requested order executions for order ${orderId} and account ${requestingAccountId} but execution account was ${tradeTransactions[0].accountId}`,
+      )
       this.setStatus(403)
       return
     }
