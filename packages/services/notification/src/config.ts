@@ -18,6 +18,7 @@ const config: NotificationConfig = {
     Environment.staging,
     Environment.e2eAws,
     Environment.e2eLocal,
+    Environment.yieldUat,
   ],
   fromEmail: process.env.NOTIFICATION_FROM_EMAIL || 'no-reply@kinesis.money',
   mandrillApi: process.env.MANDRILL_API || '5U8lA1W0NPMIqwMsOYEbJg', // Test key

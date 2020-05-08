@@ -23,6 +23,7 @@ const environmentNameRecord = {
   [Environment.integration]: 'int',
   [Environment.uat]: 'uat',
   [Environment.production]: 'prod',
+  [Environment.yieldUat]: 'yield',
 }
 
 const logger = Logger.getInstance('api', 'SessionsController')

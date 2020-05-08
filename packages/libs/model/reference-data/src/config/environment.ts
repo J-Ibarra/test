@@ -16,6 +16,8 @@ export const getEnvironment = () => {
       return Environment.uat
     case 'stg':
       return Environment.staging
+    case 'yield-uat':
+      return Environment.yieldUat
     default:
       return Environment.development
   }

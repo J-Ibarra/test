@@ -7,6 +7,7 @@ export enum Environment {
   integration = 'integration',
   staging = 'stg',
   uat = 'uat',
+  yieldUat = 'yield-uat',
 }
 
 export const e2eTestingEnvironments = [Environment.e2eLocal, Environment.e2eAws]
