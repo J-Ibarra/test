@@ -39,7 +39,7 @@ export interface ExchangeHoldingsTransfer {
    */
   feeLimit?: number
   /**
-   * The increment that Kinesis want to add when calculation the fee to be paid (based on current average transaction fees),
+   * The increment that Kinesis wants to add when calculating the fee to be paid (based on current average transaction fees),
    *  in order to stay ahead of the competition (priority-wise).
    */
   transactionFeeIncrement?: number
