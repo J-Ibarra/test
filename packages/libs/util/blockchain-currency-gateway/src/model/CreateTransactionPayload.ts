@@ -27,7 +27,7 @@ export interface MultiTargetCreateTransactionPayload extends CreateTransactionPa
    * This is used mostly for withdrawals where we want to make sure kinesis remains profitable.
    */
   feeLimit?: number
-  /** The increment that Kinesis want to add when calculation the fee to be paid, in order to stay ahead of the competition (priority-wise). */
+  /** The increment that Kinesis wants to add when calculating the fee to be paid, in order to stay ahead of the competition (priority-wise). */
   transactionFeeIncrement?: number
 }
 
