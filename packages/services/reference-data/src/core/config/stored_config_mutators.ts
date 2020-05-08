@@ -1,4 +1,4 @@
-import { findExchangeConfig } from '../../core'
+import { findExchangeConfig } from './stored_config_loader'
 import { SupportedFeatureFlags, IExchangeConfigEntry, CurrencyCode, WithdrawalConfig } from '@abx-types/reference-data'
 import { getModel } from '@abx-utils/db-connection-utils'
 
