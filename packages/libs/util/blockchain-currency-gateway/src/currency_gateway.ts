@@ -34,7 +34,7 @@ export interface ExchangeHoldingsTransfer {
   amount: number
   memo?: string
   /**
-   * The maximum amount of fee that it is acceptable to pay for the transaction.
+   * The maximum amount of fee that is acceptable to be paid for the transaction.
    * This is used mostly for withdrawals where we want to make sure kinesis remains profitable.
    */
   feeLimit?: number
