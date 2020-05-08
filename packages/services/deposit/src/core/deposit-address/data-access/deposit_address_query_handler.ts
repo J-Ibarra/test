@@ -25,10 +25,26 @@ export async function findDepositAddresses(query: Partial<DepositAddress>, trans
   return depositAddresses.map((address) => address.get())
 }
 
-export async function findDepositAddress(query: Partial<DepositAddress>, transaction?: Transaction): Promise<DepositAddress | null> {
+/**
+ * Does a deposit_address lookup based on the search criteria requested.
+ * The {@code usePessimisticLock} flag can be used if the client wants to create
+ * a pessimistic lock on the retrieved records, releasing the lock once the transaction completes.
+ *
+ * @param param contains the DB query to use + optional DB transaction
+ */
+export async function findDepositAddress({
+  query,
+  transaction,
+  usePessimisticLock,
+}: {
+  query: Partial<DepositAddress>
+  transaction?: Transaction
+  usePessimisticLock?: boolean
+}): Promise<DepositAddress | null> {
   const depositAddressInstance = await getModel<DepositAddress>('depositAddress').findOne({
     where: query as any,
     transaction,
+    lock: usePessimisticLock ? Transaction.LOCK.UPDATE : undefined,
   })
 
   return depositAddressInstance ? depositAddressInstance.get() : null
