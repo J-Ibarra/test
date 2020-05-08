@@ -73,7 +73,7 @@ export interface OnChainCurrencyGateway {
    * @param fromAddress the address to transfer to the holdings account from
    * @param amount the amount to transfer
    * @param feeLimit the maximum fee that Kinesis is willing to pay
-   * @param transactionFeeIncrement the increment that Kinesis want to add when calculation the fee to be paid in order to stay ahead of the competition (priority-wise).
+   * @param transactionFeeIncrement the increment that Kinesis wants to add when calculating the fee to be paid in order to stay ahead of the competition (priority-wise).
    */
   transferToExchangeHoldingsFrom(
     fromAddress: CryptoAddress | Pick<CryptoAddress, 'privateKey'>,
