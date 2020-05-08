@@ -41,6 +41,19 @@ export async function getWithdrawalConfigForCurrency({ currencyCode }: { currenc
   })
 }
 
+export async function updateWithdrawalConfigForCurrency({
+  currencyCode,
+  config,
+}: {
+  currencyCode: CurrencyCode
+  config: Partial<CurrencyWithdrawalConfig>
+}): Promise<CurrencyWithdrawalConfig> {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<CurrencyWithdrawalConfig>(ConfigEndpoints.updateWithdrawalConfigForCurrency, {
+    currencyCode,
+    config,
+  })
+}
+
 export async function getWithdrawalConfig(): Promise<WithdrawalConfig> {
   return internalApiRequestDispatcher.fireRequestToInternalApi<WithdrawalConfig>(ConfigEndpoints.getWithdrawalConfig)
 }
@@ -72,7 +85,9 @@ export async function getDepositMimimumAmounts(): Promise<Record<CurrencyCode, n
 }
 
 export async function getDepositMimimumAmountForCurrency(currencyCode: CurrencyCode): Promise<number> {
-  const depositMinimumAmounts = await internalApiRequestDispatcher.fireRequestToInternalApi<Record<CurrencyCode, number>>(ConfigEndpoints.getDepositMimimumAmounts)
+  const depositMinimumAmounts = await internalApiRequestDispatcher.fireRequestToInternalApi<Record<CurrencyCode, number>>(
+    ConfigEndpoints.getDepositMimimumAmounts,
+  )
   if (depositMinimumAmounts && depositMinimumAmounts[currencyCode]) {
     return depositMinimumAmounts[currencyCode]
   }

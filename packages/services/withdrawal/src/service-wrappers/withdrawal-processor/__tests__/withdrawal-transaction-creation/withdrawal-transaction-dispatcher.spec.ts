@@ -23,6 +23,8 @@ describe('withdrawal-transaction-dispatcher', () => {
 
   const transactionFee = 1
   const withdrawalFeeAmount = 0.5
+  const transactionFeeCap = 0.0003
+  const transactionFeeIncrement = 0.00000005
   const txHash = 'dacxv123das'
 
   beforeEach(() => {
@@ -76,6 +78,8 @@ describe('withdrawal-transaction-dispatcher', () => {
 
     sinon.stub(referenceDataOperations, 'getWithdrawalConfigForCurrency').resolves({
       feeAmount: withdrawalFeeAmount,
+      transactionFeeCap,
+      transactionFeeIncrement,
     })
 
     await dispatchWithdrawalTransaction(withdrawalRequestId, withdrawalTargetAddress, withdrawalAmount, onChainCurrencyGateway, memo)
@@ -85,6 +89,8 @@ describe('withdrawal-transaction-dispatcher', () => {
         toAddress: withdrawalTargetAddress,
         amount: withdrawalAmount,
         memo,
+        feeLimit: transactionFeeCap,
+        transactionFeeIncrement: transactionFeeIncrement,
       }),
     ).to.eql(true)
     expect(
@@ -119,6 +125,8 @@ describe('withdrawal-transaction-dispatcher', () => {
 
     sinon.stub(referenceDataOperations, 'getWithdrawalConfigForCurrency').resolves({
       feeAmount: withdrawalFeeAmount,
+      transactionFeeCap,
+      transactionFeeIncrement,
     })
 
     await dispatchWithdrawalTransaction(withdrawalRequestId, withdrawalTargetAddress, withdrawalAmount, onChainCurrencyGateway, memo)
@@ -128,6 +136,8 @@ describe('withdrawal-transaction-dispatcher', () => {
         toAddress: withdrawalTargetAddress,
         amount: withdrawalAmount,
         memo,
+        feeLimit: transactionFeeCap,
+        transactionFeeIncrement: transactionFeeIncrement,
       }),
     ).to.eql(true)
     expect(sendAsyncChangeMessageStub.calledOnce).to.eql(false)

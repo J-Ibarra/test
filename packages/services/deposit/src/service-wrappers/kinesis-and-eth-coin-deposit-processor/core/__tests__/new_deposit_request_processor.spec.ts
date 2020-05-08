@@ -21,11 +21,18 @@ describe('new_deposit_request_processor', () => {
   let pendingHoldingsTransferGatekeeper: DepositGatekeeper
   let pendingCompletionGatekeeper: DepositGatekeeper
   let pendingSuspendedDepositGatekeeper: DepositGatekeeper
+  const transactionFeeCap = 12
+  const transactionFeeIncrement = 11
 
   beforeEach(async () => {
     pendingHoldingsTransferGatekeeper = new DepositGatekeeper('pendingHoldingsTransferGatekeeper')
     pendingCompletionGatekeeper = new DepositGatekeeper('pendingCompletionGatekeeper')
     pendingSuspendedDepositGatekeeper = new DepositGatekeeper('pendingSuspendedDepositGatekeeper')
+
+    sinon.stub(referenceDataOperations, 'getWithdrawalConfigForCurrency').resolves({
+      transactionFeeCap,
+      transactionFeeIncrement,
+    })
   })
 
   afterEach(() => {
@@ -118,6 +125,8 @@ describe('new_deposit_request_processor', () => {
           wif: undefined,
         },
         depositRequest.amount,
+        transactionFeeCap,
+        transactionFeeIncrement,
       ),
     ).to.eql(true)
     expect(pendingHoldingsTransferGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau)!.length).to.eql(0)
@@ -153,6 +162,8 @@ describe('new_deposit_request_processor', () => {
           wif: undefined,
         },
         depositRequest.amount,
+        transactionFeeCap,
+        transactionFeeIncrement,
       ),
     ).to.eql(true)
     expect(pendingHoldingsTransferGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau)!.length).to.eql(0)
@@ -206,6 +217,8 @@ describe('new_deposit_request_processor', () => {
           wif: undefined,
         },
         depositRequest.amount,
+        transactionFeeCap,
+        transactionFeeIncrement,
       ),
     ).to.eql(true)
     expect(pendingHoldingsTransferGatekeeper[currencyToDepositRequests].get(CurrencyCode.ethereum)!.length).to.eql(0)

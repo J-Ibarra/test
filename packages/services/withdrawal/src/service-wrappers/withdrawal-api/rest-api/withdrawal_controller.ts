@@ -3,9 +3,14 @@ import { Body, Controller, Get, Post, Request, Route, Security, SuccessResponse,
 import { prepareWithdrawalRequestEmail } from '../../../core'
 import { Logger } from '@abx-utils/logging'
 import { createEmail } from '@abx-service-clients/notification'
-import { getWithdrawalConfig, getWithdrawalConfigForCurrency, isFiatCurrency } from '@abx-service-clients/reference-data'
+import {
+  getWithdrawalConfig,
+  getWithdrawalConfigForCurrency,
+  isFiatCurrency,
+  updateWithdrawalConfigForCurrency,
+} from '@abx-service-clients/reference-data'
 import { OverloadedRequest } from '@abx-types/account'
-import { CurrencyCode } from '@abx-types/reference-data'
+import { CurrencyCode, CurrencyWithdrawalConfig } from '@abx-types/reference-data'
 import { WithdrawalRequestParams } from '@abx-types/withdrawal'
 import { initialiseWithdrawal } from '../core/withdrawals_gateway'
 
@@ -78,6 +83,22 @@ export class WithdrawalsController extends Controller {
     } catch (error) {
       this.setStatus(error.status || 400)
       this.logger.error(`Retrieving withdrawal fees for ${currency} errors: ${error.status || 400} - ${error.message}`)
+      return {
+        message: error.message as string,
+      }
+    }
+  }
+
+  @Security('cookieAuth')
+  @Security('tokenAuth')
+  @Post('/configs/{currency}')
+  public async updateWithdrawalConfig(currency: CurrencyCode, @Body() updatedConfig: Partial<CurrencyWithdrawalConfig>) {
+    try {
+      this.logger.debug(`Updating withdrawal config for ${currency}`)
+      return updateWithdrawalConfigForCurrency({ currencyCode: currency, config: updatedConfig })
+    } catch (error) {
+      this.setStatus(error.status || 400)
+      this.logger.error(`Updating withdrawal config for ${currency} errors: ${error.status || 400} - ${error.message}`)
       return {
         message: error.message as string,
       }

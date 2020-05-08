@@ -12,6 +12,7 @@ import {
   getEthereumDepositMaxBlockCheck,
   getExcludedAccountTypesFromOrderRangeValidations,
   getDepositMimimumAmounts,
+  updateWithdrawalConfigForCurrency,
 } from '../core'
 import { InternalRoute } from '@abx-utils/internal-api-tools'
 
@@ -48,6 +49,10 @@ export function createConfigEndpointHandlers(): InternalRoute<any, any>[] {
     {
       path: ConfigEndpoints.getWithdrawalConfigForCurrency,
       handler: (request) => getWithdrawalConfigForCurrency(request),
+    },
+    {
+      path: ConfigEndpoints.updateWithdrawalConfigForCurrency,
+      handler: ({ currencyCode, config }) => updateWithdrawalConfigForCurrency(currencyCode, config),
     },
     {
       path: ConfigEndpoints.getWithdrawalConfig,

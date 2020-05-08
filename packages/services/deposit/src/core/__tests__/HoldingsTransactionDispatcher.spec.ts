@@ -2,6 +2,7 @@ import sinon from 'sinon'
 import { expect } from 'chai'
 import * as accountClientOperations from '@abx-service-clients/account'
 import * as balanceOperations from '@abx-service-clients/balance'
+import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import { SourceEventType } from '@abx-types/balance'
 import * as depositRequestOperations from '..'
 import { DepositRequestStatus } from '@abx-types/deposit'
@@ -15,6 +16,8 @@ describe('HoldingsTransactionDispatcher', () => {
   const currencyId = 2
   const transactionHash = 'txHash'
   const transactionFee = '21'
+  const transactionFeeCap = 12
+  const transactionFeeIncrement = 11
   const testKinesisRevenueAccount = {
     id: 'foo-bar-1',
   } as any
@@ -42,7 +45,7 @@ describe('HoldingsTransactionDispatcher', () => {
       encryptedPrivateKey: '10',
       encryptedWif: '12',
       address: 'addr',
-      publicKey: 'publicKey'
+      publicKey: 'publicKey',
     },
   } as any
 
@@ -78,6 +81,10 @@ describe('HoldingsTransactionDispatcher', () => {
         depositsRequestsWithInsufficientStatus: [],
       })
       sinon.stub(depositRequestOperations, 'findDepositRequestsForIds').resolves([depositRequest])
+      sinon.stub(referenceDataOperations, 'getWithdrawalConfigForCurrency').resolves({
+        transactionFeeCap,
+        transactionFeeIncrement,
+      })
 
       await holdingsTransactionDispatcher.dispatchHoldingsTransactionForDepositRequests([depositRequest], CurrencyCode.bitcoin)
 
@@ -97,9 +104,11 @@ describe('HoldingsTransactionDispatcher', () => {
             privateKey: depositRequest.depositAddress.encryptedPrivateKey!,
             wif: depositRequest.depositAddress.encryptedWif!,
             address: depositRequest.depositAddress.address!,
-            publicKey: depositRequest.depositAddress.publicKey!
+            publicKey: depositRequest.depositAddress.publicKey!,
           },
           depositRequest.amount,
+          transactionFeeCap,
+          transactionFeeIncrement,
         ),
       ).to.eql(true)
 
@@ -134,6 +143,10 @@ describe('HoldingsTransactionDispatcher', () => {
         depositsRequestsWithInsufficientStatus,
       })
       sinon.stub(depositRequestOperations, 'findDepositRequestsForIds').resolves([depositRequest, ...depositsRequestsWithInsufficientStatus])
+      sinon.stub(referenceDataOperations, 'getWithdrawalConfigForCurrency').resolves({
+        transactionFeeCap,
+        transactionFeeIncrement,
+      })
 
       await holdingsTransactionDispatcher.dispatchHoldingsTransactionForDepositRequests([depositRequest], CurrencyCode.bitcoin)
 
@@ -153,9 +166,11 @@ describe('HoldingsTransactionDispatcher', () => {
             privateKey: depositRequest.depositAddress.encryptedPrivateKey!,
             wif: depositRequest.depositAddress.encryptedWif!,
             address: depositRequest.depositAddress.address!,
-            publicKey: depositRequest.depositAddress.publicKey!
+            publicKey: depositRequest.depositAddress.publicKey!,
           },
           depositRequest.amount,
+          transactionFeeCap,
+          transactionFeeIncrement,
         ),
       ).to.eql(true)
 
