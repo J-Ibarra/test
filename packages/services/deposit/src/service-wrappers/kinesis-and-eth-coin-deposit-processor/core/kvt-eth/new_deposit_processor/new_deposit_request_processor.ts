@@ -5,6 +5,7 @@ import { CurrencyCode } from '@abx-types/reference-data'
 import { DepositGatekeeper, checkTransactionConfirmation } from '../..'
 import { handlerDepositError } from './new_deposit_error_handler'
 import { HoldingsTransactionDispatcher } from '../../../../../core'
+import { DepositRequestStatus } from '@abx-types/deposit'
 
 const logger = Logger.getInstance('deposit_request_processor', 'processNewestDepositRequestForCurrency')
 
@@ -37,8 +38,10 @@ export async function processNewestDepositRequestForCurrency(
     }
 
     const dispatcher = new HoldingsTransactionDispatcher()
-    const updatedDepositRequests = (await dispatcher.dispatchHoldingsTransactionForDepositRequests([depositRequest], currency))
-      .filter(dr => dr.id === depositRequest.id!)
+    const updatedDepositRequests = (
+      await dispatcher.dispatchHoldingsTransactionForDepositRequests([depositRequest], currency, DepositRequestStatus.pendingCompletion)
+    ).filter((dr) => dr.id === depositRequest.id!)
+
     pendingHoldingsTransferGatekeeper.removeRequest(currency, depositRequest.id!)
     pendingCompletionGatekeeper.addNewDepositsForCurrency(currency, updatedDepositRequests)
   } catch (e) {

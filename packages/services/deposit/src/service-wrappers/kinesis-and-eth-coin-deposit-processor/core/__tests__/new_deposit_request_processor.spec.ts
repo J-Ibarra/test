@@ -114,6 +114,7 @@ describe('new_deposit_request_processor', () => {
     expect(updateAllDepositRequestsStub.getCall(0).args[1]).to.eql({
       holdingsTxHash: depositTxHash,
       holdingsTxFee: Number(holdingsTxFee),
+      status: DepositRequestStatus.pendingCompletion,
     })
 
     expect(
@@ -207,6 +208,7 @@ describe('new_deposit_request_processor', () => {
     expect(updateAllDepositRequestsStub.getCall(0).args[1]).to.eql({
       holdingsTxHash: depositTxHash,
       holdingsTxFee: Number(holdingsTxFee),
+      status: DepositRequestStatus.pendingCompletion,
     })
     expect(
       transferToExchangeHoldingsFromMock.calledWith(

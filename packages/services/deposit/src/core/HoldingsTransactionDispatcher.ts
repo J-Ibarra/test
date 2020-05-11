@@ -1,4 +1,4 @@
-import { DepositRequest, DepositAddress } from '@abx-types/deposit'
+import { DepositRequest, DepositAddress, DepositRequestStatus } from '@abx-types/deposit'
 import { isAccountSuspended, findOrCreateKinesisRevenueAccount } from '@abx-service-clients/account'
 import { createPendingDeposit, createPendingWithdrawal } from '@abx-service-clients/balance'
 import { SourceEventType } from '@abx-types/balance'
@@ -16,7 +16,11 @@ export class HoldingsTransactionDispatcher {
   private readonly logger = Logger.getInstance('public-coin-deposit-processor', 'HoldingsTransactionDispatcher')
   private readonly depositAmountCalculator = new DepositAmountCalculator()
 
-  public async dispatchHoldingsTransactionForDepositRequests(depositRequests: DepositRequest[], currency: CurrencyCode): Promise<DepositRequest[]> {
+  public async dispatchHoldingsTransactionForDepositRequests(
+    depositRequests: DepositRequest[],
+    currency: CurrencyCode,
+    postTransactionStatus: DepositRequestStatus = DepositRequestStatus.pendingHoldingsTransaction,
+  ): Promise<DepositRequest[]> {
     const {
       totalAmount: totalAmountToTransfer,
       depositsRequestsWithInsufficientStatus,
@@ -32,6 +36,7 @@ export class HoldingsTransactionDispatcher {
       depositRequests.map((depositRequest) => depositRequest.id!),
       depositsRequestsWithInsufficientStatus.map(({ id }) => id!),
       currencyManager.getCurrencyFromTicker(currency),
+      postTransactionStatus,
     )
 
     return findDepositRequestsForIds(depositRequests.concat(depositsRequestsWithInsufficientStatus).map(({ id }) => id!))
@@ -51,6 +56,7 @@ export class HoldingsTransactionDispatcher {
     depositRequestIds: number[],
     joinedDepositRequestsWithInsufficientBalance: number[],
     onChainCurrencyGateway: OnChainCurrencyGateway,
+    postTransactionStatus: DepositRequestStatus = DepositRequestStatus.pendingHoldingsTransaction,
   ): Promise<string | undefined> {
     const accountIsSuspended = await isAccountSuspended(depositAddress.accountId)
     const firstDepositRequestId = depositRequestIds[0]
@@ -83,10 +89,12 @@ export class HoldingsTransactionDispatcher {
         updateAllDepositRequests(depositRequestIds, {
           holdingsTxHash: holdingsTransactionHash,
           holdingsTxFee: new Decimal(holdingsTransactionFee!).dividedBy(depositRequestIds.length).toNumber(),
+          status: postTransactionStatus,
         }),
         joinedDepositRequestsWithInsufficientBalance.length > 0
           ? updateAllDepositRequests(joinedDepositRequestsWithInsufficientBalance, {
               holdingsTxHash: holdingsTransactionHash,
+              status: postTransactionStatus,
             })
           : (Promise.resolve() as any),
       ])
