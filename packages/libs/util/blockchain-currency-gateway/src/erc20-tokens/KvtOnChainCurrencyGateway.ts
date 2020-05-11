@@ -6,7 +6,7 @@ import KinesisVelocityToken from './contracts/kvt/KinesisVelocityToken.json'
 const kvtAddress = {
   mainnet: '0x3a859b9ea4998D344547283C7Ce8EBc4aBb77656',
   ropsten: '0x05cB21867dda44391F7a1fd32940E7D7B1280273',
-  rinkeby: '0x0', // TODO: get address ABX-7634
+  rinkeby: '0x88D3dF1D9499D2e0F33e7cf9Fad4c6de7971d7d7',
 }
 
 export class KvtOnChainCurrencyGateway extends ERC20TokenCurrencyGatewaySkeleton {

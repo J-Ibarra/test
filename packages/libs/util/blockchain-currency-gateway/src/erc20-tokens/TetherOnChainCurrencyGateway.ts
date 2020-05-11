@@ -7,7 +7,7 @@ import Tether from './contracts/tether/Tether.json'
 const tetherAddress = {
   mainnet: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
   ropsten: '0xF6fF95D53E08c9660dC7820fD5A775484f77183A', // The ropsten testnet address is actually pointing to a test ERC20 token - YEENUS(https://github.com/bokkypoobah/WeenusTokenFaucet/blob/master/contracts/YeenusToken.sol)
-  rinkeby: '0x0', // TODO: get address ABX-7634
+  rinkeby: '0xc6fDe3FD2Cc2b173aEC24cc3f267cb3Cd78a26B7', 
 }
 
 /**
