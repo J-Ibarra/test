@@ -21,6 +21,7 @@ import './feature_flags_controller'
 import './symbols_controller'
 import './E2eTestingDataSetupController'
 import './symbols_admin_controller'
+import './exchange_config_contoller'
 import { REFERENCE_DATA_REST_API_PORT } from '@abx-service-clients/reference-data'
 
 const logger = Logger.getInstance('api', 'bootstrapRestApi')
