@@ -1,4 +1,4 @@
-import { CurrencyCode } from '@abx-types/reference-data'
+import { CurrencyCode, MobileVersions } from '@abx-types/reference-data'
 import { getModel } from '@abx-utils/db-connection-utils'
 import { findCurrencies } from '../core/symbols/currency_in_memory_cache'
 
@@ -36,4 +36,12 @@ export async function updateSymbolsForCurrencyWithStatus(code: CurrencyCode, val
       },
     },
   )
+}
+
+export async function insertMobileVersions(mobileVersions: MobileVersions) {
+  await getModel('exchangeConfig').insertOrUpdate({
+    value: {
+      mobileVersions,
+    },
+  })
 }

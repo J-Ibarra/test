@@ -1,5 +1,5 @@
 import { AccountStatus } from '@abx-types/account'
-import { CurrencyCode } from '@abx-types/reference-data'
+import { CurrencyCode, MobileVersions } from '@abx-types/reference-data'
 import {
   CurrencyWithdrawalConfig,
   DepositPollingFrequency,
@@ -29,6 +29,11 @@ export async function getExchangeHoldingsWallets(): Promise<ExchangeHoldingsWall
 export async function getTransactionFeeCaps(): Promise<Record<CurrencyCode, number>> {
   const exchangeConfig = await findExchangeConfig()
   return exchangeConfig.transactionFeeCap
+}
+
+export async function getMobileVersions(): Promise<MobileVersions> {
+  const exchangeConfig = await findExchangeConfig()
+  return exchangeConfig.mobileVersions
 }
 
 export async function getExchangeDepositPollingFrequency(): Promise<DepositPollingFrequency[]> {

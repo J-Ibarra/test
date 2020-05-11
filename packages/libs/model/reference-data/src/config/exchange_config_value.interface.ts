@@ -1,6 +1,13 @@
 import { CurrencyCode } from '../currency_code.enum'
 import { AccountType } from '@abx-types/account'
-import { FeatureFlag, ExchangeHoldingsWallet, WithdrawalConfig, WithdrawalLimit, DepositPollingFrequency } from '.'
+import { 
+  FeatureFlag, 
+  ExchangeHoldingsWallet, 
+  WithdrawalConfig, 
+  WithdrawalLimit, 
+  DepositPollingFrequency, 
+  MobileVersions 
+} from '.'
 
 export interface ExchangeConfigValue {
   featureFlags: FeatureFlag[]
@@ -14,4 +21,5 @@ export interface ExchangeConfigValue {
   ethereumDepositMaxBlockCheck: number
   excludedAccountTypesFromOrderRanges: AccountType[]
   depositMinimumAmounts: Record<CurrencyCode, number>
+  mobileVersions: MobileVersions
 }
