@@ -26,8 +26,8 @@ function isAccountEligibleForCurrency(accountId: string, currency: Currency, fea
   return currency.isEnabled!
 }
 
-export async function findAllCurrencyCodes(): Promise<CurrencyCode[]> {
-  const currencies = await fetchAllCurrencies()
+export async function findAllCurrencyCodes(state = SymbolPairStateFilter.enabled): Promise<CurrencyCode[]> {
+  const currencies = await fetchAllCurrencies(state)
 
   return currencies.map(({ code }) => code)
 }

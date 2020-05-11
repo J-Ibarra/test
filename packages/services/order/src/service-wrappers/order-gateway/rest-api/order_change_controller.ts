@@ -57,7 +57,7 @@ export class OrderChangeController extends Controller {
     } catch (e) {
       this.logger.error(`Error thrown trying to place order for ${requestBody.amount} ${requestBody.symbolId} for account ${request.account!.id}`)
       this.logger.error(e)
-      if (e.context && e.context.name === 'ValidationError') {
+      if (e.name === 'ValidationError' || (e.context && e.context.name === 'ValidationError')) {
         this.setStatus(400)
       } else {
         this.setStatus(500)

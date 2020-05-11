@@ -1,4 +1,4 @@
-import { getQueuePoller } from '@abx-utils/async-message-consumer'
+import { getQueuePoller, QueueConsumerOutput } from '@abx-utils/async-message-consumer'
 import { IAddressTransactionEventPayload, IAddressTokenTransactionEventPayload } from '@abx-utils/blockchain-currency-gateway'
 import { findDepositAddressByAddressOrPublicKey } from '../../../../core'
 import { Logger } from '@abx-utils/logging'
@@ -24,16 +24,18 @@ export class DepositAddressNewTransactionQueuePoller {
     )
   }
 
-  private processNewDepositAddressTransaction(payload: IAddressTransactionEventPayload | IAddressTokenTransactionEventPayload) {
+  private async processNewDepositAddressTransaction(
+    payload: IAddressTransactionEventPayload | IAddressTokenTransactionEventPayload,
+  ): Promise<void | QueueConsumerOutput> {
     try {
       // Checking if the transaction is an ECR20 token transaction
       if (!!payload['token_symbol']) {
         const tokenTransaction = payload as IAddressTokenTransactionEventPayload
-        return this.processDepositAddressTransaction(this.getTokenForTransaction(tokenTransaction), tokenTransaction.address, tokenTransaction.txHash)
+        await this.processDepositAddressTransaction(this.getTokenForTransaction(tokenTransaction), tokenTransaction.address, tokenTransaction.txHash)
       }
 
       const coinTransaction = payload as IAddressTransactionEventPayload
-      return this.processDepositAddressTransaction(coinTransaction.currency, coinTransaction.address, coinTransaction.txid)
+      await this.processDepositAddressTransaction(coinTransaction.currency, coinTransaction.address, coinTransaction.txid)
     } catch (e) {
       this.logger.error(`An error has ocurred while processing deposit request, skipping deletion.`)
 

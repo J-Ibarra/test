@@ -4,7 +4,8 @@ import { Transaction } from 'sequelize'
 import { getSymbolBoundaries } from '@abx-service-clients/reference-data'
 import { CurrencyBoundary, Currency } from '@abx-types/reference-data'
 import { ValidationError } from '@abx-types/error'
-import { determineMaxReserveForTradeValue, determineMaxBuyReserve } from './fees'
+import { determineMaxReserveForTradeValue } from './fees'
+import Decimal from '@abx-types/order/node_modules/decimal.js'
 
 interface FormatOrderBoundaryParams {
   order: Order
@@ -13,6 +14,7 @@ interface FormatOrderBoundaryParams {
   base: Currency
   quote: Currency
   fee: Currency
+  matchedAmount?: number
 }
 
 interface OrderBoundaryValidationResult {
@@ -28,14 +30,20 @@ export async function validateBoundaries({
   order,
   includeFee,
   transaction,
+  matchedAmount,
 }: {
   order: Order
   transaction?: Transaction
   includeFee?: boolean
+  matchedAmount?: number
 }): Promise<void> {
   const { baseBoundary, quoteBoundary, base, quote, fee } = await getSymbolBoundaries(order.symbolId)
 
-  const boundaryValidations = await formatBoundaryValidation({ order, baseBoundary, quoteBoundary, base, quote, fee }, includeFee, transaction)
+  const boundaryValidations = await formatBoundaryValidation(
+    { order, baseBoundary, quoteBoundary, base, quote, fee, matchedAmount },
+    includeFee,
+    transaction,
+  )
 
   const errorMessages = formatValidationErrors(boundaryValidations)
 
@@ -45,7 +53,7 @@ export async function validateBoundaries({
 }
 
 async function formatBoundaryValidation(
-  { order, baseBoundary, quoteBoundary, base, quote, fee }: FormatOrderBoundaryParams,
+  { order, baseBoundary, quoteBoundary, base, fee, matchedAmount }: FormatOrderBoundaryParams,
   includeFeeEstimate?: boolean,
   transaction?: Transaction,
 ): Promise<OrderBoundaryResponse> {
@@ -61,25 +69,16 @@ async function formatBoundaryValidation(
         })
       : order.amount
 
+  const orderConsideration = new Decimal(matchedAmount! || order.amount)
+    .times(order.limitPrice! || 0)
+    .toDP(quoteBoundary.maxDecimals, Decimal.ROUND_DOWN)
+    .toNumber()
+
   if (order.orderType === OrderType.market) {
     return {
       amount: validateValueWithinBoundary(orderAmount, baseBoundary),
     } as OrderBoundaryResponse
   }
-
-  const orderConsideration =
-    quote.id === fee.id && includeFeeEstimate
-      ? await determineMaxBuyReserve({
-          orderId: order.id!,
-          price: order.limitPrice!,
-          amount: order.amount,
-          accountId: order.accountId,
-          symbolId: order.symbolId,
-          maxDecimalsForCurrency: quoteBoundary.maxDecimals,
-          feeCurrencyCode: fee.code,
-          transaction: transaction!,
-        })
-      : order.amount * order.limitPrice!
 
   return {
     amount: validateValueWithinBoundary(orderAmount, baseBoundary),
@@ -122,9 +121,9 @@ const validateDecimals = (orderValue: number, boundaryDecimals: number): OrderBo
 
 const getDecimalLength: (value: number) => number = pipe(
   String,
-  s => s.split('.'),
-  s => s[1] || '',
-  s => s.length,
+  (s) => s.split('.'),
+  (s) => s[1] || '',
+  (s) => s.length,
 )
 
 function validateDecimalLength(orderDecimals: number, boundaryDecimals: number): OrderBoundaryValidationResult {

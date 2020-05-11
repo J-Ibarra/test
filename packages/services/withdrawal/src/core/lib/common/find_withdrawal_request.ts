@@ -133,7 +133,7 @@ export const findWithdrawalRequestsByTxHashWithFeeRequest = async (txHash: strin
 
 async function joinWithdrawalRequestWithFeeRequest(withdrawalRequest: WithdrawalRequest, transaction?: Transaction) {
   if (withdrawalRequest.feeWithdrawalRequestId) {
-    const feeRequest = await findWithdrawalRequestById(withdrawalRequest.id!, transaction)
+    const feeRequest = await findWithdrawalRequestById(withdrawalRequest.feeWithdrawalRequestId!, transaction)
 
     withdrawalRequest.feeRequest = feeRequest!
   }

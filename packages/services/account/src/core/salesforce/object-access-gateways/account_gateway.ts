@@ -63,7 +63,7 @@ async function getAccountFromEmail(client: AxiosInstance, email: string) {
 }
 
 async function getAccountStatusForAll(client: AxiosInstance, accountIds: string[]): Promise<GetAccountStatusResponse> {
-  const query = `SELECT Id, Account_Status__c FROM Account WHERE Id IN (${accountIds.map(accountId => `'${accountId}'`).join(',')})`
+  const query = `SELECT Id, Account_Status__c FROM Account WHERE Id IN (${accountIds.map((accountId) => `'${accountId}'`).join(',')})`
   const response = await client.get('/query', {
     params: {
       q: query,
@@ -78,7 +78,10 @@ async function createSalesforceAccount(client: AxiosInstance, { user }: { user: 
   return response.data
 }
 
-async function getOrCreateAccount(client: AxiosInstance, { user }: { user: User }): Promise<{ id: string }> {
+async function getOrCreateAccount(
+  client: AxiosInstance,
+  { user }: { user: User },
+): Promise<{ salesforceAccount: { id: string }; newAccountCreated: boolean }> {
   const { records } = await getAccountFromEmail(client, user.email)
   const recordsLength = records.length
   if (recordsLength > 1) {
@@ -89,7 +92,12 @@ async function getOrCreateAccount(client: AxiosInstance, { user }: { user: User 
 
   if (records.length === 0) {
     logger.debug(`Creating new Salesforce account for email ${user.email}.`)
-    return createSalesforceAccount(client, { user })
+    const newAccount = await createSalesforceAccount(client, { user })
+
+    return {
+      salesforceAccount: newAccount,
+      newAccountCreated: true,
+    }
   }
 
   const [salesforceAccount = {}] = records
@@ -99,7 +107,10 @@ async function getOrCreateAccount(client: AxiosInstance, { user }: { user: User 
 
   await updateSalesforceAccountKBETermsAndConditions(client, salesforceAccount.Id)
 
-  return { id: salesforceAccount.Id }
+  return {
+    salesforceAccount,
+    newAccountCreated: false,
+  }
 }
 
 async function updateSalesforceAccountKBETermsAndConditions(client: AxiosInstance, salesforceAccountId: string) {

@@ -2,6 +2,7 @@ import moment from 'moment-timezone'
 import { UserDetails } from '@abx-types/account'
 import { OrderDirection, OrderType } from '@abx-types/order'
 import { Email, EmailAttachment, EmailOrderStatus, EmailTemplates, TradeConfirmationTemplateContent } from '@abx-types/notification'
+import { scientificToDecimal } from '@abx-service-clients/reference-data'
 
 interface OrderDetails {
   baseCurrency: string
@@ -30,13 +31,11 @@ export const createTradeConfirmationEmail = ({ baseCurrency, quoteCurrency, amou
         orderStatus,
         baseOrderDirection: direction === OrderDirection.buy ? 'bought' : 'sold',
         baseCurrency,
-        baseQuantity: amount,
+        baseQuantity: scientificToDecimal(`${amount}`),
         quoteOrderDirection: direction === OrderDirection.buy ? 'sold' : 'bought',
-        quoteQuantity: consideration,
+        quoteQuantity: scientificToDecimal(`${consideration}`),
         quoteCurrency,
-        utcTradeDate: moment(createdAt)
-          .utc()
-          .format('h:mma dddd, D MMMM YYYY'),
+        utcTradeDate: moment(createdAt).utc().format('h:mma dddd, D MMMM YYYY'),
         copyrightYear: moment().format('YYYY'),
       }
 

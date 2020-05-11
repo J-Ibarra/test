@@ -41,7 +41,14 @@ const fromAbx = ({ salesforceReference, depositAddress }: AbxDepositParams): Sal
 
 export async function createLinkedAddress(client: AxiosInstance, inputParameters: AbxDepositParams) {
   const record = fromAbx(inputParameters)
-  const response = await client.post(`/sobjects/Linked_Address__c/`, record)
 
-  return response.data
+  try {
+    const response = await client.post(`/sobjects/Linked_Address__c/`, record)
+    return response.data
+  } catch (e) {
+    console.log(`Error ocurred while creating linked address`)
+    console.log(JSON.stringify(e))
+
+    return ''
+  }
 }

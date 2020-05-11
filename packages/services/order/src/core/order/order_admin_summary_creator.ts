@@ -25,7 +25,7 @@ export async function getAllOrdersForAccountHin(hin: string, { limit, offset }: 
     where: { accountId: account!.id },
     order: [['createdAt', 'DESC']],
     limit: limit || 50,
-    offset: offset || 1,
+    offset: offset || 0,
   })
 
   return enrichWithTransactionDetails(
@@ -40,7 +40,7 @@ export async function getAllOrdersAdminSummary({ limit, offset }: QueryLimitAndO
   const allOrders = await findOrders({
     order: [['createdAt', 'DESC']],
     limit: limit || 50,
-    offset: offset || 1,
+    offset: offset || 0,
   })
 
   const allAccountsWithOrders = await findAccountsByIdWithUserDetails(allOrders.map(({ accountId }) => accountId))

@@ -14,6 +14,7 @@ export const minimumDepositAmountDictionary = {
   [CurrencyCode.kau]: KAU_KAG_MINIMUM_DEPOSIT_AMOUNT,
   [CurrencyCode.bitcoin]: BTC_MINIMUM_DEPOSIT_AMOUNT,
   [CurrencyCode.tether]: USDT_MINIMUM_DEPOSIT_AMOUNT,
+  [CurrencyCode.kvt]: KVT_MINIMUM_DEPOSIT_AMOUNT,
 }
 
 export function depositAmountAboveMinimumForCurrency(amount: number, currency: CurrencyCode) {

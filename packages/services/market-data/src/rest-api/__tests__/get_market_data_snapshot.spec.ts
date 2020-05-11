@@ -71,6 +71,8 @@ describe('api:market-data', () => {
 
     sinon.stub(orderOperations, 'getOpenOrders').resolves(orders)
     sinon.stub(referenceDataOperations, 'getAllSymbolPairSummaries').resolves([{ id: 'KVT_USD' }])
+    sinon.stub(referenceDataOperations, 'findSymbolsByAccountId').resolves([{ id: 'KVT_USD' }])
+
     sinon.stub(referenceDataOperations, 'getAllSymbolsIncludingCurrency').resolves([
       {
         id: 'KVT_USD',
