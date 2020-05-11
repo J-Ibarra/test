@@ -45,7 +45,7 @@ describe('BuyerOrderSettlementHandler', () => {
     sinon.stub(orderOperations, 'findOrder').callsFake(() => Promise.resolve(initialOrder))
     determineMaxBuyReserveStub = sinon.stub(orderOperations, 'determineMaxBuyReserve').callsFake(() => Promise.resolve(maxBuyerReserve))
     finaliseReserveStub = sinon.stub(balanceOperations, 'finaliseReserve').callsFake(() => Promise.resolve())
-    updateAvailableStub = sinon.stub(balanceOperations, 'updateAvailable').callsFake(() => Promise.resolve())
+    updateAvailableStub = sinon.stub(balanceOperations, 'updateAvailableAsync').callsFake(() => Promise.resolve())
     sinon.stub(boundaryOperations, 'findBoundaryForCurrency').callsFake(() => Promise.resolve({ maxDecimals: boundary }) as any)
     sinon.stub(orderOperations, 'findOrderMatchTransactions').resolves([])
     sinon.stub(sharedUtils, 'retrieveTotalReleasedAmountForOrder').resolves(0)
@@ -59,7 +59,7 @@ describe('BuyerOrderSettlementHandler', () => {
     it('should release matchPrice * amount and use the initial order limitPrice for rebate when base is the fee currency', async () => {
       const symbol = createSymbol(CurrencyCode.kau, CurrencyCode.kvt, CurrencyCode.kau)
 
-      await sequelize.transaction(async t => {
+      await sequelize.transaction(async (t) => {
         await buyerOrderSettlementHandler.releaseReserveBalance(orderMatch, fee, symbol, transactionId, t)
 
         expect(
@@ -78,7 +78,7 @@ describe('BuyerOrderSettlementHandler', () => {
     it('should release matchPrice * amount + fee when quote currency is the fee currency', async () => {
       const symbol = createSymbol(CurrencyCode.kau, CurrencyCode.kvt, CurrencyCode.kvt)
 
-      await sequelize.transaction(async t => {
+      await sequelize.transaction(async (t) => {
         await buyerOrderSettlementHandler.releaseReserveBalance(orderMatch, fee, symbol, transactionId, t)
 
         expect(

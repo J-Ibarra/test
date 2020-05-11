@@ -20,6 +20,13 @@ export interface DbConfig {
     min: number
     idle: number
   }
+  readReplica?: {
+    username: string
+    password: string
+    database: string
+    host: string
+    port: number
+  }
 }
 
 export interface EnvironmentConfig {

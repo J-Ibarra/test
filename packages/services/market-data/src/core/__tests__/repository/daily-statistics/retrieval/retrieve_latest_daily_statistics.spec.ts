@@ -66,9 +66,10 @@ describe('Retrieve the latest daily stats', async () => {
   describe('getDailyMarketDataStatsForAllSymbols', () => {
     it('should return 18 symbols and only have  kau usd updated with values', async () => {
       setupDailyStats(kauUsd)
+      const accountId = 'accc-id'
 
-      sinon.stub(referenceDataOperations, 'getAllCompleteSymbolDetails').resolves([{ id: kauUsd }])
-      const dailyStats = await getDailyMarketDataStatsForAllSymbols()
+      sinon.stub(referenceDataOperations, 'findSymbolsByAccountId').resolves([{ id: kauUsd }])
+      const dailyStats = await getDailyMarketDataStatsForAllSymbols(accountId)
       expect(dailyStats.length).to.eql(1)
 
       const dailyStatsForKauUsd = dailyStats.find(({ symbolId }) => symbolId === kauUsd)!
@@ -84,14 +85,17 @@ describe('Retrieve the latest daily stats', async () => {
   describe('getDailyMarketDataStatsForCurrency', () => {
     it('get the ask price for a symbol', async () => {
       setupDailyStats(kauUsd)
+      const accountId = 'accc-id'
+
       sinon.stub(referenceDataOperations, 'getAllSymbolsIncludingCurrency').resolves([{ id: kauUsd }])
+      sinon.stub(referenceDataOperations, 'findSymbolsByAccountId').resolves([{ id: kauUsd }])
 
       MemoryCache.getInstance().set({ key: `exchange:stats:ask:${kauUsd}`, val: 4 })
       MemoryCache.getInstance().set({ key: `exchange:stats:bid:${kauUsd}`, val: 3 })
       MemoryCache.getInstance().set({ key: `exchange:stats:ask:${kvtUsd}`, val: 20 })
       MemoryCache.getInstance().set({ key: `exchange:stats:bid:${kvtUsd}`, val: 15 })
 
-      const dailyStats = await getDailyMarketDataStatsForCurrency(CurrencyCode.usd)
+      const dailyStats = await getDailyMarketDataStatsForCurrency(CurrencyCode.usd, accountId)
       expect(dailyStats.length).to.eql(1)
       const dailyStatsForKauUsd = dailyStats.find(({ symbolId }) => symbolId === kauUsd)!
 

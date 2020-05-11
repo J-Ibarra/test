@@ -24,8 +24,8 @@
     "run-migrations:test": "lerna run run-migrations:test --stream",
     "run-legacy-migrations:dev": "lerna run run-legacy-migrations-dev",
     "run-migrations:dev": "lerna run run-migrations:dev --stream",
-    "start-api-debug:dev": "lerna run start-api-debug:dev --stream",
-    "start-api-debug:e2e": "lerna run start-api-debug:e2e-local --stream",
+    "start-api-debug:dev": "cd packages/services/_local-service-starter && npm run start-api-debug:dev",
+    "start-api-debug:e2e": "cd packages/services/_local-service-starter && npm run start-api-debug:e2e-local",
     "start-api-debug-debit-card:dev": "npm start-api-debug:dev run lerna run start-api-debug-debit-card:dev --stream",
     "start-api-debug-debit-card:e2e": "start-api-debug:e2e lerna run start-api-debug-debit-card:e2e-local --stream",
     "push-api-docs-to-s3": "lerna run push-api-docs-to-s3"

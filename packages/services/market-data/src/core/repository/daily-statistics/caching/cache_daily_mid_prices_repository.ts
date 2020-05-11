@@ -43,7 +43,7 @@ const storeMidPricesForSymbols = (symbolId: string, { newest, oldest }: NewestAn
   if (oldest) {
     MemoryCache.getInstance().set<number>({
       key: `${MID_PRICE_OLDEST_KEY(symbolId)}`,
-      ttl: moment(oldest.createdAt).diff(moment(timeFilter), 'ms'),
+      ttl: Math.abs(moment(oldest.createdAt).diff(moment(timeFilter), 'ms')),
       val: oldest.price,
     })
   }
@@ -52,6 +52,6 @@ const storeMidPricesForSymbols = (symbolId: string, { newest, oldest }: NewestAn
 export const storeMidPrice = ({ symbolId, price, createdAt }: Pick<DepthMidPrice, 'symbolId' | 'price' | 'createdAt'>, timeFilter: Date) =>
   MemoryCache.getInstance().set<number>({
     key: `${MID_PRICE_LATEST_KEY(symbolId)}`,
-    ttl: moment(createdAt).diff(moment(timeFilter), 'ms'),
+    ttl: Math.abs(moment(createdAt).diff(moment(timeFilter), 'ms')),
     val: price,
   })

@@ -2,6 +2,7 @@ import { CurrencyCode } from '@abx-types/reference-data'
 import { isErc20Token } from '../../../core'
 import { QueueConsumerOutput } from '@abx-utils/async-message-consumer'
 import { Logger } from '@abx-utils/logging'
+import util from 'util'
 
 export const nativelyImplementedCoins = [CurrencyCode.kag, CurrencyCode.kau, CurrencyCode.ethereum, CurrencyCode.kvt, CurrencyCode.tether]
 
@@ -40,7 +41,7 @@ export async function runHandlerAndSkipDeletionOnFailure(
     return result
   } catch (e) {
     logger.error(`An error has ocurred while processing withdrawal request, skipping deletion.`)
-    logger.error(JSON.stringify(e))
+    logger.error(util.inspect(e))
 
     // Skipping deletion so message can be added to DLQ
     return { skipMessageDeletion: true }

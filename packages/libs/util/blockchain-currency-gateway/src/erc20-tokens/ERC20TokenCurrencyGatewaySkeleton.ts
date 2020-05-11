@@ -30,7 +30,7 @@ export abstract class ERC20TokenCurrencyGatewaySkeleton implements OnChainCurren
   private ethHoldingsWalletSecret: string
   private readonly GAS_LIMIT: number = 80000
   private readonly erc20BlockchainFacade: BlockchainApiProviderFacade
-  private readonly TRANSACTION_CONFIRMATIONS_TO_WAIT_FOR = 1
+  // private readonly TRANSACTION_CONFIRMATIONS_TO_WAIT_FOR = 1
 
   constructor(env: Environment) {
     this.web3 = new Web3(this.getWeb3Config(env))
@@ -57,9 +57,10 @@ export abstract class ERC20TokenCurrencyGatewaySkeleton implements OnChainCurren
     return true
   }
 
-  public async createAddressTransactionSubscription({ address, publicKey }: DepositAddress): Promise<boolean> {
+  /** This will be added back with the USDT release */
+  public async createAddressTransactionSubscription({ address }: DepositAddress): Promise<boolean> {
     try {
-      await this.erc20BlockchainFacade.subscribeToAddressTransactionEvents(address || publicKey, this.TRANSACTION_CONFIRMATIONS_TO_WAIT_FOR)
+      // await this.erc20BlockchainFacade.subscribeToAddressTransactionEvents(address || publicKey, this.TRANSACTION_CONFIRMATIONS_TO_WAIT_FOR)
 
       return true
     } catch (e) {

@@ -17,10 +17,10 @@ async function consumeQueueMessage({ type, payload }: DepositAsyncRequest): Prom
   if (type === DepositAsyncEndpoints.createWalletAddressesForNewAccount) {
     const depositAddresses = await findDepositAddressesForAccount(payload.accountId)
     logger.info(`Processing ${DepositAsyncEndpoints.createWalletAddressesForNewAccount} request`)
-    await createMissingDepositAddressesForAccount(payload.accountId, depositAddresses)
+    const newDepositAddresses = await createMissingDepositAddressesForAccount(payload.accountId, depositAddresses)
 
     const epicurus = getEpicurusInstance()
-    epicurus.publish(DepositPubSubChannels.walletAddressesForNewAccountCreated, { accountId: payload.accountId })
+    epicurus.publish(DepositPubSubChannels.walletAddressesForNewAccountCreated, { accountId: payload.accountId, newDepositAddresses })
   }
 
   return Promise.resolve()

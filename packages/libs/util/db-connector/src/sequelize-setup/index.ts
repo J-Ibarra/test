@@ -5,19 +5,50 @@ import { migrationModel } from './migration'
 
 const dbConfig = getEnvironmentConfig().exchangeDb
 
-// Instantiate sequelize connection to the correct database
-export const sequelize = new Sequelize(dbConfig.schema, dbConfig.username, dbConfig.password, {
-  host: dbConfig.host,
-  dialect: dbConfig.dialect,
-  port: dbConfig.port,
-  pool: dbConfig.pool,
-  logging: false,
-  define: {
-    freezeTableName: true,
-  },
-})
+const createSequelizeInstance = (): Sequelize.Sequelize => {
+  return dbConfig.readReplica
+    ? new Sequelize({
+        dialect: dbConfig.dialect,
+        pool: dbConfig.pool,
+        logging: false,
+        replication: {
+          write: {
+            host: dbConfig.host,
+            username: dbConfig.username,
+            password: dbConfig.password,
+            database: dbConfig.schema,
+            port: dbConfig.port,
+          },
+          read: [
+            {
+              host: dbConfig.readReplica!.host,
+              username: dbConfig.readReplica!.username,
+              password: dbConfig.readReplica!.password,
+              port: dbConfig.readReplica!.port,
+              database: dbConfig.readReplica!.database,
+            },
+          ],
+        },
+        define: {
+          freezeTableName: true,
+        },
+      } as any)
+    : new Sequelize(dbConfig.schema, dbConfig.username, dbConfig.password, {
+        host: dbConfig.host,
+        dialect: dbConfig.dialect,
+        port: dbConfig.port,
+        pool: dbConfig.pool,
+        logging: false,
+        define: {
+          freezeTableName: true,
+        },
+      })
+}
 
-sequelize.authenticate().catch(err => {
+// Instantiate sequelize connection to the correct database
+export const sequelize = createSequelizeInstance()
+
+sequelize.authenticate().catch((err) => {
   console.error('Unable to connect to the database:', err)
 })
 
@@ -38,7 +69,7 @@ export const exitOnLostConnection = (sequelizeInstance: Sequelize.Sequelize): vo
 exitOnLostConnection(sequelize)
 
 if (process.env.SYNCDB) {
-  sequelize.sync().catch(error => {
+  sequelize.sync().catch((error) => {
     console.error(JSON.stringify(error, null, 2))
     throw error
   })
@@ -51,6 +82,6 @@ export function setupModel(modelSetupFn: (sequelizeClient: Sequelize.Sequelize) 
   modelSetupFn(sequelize)
 }
 
-export function getModel<T>(modelName: string) {
+export function getModel<T>(modelName: any) {
   return sequelize.model<Sequelize.Instance<T>, T>(modelName)
 }

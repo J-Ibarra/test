@@ -10,13 +10,24 @@ import { WithdrawalState } from '@abx-types/withdrawal'
 const logger = Logger.getInstance('withdrawal', 'queue_message_consumer_withdrawal_status_change')
 
 export async function consumeFiatWithdrawalQueueMessages(request: AsyncWithdrawalStatusChangeRequest) {
-  switch (request.type) {
-    case WithdrawalStatusChangeRequestType.cancelFiatWithdrawal:
-      await cancelFiatWithdrawal(request)
-    case WithdrawalStatusChangeRequestType.createFiatWithdrawal:
-      await createFiatWithdrawal(request)
+  try {
+    switch (request.type) {
+      case WithdrawalStatusChangeRequestType.cancelFiatWithdrawal: {
+        await cancelFiatWithdrawal(request)
+        break
+      }
+      case WithdrawalStatusChangeRequestType.createFiatWithdrawal: {
+        await createFiatWithdrawal(request)
+        break
+      }
+    }
+
+    return Promise.resolve()
+  } catch (e) {
+    logger.error(`An error has ocurred while processing a withdrawal status change request: ${JSON.stringify(request)}`)
+
+    return { skipMessageDeletion: true }
   }
-  return Promise.resolve()
 }
 
 async function cancelFiatWithdrawal(request: AsyncWithdrawalStatusChangeRequest) {

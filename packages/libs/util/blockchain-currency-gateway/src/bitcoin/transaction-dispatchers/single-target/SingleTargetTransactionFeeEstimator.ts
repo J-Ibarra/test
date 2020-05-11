@@ -5,7 +5,12 @@ import { BtcCryptoApisProviderProxy } from '../../../api-provider/crypto-apis/Bt
 import { SingleTargetCreateTransactionPayload } from '../../../model'
 
 export class SingleTargetTransactionFeeEstimator {
-  public static MAXIMUM_TX_FEE = 0.00005 // As per the business requirements required by operations
+  public static MAXIMUM_TX_FEE = 0.0003 // As per the business requirements required by operations
+  /**
+   * A static increment to add to the average bee per byte in order to
+   * increase the priority of the transaction when mined.
+   */
+  public static FEE_INCREMENT_CONSTANT = 0.0000005
 
   readonly AVERAGE_FEE_PER_BYTE_KEY = 'avg-fee-per-byte'
   readonly AVERAGE_FEE_PER_TRANSACTION_KEY = 'avg-fee-per-transaction'
@@ -63,7 +68,7 @@ export class SingleTargetTransactionFeeEstimator {
     )
 
     let estimatedMinimumTransactionFee = new Decimal(tx_size_bytes)
-      .times(averageFeePerByte!)
+      .times(new Decimal(averageFeePerByte!).plus(SingleTargetTransactionFeeEstimator.FEE_INCREMENT_CONSTANT))
       .toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
       .toNumber()
 

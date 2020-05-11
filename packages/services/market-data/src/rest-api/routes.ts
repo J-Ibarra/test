@@ -35,6 +35,7 @@ export function RegisterRoutes(app: express.Express) {
     authenticateMiddleware([{ "cookieAuth": [] }, { "tokenAuth": [] }]),
     function(request: any, response: any, next: any) {
       const args = {
+        request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
       };
 
       let validatedArgs: any[] = [];
@@ -55,6 +56,7 @@ export function RegisterRoutes(app: express.Express) {
     function(request: any, response: any, next: any) {
       const args = {
         currency: { "in": "path", "name": "currency", "required": true, "dataType": "enum", "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USDT", "USD", "EUR", "GBP"] },
+        request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
       };
 
       let validatedArgs: any[] = [];

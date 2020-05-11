@@ -8,6 +8,6 @@ export function bootstrapWithdrawalCompletionPendingQueueProcessor() {
   const queuePoller = getQueuePoller()
 
   queuePoller.subscribeToQueueMessages<WithdrawalCompletionPendingPayload>(WITHDRAWAL_TRANSACTION_COMPLETION_PENDING_QUEUE_URL!, async (request) => {
-    await runHandlerAndSkipDeletionOnFailure(() => processWithdrawalCompletionRequest(request))
+    return runHandlerAndSkipDeletionOnFailure(() => processWithdrawalCompletionRequest(request))
   })
 }

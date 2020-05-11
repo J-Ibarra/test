@@ -27,7 +27,8 @@
     "@abx-utils/db-connection-utils": "^1.1.0",
     "decimal.js": "10.2.0",
     "lodash": "4.17.5",
-    "sequelize": "4.44.1"
+    "sequelize": "4.44.1",
+    "moment": "2.22.2"
   },
   "devDependencies": {
     "@lerna/filter-options": "^3.18.4",

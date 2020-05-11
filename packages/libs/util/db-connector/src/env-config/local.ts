@@ -12,6 +12,13 @@ export const dbConfig = {
       idle: 20000,
       acquire: 120000,
     },
+    readReplica: {
+      username: process.env.EXCHANGE_DB_USERNAME || 'postgres',
+      password: process.env.EXCHANGE_DB_PASSWORD || 'postgres',
+      database: process.env.EXCHANGE_DB_NAME || 'kinesis_exchange',
+      host: process.env.EXCHANGE_DB_HOST || 'postgres',
+      port: process.env.EXCHANGE_DB_PORT || 6432,
+    },
   },
   redisDb: {
     host: process.env.REDIS_DB_HOST || 'redis',
