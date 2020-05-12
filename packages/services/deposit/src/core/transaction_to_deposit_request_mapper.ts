@@ -13,13 +13,13 @@ export async function convertTransactionToDepositRequest(
   fiatValueOfOneCryptoCurrency: number,
   currencyBoundary: CurrencyBoundary,
   status: DepositRequestStatus = DepositRequestStatus.pendingHoldingsTransaction,
-  existingDepositRequests: DepositRequest[] = [],
+  existingDepositRequestsWithInsufficientAmount: DepositRequest[] = [],
 ) {
   const truncateToCurrencyDP = truncateCurrencyDecimals(currencyBoundary) as any
   const truncatedAmount = truncateToCurrencyDP(depositTransaction.amount)
   const isDepositAmountAboveMinimumForCurrency = await depositAmountAboveMinimumForCurrency(truncatedAmount, currencyBoundary.currencyCode)
 
-  const existingDepositInsufficientAmount = existingDepositRequests.reduce(
+  const existingDepositInsufficientAmount = existingDepositRequestsWithInsufficientAmount.reduce(
     (acc, { amount, status }) => (status === DepositRequestStatus.insufficientAmount ? acc.plus(amount) : acc),
     new Decimal(0),
   )
