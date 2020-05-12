@@ -6,10 +6,19 @@ import { BlockchainApiProviderFacade } from '../api-provider/BlockchainApiProvid
 import { TransactionResponse } from '../currency_gateway'
 import moment from 'moment'
 
-export const mainnetEnvironments = [Environment.production]
+export const getNetwork = (env: Environment) => {
+  switch (env) {
+    case Environment.production:
+      return ENetworkTypes.MAINNET
+    case Environment.yieldUat:
+      return ENetworkTypes.ETH_RINKEBY
+    default:
+      return ENetworkTypes.ETH_TESTNET
+  }
+}
 
 export class Erc20ApiProviderFacade implements BlockchainApiProviderFacade {
-  private readonly LOGGER = Logger.getInstance('blockchain-currency-gateway', 'EthereumBlockchainFacade')
+  private readonly LOGGER = Logger.getInstance('blockchain-currency-gateway', 'Erc20ApiProviderFacade')
   private readonly DEFAULT_ERC20_TRANSACTION_CONFIRMATIONS = 1
 
   private cryptoApiProviderProxyEth: CryptoApisProviderProxyEth
@@ -17,7 +26,7 @@ export class Erc20ApiProviderFacade implements BlockchainApiProviderFacade {
   constructor(private currency: CurrencyCode) {
     this.cryptoApiProviderProxyEth = new CryptoApisProviderProxyEth(
       CurrencyCode.ethereum,
-      mainnetEnvironments.includes(process.env.NODE_ENV as Environment) ? ENetworkTypes.MAINNET : ENetworkTypes.ETH_TESTNET,
+      getNetwork(process.env.NODE_ENV as Environment),
       process.env.CRYPTO_APIS_TOKEN!,
     )
   }

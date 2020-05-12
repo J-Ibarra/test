@@ -4,7 +4,7 @@ import moment from 'moment'
 import { Environment } from '@abx-types/reference-data'
 import { AccessToken, SalesforceTokenResponse } from '@abx-types/account'
 
-const subDomain = process.env.NODE_ENV === 'production' ? 'login' : 'test'
+const subDomain = process.env.NODE_ENV === Environment.production ? 'login' : 'test'
 const SALESFORCE_HOST = `https://${subDomain}.salesforce.com`
 let accessData: AccessToken
 

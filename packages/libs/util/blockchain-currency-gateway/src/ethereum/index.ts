@@ -42,6 +42,9 @@ export const ETH_CONFIG = {
   [Environment.staging]: {
     url: `https://ropsten.infura.io/v3/${process.env.KBE_INFURA_PROJECT_ID}`,
   },
+  [Environment.yieldUat]: {
+    url: `https://rinkeby.infura.io/v3/${process.env.KBE_INFURA_PROJECT_ID}`,
+  },
 }
 
 const logger = Logger.getInstance('currencies', 'ethereum')

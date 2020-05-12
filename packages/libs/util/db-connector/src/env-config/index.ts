@@ -3,18 +3,15 @@ import { dbConfig as prodConfig } from './production'
 import { dbConfig as testConfig } from './test'
 
 import { EnvironmentConfig } from '../model'
-
-const cloudEnvironments = ['production', 'uat', 'integration', 'e2e-aws', 'stg']
+import { Environment } from '@abx-types/reference-data'
 
 export function getEnvironmentConfig(): EnvironmentConfig {
-  let environmentConfig
-  if (process.env.NODE_ENV === 'test') {
-    environmentConfig = testConfig
-  } else if (cloudEnvironments.includes(process.env.NODE_ENV!)) {
-    environmentConfig = prodConfig
-  } else {
-    environmentConfig = localConfig
+  switch (process.env.NODE_ENV) {
+    case Environment.development:
+      return localConfig as any
+    case Environment.test:
+      return testConfig as any
+    default:
+      return prodConfig as any
   }
-
-  return environmentConfig
 }

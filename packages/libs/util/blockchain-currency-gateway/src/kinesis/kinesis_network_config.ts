@@ -81,4 +81,14 @@ export const KINESIS_NETWORK_CONFIG = {
       url: 'https://kag-testnet.kinesisgroup.io',
     },
   },
+  [Environment.yieldUat]: {
+    [CurrencyCode.kau]: {
+      passphrase: 'Kinesis KAU Test Yield',
+      url: 'https://kau-testnet-yield.kinesisgroup.io',
+    },
+    [CurrencyCode.kag]: {
+      passphrase: 'Kinesis KAG Test Yield',
+      url: 'https://kag-testnet-yield.kinesisgroup.io',
+    },
+  },
 }
