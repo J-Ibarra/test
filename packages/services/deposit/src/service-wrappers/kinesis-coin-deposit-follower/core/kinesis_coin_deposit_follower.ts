@@ -7,9 +7,8 @@ import {
   updateBlockchainFollowerDetailsForCurrency,
   pushRequestForProcessing,
   NEW_KINESIS_DEPOSIT_REQUESTS_QUEUE_URL,
-  findDepositRequestsWithInsufficientAmount,
 } from '../../../core'
-import { BlockchainFollowerDetails, DepositRequestStatus, DepositRequest } from '@abx-types/deposit'
+import { BlockchainFollowerDetails, DepositRequestStatus } from '@abx-types/deposit'
 import { storeDepositRequests } from '../../../core'
 import { CurrencyCode, CurrencyBoundary, Environment } from '@abx-types/reference-data'
 import { findCurrencyForCode } from '@abx-service-clients/reference-data'
@@ -65,23 +64,9 @@ export async function handleKinesisPaymentOperations(
   if (depositTransactions.length > 0) {
     logger.info(`${depositTransactions.length} of the ${depositCandidateOperations.length} ${currencyBoundary.currencyCode} candidates are valid`)
 
-    const depositRequestsWithInsufficientAmount = await Promise.all(
-      depositTransactions.map(({ to }) => findDepositRequestsWithInsufficientAmount(publicKeyToDepositAddress.get(to!)?.depositAddress.id!)),
-    )
-    const addressIdToDepositRequestsWithInsufficientAmount = depositRequestsWithInsufficientAmount.reduce(
-      (acc, depositRequests) => (depositRequests.length > 0 ? acc.set(depositRequests[0].depositAddressId!, depositRequests) : acc),
-      new Map<number, DepositRequest[]>(),
-    )
-
     const depositRequests = await Promise.all(
       depositTransactions.map((depositTransaction) =>
-        mapDepositTransactionToDepositRequest(
-          depositTransaction,
-          publicKeyToDepositAddress,
-          fiatValueOfOneCryptoCurrency,
-          currencyBoundary,
-          addressIdToDepositRequestsWithInsufficientAmount,
-        ),
+        mapDepositTransactionToDepositRequest(depositTransaction, publicKeyToDepositAddress, fiatValueOfOneCryptoCurrency, currencyBoundary),
       ),
     )
 
@@ -100,7 +85,6 @@ function mapDepositTransactionToDepositRequest(
   publicKeyToDepositAddress: Map<string, DepositAddressAccountStatusPair>,
   fiatValueOfOneCryptoCurrency: number,
   currencyBoundary: CurrencyBoundary,
-  addressIdToDepositRequestsWithInsufficientAmount: Map<number, DepositRequest[]>,
 ) {
   const { depositAddress } = publicKeyToDepositAddress.get(depositTransaction.to!)!
 
@@ -110,7 +94,6 @@ function mapDepositTransactionToDepositRequest(
     fiatValueOfOneCryptoCurrency,
     currencyBoundary,
     DepositRequestStatus.received,
-    addressIdToDepositRequestsWithInsufficientAmount.get(depositAddress.id!) || [],
   )
 }
 

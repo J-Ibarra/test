@@ -24,7 +24,7 @@ export async function convertTransactionToDepositRequest(
     new Decimal(0),
   )
 
-  let status = desiredStatus
+  let status = isDepositAmountAboveMinimumForCurrency ? desiredStatus : DepositRequestStatus.insufficientAmount
   if (!isDepositAmountAboveMinimumForCurrency && existingDepositInsufficientAmount.greaterThan(0)) {
     const sufficientTotalDepositBalance = await depositAmountAboveMinimumForCurrency(
       truncateToCurrencyDP(existingDepositInsufficientAmount.plus(depositTransaction.amount).toNumber()),

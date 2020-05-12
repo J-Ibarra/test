@@ -2,13 +2,14 @@ import * as Sequelize from 'sequelize'
 import { Block, Transaction } from 'web3/eth/types'
 import { Logger } from '@abx-utils/logging'
 import { CurrencyManager, Ethereum } from '@abx-utils/blockchain-currency-gateway'
-import { 
-  getBlockchainFollowerDetailsForCurrency, 
-  updateBlockchainFollowerDetailsForCurrency, 
-  pushRequestForProcessing, 
-  NEW_ETH_AND_KVT_DEPOSIT_REQUESTS_QUEUE_URL
+import {
+  getBlockchainFollowerDetailsForCurrency,
+  updateBlockchainFollowerDetailsForCurrency,
+  pushRequestForProcessing,
+  NEW_ETH_AND_KVT_DEPOSIT_REQUESTS_QUEUE_URL,
+  findDepositRequestsWithInsufficientAmount,
 } from '../../../core'
-import { BlockchainFollowerDetails, DepositAddress, DepositRequestStatus } from '@abx-types/deposit'
+import { BlockchainFollowerDetails, DepositAddress, DepositRequestStatus, DepositRequest } from '@abx-types/deposit'
 import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { findKycOrEmailVerifiedDepositAddresses, storeDepositRequests } from '../../../core'
 import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-data'
@@ -98,13 +99,31 @@ export async function handleEthereumTransactions(
 
   if (potentialDepositTransactions.length > 0) {
     logger.debug(`Found Potential Deposits: ${potentialDepositTransactions}`)
-    const depositRequests = await Promise.all(potentialDepositTransactions.map((tx) => {
-      const depositTransaction = onChainCurrencyGateway.apiToDepositTransaction(tx.tx)
-      return convertTransactionToDepositRequest(tx.depositAddress, depositTransaction, fiatValueOfOneCryptoCurrency, currencyBoundary, DepositRequestStatus.pendingHoldingsTransaction)
-    }))
+
+    const depositRequestsWithInsufficientAmount = await Promise.all(
+      potentialDepositTransactions.map(({ depositAddress }) => findDepositRequestsWithInsufficientAmount(depositAddress.id!)),
+    )
+    const addressIdToDepositRequestsWithInsufficientAmount = depositRequestsWithInsufficientAmount.reduce(
+      (acc, depositRequests) => (depositRequests.length > 0 ? acc.set(depositRequests[0].depositAddressId!, depositRequests) : acc),
+      new Map<number, DepositRequest[]>(),
+    )
+
+    const depositRequests = await Promise.all(
+      potentialDepositTransactions.map((tx) => {
+        const depositTransaction = onChainCurrencyGateway.apiToDepositTransaction(tx.tx)
+        return convertTransactionToDepositRequest(
+          tx.depositAddress,
+          depositTransaction,
+          fiatValueOfOneCryptoCurrency,
+          currencyBoundary,
+          DepositRequestStatus.pendingHoldingsTransaction,
+          addressIdToDepositRequestsWithInsufficientAmount.get(tx.depositAddress.id!),
+        )
+      }),
+    )
 
     const storedDepositRequests = await storeDepositRequests(depositRequests, t)
-    const depositRequestsWithSufficientAmount = storedDepositRequests.filter(req => req.status !== DepositRequestStatus.insufficientAmount)
+    const depositRequestsWithSufficientAmount = storedDepositRequests.filter((req) => req.status !== DepositRequestStatus.insufficientAmount)
 
     if (depositRequestsWithSufficientAmount.length > 0) {
       await pushRequestForProcessing(depositRequestsWithSufficientAmount, NEW_ETH_AND_KVT_DEPOSIT_REQUESTS_QUEUE_URL)
