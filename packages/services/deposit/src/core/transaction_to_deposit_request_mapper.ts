@@ -12,7 +12,7 @@ export async function convertTransactionToDepositRequest(
   depositTransaction: DepositTransaction,
   fiatValueOfOneCryptoCurrency: number,
   currencyBoundary: CurrencyBoundary,
-  status: DepositRequestStatus = DepositRequestStatus.pendingHoldingsTransaction,
+  desiredStatus: DepositRequestStatus = DepositRequestStatus.pendingHoldingsTransaction,
   existingDepositRequestsWithInsufficientAmount: DepositRequest[] = [],
 ) {
   const truncateToCurrencyDP = truncateCurrencyDecimals(currencyBoundary) as any
@@ -24,16 +24,14 @@ export async function convertTransactionToDepositRequest(
     new Decimal(0),
   )
 
-  let initialStatus: DepositRequestStatus
-  if (isDepositAmountAboveMinimumForCurrency) {
-    initialStatus = status
-  } else if (existingDepositInsufficientAmount.greaterThan(0)) {
+  let status = desiredStatus
+  if (!isDepositAmountAboveMinimumForCurrency && existingDepositInsufficientAmount.greaterThan(0)) {
     const sufficientTotalDepositBalance = await depositAmountAboveMinimumForCurrency(
       truncateToCurrencyDP(existingDepositInsufficientAmount.plus(depositTransaction.amount).toNumber()),
       currencyBoundary.currencyCode,
     )
 
-    initialStatus = sufficientTotalDepositBalance ? status : DepositRequestStatus.insufficientAmount
+    status = sufficientTotalDepositBalance ? desiredStatus : DepositRequestStatus.insufficientAmount
   }
 
   return {
@@ -43,6 +41,6 @@ export async function convertTransactionToDepositRequest(
     depositTxHash: depositTransaction.txHash,
     fiatCurrencyCode: FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION,
     fiatConversion: new Decimal(truncatedAmount).times(fiatValueOfOneCryptoCurrency).toNumber(),
-    status: isDepositAmountAboveMinimumForCurrency ? status : DepositRequestStatus.insufficientAmount,
+    status,
   } as DepositRequest
 }
