@@ -1,7 +1,6 @@
 import { expect } from 'chai'
 import * as sinon from 'sinon'
 import * as Account from '@abx-service-clients/account'
-import * as Balance from '@abx-service-clients/balance'
 import { CurrencyCode } from '@abx-types/reference-data'
 import * as depositRequestOperations from '../../../../../core'
 import { processReceivedDepositRequestForCurrency } from '../../kinesis'
@@ -67,16 +66,13 @@ describe('received_requests_processor', () => {
     const currencyManager = getCurrencyManager(checkConfirmationOfTransactionStub)
 
     const isAccountSuspendedStub = sinon.stub(Account, 'isAccountSuspended').resolves(false)
-    const getBalanceAdjustmentStub = sinon.stub(Balance, 'getBalanceAdjustmentForSourceEvent').resolves(balanceAdjustment)
     const completeReceivedDepositStub = sinon.stub(depositRequestOperations, 'completeReceivedDeposit')
 
     await triggerProcessor(currencyManager)
 
     expect(checkConfirmationOfTransactionStub.calledOnceWith(depositRequest.depositTxHash)).to.eql(true)
     expect(isAccountSuspendedStub.calledOnce).to.eql(true)
-    expect(getBalanceAdjustmentStub.calledOnce).to.eql(true)
     expect(completeReceivedDepositStub.notCalled).to.eql(true)
-    expect(getBalanceAdjustmentStub.getCall(0).args[0]).to.eql(depositRequest.id!)
     expect(receivedGateKeeper[currencyToDepositRequests]!.get(CurrencyCode.kau)!.length).to.eql(0)
   })
 
@@ -86,16 +82,13 @@ describe('received_requests_processor', () => {
     const currencyManager = getCurrencyManager(checkConfirmationOfTransactionStub)
 
     const isAccountSuspendedStub = sinon.stub(Account, 'isAccountSuspended').resolves(false)
-    const getBalanceAdjustmentStub = sinon.stub(Balance, 'getBalanceAdjustmentForSourceEvent').resolves(null)
     const completeReceivedDepositStub = sinon.stub(depositRequestOperations, 'completeReceivedDeposit')
 
     await triggerProcessor(currencyManager)
 
     expect(checkConfirmationOfTransactionStub.calledOnceWith(depositRequest.depositTxHash)).to.eql(true)
     expect(isAccountSuspendedStub.calledOnce).to.eql(true)
-    expect(getBalanceAdjustmentStub.calledOnce).to.eql(true)
     expect(completeReceivedDepositStub.calledOnce).to.eql(true)
-    expect(getBalanceAdjustmentStub.getCall(0).args[0]).to.eql(depositRequest.id!)
     expect(completeReceivedDepositStub.getCall(0).args[0]).to.eql(depositRequest)
 
     expect(receivedGateKeeper[currencyToDepositRequests]!.get(CurrencyCode.kau)!.length).to.eql(0)
