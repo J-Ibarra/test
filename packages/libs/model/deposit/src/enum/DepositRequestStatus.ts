@@ -15,4 +15,11 @@ export enum DepositRequestStatus {
 
   // Set after the holdings transaction has been dispatched
   pendingHoldingsTransactionConfirmation = 'pendingHoldingsTransactionConfirmation',
+
+
+  // The following states are specific to the KAU/KAG deposit flow
+  // The deposit request is received
+  received = 'received',
+  // The deposit request is stored successfully and the transaction is being created
+  completedPendingHoldingsTransaction = 'completedPendingHoldingsTransaction',
 }

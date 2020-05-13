@@ -9,6 +9,7 @@ import { WITHDRAWAL_TRANSACTION_SENT_QUEUE_URL } from '@abx-service-clients/with
 import { updateWithdrawalRequest } from '../../../../core'
 import { WithdrawalState } from '@abx-types/withdrawal'
 import util from 'util'
+import { getWithdrawalConfigForCurrency } from '@abx-service-clients/reference-data'
 
 const logger = Logger.getInstance('withdrawal', 'withdrawal-transaction-dispatcher')
 export const DEFAULT_NUMBER_OF_CONFIRMATION_FOR_WITHDRAWAL = 1
@@ -55,10 +56,14 @@ async function transferFunds(withdrawalRequestId: number, currencyGateway: OnCha
     })
   }
 
+  const withdrawalConfig = await getWithdrawalConfigForCurrency({ currencyCode: currencyGateway.ticker! })
+
   return currencyGateway.transferFromExchangeHoldingsTo({
     toAddress: address,
     amount,
     memo,
+    feeLimit: withdrawalConfig.transactionFeeCap,
+    transactionFeeIncrement: withdrawalConfig.transactionFeeIncrement,
   })
 }
 

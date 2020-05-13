@@ -3,9 +3,8 @@ import * as sinon from 'sinon'
 import { createTemporaryTestingAccount } from '@abx-utils/account'
 import { CurrencyCode, FiatCurrency } from '@abx-types/reference-data'
 import { DepositAddress, DepositRequest, DepositRequestStatus } from '@abx-types/deposit'
-import { storeDepositAddress } from '../deposit_address'
+import { storeDepositAddress } from '../deposit-address'
 import { findDepositRequestById, getPendingDepositRequests, loadAllPendingDepositRequestsAboveMinimumAmount, storeDepositRequests } from '..'
-import { getMinimumDepositAmountForCurrency } from '../../core'
 import { truncateTables } from '@abx-utils/db-connection-utils'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
 
@@ -130,12 +129,14 @@ describe('Deposit Request module', () => {
         accountId: SAVED_TEST_ACCOUNT_ID,
         transactionTrackingActivated: false,
       })
+
+      sinon.stub(referenceDataOperations, 'getDepositMimimumAmountForCurrency').resolves(1)
     })
 
     it('should load all pending deposit requests above the minimum for the currency', async () => {
       const pendingKauDepositRequest: DepositRequest = {
         depositAddress: SAVED_KAU_DEPOSIT_ADDRESS,
-        amount: 100,
+        amount: 1,
         depositTxHash: '',
         from: '',
         fiatConversion: 3000,
@@ -145,7 +146,7 @@ describe('Deposit Request module', () => {
 
       const pendingEthDepositRequest: DepositRequest = {
         depositAddress: SAVED_ETH_DEPOSIT_ADDRESS,
-        amount: 100,
+        amount: 2,
         depositTxHash: '',
         from: '',
         fiatConversion: 3000,
@@ -173,7 +174,7 @@ describe('Deposit Request module', () => {
     it('should not load all pending deposit requests below the minimum for the currency', async () => {
       const pendingKauDepositRequest: DepositRequest = {
         depositAddress: SAVED_KAU_DEPOSIT_ADDRESS,
-        amount: getMinimumDepositAmountForCurrency(CurrencyCode.kau) - 0.1,
+        amount: 0.5,
         depositTxHash: '',
         from: '',
         fiatConversion: 3000,

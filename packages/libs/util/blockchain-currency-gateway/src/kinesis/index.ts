@@ -104,24 +104,48 @@ export class Kinesis implements OnChainCurrencyGateway {
     }
   }
 
-  public async getLatestTransactions(lastSeenTransactionHash?: string, transactionAcc: DepositTransaction[] = []): Promise<DepositTransaction[]> {
-    const payments = await this.getServer().payments().order('desc').limit(100).cursor('').call()
+  /**  
+    Recursively traverses the latest payment operations until the paging token 
+    of the operations is larger than the paging token which we have previously recorder
+  */
+
+  public async getLatestTransactions(
+    lastRecorderPagingToken?: string,
+    pagingToken?: string,
+    transactionAcc: DepositTransaction[] = [],
+  ): Promise<DepositTransaction[]> {
+    const payments = await this.getServer()
+      .payments()
+      .order('desc')
+      .limit(100)
+      .cursor(pagingToken || '')
+      .call()
     const newTransactions: PaymentOperationRecord[] = []
 
+    if (transactionAcc.length > 0 && payments.records.length > 0 && Number(lastRecorderPagingToken) > Number(payments.records[0].paging_token)) {
+      return newTransactions.map(this.apiToDepositTransaction)
+    }
+
     for (const payment of payments.records) {
-      if (payment.transaction_hash === lastSeenTransactionHash) {
+      if (payment.paging_token === lastRecorderPagingToken) {
         return transactionAcc.concat(newTransactions.map(this.apiToDepositTransaction))
       }
 
+      logger.info(`New payment operation found ${JSON.stringify(payment)}`)
       newTransactions.push(payment)
     }
 
     const newTransactionDepositTransactions = newTransactions.map(this.apiToDepositTransaction)
-    if (newTransactions.length < 100) {
+
+    if (newTransactionDepositTransactions.length < 100) {
       return transactionAcc.concat(newTransactionDepositTransactions)
     }
 
-    return this.getLatestTransactions(lastSeenTransactionHash, transactionAcc.concat(newTransactionDepositTransactions))
+    return this.getLatestTransactions(
+      lastRecorderPagingToken,
+      newTransactions[newTransactions.length - 1].paging_token,
+      transactionAcc.concat(newTransactionDepositTransactions),
+    )
   }
 
   public async getHoldingBalance() {
@@ -346,11 +370,13 @@ export class Kinesis implements OnChainCurrencyGateway {
     return new Server(this.config.url)
   }
 
-  private apiToDepositTransaction(operation: PaymentOperationRecord | CreateAccountOperationRecord): DepositTransaction {
+  public apiToDepositTransaction(operation: PaymentOperationRecord | CreateAccountOperationRecord): DepositTransaction {
     return {
       txHash: operation.transaction_hash,
       amount: operation.type === 'create_account' ? Number(operation.starting_balance) : Number(operation.amount),
       from: operation.type === 'create_account' ? operation.funder : operation.from,
+      to: operation.type === 'create_account' ? (operation as CreateAccountOperationRecord).account : operation.to!,
+      pagingToken: operation.paging_token,
     }
   }
 

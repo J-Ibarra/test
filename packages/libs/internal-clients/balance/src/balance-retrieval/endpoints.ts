@@ -5,5 +5,6 @@ export enum BalanceRetrievalEndpoints {
   findRawBalances = 'balance/findRawBalances',
   retrieveTotalOrderValueReceivedByAccount = 'balance/retrieveTotalOrderValueReceivedByAccount',
   getBalanceAdjustmentsForBalanceAndTradeTransactions = 'balance/getBalanceAdjustmentsForBalanceAndTradeTransactions',
+  getBalanceAdjustmentForSourceEvent = 'balance/getBalanceAdjustmentForSourceEvent',
   getOrderBalanceReserveAdjustment = 'balance/getOrderBalanceReserveAdjustment',
 }

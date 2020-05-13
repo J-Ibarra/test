@@ -6,6 +6,7 @@ import { FeatureFlagsController } from './feature_flags_controller';
 import { SymbolsController } from './symbols_controller';
 import { E2eTestingDataSetupController } from './E2eTestingDataSetupController';
 import { AdminSymbolsController } from './symbols_admin_controller';
+import { ExchangeConfigController } from './exchange_config_contoller';
 import { expressAuthentication } from './middleware/authentication';
 import * as express from 'express';
 
@@ -41,6 +42,13 @@ const models: TsoaRoute.Models = {
       "fee": { "ref": "CurrencyCode", "required": true },
       "orderRange": { "dataType": "object" },
       "sortOrder": { "dataType": "object" },
+    },
+  },
+  "MobileVersions": {
+    "properties": {
+      "ios": { "dataType": "string", "required": true },
+      "android": { "dataType": "string", "required": true },
+      "forceVersionUpdate": { "dataType": "boolean", "required": true },
     },
   },
 };
@@ -219,6 +227,44 @@ export function RegisterRoutes(app: express.Express) {
 
 
       const promise = controller.setOrderRangeForSymbol.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.get('/api/fees/transaction',
+    authenticateMiddleware([{ "cookieAuth": [] }, { "tokenAuth": [] }]),
+    function(request: any, response: any, next: any) {
+      const args = {
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new ExchangeConfigController();
+
+
+      const promise = controller.retrieveTransactionFeeCaps.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.get('/api/mobile/versions',
+    authenticateMiddleware([{ "cookieAuth": [] }, { "tokenAuth": [] }]),
+    function(request: any, response: any, next: any) {
+      const args = {
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new ExchangeConfigController();
+
+
+      const promise = controller.retrieveMobileVersions.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
 

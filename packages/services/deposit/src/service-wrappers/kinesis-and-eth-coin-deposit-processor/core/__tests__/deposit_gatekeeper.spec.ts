@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import moment from 'moment'
 import { CurrencyCode } from '@abx-types/reference-data'
-import { DepositGatekeeper } from '../framework/deposit_gatekeeper'
+import { DepositGatekeeper } from '../common/deposit_gatekeeper'
 import { currencyToDepositRequests, depositRequest } from './data.helper'
 
 describe('deposit_gatekeeper', () => {
@@ -34,9 +34,7 @@ describe('deposit_gatekeeper', () => {
       testGatekeeper[currencyToDepositRequests].set(CurrencyCode.kau, [
         {
           isLocked: false,
-          lockedUntil: moment()
-            .add(10, 'minutes')
-            .toDate(),
+          lockedUntil: moment().add(10, 'minutes').toDate(),
           request: depositRequest,
         },
       ])
@@ -49,9 +47,7 @@ describe('deposit_gatekeeper', () => {
       testGatekeeper[currencyToDepositRequests].set(CurrencyCode.kau, [
         {
           isLocked: false,
-          lockedUntil: moment()
-            .subtract(10, 'minutes')
-            .toDate(),
+          lockedUntil: moment().subtract(10, 'minutes').toDate(),
           request: depositRequest,
         },
       ])

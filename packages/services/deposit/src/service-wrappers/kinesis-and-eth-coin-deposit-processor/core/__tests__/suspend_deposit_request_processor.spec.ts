@@ -7,8 +7,8 @@ import { EmailTemplates } from '@abx-types/notification'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { DepositRequestStatus } from '@abx-types/deposit'
 import * as DepositRequestRepo from '../../../../core'
-import { DepositGatekeeper } from '../framework/deposit_gatekeeper'
-import * as SuspendDepositRequestProcessor from '../framework/suspend_deposit_request_processor'
+import { DepositGatekeeper } from '../common/deposit_gatekeeper'
+import * as SuspendDepositRequestProcessor from '../kvt-eth/suspend_deposit_request_processor'
 import { currencyToDepositRequests, depositRequest, testAccount, testBoundary, testUser } from './data.helper'
 import { isFiatCurrency } from '@abx-service-clients/reference-data'
 import * as notificationOperations from '@abx-service-clients/notification'
@@ -102,7 +102,7 @@ describe('suspended_deposit_request_processor', () => {
   })
 })
 
-const prepareStub = request => {
+const prepareStub = (request) => {
   const spyUpdateDepositRequest = sinon.stub(DepositRequestRepo, 'updateDepositRequest').resolves(request)
 
   const stubUser = sinon.stub(accountOperations, 'findUserByAccountId').resolves(testUser)

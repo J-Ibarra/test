@@ -6,26 +6,33 @@ import { CurrencyCode } from '@abx-types/reference-data'
 import { DepositRequestStatus } from '@abx-types/deposit'
 import * as privateKeyOperations from '@abx-utils/encryption'
 import * as depositRequestOperations from '../../../../core'
-import * as FailedHoldingsTransactionChecker from '../framework/failed_transactions_operations/failed_holdings_transaction_checker'
-import { processNewestDepositRequestForCurrency } from '../framework/new_deposit_processor/new_deposit_request_processor'
+import * as FailedHoldingsTransactionChecker from '../kvt-eth/failed_transactions_operations/failed_holdings_transaction_checker'
+import { processNewestDepositRequestForCurrency } from '../kvt-eth/new_deposit_processor/new_deposit_request_processor'
 import { currencyToDepositRequests, decryptedPrivateKey, depositAddress, depositRequest } from './data.helper'
-import { DepositGatekeeper } from '../framework'
+import { DepositGatekeeper } from '../common'
 import * as balanceOperations from '@abx-service-clients/balance'
+import * as blockchainOperations from '@abx-utils/blockchain-currency-gateway'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
 
 const depositTxHash = 'deposit-tx-hash'
-const holdingsTxHash = 'holdings-tx-hash'
 const holdingsTxFee = '0.5'
 
 describe('new_deposit_request_processor', () => {
   let pendingHoldingsTransferGatekeeper: DepositGatekeeper
   let pendingCompletionGatekeeper: DepositGatekeeper
   let pendingSuspendedDepositGatekeeper: DepositGatekeeper
+  const transactionFeeCap = 12
+  const transactionFeeIncrement = 11
 
   beforeEach(async () => {
     pendingHoldingsTransferGatekeeper = new DepositGatekeeper('pendingHoldingsTransferGatekeeper')
     pendingCompletionGatekeeper = new DepositGatekeeper('pendingCompletionGatekeeper')
     pendingSuspendedDepositGatekeeper = new DepositGatekeeper('pendingSuspendedDepositGatekeeper')
+
+    sinon.stub(referenceDataOperations, 'getWithdrawalConfigForCurrency').resolves({
+      transactionFeeCap,
+      transactionFeeIncrement,
+    })
   })
 
   afterEach(() => {
@@ -78,7 +85,7 @@ describe('new_deposit_request_processor', () => {
   })
 
   it('should transfer deposit amount to holdings if deposit transaction confirmed and add request to pendingCompletionGatekeeper', async () => {
-    const { currencyGateway, pendingDepositStub, updateStub, transferToExchangeHoldingsFromMock } = prepareStubs(
+    const { currencyGateway, pendingDepositStub, updateAllDepositRequestsStub, transferToExchangeHoldingsFromMock } = prepareStubs(
       CurrencyCode.kau,
       pendingHoldingsTransferGatekeeper,
       sinon.mock().resolves({ txHash: depositTxHash, transactionFee: holdingsTxFee }),
@@ -103,61 +110,31 @@ describe('new_deposit_request_processor', () => {
       }),
     ).to.eql(true)
 
-    expect(updateStub.getCall(0).args[0]).to.eql(depositRequest.id)
-    expect(updateStub.getCall(0).args[1]).to.eql({
+    expect(updateAllDepositRequestsStub.getCall(0).args[0]).to.eql([depositRequest.id])
+    expect(updateAllDepositRequestsStub.getCall(0).args[1]).to.eql({
       holdingsTxHash: depositTxHash,
       holdingsTxFee: Number(holdingsTxFee),
       status: DepositRequestStatus.pendingCompletion,
     })
 
-    expect(transferToExchangeHoldingsFromMock.calledWith({ privateKey: decryptedPrivateKey }, depositRequest.amount)).to.eql(true)
-    expect(pendingHoldingsTransferGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau)!.length).to.eql(0)
-    expect(pendingCompletionGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau)![0].request).to.eql(depositRequest)
-  })
-
-  it('should not transfer deposit amount to holdings if the balance at the address is 0 meaning a merge operation has been performed previously', async () => {
-    const { currencyGateway, pendingDepositStub, updateStub, transferToExchangeHoldingsFromMock } = prepareStubs(
-      CurrencyCode.kau,
-      pendingHoldingsTransferGatekeeper,
-      sinon.mock().resolves({ txHash: depositTxHash }),
-      0,
-    )
-    sinon.stub(depositRequestOperations, 'findMostRecentlyUpdatedDepositRequest').resolves({ holdingsTxHash })
-
-    sinon.stub(Account, 'isAccountSuspended').resolves(false)
-
-    await processNewestDepositRequestForCurrency(
-      pendingHoldingsTransferGatekeeper,
-      pendingCompletionGatekeeper,
-      pendingSuspendedDepositGatekeeper,
-      CurrencyCode.kau,
-      currencyGateway as any,
-    )
-
     expect(
-      pendingDepositStub.calledWith({
-        accountId: depositAddress.accountId,
-        amount: depositRequest.amount,
-        currencyId: depositRequest.depositAddress.currencyId,
-        sourceEventId: depositRequest.id!,
-        sourceEventType: SourceEventType.currencyDepositRequest,
-      }),
+      transferToExchangeHoldingsFromMock.calledWith(
+        {
+          privateKey: decryptedPrivateKey,
+          publicKey: depositAddress.publicKey,
+          address: undefined,
+          wif: undefined,
+        },
+        depositRequest.amount,
+        transactionFeeCap,
+        transactionFeeIncrement,
+      ),
     ).to.eql(true)
-
-    // Holdings Fee is null here because there was no merge operation and thus does not return a fee
-    expect(updateStub.getCall(0).args[0]).to.eql(depositRequest.id)
-    expect(updateStub.getCall(0).args[1]).to.eql({
-      holdingsTxHash: holdingsTxHash,
-      holdingsTxFee: 0,
-      status: DepositRequestStatus.pendingCompletion,
-    })
-    expect(transferToExchangeHoldingsFromMock.calledWith({ privateKey: decryptedPrivateKey }, depositRequest.amount)).to.eql(false)
     expect(pendingHoldingsTransferGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau)!.length).to.eql(0)
-    expect(pendingCompletionGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau)![0].request).to.eql(depositRequest)
   })
 
   it('should update status to failedHoldingsTransaction if holdings transfer fails and add request to FailedHoldingsTransactionChecker', async () => {
-    const { currencyGateway, updateStub, transferToExchangeHoldingsFromMock } = prepareStubs(
+    const { currencyGateway, updateDepositStub, transferToExchangeHoldingsFromMock } = prepareStubs(
       CurrencyCode.kau,
       pendingHoldingsTransferGatekeeper,
       sinon.mock().rejects('Transfer failure'),
@@ -173,60 +150,40 @@ describe('new_deposit_request_processor', () => {
     )
 
     expect(
-      updateStub.calledWith(depositRequest.id!, {
+      updateDepositStub.calledWith(depositRequest.id!, {
         status: DepositRequestStatus.failedHoldingsTransaction,
       }),
     ).to.eql(true)
-    expect(transferToExchangeHoldingsFromMock.calledWith({ privateKey: decryptedPrivateKey }, depositRequest.amount)).to.eql(true)
+    expect(
+      transferToExchangeHoldingsFromMock.calledWith(
+        {
+          privateKey: decryptedPrivateKey,
+          publicKey: depositAddress.publicKey,
+          address: undefined,
+          wif: undefined,
+        },
+        depositRequest.amount,
+        transactionFeeCap,
+        transactionFeeIncrement,
+      ),
+    ).to.eql(true)
     expect(pendingHoldingsTransferGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau)!.length).to.eql(0)
     expect(registerFailedRequestStub.calledOnceWith(CurrencyCode.kau, depositRequest)).to.eql(true)
   }).timeout(60_000)
 
-  it('should not create a pendingWithdrawal balance if the deposit currency needs to be covered', async () => {
-    const { currencyGateway, pendingDepositStub, pendingWithdrawalStub, updateStub, transferToExchangeHoldingsFromMock } = prepareStubs(
-      CurrencyCode.kau,
-      pendingHoldingsTransferGatekeeper,
-      sinon.mock().resolves({ txHash: depositTxHash, transactionFee: holdingsTxFee }),
-    )
-    sinon.stub(Account, 'isAccountSuspended').resolves(false)
-    await processNewestDepositRequestForCurrency(
-      pendingHoldingsTransferGatekeeper,
-      pendingCompletionGatekeeper,
-      pendingSuspendedDepositGatekeeper,
-      CurrencyCode.kau,
-      currencyGateway as any,
-    )
-
-    expect(
-      pendingDepositStub.calledWith({
-        accountId: depositAddress.accountId,
-        amount: depositRequest.amount,
-        currencyId: depositRequest.depositAddress.currencyId,
-        sourceEventId: depositRequest.id!,
-        sourceEventType: SourceEventType.currencyDepositRequest,
-      }),
-    ).to.eql(true)
-
-    expect(updateStub.getCall(0).args[0]).to.eql(depositRequest.id)
-    expect(updateStub.getCall(0).args[1]).to.eql({
-      holdingsTxHash: depositTxHash,
-      holdingsTxFee: Number(holdingsTxFee),
-      status: DepositRequestStatus.pendingCompletion,
-    })
-    expect(transferToExchangeHoldingsFromMock.calledWith({ privateKey: decryptedPrivateKey }, depositRequest.amount)).to.eql(true)
-    expect(pendingHoldingsTransferGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau)!.length).to.eql(0)
-    expect(pendingCompletionGatekeeper[currencyToDepositRequests].get(CurrencyCode.kau)![0].request).to.eql(depositRequest)
-
-    expect(pendingWithdrawalStub.getCalls().length).to.eql(0)
-  })
-
   it('should create a pendingWithdrawal balance if the deposit currency needs to be covered', async () => {
-    const { currencyGateway, pendingDepositStub, pendingWithdrawalStub, updateStub, transferToExchangeHoldingsFromMock } = prepareStubs(
+    const {
+      currencyGateway,
+      pendingDepositStub,
+      pendingWithdrawalStub,
+      updateAllDepositRequestsStub,
+      transferToExchangeHoldingsFromMock,
+    } = prepareStubs(
       CurrencyCode.ethereum,
       pendingHoldingsTransferGatekeeper,
       sinon.mock().resolves({ txHash: depositTxHash, transactionFee: holdingsTxFee }),
     )
-    sinon.stub(Account, 'findOrCreateKinesisRevenueAccount').resolves({ id: 'acc-1' })
+
     sinon.stub(Account, 'isAccountSuspended').resolves(false)
     sinon.stub(referenceDataOperations, 'getCurrencyId').resolves(1)
     await processNewestDepositRequestForCurrency(
@@ -247,16 +204,26 @@ describe('new_deposit_request_processor', () => {
       }),
     ).to.eql(true)
 
-    expect(updateStub.getCall(0).args[0]).to.eql(depositRequest.id)
-    expect(updateStub.getCall(0).args[1]).to.eql({
+    expect(updateAllDepositRequestsStub.getCall(0).args[0]).to.eql([depositRequest.id])
+    expect(updateAllDepositRequestsStub.getCall(0).args[1]).to.eql({
       holdingsTxHash: depositTxHash,
       holdingsTxFee: Number(holdingsTxFee),
       status: DepositRequestStatus.pendingCompletion,
     })
-    expect(transferToExchangeHoldingsFromMock.calledWith({ privateKey: decryptedPrivateKey }, depositRequest.amount)).to.eql(true)
+    expect(
+      transferToExchangeHoldingsFromMock.calledWith(
+        {
+          privateKey: decryptedPrivateKey,
+          publicKey: depositAddress.publicKey,
+          address: undefined,
+          wif: undefined,
+        },
+        depositRequest.amount,
+        transactionFeeCap,
+        transactionFeeIncrement,
+      ),
+    ).to.eql(true)
     expect(pendingHoldingsTransferGatekeeper[currencyToDepositRequests].get(CurrencyCode.ethereum)!.length).to.eql(0)
-    expect(pendingCompletionGatekeeper[currencyToDepositRequests].get(CurrencyCode.ethereum)![0].request).to.eql(depositRequest)
-
     expect(pendingWithdrawalStub.getCalls().length).to.eql(1)
   })
 })
@@ -270,27 +237,34 @@ const prepareStubs = (
   pendingHoldingsTransferGatekeeper.addNewDepositsForCurrency(currencyToStub, [depositRequest])
 
   const currencyGateway = {
-    getCurrencyFromTicker: () => ({
+    getCurrencyFromTicker: sinon.stub().returns({
       checkConfirmationOfTransaction: sinon.mock().resolves(true),
+      transferToExchangeHoldingsFrom: transferToExchangeHoldingsFromMock,
+      balanceAt: () => Promise.resolve(balance),
+      ticker: currencyToStub,
     }),
-    getCurrencyFromId: () =>
-      Promise.resolve({
-        transferToExchangeHoldingsFrom: transferToExchangeHoldingsFromMock,
-        balanceAt: () => Promise.resolve(balance),
-        ticker: currencyToStub,
-      }),
-  }
+    transferToExchangeHoldingsFrom: transferToExchangeHoldingsFromMock,
+  } as any
+  const onChainCurrencyManagerStub = {
+    getCurrencyFromTicker: sinon.stub().returns(currencyGateway),
+    transferToExchangeHoldingsFrom: transferToExchangeHoldingsFromMock,
+  } as any
 
-  sinon.stub(privateKeyOperations, 'decryptValue').resolves(decryptedPrivateKey)
+  sinon.stub(blockchainOperations, 'getOnChainCurrencyManagerForEnvironment').returns(onChainCurrencyManagerStub)
+
+  sinon.stub(Account, 'findOrCreateKinesisRevenueAccount').resolves({ id: 'acc-1' })
+  sinon.stub(privateKeyOperations, 'decryptValue').callsFake((key) => (key ? Promise.resolve(`decrypted ${key}`) : Promise.resolve(undefined)))
   const pendingDepositStub = sinon.stub(balanceOperations, 'createPendingDeposit')
   const pendingWithdrawalStub = sinon.stub(balanceOperations, 'createPendingWithdrawal')
-  const updateStub = sinon.stub(depositRequestOperations, 'updateDepositRequest').resolves(depositRequest)
+  const updateAllDepositRequestsStub = sinon.stub(depositRequestOperations, 'updateAllDepositRequests').resolves([depositRequest])
+  const updateDepositStub = sinon.stub(depositRequestOperations, 'updateDepositRequest').resolves(depositRequest)
 
   return {
     currencyGateway,
     transferToExchangeHoldingsFromMock,
     pendingDepositStub,
     pendingWithdrawalStub,
-    updateStub,
+    updateAllDepositRequestsStub,
+    updateDepositStub,
   }
 }

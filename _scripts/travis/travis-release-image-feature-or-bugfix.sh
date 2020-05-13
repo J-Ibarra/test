@@ -8,4 +8,3 @@ eval $(aws ecr get-login --region ap-southeast-2 --no-include-email)
 
 node ./_scripts/travis/build-image.util.js $1 \
 && lerna run push-image --scope $1 --since develop \
-&& lerna run deploy-latest-integration --scope $1 --since develop

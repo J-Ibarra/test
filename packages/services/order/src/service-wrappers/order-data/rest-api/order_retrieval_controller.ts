@@ -2,8 +2,12 @@ import { Controller, Get, Request, Route, Security, Tags } from 'tsoa'
 import { OverloadedRequest } from '@abx-types/account'
 import { Logger } from '@abx-utils/logging'
 import * as orderRetrieval from '../../../core'
-import { CoreOrderDetails, OrderWithTradeTransactions } from '@abx-types/order'
+import { CoreOrderDetails, OrderWithTradeTransactions, TradeTransaction } from '@abx-types/order'
 import { CurrencyCode } from '@abx-types/reference-data'
+import { findTradeTransactions } from '../../../core'
+import { DBOrder } from '@abx-utils/db-connection-utils'
+
+export type OrderExecutionSummary = Pick<TradeTransaction, 'id' | 'amount' | 'matchPrice'>
 
 @Tags('order')
 @Route('orders')
@@ -17,6 +21,35 @@ export class OrderRetrievalController extends Controller {
     this.logger.debug(`Retrieving orders for ${request.account!.id}`)
 
     return orderRetrieval.findAllOrdersForAccount(request.account!.id, request.where)
+  }
+
+  @Security('cookieAuth')
+  @Security('tokenAuth')
+  @Get('{orderId}/executions')
+  public async getOrderExecutions(orderId: number, @Request() request: OverloadedRequest): Promise<OrderExecutionSummary[] | void> {
+    const requestingAccountId = request.account!.id
+
+    const { rows: tradeTransactions } = await findTradeTransactions({
+      where: {
+        orderId,
+      },
+      order: [['createdAt', DBOrder.ASC]],
+    })
+
+    if (tradeTransactions.length > 0 && tradeTransactions[0].accountId !== requestingAccountId) {
+      this.logger.warn(
+        `Requested order executions for order ${orderId} and account ${requestingAccountId} but execution account was ${tradeTransactions[0].accountId}`,
+      )
+      this.setStatus(403)
+      return
+    }
+
+    return tradeTransactions.map(({ id, matchPrice, amount, createdAt }) => ({
+      id: id!,
+      amount,
+      matchPrice,
+      createdAt,
+    }))
   }
 
   @Security('cookieAuth')

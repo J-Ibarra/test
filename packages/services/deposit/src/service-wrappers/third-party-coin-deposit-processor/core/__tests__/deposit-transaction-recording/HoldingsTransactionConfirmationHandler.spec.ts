@@ -2,10 +2,10 @@ import sinon from 'sinon'
 import { expect } from 'chai'
 
 import { HoldingsTransactionConfirmationHandler } from '../../deposit-transaction-recording/HoldingsTransactionConfirmationHandler'
-import { HoldingsTransactionDispatcher } from '../../holdings-transaction-creation/HoldingsTransactionDispatcher'
 import * as coreOperations from '../../../../../core'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { DepositRequestStatus } from '@abx-types/deposit'
+import { HoldingsTransactionDispatcher, DepositCompleter } from '../../../../../core'
 
 describe('HoldingsTransactionConfirmationHandler', () => {
   const holdingsTransactionConfirmationHandler = new HoldingsTransactionConfirmationHandler()
@@ -22,11 +22,15 @@ describe('HoldingsTransactionConfirmationHandler', () => {
 
     const dispatchHoldingsTransactionForDepositRequestsStub = sinon
       .stub(HoldingsTransactionDispatcher.prototype, 'dispatchHoldingsTransactionForDepositRequests')
-      .resolves()
+      .resolves(blockedDepositRequests)
 
+    const depositCompleterStub = sinon
+      .stub(DepositCompleter.prototype, 'completeDepositRequests')
+      .resolves()
     await holdingsTransactionConfirmationHandler.handleHoldingsTransactionConfirmation(txHash, depositAddressId, CurrencyCode.bitcoin)
 
     expect(updateDepositRequestForHoldingsTxHashStub.calledWith(txHash, { status: DepositRequestStatus.completed })).to.eql(true)
     expect(dispatchHoldingsTransactionForDepositRequestsStub.calledWith(blockedDepositRequests, CurrencyCode.bitcoin)).to.eql(true)
+    expect(depositCompleterStub.calledWith(blockedDepositRequests, CurrencyCode.bitcoin, DepositRequestStatus.pendingHoldingsTransactionConfirmation)).to.eql(true)
   })
 })

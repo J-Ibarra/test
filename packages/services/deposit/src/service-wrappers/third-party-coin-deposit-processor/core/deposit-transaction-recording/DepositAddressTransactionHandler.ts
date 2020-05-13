@@ -1,12 +1,12 @@
 import { getOnChainCurrencyManagerForEnvironment, Transaction } from '@abx-utils/blockchain-currency-gateway'
 import { Environment, CurrencyCode } from '@abx-types/reference-data'
 import { DepositAddress } from '@abx-types/deposit'
-import { getRequiredConfirmationsForDepositTransaction } from '../utils'
-import { getMinimumDepositAmountForCurrency } from '../../../../core'
+import { getRequiredConfirmationsForDepositTransaction } from '../../../../core'
 import { NewTransactionRecorder } from './NewTransactionRecorder'
 import { HoldingsTransactionGateway } from '../holdings-transaction-creation/HoldingsTransactionGateway'
 import { Logger } from '@abx-utils/logging'
 import { HoldingsTransactionConfirmationHandler } from './HoldingsTransactionConfirmationHandler'
+import { depositAmountAboveMinimumForCurrency } from '../../../../core'
 
 export class DepositAddressTransactionHandler {
   private readonly logger = Logger.getInstance('public-coin-deposit-processor', 'DepositAddressTransactionHandler')
@@ -69,9 +69,9 @@ export class DepositAddressTransactionHandler {
   }
 
   private async processHoldingsTransaction(depositAmount: number, currency: CurrencyCode, txid: string) {
-    const depositAmountAboveMinimumForCurrency = getMinimumDepositAmountForCurrency(currency) <= depositAmount
+    const isDepositAmountAboveMinimumForCurrency = await depositAmountAboveMinimumForCurrency(depositAmount, currency)
 
-    if (depositAmountAboveMinimumForCurrency) {
+    if (isDepositAmountAboveMinimumForCurrency) {
       await this.holdingsTransactionGateway.dispatchHoldingsTransactionForConfirmedDepositRequest(txid, currency)
     }
   }

@@ -1,6 +1,6 @@
 import { CurrencyCode } from '@abx-types/reference-data'
 import { BalanceRetrievalEndpoints } from './endpoints'
-import { Balance, RawBalance, BalanceAdjustment } from '@abx-types/balance'
+import { Balance, RawBalance, BalanceAdjustment, SourceEventType } from '@abx-types/balance'
 import { InternalApiRequestDispatcher } from '@abx-utils/internal-api-tools'
 
 export const BALANCE_REST_API_PORT = 3102
@@ -56,6 +56,13 @@ export function getOrderBalanceReserveAdjustment(currencyCode: CurrencyCode, acc
     currencyCode,
     accountId,
     orderId,
+  })
+}
+
+export function getBalanceAdjustmentForSourceEvent(sourceEventId: number, sourceEventType: SourceEventType): Promise<BalanceAdjustment> {
+  return internalApiRequestDispatcher.fireRequestToInternalApi<BalanceAdjustment>(BalanceRetrievalEndpoints.getBalanceAdjustmentForSourceEvent, {
+    sourceEventId,
+    sourceEventType,
   })
 }
 

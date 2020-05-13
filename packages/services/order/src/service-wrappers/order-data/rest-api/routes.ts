@@ -136,6 +136,27 @@ export function RegisterRoutes(app: express.Express) {
       const promise = controller.getOrdersForCurrentAccount.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
+  app.get('/api/orders/:orderId/executions',
+    authenticateMiddleware([{ "cookieAuth": [] }, { "tokenAuth": [] }]),
+    function(request: any, response: any, next: any) {
+      const args = {
+        orderId: { "in": "path", "name": "orderId", "required": true, "dataType": "double" },
+        request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new OrderRetrievalController();
+
+
+      const promise = controller.getOrderExecutions.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
   app.get('/api/orders/:orderId',
     authenticateMiddleware([{ "cookieAuth": [] }, { "tokenAuth": [] }]),
     function(request: any, response: any, next: any) {

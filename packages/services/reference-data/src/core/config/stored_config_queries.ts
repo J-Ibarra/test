@@ -1,12 +1,10 @@
 import { AccountStatus } from '@abx-types/account'
-import { getModel } from '@abx-utils/db-connection-utils'
-import { CurrencyCode } from '@abx-types/reference-data'
+import { CurrencyCode, MobileVersions } from '@abx-types/reference-data'
 import {
   CurrencyWithdrawalConfig,
   DepositPollingFrequency,
   ExchangeHoldingsWallet,
   FeatureFlag,
-  IExchangeConfigEntry,
   SupportedFeatureFlags,
   WithdrawalConfig,
 } from '@abx-types/reference-data'
@@ -16,23 +14,6 @@ export async function getFeatureFlags(): Promise<FeatureFlag[]> {
   const exchangeConfig = await findExchangeConfig()
 
   return !!exchangeConfig ? exchangeConfig.featureFlags : []
-}
-
-export async function changeFeatureFlagEnabledStatus(flag: SupportedFeatureFlags, enabled: boolean): Promise<void> {
-  const exchangeConfig = await findExchangeConfig()
-  exchangeConfig.featureFlags = exchangeConfig.featureFlags.map(featureFlag => (featureFlag.name === flag ? { name, enabled } : featureFlag))
-
-  const exchangeConfigInstances = await getModel<IExchangeConfigEntry>('exchangeConfig').findAll()
-  const exchangeConfigEntries = exchangeConfigInstances.map(exchangeConfigInstance => exchangeConfigInstance.get())
-
-  const featureFlagsConfigEntry = exchangeConfigEntries.find(({ value }) => !!value.featureFlags)
-  await getModel<IExchangeConfigEntry>('exchangeConfig').update(
-    {
-      id: featureFlagsConfigEntry!.id,
-      value: { featureFlags: exchangeConfig.featureFlags },
-    },
-    { where: { id: featureFlagsConfigEntry!.id! } },
-  )
 }
 
 export async function isFeatureFlagEnabled(flag: SupportedFeatureFlags): Promise<boolean> {
@@ -48,6 +29,11 @@ export async function getExchangeHoldingsWallets(): Promise<ExchangeHoldingsWall
 export async function getTransactionFeeCaps(): Promise<Record<CurrencyCode, number>> {
   const exchangeConfig = await findExchangeConfig()
   return exchangeConfig.transactionFeeCap
+}
+
+export async function getMobileVersions(): Promise<MobileVersions> {
+  const exchangeConfig = await findExchangeConfig()
+  return exchangeConfig.mobileVersions
 }
 
 export async function getExchangeDepositPollingFrequency(): Promise<DepositPollingFrequency[]> {
@@ -88,4 +74,9 @@ export async function getEthereumDepositMaxBlockCheck(): Promise<number> {
 export async function getExcludedAccountTypesFromOrderRangeValidations() {
   const exchangeConfig = await findExchangeConfig()
   return exchangeConfig && exchangeConfig.excludedAccountTypesFromOrderRanges
+}
+
+export async function getDepositMimimumAmounts(): Promise<Record<CurrencyCode, number>> {
+  const exchangeConfig = await findExchangeConfig()
+  return exchangeConfig.depositMinimumAmounts
 }

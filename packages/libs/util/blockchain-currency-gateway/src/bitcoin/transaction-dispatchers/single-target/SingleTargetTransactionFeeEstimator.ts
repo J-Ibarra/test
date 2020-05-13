@@ -40,7 +40,8 @@ export class SingleTargetTransactionFeeEstimator {
     amount,
     memo,
     feeLimit = SingleTargetTransactionFeeEstimator.MAXIMUM_TX_FEE,
-  }: Pick<SingleTargetCreateTransactionPayload, 'senderAddress' | 'receiverAddress' | 'amount' | 'memo' | 'feeLimit'>): Promise<number> {
+    transactionFeeIncrement = SingleTargetTransactionFeeEstimator.FEE_INCREMENT_CONSTANT,
+  }: SingleTargetCreateTransactionPayload): Promise<number> {
     let averageFeePerByte = this.MEMORY_CACHE.get<string>(this.AVERAGE_FEE_PER_BYTE_KEY)
     let averageFeePerTransaction = this.MEMORY_CACHE.get<string>(this.AVERAGE_FEE_PER_TRANSACTION_KEY)
 
@@ -68,7 +69,7 @@ export class SingleTargetTransactionFeeEstimator {
     )
 
     let estimatedMinimumTransactionFee = new Decimal(tx_size_bytes)
-      .times(new Decimal(averageFeePerByte!).plus(SingleTargetTransactionFeeEstimator.FEE_INCREMENT_CONSTANT))
+      .times(new Decimal(averageFeePerByte!).plus(transactionFeeIncrement))
       .toDP(BitcoinTransactionCreationUtils.MAX_BITCOIN_DECIMALS, Decimal.ROUND_DOWN)
       .toNumber()
 

@@ -1,8 +1,8 @@
 import '../../core'
-import { configureDepositHandler } from './service_configurator'
-import { getExchangeDepositPollingFrequency } from '@abx-service-clients/reference-data'
+import { configureKVTAndETHDepositHandler } from './kvt_eth_configurator'
+import { configureKinesisDepositHandler } from './kinesis_service_configurator'
 
 export async function bootstrapKinesisAndEthCoinDepositProcessor() {
-  const pollingFrequency = await getExchangeDepositPollingFrequency()
-  await configureDepositHandler(pollingFrequency)
+  await configureKVTAndETHDepositHandler()
+  await configureKinesisDepositHandler()
 }

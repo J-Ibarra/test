@@ -3,7 +3,7 @@ import {
   FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION,
   findDepositRequestsWhereTransactionHashPresent,
   createNewDepositRequest,
-  getMinimumDepositAmountForCurrency,
+  depositAmountAboveMinimumForCurrency,
 } from '../../../../core'
 import { Transaction } from '@abx-utils/blockchain-currency-gateway'
 import { CurrencyCode } from '@abx-types/reference-data'
@@ -53,11 +53,10 @@ export class NewTransactionRecorder {
    */
   private async persistTransactionDetails(currency: CurrencyCode, depositTransactionDetails: Transaction, depositAddress: DepositAddress) {
     const fiatValueOfOneCryptoCurrency = await calculateRealTimeMidPriceForSymbol(`${currency}_${FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION}`)
-    let depositAmountAboveMinimumForCurrency = getMinimumDepositAmountForCurrency(currency) <= depositTransactionDetails.amount
-
+    const isDepositAmountAboveMinimumForCurrency = await depositAmountAboveMinimumForCurrency(depositTransactionDetails.amount, currency)
     const depositAmountFiatConversion = new Decimal(depositTransactionDetails.amount).times(fiatValueOfOneCryptoCurrency).toDP(2).toNumber()
 
-    if (!depositAmountAboveMinimumForCurrency) {
+    if (!isDepositAmountAboveMinimumForCurrency) {
       logger.debug(`Attempted to process deposit address transaction ${depositTransactionDetails.transactionHash} which has already been recorded`)
       await createNewDepositRequest(depositTransactionDetails, depositAddress, depositAmountFiatConversion, DepositRequestStatus.insufficientAmount)
     } else {
