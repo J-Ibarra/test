@@ -72,7 +72,6 @@ describe('received_requests_processor', () => {
 
     expect(checkConfirmationOfTransactionStub.calledOnceWith(depositRequest.depositTxHash)).to.eql(true)
     expect(isAccountSuspendedStub.calledOnce).to.eql(true)
-    expect(completeReceivedDepositStub.notCalled).to.eql(true)
     expect(receivedGateKeeper[currencyToDepositRequests]!.get(CurrencyCode.kau)!.length).to.eql(0)
   })
 
