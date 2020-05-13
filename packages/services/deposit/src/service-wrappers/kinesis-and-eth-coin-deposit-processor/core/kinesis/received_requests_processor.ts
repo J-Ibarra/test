@@ -6,14 +6,12 @@ import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { CurrencyCode } from '@abx-types/reference-data'
 import { DepositRequest } from '@abx-types/deposit'
 import { isAccountSuspended } from '@abx-service-clients/account'
-import { getBalanceAdjustmentForSourceEventId } from '@abx-service-clients/balance'
+import { getBalanceAdjustmentForSourceEvent } from '@abx-service-clients/balance'
 import { completeReceivedDeposit } from '../../../../core'
 import { DepositGatekeeper, checkTransactionConfirmation } from '../common'
+import { SourceEventType } from '@abx-types/balance'
 
-const logger = Logger.getInstance(
-  'received_deposit_requests_processor', 
-  'processReceivedDepositRequestForCurrency'
-)
+const logger = Logger.getInstance('received_deposit_requests_processor', 'processReceivedDepositRequestForCurrency')
 
 export async function processReceivedDepositRequestForCurrency(
   receivedGateKeeper: DepositGatekeeper,
@@ -47,7 +45,6 @@ export async function processReceivedDepositRequestForCurrency(
     logger.info(`Deposit request ${depositRequest.id} successfully completed`)
 
     completedPendingHoldingsTransactionGatekeeper.addNewDepositsForCurrency(currency, [depositRequest])
-
   } catch (e) {
     logger.error(`Error encountered while process new deposit for ${currency}: ${depositRequest.id}`)
     logger.error(JSON.stringify(util.inspect(e)))
@@ -57,8 +54,8 @@ export async function processReceivedDepositRequestForCurrency(
 }
 
 async function completeDeposit(depositRequest: DepositRequest) {
-  return wrapInTransaction(sequelize, null, async transaction => {
-    const existingBalanceAdjustment = await getBalanceAdjustmentForSourceEventId(depositRequest.id!)
+  return wrapInTransaction(sequelize, null, async (transaction) => {
+    const existingBalanceAdjustment = await getBalanceAdjustmentForSourceEvent(depositRequest.id!, SourceEventType.currencyDeposit)
     if (!!existingBalanceAdjustment) {
       logger.info(`Balance adjustment for deposit request ${depositRequest.depositTxHash} is already created`)
       return

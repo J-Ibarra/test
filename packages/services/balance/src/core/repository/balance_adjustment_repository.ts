@@ -37,7 +37,7 @@ export class BalanceAdjustmentRepository {
         },
         { transaction },
       )
-      .then(instance => instance.get())
+      .then((instance) => instance.get())
   }
 
   public async getBalanceAdjustmentsForBalance(balanceId: number, t?: Transaction): Promise<BalanceAdjustment[]> {
@@ -46,12 +46,16 @@ export class BalanceAdjustmentRepository {
       transaction: t,
     })
 
-    return adjustmentInstances.map(adjustment => adjustment.get())
+    return adjustmentInstances.map((adjustment) => adjustment.get())
   }
 
-  public async getBalanceAdjustmentForSourceEventId(sourceEventId: number, t?: Transaction): Promise<BalanceAdjustment | null> {
+  public async getBalanceAdjustmentForSourceEvent(
+    sourceEventId: number,
+    sourceEventType: SourceEventType,
+    t?: Transaction,
+  ): Promise<BalanceAdjustment | null> {
     const balanceAdjustmentInstance = await getModel<BalanceAdjustment>('balanceAdjustment').findOne({
-      where: { sourceEventId },
+      where: { sourceEventId, sourceEventType },
       transaction: t,
     })
 
@@ -77,7 +81,7 @@ export class BalanceAdjustmentRepository {
       transaction: t,
     })
 
-    return balanceAdjustmentInstances.map(adjustment => adjustment.get())
+    return balanceAdjustmentInstances.map((adjustment) => adjustment.get())
   }
 
   public async retrieveTotalOrderValueReceivedByAccount(

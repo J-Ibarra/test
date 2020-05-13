@@ -38,8 +38,8 @@ export function createQueryEndpointHandlers(): InternalRoute<any, any>[] {
       handler: ({ orderId }) => balanceAdjustmentRepository.getOrderBalanceReserveAdjustment(orderId),
     },
     {
-      path: BalanceRetrievalEndpoints.getBalanceAdjustmentForSourceEventId,
-      handler: ({ sourceEventId }) => balanceAdjustmentRepository.getBalanceAdjustmentForSourceEventId(sourceEventId),
+      path: BalanceRetrievalEndpoints.getBalanceAdjustmentForSourceEvent,
+      handler: ({ sourceEventType, sourceEventId }) => balanceAdjustmentRepository.getBalanceAdjustmentForSourceEvent(sourceEventId, sourceEventType),
     },
     {
       path: BalanceRetrievalEndpoints.getBalanceAdjustmentsForBalanceAndTradeTransactions,

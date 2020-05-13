@@ -67,7 +67,7 @@ describe('received_requests_processor', () => {
     const currencyManager = getCurrencyManager(checkConfirmationOfTransactionStub)
 
     const isAccountSuspendedStub = sinon.stub(Account, 'isAccountSuspended').resolves(false)
-    const getBalanceAdjustmentStub = sinon.stub(Balance, 'getBalanceAdjustmentForSourceEventId').resolves(balanceAdjustment)
+    const getBalanceAdjustmentStub = sinon.stub(Balance, 'getBalanceAdjustmentForSourceEvent').resolves(balanceAdjustment)
     const completeReceivedDepositStub = sinon.stub(depositRequestOperations, 'completeReceivedDeposit')
 
     await triggerProcessor(currencyManager)
@@ -86,7 +86,7 @@ describe('received_requests_processor', () => {
     const currencyManager = getCurrencyManager(checkConfirmationOfTransactionStub)
 
     const isAccountSuspendedStub = sinon.stub(Account, 'isAccountSuspended').resolves(false)
-    const getBalanceAdjustmentStub = sinon.stub(Balance, 'getBalanceAdjustmentForSourceEventId').resolves(null)
+    const getBalanceAdjustmentStub = sinon.stub(Balance, 'getBalanceAdjustmentForSourceEvent').resolves(null)
     const completeReceivedDepositStub = sinon.stub(depositRequestOperations, 'completeReceivedDeposit')
 
     await triggerProcessor(currencyManager)
