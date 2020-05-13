@@ -6,7 +6,7 @@ export async function up({ sequelize }: { sequelize: Sequelize }) {
     ALTER TABLE public.blockchain_follower_details RENAME COLUMN "lastBlockNumberProcessed" to "lastEntityProcessedIdentifier";
 
     ALTER TABLE public.blockchain_follower_details
-      ALTER COLUMN "lastBlockNumberProcessed" TYPE character varying(200);`,
+      ALTER COLUMN "lastEntityProcessedIdentifier" TYPE character varying(200);`,
   )
 }
 
