@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Request, Route, Security, SuccessResponse, Tags } from 'tsoa'
 
-import { prepareWithdrawalRequestEmail } from '../../../core'
+import { prepareWithdrawalRequestEmail, checkForNonCompletedWithdrawalRequests } from '../../../core'
 import { Logger } from '@abx-utils/logging'
 import { createEmail } from '@abx-service-clients/notification'
 import {
@@ -95,9 +95,21 @@ export class WithdrawalsController extends Controller {
   public async updateWithdrawalConfig(currency: CurrencyCode, @Body() updatedConfig: Partial<CurrencyWithdrawalConfig>) {
     try {
       this.logger.debug(`Updating withdrawal config for ${currency}`)
+
+      const pendingWithdrawalsExist = await checkForNonCompletedWithdrawalRequests(currency)
+
+      if (pendingWithdrawalsExist) {
+        this.setStatus(400)
+        const errorMessage = `There are withdrawal requests in progress for currency ${currency}. Please try again later`
+        this.logger.error(errorMessage)
+        return {
+          message: errorMessage,
+        }
+      }
+
       return updateWithdrawalConfigForCurrency({ currencyCode: currency, config: updatedConfig })
     } catch (error) {
-      this.setStatus(error.status || 400)
+      this.setStatus(error.status || 500)
       this.logger.error(`Updating withdrawal config for ${currency} errors: ${error.status || 400} - ${error.message}`)
       return {
         message: error.message as string,

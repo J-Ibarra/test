@@ -3,6 +3,8 @@ import { Transaction } from 'sequelize'
 
 import { getModel, wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
 import { WithdrawalRequest, WithdrawalState } from '@abx-types/withdrawal'
+import { CurrencyCode } from '@abx-types/reference-data'
+import { findCurrencyForCode } from '@abx-service-clients/reference-data'
 
 export async function findWithdrawalRequestById(id: number, transaction?: Transaction) {
   const withdrawalRequest = await getModel<WithdrawalRequest>('withdrawalRequest').findByPrimary(id, {
@@ -139,4 +141,29 @@ async function joinWithdrawalRequestWithFeeRequest(withdrawalRequest: Withdrawal
   }
 
   return withdrawalRequest
+}
+
+export async function checkForNonCompletedWithdrawalRequests(currencyCode: CurrencyCode, transaction?: Transaction): Promise<boolean> {
+  const { id: currencyId } = await findCurrencyForCode(currencyCode)
+
+  const nonCompletedRequestsCount = await getModel<WithdrawalRequest>('withdrawalRequest').count({
+    where: {
+      currencyId,
+      $and: [
+        {
+          state: {
+            $not: WithdrawalState.completed,
+          },
+        },
+        {
+          state: {
+            $not: WithdrawalState.cancelled,
+          },
+        },
+      ]
+    },
+    transaction,
+  })
+
+  return nonCompletedRequestsCount > 0
 }
