@@ -100,15 +100,16 @@ export async function createMissingDepositAddressesForAccount(
       .join(', ')}`,
   )
 
-  return createNewDepositAddresses(manager, accountId, cryptoCurrenciesToGenerateAddressFor)
+  return createNewDepositAddresses(manager, accountId, cryptoCurrenciesToGenerateAddressFor, filteredCryptoCurrencies)
 }
 
 async function createNewDepositAddresses(
   currencyManager: CurrencyManager,
   accountId: string,
   cryptoCurrenciesToGenerateAddressFor: Currency[],
+  allCurrenciesEligibleForAccount: Currency[],
 ): Promise<DepositAddress[]> {
-  const kauCurrencyId = cryptoCurrenciesToGenerateAddressFor.find((c) => c.code === CurrencyCode.kau)!.id
+  const kauCurrencyId = allCurrenciesEligibleForAccount.find((c) => c.code === CurrencyCode.kau)!.id
   logger.debug(`KAU currency id: ${kauCurrencyId}`)
 
   const createdDepositAddressesWithoutKau = await Promise.all(
@@ -118,7 +119,7 @@ async function createNewDepositAddresses(
         return createNewDepositAddress(currencyManager, accountId, code)
       }),
   )
-  const kagCurrencyId = cryptoCurrenciesToGenerateAddressFor.find((c) => c.code === CurrencyCode.kag)!.id
+  const kagCurrencyId = allCurrenciesEligibleForAccount.find((c) => c.code === CurrencyCode.kag)!.id
   logger.debug(`KAG currency id: ${kauCurrencyId}`)
 
   const kagDepositAddress = createdDepositAddressesWithoutKau.find((address) => address.currencyId === kagCurrencyId)
