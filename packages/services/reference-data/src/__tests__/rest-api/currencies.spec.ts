@@ -35,17 +35,23 @@ describe('api:currencies', () => {
     await app.close()
   })
 
-  it('retrieves all currencies', async () => {
-    const body = await makeRequest()
+  it('retrieves all currencies includeOrderRange=false', async () => {
+    const { body } = await makeRequest()
 
     verifyThatBodyHasCorrectProperties(body)
+  })
+
+  it('retrieves all currencies includeOrderRange=true', async () => {
+    const { body } = await makeRequest(true)
+
+    verifyThatBodyHasCorrectProperties(body, true)
   })
 
   it('retrieves all currencies feature flag enabled=false', async () => {
     await updateOrCreateExchangeConfig({
       featureFlags: [{name: SupportedFeatureFlags.bitcoin, enabled: false}]
     })
-    const body = await makeRequest()
+    const { body } = await makeRequest()
 
     expect(body).not.include.something.with.property('code', 'BTC')
 
@@ -56,7 +62,7 @@ describe('api:currencies', () => {
     await updateOrCreateExchangeConfig({
       featureFlags: [{name: SupportedFeatureFlags.bitcoin, enabled: true}]
     })
-    const body = await makeRequest()
+    const { body } = await makeRequest()
 
     expect(body).to.include.something.with.property('code', 'BTC')
 
@@ -67,7 +73,7 @@ describe('api:currencies', () => {
     await updateOrCreateExchangeConfig({
       featureFlags: [{name: SupportedFeatureFlags.bitcoin, enabled: []}]
     })
-    const body = await makeRequest()
+    const { body } = await makeRequest()
 
     expect(body).not.include.something.with.property('code', 'BTC')
 
@@ -90,21 +96,30 @@ describe('api:currencies', () => {
     verifyThatBodyHasCorrectProperties(body)
   })
 
-  async function makeRequest() {
+  async function makeRequest(includeExtendedDetails: boolean = false) {
     const { cookie } = await createAccountAndSession()
     const { body, status } = await request(app)
       .get('/api/currencies')
+      .query({ includeExtendedDetails })
       .set('Cookie', cookie)
     expect(status).to.eql(200)
     expect(body).to.be.an('array')
 
-    return body
+    return {
+      body,
+      status,
+    }
   }
 
-  function verifyThatBodyHasCorrectProperties(body) {
+  function verifyThatBodyHasCorrectProperties(body, includeExtendedDetails: boolean = false) {
     body.forEach(currency => {
       expect(currency).to.be.an('object')
       expect(currency).to.have.property('code')
+
+      if (includeExtendedDetails) {
+        expect(currency).to.have.property('iconUrl')
+        expect(currency).to.have.property('isFiat')
+      }
     })
   }
 })

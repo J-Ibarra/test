@@ -78,6 +78,7 @@ export function RegisterRoutes(app: express.Express) {
     function(request: any, response: any, next: any) {
       const args = {
         request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+        includeExtendedDetails: { "in": "query", "name": "includeExtendedDetails", "dataType": "boolean" },
       };
 
       let validatedArgs: any[] = [];
