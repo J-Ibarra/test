@@ -25,7 +25,7 @@
     "clean": "npm run clean:build && npm run clean:swagger",
     "build:static": "bundle exec middleman build",
     "build:docs": "npm run mergeSwagger && npm run convert && npm run build:static",
-    "push-api-docs-to-s3": "aws s3 cp ./build/ s3://int-api.kinesis.money-docs/ --recursive --acl public-read"
+    "push-api-docs-to-s3": "aws s3 cp ./build/ s3://api-docs.kinesis.money/ --recursive --acl public-read"
   },
   "bugs": {
     "url": "https://github.com/bullioncapital/secondary-exchange-services/issues"
