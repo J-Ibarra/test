@@ -22,6 +22,246 @@ Base URLs:
 
 * <a href="/api">/api</a>
 
+<h1 id="kinesis-exchange-api-default">Default</h1>
+
+## SetOrderRangeForSymbol
+
+<a id="opIdSetOrderRangeForSymbol"></a>
+
+> Code samples
+
+```http
+PATCH /api/symbols/admin/{symbolId} HTTP/1.1
+
+Content-Type: application/json
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/symbols/admin/{symbolId}',
+  method: 'patch',
+
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+fetch('/api/symbols/admin/{symbolId}',
+{
+  method: 'PATCH',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.patch('/api/symbols/admin/{symbolId}', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+}
+
+result = RestClient.patch '/api/symbols/admin/{symbolId}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`PATCH /symbols/admin/{symbolId}`
+
+> Body parameter
+
+```json
+{}
+```
+
+<h3 id="setorderrangeforsymbol-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|symbolId|path|string|true|none|
+|body|body|[VerifyMfaForUserRequestbody](#schemaverifymfaforuserrequestbody)|true|none|
+
+> Example responses
+
+> 200 Response
+
+```json
+{}
+```
+
+<h3 id="setorderrangeforsymbol-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
+
+<h3 id="setorderrangeforsymbol-responseschema">Response Schema</h3>
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+cookieAuth & adminAuth
+</aside>
+
+<h1 id="kinesis-exchange-api-admin-fund-management-api">Admin Fund Management API</h1>
+
+## RetrieveAdminRequestsCount
+
+<a id="opIdRetrieveAdminRequestsCount"></a>
+
+> Code samples
+
+```http
+GET /api/admin/fund-management/admin-requests/count HTTP/1.1
+
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/admin/fund-management/admin-requests/count',
+  method: 'get',
+
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/admin/fund-management/admin-requests/count',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/admin/fund-management/admin-requests/count', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/admin/fund-management/admin-requests/count',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`GET /admin/fund-management/admin-requests/count`
+
+<h3 id="retrieveadminrequestscount-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|accountHin|query|string|false|none|
+
+> Example responses
+
+> 200 Response
+
+```json
+{}
+```
+
+<h3 id="retrieveadminrequestscount-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
+
+<h3 id="retrieveadminrequestscount-responseschema">Response Schema</h3>
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+adminAuth
+</aside>
+
 <h1 id="kinesis-exchange-api-account-api">Account API</h1>
 
 ## GetBankDetails
@@ -1775,6 +2015,118 @@ To perform this operation, you must be authenticated by means of one of the foll
 cookieAuth, None
 </aside>
 
+## DisableMfaByAdmin
+
+<a id="opIdDisableMfaByAdmin"></a>
+
+> Code samples
+
+```http
+DELETE /api/mfa/admin/{accountHin} HTTP/1.1
+
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/mfa/admin/{accountHin}',
+  method: 'delete',
+
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/mfa/admin/{accountHin}',
+{
+  method: 'DELETE',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.delete('/api/mfa/admin/{accountHin}', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.delete '/api/mfa/admin/{accountHin}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`DELETE /mfa/admin/{accountHin}`
+
+<h3 id="disablemfabyadmin-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|accountHin|path|string|true|none|
+
+> Example responses
+
+> 200 Response
+
+```json
+{}
+```
+
+<h3 id="disablemfabyadmin-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
+
+<h3 id="disablemfabyadmin-responseschema">Response Schema</h3>
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+cookieAuth & adminAuth
+</aside>
+
 ## SendResetPasswordEmail
 
 <a id="opIdSendResetPasswordEmail"></a>
@@ -3476,16 +3828,14 @@ To perform this operation, you must be authenticated by means of one of the foll
 cookieAuth, None
 </aside>
 
-<h1 id="kinesis-exchange-api-market-data-api">Market Data API</h1>
+## GetMinimumDepositAmounts
 
-## GetOHLCMarketData
-
-<a id="opIdGetOHLCMarketData"></a>
+<a id="opIdGetMinimumDepositAmounts"></a>
 
 > Code samples
 
 ```http
-GET /api/market-data/ohlc?symbolId=string&timeFrame=1&fromDate=2020-04-09T16%3A03%3A13Z HTTP/1.1
+GET /api/deposits/minimum-amounts HTTP/1.1
 
 Accept: application/json
 
@@ -3498,9 +3848,9 @@ var headers = {
 };
 
 $.ajax({
-  url: '/api/market-data/ohlc',
+  url: '/api/deposits/minimum-amounts',
   method: 'get',
-  data: '?symbolId=string&timeFrame=1&fromDate=2020-04-09T16%3A03%3A13Z',
+
   headers: headers,
   success: function(data) {
     console.log(JSON.stringify(data));
@@ -3517,7 +3867,113 @@ const headers = {
 
 };
 
-fetch('/api/market-data/ohlc?symbolId=string&timeFrame=1&fromDate=2020-04-09T16%3A03%3A13Z',
+fetch('/api/deposits/minimum-amounts',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/deposits/minimum-amounts', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/deposits/minimum-amounts',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`GET /deposits/minimum-amounts`
+
+> Example responses
+
+> 200 Response
+
+```json
+{}
+```
+
+<h3 id="getminimumdepositamounts-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|[Record](#schemarecord)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+cookieAuth, None
+</aside>
+
+<h1 id="kinesis-exchange-api-market-data-api">Market Data API</h1>
+
+## GetOHLCMarketData
+
+<a id="opIdGetOHLCMarketData"></a>
+
+> Code samples
+
+```http
+GET /api/market-data/ohlc?symbolId=string&timeFrame=1&fromDate=2020-05-20T07%3A42%3A38Z HTTP/1.1
+
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/market-data/ohlc',
+  method: 'get',
+  data: '?symbolId=string&timeFrame=1&fromDate=2020-05-20T07%3A42%3A38Z',
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/market-data/ohlc?symbolId=string&timeFrame=1&fromDate=2020-05-20T07%3A42%3A38Z',
 {
   method: 'GET',
 
@@ -3538,7 +3994,7 @@ headers = {
 }
 
 r = requests.get('/api/market-data/ohlc', params={
-  'symbolId': 'string',  'timeFrame': '1',  'fromDate': '2020-04-09T16:03:13Z'
+  'symbolId': 'string',  'timeFrame': '1',  'fromDate': '2020-05-20T07:42:38Z'
 }, headers = headers)
 
 print r.json()
@@ -4377,6 +4833,12 @@ p JSON.parse(result)
 
 `GET /currencies`
 
+<h3 id="getcurrencies-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|includeExtendedDetails|query|boolean|false|none|
+
 > Example responses
 
 > 200 Response
@@ -4387,7 +4849,8 @@ p JSON.parse(result)
     "id": 0,
     "code": "ETH",
     "symbolSortPriority": 0,
-    "currencyOrderPriority": 0
+    "currencyOrderPriority": 0,
+    "isEnabled": true
   }
 ]
 ```
@@ -4409,6 +4872,7 @@ Status Code **200**
 |» code|[CurrencyCode](#schemacurrencycode)|true|none|none|
 |» symbolSortPriority|number(double)\|null|false|none|none|
 |» currencyOrderPriority|number(double)\|null|false|none|none|
+|» isEnabled|boolean\|null|false|none|none|
 
 #### Enumerated Values
 
@@ -4548,6 +5012,21 @@ Status Code **200**
 |---|---|
 |name|debit_card|
 |name|BTC|
+|name|TETHER|
+|name|BTC_KAU|
+|name|BTC_KAG|
+|name|ETH_BTC|
+|name|BTC_USD|
+|name|BTC_EUR|
+|name|BTC_GBP|
+|name|KVT_BTC|
+|name|KVT_USDT|
+|name|KAU_USDT|
+|name|KAG_USDT|
+|name|ETH_USDT|
+|name|BTC_USDT|
+|name|USDT_EUR|
+|name|USDT_USD|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -4825,6 +5304,218 @@ Returns true if you are bound and false if you aren't
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
 None, cookieAuth
+</aside>
+
+## RetrieveTransactionFeeCaps
+
+<a id="opIdRetrieveTransactionFeeCaps"></a>
+
+> Code samples
+
+```http
+GET /api/fees/transaction HTTP/1.1
+
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/fees/transaction',
+  method: 'get',
+
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/fees/transaction',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/fees/transaction', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/fees/transaction',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`GET /fees/transaction`
+
+> Example responses
+
+> 200 Response
+
+```json
+{}
+```
+
+<h3 id="retrievetransactionfeecaps-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|[Record](#schemarecord)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+cookieAuth, None
+</aside>
+
+## RetrieveMobileVersions
+
+<a id="opIdRetrieveMobileVersions"></a>
+
+> Code samples
+
+```http
+GET /api/mobile/versions HTTP/1.1
+
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/mobile/versions',
+  method: 'get',
+
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/mobile/versions',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/mobile/versions', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/mobile/versions',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`GET /mobile/versions`
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "ios": "string",
+  "android": "string",
+  "forceVersionUpdate": true
+}
+```
+
+<h3 id="retrievemobileversions-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|[MobileVersions](#schemamobileversions)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+cookieAuth, None
 </aside>
 
 <h1 id="kinesis-exchange-api-withdrawal-api">Withdrawal API</h1>
@@ -5188,6 +5879,144 @@ p JSON.parse(result)
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
 
 <h3 id="getwithdrawalconfigforcurrency-responseschema">Response Schema</h3>
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+cookieAuth, None
+</aside>
+
+## UpdateWithdrawalConfig
+
+<a id="opIdUpdateWithdrawalConfig"></a>
+
+> Code samples
+
+```http
+POST /api/withdrawals/configs/{currency} HTTP/1.1
+
+Content-Type: application/json
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/withdrawals/configs/{currency}',
+  method: 'post',
+
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '{}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+fetch('/api/withdrawals/configs/{currency}',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('/api/withdrawals/configs/{currency}', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+}
+
+result = RestClient.post '/api/withdrawals/configs/{currency}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`POST /withdrawals/configs/{currency}`
+
+> Body parameter
+
+```json
+{}
+```
+
+<h3 id="updatewithdrawalconfig-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|currency|path|string|true|none|
+|body|body|[PartialCurrencyWithdrawalConfig](#schemapartialcurrencywithdrawalconfig)|true|none|
+
+#### Enumerated Values
+
+|Parameter|Value|
+|---|---|
+|currency|ETH|
+|currency|KAU|
+|currency|KAG|
+|currency|KVT|
+|currency|BTC|
+|currency|USDT|
+|currency|USD|
+|currency|EUR|
+|currency|GBP|
+
+> Example responses
+
+> 200 Response
+
+```json
+{}
+```
+
+<h3 id="updatewithdrawalconfig-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
+
+<h3 id="updatewithdrawalconfig-responseschema">Response Schema</h3>
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -5706,6 +6535,2339 @@ To perform this operation, you must be authenticated by means of one of the foll
 cookieAuth, None
 </aside>
 
+## GetOrderExecutions
+
+<a id="opIdGetOrderExecutions"></a>
+
+> Code samples
+
+```http
+GET /api/orders/{orderId}/executions HTTP/1.1
+
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/orders/{orderId}/executions',
+  method: 'get',
+
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/orders/{orderId}/executions',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/orders/{orderId}/executions', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/orders/{orderId}/executions',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`GET /orders/{orderId}/executions`
+
+<h3 id="getorderexecutions-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|orderId|path|number(double)|true|none|
+
+> Example responses
+
+> 200 Response
+
+```json
+{}
+```
+
+<h3 id="getorderexecutions-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
+
+<h3 id="getorderexecutions-responseschema">Response Schema</h3>
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+cookieAuth, None
+</aside>
+
+## GetOrder
+
+<a id="opIdGetOrder"></a>
+
+> Code samples
+
+```http
+GET /api/orders/{orderId} HTTP/1.1
+
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/orders/{orderId}',
+  method: 'get',
+
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/orders/{orderId}',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/orders/{orderId}', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/orders/{orderId}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`GET /orders/{orderId}`
+
+<h3 id="getorder-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|orderId|path|number(double)|true|none|
+
+> Example responses
+
+> 200 Response
+
+```json
+{}
+```
+
+<h3 id="getorder-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
+
+<h3 id="getorder-responseschema">Response Schema</h3>
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+cookieAuth, None
+</aside>
+
+## GetOrdersForCurrency
+
+<a id="opIdGetOrdersForCurrency"></a>
+
+> Code samples
+
+```http
+GET /api/orders/currencies/{currency} HTTP/1.1
+
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/orders/currencies/{currency}',
+  method: 'get',
+
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/orders/currencies/{currency}',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/orders/currencies/{currency}', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/orders/currencies/{currency}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`GET /orders/currencies/{currency}`
+
+<h3 id="getordersforcurrency-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|currency|path|string|true|none|
+
+#### Enumerated Values
+
+|Parameter|Value|
+|---|---|
+|currency|ETH|
+|currency|KAU|
+|currency|KAG|
+|currency|KVT|
+|currency|BTC|
+|currency|USDT|
+|currency|USD|
+|currency|EUR|
+|currency|GBP|
+
+> Example responses
+
+> 200 Response
+
+```json
+[
+  {
+    "transactions": [
+      {
+        "id": 0,
+        "counterTradeTransactionId": 0,
+        "counterTrade": null,
+        "direction": "buy",
+        "symbolId": "string",
+        "accountId": "string",
+        "orderId": 0,
+        "amount": 0,
+        "matchPrice": 0,
+        "fee": 0,
+        "feeCurrencyId": 0,
+        "feeRate": 0,
+        "taxRate": 0,
+        "taxAmountCHF": 0,
+        "taxAmountFeeCurrency": 0,
+        "baseFiatConversion": 0,
+        "quoteFiatConversion": 0,
+        "fiatCurrencyCode": "CurrencyCode",
+        "createdAt": "2020-05-20T07:42:38Z",
+        "updatedAt": "2020-05-20T07:42:38Z"
+      }
+    ]
+  }
+]
+```
+
+<h3 id="getordersforcurrency-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
+
+<h3 id="getordersforcurrency-responseschema">Response Schema</h3>
+
+Status Code **200**
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[[OrderWithTradeTransactions](#schemaorderwithtradetransactions)]|false|none|none|
+|» transactions|[[TradeTransaction](#schematradetransaction)]|true|none|none|
+|»» id|number(double)\|null|false|none|none|
+|»» counterTradeTransactionId|number(double)|true|none|none|
+|»» counterTrade|[TradeTransaction](#schematradetransaction)|false|none|none|
+|»» direction|[OrderDirection](#schemaorderdirection)|true|none|none|
+|»» symbolId|string|true|none|none|
+|»» accountId|string|true|none|none|
+|»» orderId|number(double)|true|none|none|
+|»» amount|number(double)|true|none|none|
+|»» matchPrice|number(double)|true|none|none|
+|»» fee|number(double)|true|none|none|
+|»» feeCurrencyId|number(double)|true|none|none|
+|»» feeRate|number(double)|true|none|none|
+|»» taxRate|number(double)|true|none|none|
+|»» taxAmountCHF|number(double)|true|none|none|
+|»» taxAmountFeeCurrency|number(double)|true|none|none|
+|»» baseFiatConversion|number(double)|true|none|none|
+|»» quoteFiatConversion|number(double)|true|none|none|
+|»» fiatCurrencyCode|[FiatCurrency](#schemafiatcurrency)|true|none|none|
+|»» createdAt|string(date-time)\|null|false|none|none|
+|»» updatedAt|string(date-time)\|null|false|none|none|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|direction|buy|
+|direction|sell|
+|fiatCurrencyCode|CurrencyCode|
+|fiatCurrencyCode|CurrencyCode|
+|fiatCurrencyCode|CurrencyCode|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+cookieAuth, None
+</aside>
+
+## GetAllDefaultTiers
+
+<a id="opIdGetAllDefaultTiers"></a>
+
+> Code samples
+
+```http
+GET /api/fees/trade HTTP/1.1
+
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/fees/trade',
+  method: 'get',
+
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/fees/trade',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/fees/trade', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/fees/trade',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`GET /fees/trade`
+
+> Example responses
+
+> 200 Response
+
+```json
+{}
+```
+
+<h3 id="getalldefaulttiers-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|[Record](#schemarecord)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+cookieAuth, None
+</aside>
+
+## GetAllAccountTiers
+
+<a id="opIdGetAllAccountTiers"></a>
+
+> Code samples
+
+```http
+GET /api/fees/account HTTP/1.1
+
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/fees/account',
+  method: 'get',
+
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/fees/account',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/fees/account', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/fees/account',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`GET /fees/account`
+
+> Example responses
+
+> 200 Response
+
+```json
+{}
+```
+
+<h3 id="getallaccounttiers-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
+
+<h3 id="getallaccounttiers-responseschema">Response Schema</h3>
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+cookieAuth
+</aside>
+
+## GetFees
+
+<a id="opIdGetFees"></a>
+
+> Code samples
+
+```http
+GET /api/fees/{symbolId} HTTP/1.1
+
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/fees/{symbolId}',
+  method: 'get',
+
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/fees/{symbolId}',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/fees/{symbolId}', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/fees/{symbolId}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`GET /fees/{symbolId}`
+
+<h3 id="getfees-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|symbolId|path|string|true|none|
+
+> Example responses
+
+> 200 Response
+
+```json
+{}
+```
+
+<h3 id="getfees-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
+
+<h3 id="getfees-responseschema">Response Schema</h3>
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+cookieAuth, None
+</aside>
+
+## AddDefaultTiers
+
+<a id="opIdAddDefaultTiers"></a>
+
+> Code samples
+
+```http
+POST /api/admin/fees/default HTTP/1.1
+
+Content-Type: application/json
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/admin/fees/default',
+  method: 'post',
+
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '[
+  {
+    "id": 0,
+    "tier": 0,
+    "symbolId": "string",
+    "threshold": 0,
+    "rate": 0
+  }
+]';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+fetch('/api/admin/fees/default',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('/api/admin/fees/default', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+}
+
+result = RestClient.post '/api/admin/fees/default',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`POST /admin/fees/default`
+
+> Body parameter
+
+```json
+[
+  {
+    "id": 0,
+    "tier": 0,
+    "symbolId": "string",
+    "threshold": 0,
+    "rate": 0
+  }
+]
+```
+
+<h3 id="adddefaulttiers-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|body|body|array[object]|true|none|
+
+> Example responses
+
+> 201 Response
+
+```json
+{}
+```
+
+<h3 id="adddefaulttiers-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Created|Inline|
+
+<h3 id="adddefaulttiers-responseschema">Response Schema</h3>
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+cookieAuth & adminAuth
+</aside>
+
+## GetDefaultTiers
+
+<a id="opIdGetDefaultTiers"></a>
+
+> Code samples
+
+```http
+GET /api/admin/fees/default?symbolId=string HTTP/1.1
+
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/admin/fees/default',
+  method: 'get',
+  data: '?symbolId=string',
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/admin/fees/default?symbolId=string',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/admin/fees/default', params={
+  'symbolId': 'string'
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/admin/fees/default',
+  params: {
+  'symbolId' => 'string'
+}, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`GET /admin/fees/default`
+
+<h3 id="getdefaulttiers-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|symbolId|query|string|true|none|
+
+> Example responses
+
+> 200 Response
+
+```json
+[
+  {
+    "id": 0,
+    "tier": 0,
+    "symbolId": "string",
+    "threshold": 0,
+    "rate": 0
+  }
+]
+```
+
+<h3 id="getdefaulttiers-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
+
+<h3 id="getdefaulttiers-responseschema">Response Schema</h3>
+
+Status Code **200**
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[[FeeTier](#schemafeetier)]|false|none|none|
+|» id|number(double)\|null|false|none|none|
+|» tier|number(double)|true|none|The fee tier.|
+|» symbolId|string|true|none|The id of the targeted symbol.|
+|» threshold|number(double)|true|none|The tier threshold.|
+|» rate|number(double)|true|none|The fee rate.|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+cookieAuth & adminAuth
+</aside>
+
+## AddAccountTiers
+
+<a id="opIdAddAccountTiers"></a>
+
+> Code samples
+
+```http
+POST /api/admin/fees/account HTTP/1.1
+
+Content-Type: application/json
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/admin/fees/account',
+  method: 'post',
+
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = '[
+  {
+    "id": 0,
+    "tier": 0,
+    "symbolId": "string",
+    "threshold": 0,
+    "rate": 0,
+    "accountId": "string"
+  }
+]';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+
+};
+
+fetch('/api/admin/fees/account',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('/api/admin/fees/account', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+}
+
+result = RestClient.post '/api/admin/fees/account',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`POST /admin/fees/account`
+
+> Body parameter
+
+```json
+[
+  {
+    "id": 0,
+    "tier": 0,
+    "symbolId": "string",
+    "threshold": 0,
+    "rate": 0,
+    "accountId": "string"
+  }
+]
+```
+
+<h3 id="addaccounttiers-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|body|body|array[object]|true|none|
+
+> Example responses
+
+> 201 Response
+
+```json
+{}
+```
+
+<h3 id="addaccounttiers-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Created|Inline|
+
+<h3 id="addaccounttiers-responseschema">Response Schema</h3>
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+cookieAuth & adminAuth
+</aside>
+
+## GetAccountSymbolTiers
+
+<a id="opIdGetAccountSymbolTiers"></a>
+
+> Code samples
+
+```http
+GET /api/admin/fees/account?accountId=string&symbolId=string HTTP/1.1
+
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/admin/fees/account',
+  method: 'get',
+  data: '?accountId=string&symbolId=string',
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/admin/fees/account?accountId=string&symbolId=string',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/admin/fees/account', params={
+  'accountId': 'string',  'symbolId': 'string'
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/admin/fees/account',
+  params: {
+  'accountId' => 'string',
+'symbolId' => 'string'
+}, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`GET /admin/fees/account`
+
+<h3 id="getaccountsymboltiers-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|accountId|query|string|true|none|
+|symbolId|query|string|true|none|
+
+> Example responses
+
+> 200 Response
+
+```json
+{}
+```
+
+<h3 id="getaccountsymboltiers-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
+
+<h3 id="getaccountsymboltiers-responseschema">Response Schema</h3>
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+cookieAuth & adminAuth
+</aside>
+
+## GetOrderMatches
+
+<a id="opIdGetOrderMatches"></a>
+
+> Code samples
+
+```http
+GET /api/order-matches?symbolPairId=string HTTP/1.1
+
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/order-matches',
+  method: 'get',
+  data: '?symbolPairId=string',
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/order-matches?symbolPairId=string',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/order-matches', params={
+  'symbolPairId': 'string'
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/order-matches',
+  params: {
+  'symbolPairId' => 'string'
+}, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`GET /order-matches`
+
+<h3 id="getordermatches-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|symbolPairId|query|string|true|none|
+|limit|query|number(double)|false|none|
+
+> Example responses
+
+> 200 Response
+
+```json
+{}
+```
+
+<h3 id="getordermatches-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
+
+<h3 id="getordermatches-responseschema">Response Schema</h3>
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
+## RetrieveAllOrdersCount
+
+<a id="opIdRetrieveAllOrdersCount"></a>
+
+> Code samples
+
+```http
+GET /api/admin/orders/count HTTP/1.1
+
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/admin/orders/count',
+  method: 'get',
+
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/admin/orders/count',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/admin/orders/count', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/admin/orders/count',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`GET /admin/orders/count`
+
+<h3 id="retrieveallorderscount-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|accountHin|query|string|false|none|
+
+> Example responses
+
+> 200 Response
+
+```json
+{}
+```
+
+<h3 id="retrieveallorderscount-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
+
+<h3 id="retrieveallorderscount-responseschema">Response Schema</h3>
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
+## GetTransactionHistoryForCurrency
+
+<a id="opIdGetTransactionHistoryForCurrency"></a>
+
+> Code samples
+
+```http
+GET /api/transaction-history/{selectedCurrency} HTTP/1.1
+
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/transaction-history/{selectedCurrency}',
+  method: 'get',
+
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/transaction-history/{selectedCurrency}',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/transaction-history/{selectedCurrency}', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/transaction-history/{selectedCurrency}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`GET /transaction-history/{selectedCurrency}`
+
+<h3 id="gettransactionhistoryforcurrency-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|selectedCurrency|path|string|true|none|
+
+#### Enumerated Values
+
+|Parameter|Value|
+|---|---|
+|selectedCurrency|ETH|
+|selectedCurrency|KAU|
+|selectedCurrency|KAG|
+|selectedCurrency|KVT|
+|selectedCurrency|BTC|
+|selectedCurrency|USDT|
+|selectedCurrency|USD|
+|selectedCurrency|EUR|
+|selectedCurrency|GBP|
+
+> Example responses
+
+> 200 Response
+
+```json
+{}
+```
+
+<h3 id="gettransactionhistoryforcurrency-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
+
+<h3 id="gettransactionhistoryforcurrency-responseschema">Response Schema</h3>
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+cookieAuth, None
+</aside>
+
+## GetTopOfDepthForCurrencyPairAndDirection
+
+<a id="opIdGetTopOfDepthForCurrencyPairAndDirection"></a>
+
+> Code samples
+
+```http
+GET /api/depth/{symbolId}/{direction}/top HTTP/1.1
+
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/depth/{symbolId}/{direction}/top',
+  method: 'get',
+
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/depth/{symbolId}/{direction}/top',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/depth/{symbolId}/{direction}/top', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/depth/{symbolId}/{direction}/top',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`GET /depth/{symbolId}/{direction}/top`
+
+<h3 id="gettopofdepthforcurrencypairanddirection-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|symbolId|path|string|true|none|
+|direction|path|string|true|none|
+
+#### Enumerated Values
+
+|Parameter|Value|
+|---|---|
+|direction|buy|
+|direction|sell|
+
+> Example responses
+
+> 200 Response
+
+```json
+{}
+```
+
+<h3 id="gettopofdepthforcurrencypairanddirection-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
+
+<h3 id="gettopofdepthforcurrencypairanddirection-responseschema">Response Schema</h3>
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+cookieAuth, None
+</aside>
+
+## GetDepthForCurrencyPair
+
+<a id="opIdGetDepthForCurrencyPair"></a>
+
+> Code samples
+
+```http
+GET /api/depth/{symbolId} HTTP/1.1
+
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/depth/{symbolId}',
+  method: 'get',
+
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/depth/{symbolId}',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/depth/{symbolId}', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/depth/{symbolId}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`GET /depth/{symbolId}`
+
+<h3 id="getdepthforcurrencypair-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|symbolId|path|string|true|none|
+|limit|query|number(double)|false|none|
+|direction|query|string|false|none|
+
+#### Enumerated Values
+
+|Parameter|Value|
+|---|---|
+|direction|buy|
+|direction|sell|
+
+> Example responses
+
+> 200 Response
+
+```json
+{}
+```
+
+<h3 id="getdepthforcurrencypair-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
+
+<h3 id="getdepthforcurrencypair-responseschema">Response Schema</h3>
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
+## GetFeePools
+
+<a id="opIdGetFeePools"></a>
+
+> Code samples
+
+```http
+GET /api/fee-pools HTTP/1.1
+
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/fee-pools',
+  method: 'get',
+
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/fee-pools',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/fee-pools', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/fee-pools',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`GET /fee-pools`
+
+> Example responses
+
+> 200 Response
+
+```json
+[
+  {
+    "code": "ETH",
+    "pool": 0
+  }
+]
+```
+
+<h3 id="getfeepools-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
+
+<h3 id="getfeepools-responseschema">Response Schema</h3>
+
+Status Code **200**
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[[FeePool](#schemafeepool)]|false|none|none|
+|» code|[CurrencyCode](#schemacurrencycode)|true|none|none|
+|» pool|number(double)|true|none|none|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|code|ETH|
+|code|KAU|
+|code|KAG|
+|code|KVT|
+|code|BTC|
+|code|USDT|
+|code|USD|
+|code|EUR|
+|code|GBP|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
+## GetFeePool
+
+<a id="opIdGetFeePool"></a>
+
+> Code samples
+
+```http
+GET /api/fee-pools/{currencyCode} HTTP/1.1
+
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/fee-pools/{currencyCode}',
+  method: 'get',
+
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/fee-pools/{currencyCode}',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/fee-pools/{currencyCode}', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/fee-pools/{currencyCode}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`GET /fee-pools/{currencyCode}`
+
+<h3 id="getfeepool-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|currencyCode|path|string|true|none|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "code": "ETH",
+  "pool": 0
+}
+```
+
+<h3 id="getfeepool-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|[FeePool](#schemafeepool)|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
+## GetAccountMonthlyTradeSummary
+
+<a id="opIdGetAccountMonthlyTradeSummary"></a>
+
+> Code samples
+
+```http
+GET /api/transactions/monthly-summary HTTP/1.1
+
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/transactions/monthly-summary',
+  method: 'get',
+
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/transactions/monthly-summary',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/transactions/monthly-summary', params={
+
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/transactions/monthly-summary',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`GET /transactions/monthly-summary`
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "currentMonth": {
+    "trades": 0,
+    "volume": 0
+  },
+  "lastMonth": {
+    "trades": 0,
+    "volume": 0
+  }
+}
+```
+
+<h3 id="getaccountmonthlytradesummary-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|[AccountMonthlyTradeSummary](#schemaaccountmonthlytradesummary)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+cookieAuth, None
+</aside>
+
+## GetTransactions
+
+<a id="opIdGetTransactions"></a>
+
+> Code samples
+
+```http
+GET /api/transactions?type=trade HTTP/1.1
+
+Accept: application/json
+
+```
+
+```javascript
+var headers = {
+  'Accept':'application/json'
+
+};
+
+$.ajax({
+  url: '/api/transactions',
+  method: 'get',
+  data: '?type=trade',
+  headers: headers,
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+
+const headers = {
+  'Accept':'application/json'
+
+};
+
+fetch('/api/transactions?type=trade',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('/api/transactions', params={
+  'type': 'trade'
+}, headers = headers)
+
+print r.json()
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json'
+}
+
+result = RestClient.get '/api/transactions',
+  params: {
+  'type' => 'string'
+}, headers: headers
+
+p JSON.parse(result)
+
+```
+
+`GET /transactions`
+
+<h3 id="gettransactions-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|type|query|string|true|none|
+|limit|query|number(double)|false|none|
+|offset|query|number(double)|false|none|
+
+#### Enumerated Values
+
+|Parameter|Value|
+|---|---|
+|type|trade|
+|type|currency|
+|type|transfer|
+
+> Example responses
+
+> 200 Response
+
+```json
+{}
+```
+
+<h3 id="gettransactions-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ok|Inline|
+
+<h3 id="gettransactions-responseschema">Response Schema</h3>
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+cookieAuth, None
+</aside>
+
 ## CancelOrder
 
 <a id="opIdCancelOrder"></a>
@@ -5912,8 +9074,8 @@ cookieAuth, None
   "fee": 0,
   "id": 0,
   "globalTransactionId": "string",
-  "createdAt": "2020-04-09T16:03:13Z",
-  "updatedAt": "2020-04-09T16:03:13Z",
+  "createdAt": "2020-05-20T07:42:38Z",
+  "updatedAt": "2020-05-20T07:42:38Z",
   "tradingPlatformName": "string"
 }
 
@@ -5947,7 +9109,7 @@ cookieAuth, None
 ```json
 {
   "status": "pending",
-  "updatedAt": "2020-04-09T16:03:13Z"
+  "updatedAt": "2020-05-20T07:42:38Z"
 }
 
 ```
@@ -6481,7 +9643,8 @@ cookieAuth, None
   "status": "registered",
   "enableMfa": true,
   "hasTriggeredKycCheck": true,
-  "suspended": true
+  "suspended": true,
+  "hasLogged": true
 }
 
 ```
@@ -6495,6 +9658,7 @@ cookieAuth, None
 |enableMfa|boolean\|null|false|none|none|
 |hasTriggeredKycCheck|boolean\|null|false|none|none|
 |suspended|boolean\|null|false|none|none|
+|hasLogged|boolean\|null|false|none|none|
 
 <h2 id="tocSbalanceamount">BalanceAmount</h2>
 
@@ -6662,6 +9826,21 @@ cookieAuth, None
 |---|---|---|---|---|
 |publicKey|string|true|none|none|
 
+<h2 id="tocSrecord">Record</h2>
+
+<a id="schemarecord"></a>
+
+```json
+{}
+
+```
+
+*Construct a type with a set of properties K of type T*
+
+### Properties
+
+*None*
+
 <h2 id="tocSemailtemplates">EmailTemplates</h2>
 
 <a id="schemaemailtemplates"></a>
@@ -6715,21 +9894,6 @@ cookieAuth, None
 |template|[EmailTemplates](#schemaemailtemplates)|true|none|none|
 |from|string\|null|false|none|none|
 
-<h2 id="tocSrecord">Record</h2>
-
-<a id="schemarecord"></a>
-
-```json
-{}
-
-```
-
-*Construct a type with a set of properties K of type T*
-
-### Properties
-
-*None*
-
 <h2 id="tocScurrency">Currency</h2>
 
 <a id="schemacurrency"></a>
@@ -6739,7 +9903,8 @@ cookieAuth, None
   "id": 0,
   "code": "ETH",
   "symbolSortPriority": 0,
-  "currencyOrderPriority": 0
+  "currencyOrderPriority": 0,
+  "isEnabled": true
 }
 
 ```
@@ -6752,6 +9917,7 @@ cookieAuth, None
 |code|[CurrencyCode](#schemacurrencycode)|true|none|none|
 |symbolSortPriority|number(double)\|null|false|none|none|
 |currencyOrderPriority|number(double)\|null|false|none|none|
+|isEnabled|boolean\|null|false|none|none|
 
 <h2 id="tocSsupportedfeatureflags">SupportedFeatureFlags</h2>
 
@@ -6774,6 +9940,21 @@ cookieAuth, None
 |---|---|
 |*anonymous*|debit_card|
 |*anonymous*|BTC|
+|*anonymous*|TETHER|
+|*anonymous*|BTC_KAU|
+|*anonymous*|BTC_KAG|
+|*anonymous*|ETH_BTC|
+|*anonymous*|BTC_USD|
+|*anonymous*|BTC_EUR|
+|*anonymous*|BTC_GBP|
+|*anonymous*|KVT_BTC|
+|*anonymous*|KVT_USDT|
+|*anonymous*|KAU_USDT|
+|*anonymous*|KAG_USDT|
+|*anonymous*|ETH_USDT|
+|*anonymous*|BTC_USDT|
+|*anonymous*|USDT_EUR|
+|*anonymous*|USDT_USD|
 
 <h2 id="tocSfeatureflag">FeatureFlag</h2>
 
@@ -6821,6 +10002,27 @@ cookieAuth, None
 |orderRange|object\|null|false|none|The percentage used to limit order price ranges.|
 |sortOrder|object\|null|false|none|none|
 
+<h2 id="tocSmobileversions">MobileVersions</h2>
+
+<a id="schemamobileversions"></a>
+
+```json
+{
+  "ios": "string",
+  "android": "string",
+  "forceVersionUpdate": true
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|ios|string|true|none|none|
+|android|string|true|none|none|
+|forceVersionUpdate|boolean|true|none|none|
+
 <h2 id="tocSwithdrawalrequestparams">WithdrawalRequestParams</h2>
 
 <a id="schemawithdrawalrequestparams"></a>
@@ -6846,6 +10048,21 @@ cookieAuth, None
 |currencyCode|[CurrencyCode](#schemacurrencycode)|true|none|none|
 |memo|string\|null|false|none|none|
 
+<h2 id="tocSpartialcurrencywithdrawalconfig">PartialCurrencyWithdrawalConfig</h2>
+
+<a id="schemapartialcurrencywithdrawalconfig"></a>
+
+```json
+{}
+
+```
+
+*Make all properties in T optional*
+
+### Properties
+
+*None*
+
 <h2 id="tocScontactcreaterequest">ContactCreateRequest</h2>
 
 <a id="schemacontactcreaterequest"></a>
@@ -6866,6 +10083,325 @@ cookieAuth, None
 |currency|[CurrencyCode](#schemacurrencycode)|true|none|none|
 |name|string|true|none|none|
 |publicKey|string|true|none|none|
+
+<h2 id="tocStradetransaction">TradeTransaction</h2>
+
+<a id="schematradetransaction"></a>
+
+```json
+{
+  "id": 0,
+  "counterTradeTransactionId": 0,
+  "counterTrade": null,
+  "direction": "buy",
+  "symbolId": "string",
+  "accountId": "string",
+  "orderId": 0,
+  "amount": 0,
+  "matchPrice": 0,
+  "fee": 0,
+  "feeCurrencyId": 0,
+  "feeRate": 0,
+  "taxRate": 0,
+  "taxAmountCHF": 0,
+  "taxAmountFeeCurrency": 0,
+  "baseFiatConversion": 0,
+  "quoteFiatConversion": 0,
+  "fiatCurrencyCode": "CurrencyCode",
+  "createdAt": "2020-05-20T07:42:38Z",
+  "updatedAt": "2020-05-20T07:42:38Z"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|id|number(double)\|null|false|none|none|
+|counterTradeTransactionId|number(double)|true|none|none|
+|counterTrade|[TradeTransaction](#schematradetransaction)|false|none|none|
+|direction|[OrderDirection](#schemaorderdirection)|true|none|none|
+|symbolId|string|true|none|none|
+|accountId|string|true|none|none|
+|orderId|number(double)|true|none|none|
+|amount|number(double)|true|none|none|
+|matchPrice|number(double)|true|none|none|
+|fee|number(double)|true|none|none|
+|feeCurrencyId|number(double)|true|none|none|
+|feeRate|number(double)|true|none|none|
+|taxRate|number(double)|true|none|none|
+|taxAmountCHF|number(double)|true|none|none|
+|taxAmountFeeCurrency|number(double)|true|none|none|
+|baseFiatConversion|number(double)|true|none|none|
+|quoteFiatConversion|number(double)|true|none|none|
+|fiatCurrencyCode|[FiatCurrency](#schemafiatcurrency)|true|none|none|
+|createdAt|string(date-time)\|null|false|none|none|
+|updatedAt|string(date-time)\|null|false|none|none|
+
+<h2 id="tocSorderdirection">OrderDirection</h2>
+
+<a id="schemaorderdirection"></a>
+
+```json
+"buy"
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|string|false|none|none|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|*anonymous*|buy|
+|*anonymous*|sell|
+
+<h2 id="tocSfiatcurrency">FiatCurrency</h2>
+
+<a id="schemafiatcurrency"></a>
+
+```json
+"CurrencyCode"
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|string|false|none|none|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|*anonymous*|CurrencyCode|
+|*anonymous*|CurrencyCode|
+|*anonymous*|CurrencyCode|
+
+<h2 id="tocSorderwithtradetransactions">OrderWithTradeTransactions</h2>
+
+<a id="schemaorderwithtradetransactions"></a>
+
+```json
+{
+  "transactions": [
+    {
+      "id": 0,
+      "counterTradeTransactionId": 0,
+      "counterTrade": null,
+      "direction": "buy",
+      "symbolId": "string",
+      "accountId": "string",
+      "orderId": 0,
+      "amount": 0,
+      "matchPrice": 0,
+      "fee": 0,
+      "feeCurrencyId": 0,
+      "feeRate": 0,
+      "taxRate": 0,
+      "taxAmountCHF": 0,
+      "taxAmountFeeCurrency": 0,
+      "baseFiatConversion": 0,
+      "quoteFiatConversion": 0,
+      "fiatCurrencyCode": "CurrencyCode",
+      "createdAt": "2020-05-20T07:42:38Z",
+      "updatedAt": "2020-05-20T07:42:38Z"
+    }
+  ]
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|transactions|[[TradeTransaction](#schematradetransaction)]|true|none|none|
+
+<h2 id="tocSfeetier">FeeTier</h2>
+
+<a id="schemafeetier"></a>
+
+```json
+{
+  "id": 0,
+  "tier": 0,
+  "symbolId": "string",
+  "threshold": 0,
+  "rate": 0
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|id|number(double)\|null|false|none|none|
+|tier|number(double)|true|none|The fee tier.|
+|symbolId|string|true|none|The id of the targeted symbol.|
+|threshold|number(double)|true|none|The tier threshold.|
+|rate|number(double)|true|none|The fee rate.|
+
+<h2 id="tocSaccountfeetier">AccountFeeTier</h2>
+
+<a id="schemaaccountfeetier"></a>
+
+```json
+{
+  "id": 0,
+  "tier": 0,
+  "symbolId": "string",
+  "threshold": 0,
+  "rate": 0,
+  "accountId": "string"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|id|number(double)\|null|false|none|none|
+|tier|number(double)|true|none|The fee tier.|
+|symbolId|string|true|none|The id of the targeted symbol.|
+|threshold|number(double)|true|none|The tier threshold.|
+|rate|number(double)|true|none|The fee rate.|
+|accountId|string|true|none|The id of the targetAddress account.|
+
+<h2 id="tocSorderstatus">OrderStatus</h2>
+
+<a id="schemaorderstatus"></a>
+
+```json
+"submit"
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|string|false|none|none|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|*anonymous*|submit|
+|*anonymous*|partialFill|
+|*anonymous*|cancel|
+|*anonymous*|pendingCancel|
+|*anonymous*|fill|
+
+<h2 id="tocSorderadminsummary">OrderAdminSummary</h2>
+
+<a id="schemaorderadminsummary"></a>
+
+```json
+{
+  "createdAt": "2020-05-20T07:42:38Z",
+  "orderId": 0,
+  "client": "string",
+  "hin": "string",
+  "direction": "buy",
+  "symbolId": "string",
+  "amount": 0,
+  "price": 0,
+  "fee": 0,
+  "feeCurrency": "string",
+  "filled": 0,
+  "status": "submit"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|createdAt|string(date-time)|true|none|none|
+|orderId|number(double)|true|none|none|
+|client|string|true|none|none|
+|hin|string|true|none|none|
+|direction|[OrderDirection](#schemaorderdirection)|true|none|none|
+|symbolId|string|true|none|none|
+|amount|number(double)|true|none|none|
+|price|number(double)|true|none|none|
+|fee|number(double)\|null|false|none|none|
+|feeCurrency|string|true|none|none|
+|filled|number(double)|true|none|none|
+|status|[OrderStatus](#schemaorderstatus)|true|none|none|
+
+<h2 id="tocSfeepool">FeePool</h2>
+
+<a id="schemafeepool"></a>
+
+```json
+{
+  "code": "ETH",
+  "pool": 0
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|code|[CurrencyCode](#schemacurrencycode)|true|none|none|
+|pool|number(double)|true|none|none|
+
+<h2 id="tocSmonthlytradesummary">MonthlyTradeSummary</h2>
+
+<a id="schemamonthlytradesummary"></a>
+
+```json
+{
+  "trades": 0,
+  "volume": 0
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|trades|number(double)|true|none|The total number of trades.|
+|volume|number(double)|true|none|The volume in the preferred currency.|
+
+<h2 id="tocSaccountmonthlytradesummary">AccountMonthlyTradeSummary</h2>
+
+<a id="schemaaccountmonthlytradesummary"></a>
+
+```json
+{
+  "currentMonth": {
+    "trades": 0,
+    "volume": 0
+  },
+  "lastMonth": {
+    "trades": 0,
+    "volume": 0
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|currentMonth|[MonthlyTradeSummary](#schemamonthlytradesummary)|true|none|none|
+|lastMonth|[MonthlyTradeSummary](#schemamonthlytradesummary)|true|none|none|
 
 <h2 id="tocSpartialplaceorderrequest">PartialPlaceOrderRequest</h2>
 

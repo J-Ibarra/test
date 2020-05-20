@@ -1,6 +1,6 @@
 {
   "swagger": {
-    "outputDirectory": "./dist",
+    "outputDirectory": "./dist/swagger-order-data",
     "entryFile": "./src/service-wrappers/order-data/rest-api/index.ts",
     "basePath": "/api",
     "securityDefinitions": {
