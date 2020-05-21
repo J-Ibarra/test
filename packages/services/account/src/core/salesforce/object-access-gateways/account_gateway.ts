@@ -108,7 +108,9 @@ async function getOrCreateAccount(
   await updateSalesforceAccountKBETermsAndConditions(client, salesforceAccount.Id)
 
   return {
-    salesforceAccount,
+    salesforceAccount: {
+      id: salesforceAccount.Id,
+    },
     newAccountCreated: false,
   }
 }

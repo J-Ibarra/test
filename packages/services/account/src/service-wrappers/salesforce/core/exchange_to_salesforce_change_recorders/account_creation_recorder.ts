@@ -1,5 +1,5 @@
 import { get } from 'lodash'
-import { SalesforceReferenceTable } from '@abx-types/account'
+import { SalesforceReferenceTable, Account, User } from '@abx-types/account'
 import * as SalesforceAccount from '../../../../core/salesforce/object-access-gateways/account_gateway'
 import * as SalesforcePlatformCredential from '../../../../core/salesforce/object-access-gateways/platform_credential_gateway'
 import { Logger } from '@abx-utils/logging'
@@ -44,27 +44,11 @@ export async function accountCreatedRecorder({ accountId, newDepositAddresses }:
       logger.debug(`PlatformCredential Created ${JSON.stringify(platformCredentialResponse)}`)
 
       salesforceReference = await createSalesforceReferenceForAccount(account.id, salesforceAccount.id, platformCredentialResponse.id)
+    } else if (!salesforceReference) {
+      salesforceReference = await createSalesforceReference(client, account, accountUser, salesforceAccount, referrerSalesforcePlatformCredentialId)
     }
 
-    const currencies = await getAllCurrenciesEligibleForAccount(account.id)
-    const currencyIdToCurrency = currencies.reduce((acc, currency) => acc.set(currency.id, currency), new Map<number, Currency>())
-
-    logger.debug(`Deposit address currencies for account ${accountId} : ${newDepositAddresses.map(({ currencyId }) => currencyId).join(',')} `)
-
-    const linkedAddressResponse = await Promise.all(
-      newDepositAddresses.map((depositAddress) => {
-        logger.info(`Creating a linked address for currency ${depositAddress.currencyId} and account ${accountId}`)
-
-        return createLinkedAddress(client, {
-          salesforceReference: salesforceReference!,
-          depositAddress: {
-            ...depositAddress,
-            currency: currencyIdToCurrency.get(depositAddress.currencyId),
-            publicKey: depositAddress.address || depositAddress.publicKey,
-          },
-        })
-      }),
-    )
+    const linkedAddressResponse = await linkDepositAddresses(accountId, newDepositAddresses, client, salesforceReference)
     logger.debug(`Linked addresses created: ${JSON.stringify(linkedAddressResponse)}`)
   } catch (e) {
     logger.error(get(e, 'response.data', e))
@@ -105,4 +89,44 @@ async function getReferrerSalesforceAccountId(referrerId: string) {
   }
 
   return null
+}
+
+async function linkDepositAddresses(accountId: string, newDepositAddresses: DepositAddress[], client, salesforceReference: SalesforceReferenceTable) {
+  const currencies = await getAllCurrenciesEligibleForAccount(accountId)
+  const currencyIdToCurrency = currencies.reduce((acc, currency) => acc.set(currency.id, currency), new Map<number, Currency>())
+
+  logger.debug(`Deposit address currencies for account ${accountId} : ${newDepositAddresses.map(({ currencyId }) => currencyId).join(',')} `)
+
+  return Promise.all(
+    newDepositAddresses.map((depositAddress) => {
+      logger.info(`Creating a linked address for currency ${depositAddress.currencyId} and account ${accountId}`)
+
+      return createLinkedAddress(client, {
+        salesforceReference: salesforceReference!,
+        depositAddress: {
+          ...depositAddress,
+          currency: currencyIdToCurrency.get(depositAddress.currencyId),
+          publicKey: depositAddress.address || depositAddress.publicKey,
+        },
+      })
+    }),
+  )
+}
+
+async function createSalesforceReference(client, account: Account, accountUser: User, salesforceAccount, referrerSalesforcePlatformCredentialId) {
+  let platformCredentialId = await SalesforcePlatformCredential.getPlatformCredentialIdForSalesforceAccountId(client, salesforceAccount.id)
+
+  if (!platformCredentialId) {
+    const platformCredentialResponse = await SalesforcePlatformCredential.createPlatformCredential(client, {
+      account,
+      user: accountUser,
+      salesforceAccountId: salesforceAccount.id,
+      referrerSalesforcePlatformCredentialId,
+    })
+    logger.debug(`PlatformCredential Created ${JSON.stringify(platformCredentialResponse)}`)
+
+    platformCredentialId = platformCredentialResponse.id
+  }
+
+  return createSalesforceReferenceForAccount(account.id, salesforceAccount.id, platformCredentialId || '')
 }

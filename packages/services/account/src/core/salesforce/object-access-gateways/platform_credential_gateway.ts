@@ -68,6 +68,17 @@ const mapAccountStatus = (status: AccountStatus): VerificationTier => {
   return VerificationTier.tier_zero
 }
 
+export async function getPlatformCredentialIdForSalesforceAccountId(client: AxiosInstance, salesforceAccountId: string): Promise<string | null> {
+  const query = `SELECT Id FROM Platform_Credential__c WHERE Account__c='${salesforceAccountId}'`
+  const { data } = await client.get('/query', {
+    params: {
+      q: query,
+    },
+  })
+
+  return data.records.length > 0 ? data.records[0].id : null
+}
+
 export async function createPlatformCredential(client: AxiosInstance, params: KbeAccountCreationParams): Promise<SalesforcePostResponse> {
   const platformCredential = createPlatformCredentialRecord(params)
   const response = await client.post(`/sobjects/Platform_Credential__c/`, platformCredential)

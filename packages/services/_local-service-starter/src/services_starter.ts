@@ -1,5 +1,5 @@
 import { bootstrapReferenceDataService } from '@abx/exchange-reference-data-service'
-import { bootstrapAccountsService } from '@abx/exchange-account-data-service'
+import { bootstrapAccountsService, bootstrapSalesforceService } from '@abx/exchange-account-data-service'
 import { bootstrapBalanceService } from '@abx/exchange-balance-service'
 import { bootstrapFundManagementService } from '@abx/admin-fund-management-service'
 import { bootstrapMarketDataService } from '@abx/exchange-market-data-service'
@@ -32,6 +32,7 @@ export async function startAllServices() {
   await bootstrapSettlementService()
   await bootstrapReportsService()
   await bootstrapNotificationService()
+  await bootstrapSalesforceService()
   // await bootstrapSchedulerService()
 
   await bootstrapWithdrawalApiService()
