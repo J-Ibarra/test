@@ -20,10 +20,13 @@ export class DepositAddressTransactionHandler {
     const onChainCurrencyGateway = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment).getCurrencyFromTicker(currency)
 
     const depositTransactionDetails = await onChainCurrencyGateway.getTransaction(txid, depositAddress.address!)
+    this.logger.debug(`Successfully retrieved transaction details ${JSON.stringify(depositTransactionDetails)}`)
+
     const holdingsPublicAddress = await onChainCurrencyGateway.getHoldingPublicAddress()
 
     const isOutgoingTransactionToKinesisHoldings =
       !!depositTransactionDetails && depositTransactionDetails.receiverAddress.toLowerCase() === holdingsPublicAddress.toLowerCase()
+    this.logger.debug(`Transaction ${txid} is ${isOutgoingTransactionToKinesisHoldings ? 'outgoing' : 'incoming'}`)
 
     if (!!depositTransactionDetails && depositTransactionDetails.receiverAddress.toLowerCase() === depositAddress.address!.toLowerCase()) {
       await this.handleNewDepositAddressTransaction(depositTransactionDetails, depositAddress, txid, currency)

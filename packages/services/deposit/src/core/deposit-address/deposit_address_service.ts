@@ -185,8 +185,9 @@ async function reuseDepositAddress(
 
   // reuse the existing public address
   logger.debug(`Use existing public address for ${currencyCode} and account ${depositAddress.accountId}`)
-  const newDepositAddress = {
+  const newDepositAddress: DepositAddress = {
     ...depositAddress,
+    address: depositAddress.address || depositAddress.publicKey,
     id: undefined,
     currencyId: cryptoCurrency!.id,
     createdAt: undefined,

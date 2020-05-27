@@ -42,16 +42,22 @@ export class Erc20ApiProviderFacade implements BlockchainApiProviderFacade {
   }
 
   async getTransaction(_transactionHash: string, _targetAddress: string): Promise<Transaction | null> {
-    const transaction = await this.cryptoApiProviderProxyEth.getTransactionDetails({ TX_HASH: _transactionHash })
-    const tokenTransfer = transaction.token_transfers[0]
+    try {
+      const transaction = await this.cryptoApiProviderProxyEth.getTransactionDetails({ TX_HASH: _transactionHash })
+      const tokenTransfer = transaction.token_transfers[0]
 
-    return {
-      transactionHash: _transactionHash,
-      time: moment(transaction.timestamp).toDate(),
-      amount: Number(tokenTransfer.value),
-      senderAddress: tokenTransfer.from,
-      receiverAddress: tokenTransfer.to,
-      confirmations: Number(transaction.confirmations),
+      return {
+        transactionHash: _transactionHash,
+        time: moment(transaction.timestamp).toDate(),
+        amount: Number(tokenTransfer.value),
+        senderAddress: tokenTransfer.from,
+        receiverAddress: tokenTransfer.to,
+        confirmations: Number(transaction.confirmations),
+      }
+    } catch (e) {
+      this.LOGGER.error(`Unable to retrieve transaction for hash ${_transactionHash}`)
+      this.LOGGER.error(JSON.stringify(e))
+      throw e
     }
   }
 
