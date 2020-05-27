@@ -130,7 +130,7 @@ describe('Deposit Request module', () => {
         transactionTrackingActivated: false,
       })
 
-      sinon.stub(referenceDataOperations, 'getDepositMimimumAmountForCurrency').resolves(1)
+      sinon.stub(referenceDataOperations, 'getDepositMinimumAmountForCurrency').resolves(1)
     })
 
     it('should load all pending deposit requests above the minimum for the currency', async () => {

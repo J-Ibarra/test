@@ -16,4 +16,7 @@ export interface DepositAddress {
    * processing them as deposits.
    */
   transactionTrackingActivated?: boolean
+
+  createdAt?: Date
+  updatedAt?: Date
 }

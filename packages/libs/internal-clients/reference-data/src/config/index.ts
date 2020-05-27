@@ -84,7 +84,7 @@ export async function getDepositMimimumAmounts(): Promise<Record<CurrencyCode, n
   return internalApiRequestDispatcher.fireRequestToInternalApi<Record<CurrencyCode, number>>(ConfigEndpoints.getDepositMimimumAmounts)
 }
 
-export async function getDepositMimimumAmountForCurrency(currencyCode: CurrencyCode): Promise<number> {
+export async function getDepositMinimumAmountForCurrency(currencyCode: CurrencyCode): Promise<number> {
   const depositMinimumAmounts = await internalApiRequestDispatcher.fireRequestToInternalApi<Record<CurrencyCode, number>>(
     ConfigEndpoints.getDepositMimimumAmounts,
   )

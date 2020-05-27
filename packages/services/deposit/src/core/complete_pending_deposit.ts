@@ -70,9 +70,7 @@ export async function completeReceivedDeposit(receivedRequest: DepositRequest, t
 
   await Promise.all([
     updateDepositRequest(id!, { status: DepositRequestStatus.completedPendingHoldingsTransaction }, transaction).then(() =>
-      logger.debug(
-        `Received Deposit Request ${id} for ${amount} at address: ${publicKey}`,
-      ),
+      logger.debug(`Received Deposit Request ${id} for ${amount} at address: ${publicKey}`),
     ),
     createCurrencyTransaction({
       accountId,

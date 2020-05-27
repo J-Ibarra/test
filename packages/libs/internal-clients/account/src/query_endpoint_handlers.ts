@@ -1,11 +1,9 @@
-import { MemoryCache } from '@abx-utils/db-connection-utils'
 import { AccountQueryEndpoints } from './endpoints'
 import { User, Account, KycVerifiedAccountDetails } from '@abx-types/account'
 import { InternalApiRequestDispatcher } from '@abx-utils/internal-api-tools'
 
 export const ACCOUNT_REST_API_PORT = 3103
 
-const memoryCache = MemoryCache.getInstance()
 let operatorAccount: Account | null
 let kinesisRevenueAccount: Account | null
 
@@ -79,11 +77,10 @@ export async function getKycVerifiedAccountDetails(accountId: string): Promise<K
  * @param cacheExpiryInSeconds the cache expiry in seconds
  */
 export async function getAllKycOrEmailVerifiedAccountIds(cacheExpiryInSeconds?: number): Promise<Set<string>> {
-  let kycOrEmailVerifiedAccountIds: string[] = await returnCachedValueOrRetrieveFromSource<string[]>(
-    AccountQueryEndpoints.getAllKycOrEmailVerifiedAccountIds,
-    'getAllKycOrEmailVerifiedAccountIds',
-    cacheExpiryInSeconds || 0,
-  )
+  let kycOrEmailVerifiedAccountIds: string[] = await internalApiRequestDispatcher.returnCachedValueOrRetrieveFromSource<string[]>({
+    endpoint: AccountQueryEndpoints.getAllKycOrEmailVerifiedAccountIds,
+    ttl: cacheExpiryInSeconds || 0,
+  })
 
   return new Set<string>(kycOrEmailVerifiedAccountIds)
 }
@@ -98,32 +95,14 @@ export async function getAllKycOrEmailVerifiedAccountIds(cacheExpiryInSeconds?: 
 export async function getAllKycVerifiedAccountIds(cacheExpiryInSeconds?: number): Promise<Set<string>> {
   let kycVerifiedAccountIds: string[] = []
   if (!!cacheExpiryInSeconds) {
-    kycVerifiedAccountIds = await returnCachedValueOrRetrieveFromSource<string[]>(
-      AccountQueryEndpoints.getAllKycVerifiedAccountIds,
-      'getAllKycVerifiedAccountIds',
-      cacheExpiryInSeconds,
-    )
+    kycVerifiedAccountIds = await internalApiRequestDispatcher.returnCachedValueOrRetrieveFromSource<string[]>({
+      endpoint: AccountQueryEndpoints.getAllKycVerifiedAccountIds,
+      ttl: cacheExpiryInSeconds,
+    })
   }
 
   kycVerifiedAccountIds = await internalApiRequestDispatcher.fireRequestToInternalApi<string[]>(AccountQueryEndpoints.getAllKycVerifiedAccountIds)
   return new Set<string>(kycVerifiedAccountIds)
-}
-
-async function returnCachedValueOrRetrieveFromSource<T>(endpoint: AccountQueryEndpoints, cacheKey: string, cacheExpiryInSeconds: number): Promise<T> {
-  const cachedValue = await memoryCache.get(cacheKey)
-
-  if (!!cachedValue) {
-    return cachedValue as T
-  }
-
-  const freshValue = await internalApiRequestDispatcher.fireRequestToInternalApi<T>(endpoint)
-  await memoryCache.set<T>({
-    key: cacheKey,
-    ttl: cacheExpiryInSeconds,
-    val: freshValue,
-  })
-
-  return freshValue
 }
 
 export * from './endpoints'

@@ -74,14 +74,9 @@ export class OrderChangeController extends Controller {
   public async cancelOrder(id: number, @Request() request: OverloadedRequest): Promise<{ orderId: number } | ApiErrorPayload> {
     this.logger.debug(`Cancelling order ${id} for account ${request.account!.id}`)
 
-    const query = {
-      where: { id, accountId: request.account!.id },
-    }
-
     try {
-      const orders = await orderRetrieval.findOrders(query)
-      this.logger.debug(`Orders found: ${JSON.stringify(orders)}`)
-      if (!orders.length) {
+      const order = await orderRetrieval.findOrder(id)
+      if (!order || order.accountId !== request.account!.id) {
         this.logger.warn(`User ${request.account!.id} tried to cancel invalid order ${id}`)
         this.setStatus(400)
         return {
@@ -89,7 +84,7 @@ export class OrderChangeController extends Controller {
         }
       }
 
-      const cancellationQuery: CancelOrderRequest = { orderId: orders[0].id!, cancellationReason: 'Order cancelled by client' }
+      const cancellationQuery: CancelOrderRequest = { orderId: order.id!, cancellationReason: 'Order cancelled by client' }
       const cancelledOrder = await OrderCancellationGateway.getInstance().cancelOrder(cancellationQuery)
 
       this.setStatus(200)

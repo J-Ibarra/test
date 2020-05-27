@@ -1,10 +1,16 @@
-#!/bin/bash
+# Removing left and right curly brackets from input, example input: {@abx/exchange-deposit-service,@abx/exchange-reference-data-service}'
+scopeWithLeftBracketRemoved=${1/{/}
+scopeWithLeftAndRightBracketsRemoved=${scopeWithLeftBracketRemoved/\}/}
 
-./_scripts/travis/travis-build-branch-checkout.sh
+# Splitting services on ',' delimiter
+servicePackages=(${scopeWithLeftAndRightBracketsRemoved//,/ })
 
-npm link
-npm run bootstrap
-
-# Run legacy migrations to get DB in good shape for tests
-lerna run build --scope @abx-utils/kbe-legacy-migrations --include-dependencies --exclude-dependents
-npm run run-legacy-migrations:test 
+# Running tests for each service in sequence, Max 3 services supported
+if [[ "${servicePackages[2]}" != "" ]]; then
+  lerna run test --scope ${servicePackages[0]} --since develop --include-dependencies \
+  && lerna run test --scope ${servicePackages[1]} --since develop --include-dependencies \
+  && lerna run test --scope ${servicePackages[2]} --since develop --include-dependencies
+else
+  lerna run test --scope ${servicePackages[0]} --since develop --include-dependencies \
+  && lerna run test --scope ${servicePackages[1]} --since develop --include-dependencies
+fi

@@ -2,9 +2,10 @@ import { expect } from 'chai'
 import sinon from 'sinon'
 import { Account } from '@abx-types/account'
 import { updateDumbWithdrawalRequest } from '../utils'
-import { Currency, FiatCurrency } from '@abx-types/reference-data'
+import { Currency, FiatCurrency, CurrencyCode } from '@abx-types/reference-data'
 import { WithdrawalRequest, WithdrawalRequestType, WithdrawalState } from '@abx-types/withdrawal'
 import * as helper from '../../lib'
+import * as referenceDataOperations from '@abx-service-clients/reference-data'
 import { createWithdrawalRequest } from '../../lib'
 import { createAccountsAndWithdrawalFunctions, sortById } from '../../../service-wrappers/withdrawal-api/__tests__/initialisation_helper'
 import { truncateTables } from '@abx-utils/db-connection-utils'
@@ -18,6 +19,7 @@ let cryptoKauCurrency: Currency
 
 describe('validate_withdrawal_request', async () => {
   const sandbox = sinon.createSandbox()
+  sinon.stub(referenceDataOperations, 'findCurrencyForCode').resolves({ id: 2 })
 
   after(async () => {
     sandbox.restore()
@@ -194,6 +196,66 @@ describe('validate_withdrawal_request', async () => {
       expect(newWithdrawals.length).to.eql(2)
       expect(newWithdrawals[0].amount).to.eql(usdCompletedWithdrawal.amount)
       expect(newWithdrawals[1].amount).to.eql(kauCompletedWithdrawal.amount)
+    })
+
+    it('checkForNonCompletedWithdrawalRequests: should return true with 1 completed, 1 cancelled and 1 pending withdrawals', async () => {
+      await createWithdrawal({
+        amount: 5,
+        state: WithdrawalState.completed,
+        currencyId: cryptoKauCurrency.id,
+        kauConversion: 5 * 0.1,
+        fiatConversion: 0.056,
+        fiatCurrencyCode: FiatCurrency.usd,
+        accountId: accountGiver.id,
+      })
+      await createWithdrawal({
+        amount: 22,
+        state: WithdrawalState.cancelled,
+        currencyId: cryptoKauCurrency.id,
+        kauConversion: 5 * 0.1,
+        fiatConversion: 0.056,
+        fiatCurrencyCode: FiatCurrency.usd,
+        accountId: accountGiver.id,
+      })
+      await createWithdrawal({
+        amount: 80,
+        state: WithdrawalState.pending,
+        currencyId: cryptoKauCurrency.id,
+        kauConversion: 5 * 0.1,
+        fiatConversion: 0.056,
+        fiatCurrencyCode: FiatCurrency.usd,
+        accountId: accountGiver.id,
+      })
+
+      const isNonCompletedRequestExists: boolean = (await helper.checkForNonCompletedWithdrawalRequests(CurrencyCode.kau))
+
+      expect(isNonCompletedRequestExists).to.eql(true)
+    })
+
+    it('checkForNonCompletedWithdrawalRequests: should return false when all requests are completed or cancelled', async () => {
+      await createWithdrawal({
+        amount: 5,
+        state: WithdrawalState.completed,
+        currencyId: cryptoKauCurrency.id,
+        kauConversion: 5 * 0.1,
+        fiatConversion: 0.056,
+        fiatCurrencyCode: FiatCurrency.usd,
+        accountId: accountGiver.id,
+      })
+
+      await createWithdrawal({
+        amount: 5,
+        state: WithdrawalState.cancelled,
+        currencyId: cryptoKauCurrency.id,
+        kauConversion: 5 * 0.1,
+        fiatConversion: 0.056,
+        fiatCurrencyCode: FiatCurrency.usd,
+        accountId: accountGiver.id,
+      })
+
+      const isNonCompletedRequestExists: boolean = (await helper.checkForNonCompletedWithdrawalRequests(CurrencyCode.kau))
+
+      expect(isNonCompletedRequestExists).to.eql(false)
     })
   })
 })

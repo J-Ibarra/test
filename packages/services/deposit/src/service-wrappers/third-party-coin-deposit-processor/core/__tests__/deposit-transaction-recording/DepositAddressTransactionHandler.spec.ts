@@ -9,6 +9,7 @@ import { HoldingsTransactionGateway } from '../../holdings-transaction-creation/
 import { HoldingsTransactionConfirmationHandler } from '../../deposit-transaction-recording/HoldingsTransactionConfirmationHandler'
 import * as coreOperations from '../../../../../core'
 import * as referenceDataOperations from '@abx-service-clients/reference-data'
+import { DepositRequest } from '@abx-types/deposit'
 
 describe('DepositAddressTransactionHandler', () => {
   const getTransactionStub = sinon.stub()
@@ -19,7 +20,7 @@ describe('DepositAddressTransactionHandler', () => {
     address: 'deposit-address',
   } as any
   const depositAddressTransactionHandler = new DepositAddressTransactionHandler()
-  
+
   beforeEach(() => {
     process.env.KINESIS_BITCOIN_HOLDINGS_ADDRESS = holdingsAddress
 
@@ -32,7 +33,7 @@ describe('DepositAddressTransactionHandler', () => {
 
     sinon.stub(blockchainGateway, 'getOnChainCurrencyManagerForEnvironment').returns(onChainCurrencyManagerStub)
     sinon.stub(coreOperations, 'getRequiredConfirmationsForDepositTransaction').returns(1)
-    sinon.stub(referenceDataOperations, 'getDepositMimimumAmountForCurrency').resolves(0.0002)
+    sinon.stub(referenceDataOperations, 'getDepositMinimumAmountForCurrency').resolves(0.0002)
   })
 
   afterEach(() => sinon.restore())
@@ -111,6 +112,137 @@ describe('DepositAddressTransactionHandler', () => {
           depositTransactionDetails,
         }),
       ).to.eql(true)
+      expect(holdingsTransactionGatewayStub.calledWith(txid, CurrencyCode.bitcoin)).to.eql(true)
+    })
+
+    it('should not process transaction when total amount is below minimum', async () => {
+      sinon.stub(coreOperations, 'findDepositRequestsWithInsufficientAmount').returns(
+        Promise.resolve([
+          {
+            amount: 0.00003,
+          } as DepositRequest,
+          {
+            amount: 0.00004,
+          } as DepositRequest,
+        ]),
+      )
+      const depositTransactionDetails = {
+        receiverAddress: depositAddress.address,
+        confirmations: 1,
+        amount: 0.0001,
+      } as any
+
+      getTransactionStub.resolves(depositTransactionDetails)
+
+      sinon.stub(NewTransactionRecorder.prototype, 'recordDepositTransaction').resolves()
+      const holdingsTransactionGatewayStub = sinon
+        .stub(HoldingsTransactionGateway.prototype, 'dispatchHoldingsTransactionForConfirmedDepositRequest')
+        .resolves()
+
+      await depositAddressTransactionHandler.handleDepositAddressTransaction(txid, depositAddress, CurrencyCode.bitcoin)
+
+      expect(holdingsTransactionGatewayStub.calledWith(txid, CurrencyCode.bitcoin)).to.eql(false)
+    })
+
+    it('should process transaction when total amount is above minimum', async () => {
+      sinon.stub(coreOperations, 'findDepositRequestsWithInsufficientAmount').returns(
+        Promise.resolve([
+          {
+            amount: 0.00003,
+          } as DepositRequest,
+          {
+            amount: 0.00004,
+          } as DepositRequest,
+          {
+            amount: 0.00005,
+          } as DepositRequest,
+        ]),
+      )
+      const depositTransactionDetails = {
+        receiverAddress: depositAddress.address,
+        confirmations: 1,
+        amount: 0.0001,
+      } as any
+
+      getTransactionStub.resolves(depositTransactionDetails)
+
+      sinon.stub(NewTransactionRecorder.prototype, 'recordDepositTransaction').resolves()
+      const holdingsTransactionGatewayStub = sinon
+        .stub(HoldingsTransactionGateway.prototype, 'dispatchHoldingsTransactionForConfirmedDepositRequest')
+        .resolves()
+
+      await depositAddressTransactionHandler.handleDepositAddressTransaction(txid, depositAddress, CurrencyCode.bitcoin)
+
+      expect(holdingsTransactionGatewayStub.calledWith(txid, CurrencyCode.bitcoin)).to.eql(true)
+    })
+
+    it('should calculate the total amount (current + insufficient) properly, total amount below minimum', async () => {
+      const txid = 'foo-txid-1'
+      sinon.stub(coreOperations, 'findDepositRequestsWithInsufficientAmount').returns(
+        Promise.resolve([
+          {
+            amount: 0.00003,
+          } as DepositRequest,
+          {
+            amount: 0.00011,
+          } as DepositRequest,
+          {
+            amount: 0.00005,
+            depositTxHash: txid,
+          } as DepositRequest,
+        ]),
+      )
+      const depositTransactionDetails = {
+        receiverAddress: depositAddress.address,
+        confirmations: 1,
+        amount: 0.00005,
+        txid,
+      } as any
+
+      getTransactionStub.resolves(depositTransactionDetails)
+
+      sinon.stub(NewTransactionRecorder.prototype, 'recordDepositTransaction').resolves()
+      const holdingsTransactionGatewayStub = sinon
+        .stub(HoldingsTransactionGateway.prototype, 'dispatchHoldingsTransactionForConfirmedDepositRequest')
+        .resolves()
+
+      await depositAddressTransactionHandler.handleDepositAddressTransaction(txid, depositAddress, CurrencyCode.bitcoin)
+
+      expect(holdingsTransactionGatewayStub.notCalled).to.eql(true)
+    })
+
+    it('should calculate the total amount (current + insufficient) properly, total amount above minimum', async () => {
+      const txid = 'foo-txid-1'
+      sinon.stub(coreOperations, 'findDepositRequestsWithInsufficientAmount').returns(
+        Promise.resolve([
+          {
+            amount: 0.00003,
+          } as DepositRequest,
+          {
+            amount: 0.00013,
+          } as DepositRequest,
+          {
+            amount: 0.00005,
+            depositTxHash: txid,
+          } as DepositRequest,
+        ]),
+      )
+      const depositTransactionDetails = {
+        receiverAddress: depositAddress.address,
+        confirmations: 1,
+        amount: 0.00005,
+        txid,
+      } as any
+
+      getTransactionStub.resolves(depositTransactionDetails)
+
+      sinon.stub(NewTransactionRecorder.prototype, 'recordDepositTransaction').resolves()
+      const holdingsTransactionGatewayStub = sinon
+        .stub(HoldingsTransactionGateway.prototype, 'dispatchHoldingsTransactionForConfirmedDepositRequest')
+        .resolves()
+
+      await depositAddressTransactionHandler.handleDepositAddressTransaction(txid, depositAddress, CurrencyCode.bitcoin)
+
       expect(holdingsTransactionGatewayStub.calledWith(txid, CurrencyCode.bitcoin)).to.eql(true)
     })
   })

@@ -22,6 +22,31 @@ describe('Deposit Address module', () => {
 
   let currencyId: number = 2
   let ethereumCurrencyId: number = 3
+  const kagCurrencyId = 4
+  const kvtCurrencyId = 5
+  const tetherCurrencyId = 6
+  const cryptoCurrencies = [
+    {
+      id: currencyId,
+      code: CurrencyCode.kau,
+    },
+    {
+      id: ethereumCurrencyId,
+      code: CurrencyCode.ethereum,
+    },
+    {
+      id: kagCurrencyId,
+      code: CurrencyCode.kag,
+    },
+    {
+      id: kvtCurrencyId,
+      code: CurrencyCode.kvt,
+    },
+    {
+      id: tetherCurrencyId,
+      code: CurrencyCode.tether,
+    },
+  ]
 
   const testCurrencyManager = {
     generateAddress: () => ({ privateKey: 'private-key', publicKey: 'publicKey' }),
@@ -71,7 +96,7 @@ describe('Deposit Address module', () => {
       transactionTrackingActivated: false,
     })
 
-    const fetchedDepositAddress = await findDepositAddressByAddressOrPublicKey('bar')
+    const fetchedDepositAddress = await findDepositAddressByAddressOrPublicKey('bar', 1)
 
     expect(storedAddress).to.eql(fetchedDepositAddress)
   })
@@ -86,47 +111,12 @@ describe('Deposit Address module', () => {
       transactionTrackingActivated: false,
     })
 
-    const fetchedDepositAddress = await findDepositAddressByAddressOrPublicKey('bar')
+    const fetchedDepositAddress = await findDepositAddressByAddressOrPublicKey('bar', 1)
 
     expect(storedAddress).to.eql(fetchedDepositAddress)
   })
 
-  it('fetchDepositAddressesForUser generates missing deposit addresses for implemented currencies', async () => {
-    const newAddress = {
-      accountId: ACCOUNT_ID,
-      currencyId: 1,
-      encryptedPrivateKey: 'private-key-1',
-      publicKey: 'public-key-2',
-      transactionTrackingActivated: false,
-    }
-
-    await storeDepositAddress(newAddress)
-
-    const currentAddresses = await findDepositAddressesForAccount(ACCOUNT_ID)
-    expect(currentAddresses.length).to.eql(1)
-
-    sinon.stub(referenceDataOperations, 'findCurrencyForId').resolves({
-      id: currencyId,
-      code: CurrencyCode.kau,
-    })
-
-    const cryptoCurrencies = [
-      {
-        id: currencyId,
-        code: CurrencyCode.kau,
-      },
-      {
-        id: ethereumCurrencyId,
-        code: CurrencyCode.ethereum,
-      },
-      {
-        id: 4,
-        code: CurrencyCode.kag,
-      },
-    ]
-    sinon.stub(referenceDataOperations, 'findCryptoCurrencies').resolves(cryptoCurrencies)
-    sinon.stub(referenceDataOperations, 'getAllCurrenciesEligibleForAccount').resolves(cryptoCurrencies)
-
+  describe('findOrCreateDepositAddressesForAccount', () => {
     const testBasedOnCurrencyManager = (currency): any => {
       return {
         generateAddress: () => Promise.resolve({ privateKey: `private-key-${currency}`, publicKey: `publicKey${currency}` }),
@@ -135,15 +125,59 @@ describe('Deposit Address module', () => {
         getId: () => Promise.resolve(cryptoCurrencies.find((cc) => cc.code === currency)!.id),
       }
     }
-    sinon.stub(onChainIntegration.CurrencyManager.prototype, 'getCurrencyFromTicker')
-    .callsFake((currencyCode) => testBasedOnCurrencyManager(currencyCode))
 
-    const newAddresses = await findOrCreateDepositAddressesForAccount(ACCOUNT_ID)
-    expect(newAddresses.length).to.eql(4)
-    const kauAddress = newAddresses.find((a) => a.currencyId === currencyId)
-    const kagAddress = newAddresses.find((a) => a.currencyId === 4)
-    expect(kauAddress!.publicKey).to.eql(kagAddress!.publicKey)
-    expect(kauAddress!.encryptedPrivateKey).to.eql(kagAddress!.encryptedPrivateKey)
+    beforeEach(() => {
+      sinon.stub(referenceDataOperations, 'findCryptoCurrencies').resolves(cryptoCurrencies)
+      sinon.stub(referenceDataOperations, 'getAllCurrenciesEligibleForAccount').resolves(cryptoCurrencies)
+
+      sinon
+        .stub(onChainIntegration.CurrencyManager.prototype, 'getCurrencyFromTicker')
+        .callsFake((currencyCode) => testBasedOnCurrencyManager(currencyCode))
+    })
+
+    it('generates missing deposit addresses for all currencies (new account)', async () => {
+      const newAddresses = await findOrCreateDepositAddressesForAccount(ACCOUNT_ID)
+      expect(newAddresses.length).to.eql(5)
+
+      const kauAddress = newAddresses.find((a) => a.currencyId === currencyId)
+      const kagAddress = newAddresses.find((a) => a.currencyId === kagCurrencyId)
+      expect(kauAddress!.publicKey).to.eql(kagAddress!.publicKey)
+      expect(kauAddress!.encryptedPrivateKey).to.eql(kagAddress!.encryptedPrivateKey)
+    })
+
+    it('generates missing deposit address ETH token address missing', async () => {
+      const newAddress = {
+        accountId: ACCOUNT_ID,
+        encryptedPrivateKey: 'private-key-1',
+        publicKey: 'public-key-2',
+        transactionTrackingActivated: false,
+      }
+      await storeDepositAddress({
+        ...newAddress,
+        publicKey: `public-key${CurrencyCode.kau}`,
+        currencyId,
+      })
+      await storeDepositAddress({
+        ...newAddress,
+        publicKey: `public-key${CurrencyCode.ethereum}`,
+        currencyId: ethereumCurrencyId,
+      })
+      await storeDepositAddress({
+        ...newAddress,
+        publicKey: `public-key${CurrencyCode.kag}`,
+        currencyId: kagCurrencyId,
+      })
+      await storeDepositAddress({
+        ...newAddress,
+        publicKey: `public-key${CurrencyCode.kvt}`,
+        currencyId: kvtCurrencyId,
+      })
+
+      const newAddresses = await findOrCreateDepositAddressesForAccount(ACCOUNT_ID)
+
+      const tetherAddress = newAddresses.find((a) => a.currencyId === tetherCurrencyId)!
+      expect(tetherAddress.publicKey).to.eql(`public-key${CurrencyCode.kvt}`)
+    })
   })
 
   it('findKycOrEmailVerifiedDepositAddresses only gets addresses for emailVerified or KycVerified accounts', async () => {

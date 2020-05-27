@@ -12,7 +12,8 @@
   "scripts": {
     "build": "npm run clean && npm run compile",
     "clean": "rm -rf ./dist",
-    "compile": "tsc -p tsconfig.build.json --skipLibCheck"
+    "compile": "tsc -p tsconfig.build.json --skipLibCheck",
+    "test": "ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts --require ../../../../_test-setup/test_globals.js src/**/*.spec.ts --exit"
   },
   "publishConfig": {
     "access": "restricted"
@@ -47,6 +48,7 @@
     "chai-as-promised": "7.1.1",
     "mocha": "5.2.0",
     "mock-express-request": "0.2.2",
+    "node-mocks-http": "^1.8.1",
     "sinon": "7.2.0",
     "source-map-support": "0.5.9",
     "ts-mocha": "6.0.0",

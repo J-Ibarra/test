@@ -19,9 +19,12 @@ import {
   getBoundaryAndLatestFiatValuePair,
 } from './kinesis_coin_deposit_follower_helpers'
 
+export const lastExecutions = new Map<CurrencyCode, Date>()
 const logger = Logger.getInstance('services', 'kinesis_coin_deposit_follower')
 
 export async function triggerKinesisCoinDepositFollower(onChainCurrencyGateway: Kinesis, currencyCode: CurrencyCode) {
+  lastExecutions.set(currencyCode, new Date())
+ 
   try {
     const { id: currencyId } = await findCurrencyForCode(currencyCode)
 
@@ -49,7 +52,9 @@ export async function triggerKinesisCoinDepositFollower(onChainCurrencyGateway: 
     logger.error(e)
   }
 
-  retriggerOnTimeout(onChainCurrencyGateway, currencyCode)
+  if (process.env.NODE_ENV !== Environment.test) {
+    triggerKinesisCoinDepositFollower(onChainCurrencyGateway, currencyCode)
+  }
 }
 
 export async function handleKinesisPaymentOperations(
@@ -95,10 +100,4 @@ function mapDepositTransactionToDepositRequest(
     currencyBoundary,
     DepositRequestStatus.received,
   )
-}
-
-function retriggerOnTimeout(onChainCurrencyGateway: Kinesis, currencyCode: CurrencyCode) {
-  if (process.env.NODE_ENV !== Environment.test) {
-    setTimeout(() => triggerKinesisCoinDepositFollower(onChainCurrencyGateway, currencyCode))
-  }
 }

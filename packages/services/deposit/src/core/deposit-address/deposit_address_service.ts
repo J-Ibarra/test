@@ -2,17 +2,16 @@ import { CurrencyCode, Currency, SymbolPairStateFilter } from '@abx-types/refere
 import { Logger } from '@abx-utils/logging'
 import { CurrencyManager, OnChainCurrencyGateway } from '@abx-utils/blockchain-currency-gateway'
 import { ValidationError } from '@abx-types/error'
-import { findCryptoCurrencies, isFiatCurrency, findCurrencyForCode, getAllCurrenciesEligibleForAccount } from '@abx-service-clients/reference-data'
+import { findCryptoCurrencies, isFiatCurrency, getAllCurrenciesEligibleForAccount } from '@abx-service-clients/reference-data'
 import { DepositAddress } from '@abx-types/deposit'
 import { encryptValue } from '@abx-utils/encryption'
 import { groupBy } from 'lodash'
-import { Account } from '@abx-types/account'
-import { findDepositAddressesForAccount, findDepositAddress } from './data-access/deposit_address_query_handler'
-import { storeDepositAddress, updateDepositAddress } from './data-access/deposit_address_update_handler'
-import { wrapInTransaction, sequelize } from '@abx-utils/db-connection-utils'
+import { findDepositAddressesForAccount } from './data-access/deposit_address_query_handler'
+import { storeDepositAddress } from './data-access/deposit_address_update_handler'
 
 const logger = Logger.getInstance('lib', 'deposit_address')
 let cryptoCurrencies: Currency[] = []
+const ethereumBasedCurrencies = [CurrencyCode.ethereum, CurrencyCode.tether]
 
 export async function generateNewDepositAddress(accountId: string, currency: OnChainCurrencyGateway) {
   let cryptoAddress
@@ -100,37 +99,78 @@ export async function createMissingDepositAddressesForAccount(
       .join(', ')}`,
   )
 
-  return createNewDepositAddresses(manager, accountId, cryptoCurrenciesToGenerateAddressFor, filteredCryptoCurrencies)
+  return createNewDepositAddresses(manager, accountId, cryptoCurrenciesToGenerateAddressFor, filteredCryptoCurrencies, existingDepositAddresses)
 }
 
 async function createNewDepositAddresses(
   currencyManager: CurrencyManager,
   accountId: string,
   cryptoCurrenciesToGenerateAddressFor: Currency[],
-  allCurrenciesEligibleForAccount: Currency[],
+  allowedCryptoCurrencies: Currency[],
+  existingDepositAddresses: DepositAddress[],
 ): Promise<DepositAddress[]> {
-  const kauCurrencyId = allCurrenciesEligibleForAccount.find((c) => c.code === CurrencyCode.kau)!.id
-  logger.debug(`KAU currency id: ${kauCurrencyId}`)
-
-  const createdDepositAddressesWithoutKau = await Promise.all(
+  const createdDepositAddressesWithoutKauAndEthBased = await Promise.all(
     cryptoCurrenciesToGenerateAddressFor
-      .filter(({ id }) => id !== kauCurrencyId)
+      .filter(({ code }) => code !== CurrencyCode.kau && !ethereumBasedCurrencies.includes(code))
       .map(({ code }) => {
         return createNewDepositAddress(currencyManager, accountId, code)
       }),
   )
-  const kagCurrencyId = allCurrenciesEligibleForAccount.find((c) => c.code === CurrencyCode.kag)!.id
-  logger.debug(`KAG currency id: ${kauCurrencyId}`)
 
-  const kagDepositAddress = createdDepositAddressesWithoutKau.find((address) => address.currencyId === kagCurrencyId)
-  logger.debug(`kagDepositAddress: ${JSON.stringify(kagDepositAddress)}`)
+  const newEthereumBasedDepositAddresses = await createEthBasedDepositAddresses(
+    existingDepositAddresses.concat(createdDepositAddressesWithoutKauAndEthBased),
+    cryptoCurrenciesToGenerateAddressFor,
+    allowedCryptoCurrencies,
+  )
 
-  if (kagDepositAddress) {
-    const kauDepositAddress = await reuseDepositAddress(kagDepositAddress, CurrencyCode.kau, cryptoCurrenciesToGenerateAddressFor)
-    return createdDepositAddressesWithoutKau.concat(kauDepositAddress)
+  return reuseKagAddressForKau(
+    existingDepositAddresses,
+    cryptoCurrenciesToGenerateAddressFor,
+    allowedCryptoCurrencies,
+    createdDepositAddressesWithoutKauAndEthBased.concat(newEthereumBasedDepositAddresses),
+  )
+}
+
+async function createEthBasedDepositAddresses(
+  depositAddresses: DepositAddress[],
+  cryptoCurrenciesToGenerateAddressFor: Currency[],
+  allowedCryptoCurrencies: Currency[],
+): Promise<DepositAddress[]> {
+  const kvtCurrencyId = allowedCryptoCurrencies.find((c) => c.code === CurrencyCode.kvt)!.id
+  const kvtDepositAddress = depositAddresses.find((address) => address.currencyId === kvtCurrencyId)
+  let newEthereumBasedDepositAddresses: DepositAddress[] = []
+
+  if (kvtDepositAddress) {
+    newEthereumBasedDepositAddresses = await Promise.all(
+      cryptoCurrenciesToGenerateAddressFor
+        .filter(({ code }) => ethereumBasedCurrencies.includes(code))
+        .map(({ code }) => reuseDepositAddress(kvtDepositAddress, code, allowedCryptoCurrencies)),
+    )
   }
 
-  return createdDepositAddressesWithoutKau
+  return newEthereumBasedDepositAddresses
+}
+
+async function reuseKagAddressForKau(
+  existingAddresses: DepositAddress[],
+  cryptoCurrenciesToGenerateAddressFor: Currency[],
+  allowedCryptoCurrencies: Currency[],
+  newDepositAddresses: DepositAddress[],
+) {
+  const currencyCodeToId = allowedCryptoCurrencies.reduce((acc, { code, id }) => ({ ...acc, [code]: id }), {})
+
+  const shouldGenerateKauAddress = cryptoCurrenciesToGenerateAddressFor.some(({ code }) => code === CurrencyCode.kau)
+
+  if (shouldGenerateKauAddress) {
+    const kagDepositAddress = existingAddresses
+      .concat(newDepositAddresses)
+      .find((address) => address.currencyId === currencyCodeToId[CurrencyCode.kag])!
+
+    const kauDepositAddress = await reuseDepositAddress(kagDepositAddress, CurrencyCode.kau, allowedCryptoCurrencies)
+    return newDepositAddresses.concat(kauDepositAddress)
+  }
+
+  return newDepositAddresses
 }
 
 async function reuseDepositAddress(
@@ -172,31 +212,4 @@ export async function createNewDepositAddress(manager: CurrencyManager, accountI
   logger.debug(`Address: ${JSON.stringify(address)}`)
 
   return storeDepositAddress(address)
-}
-
-export const findDepositAddressAndListenForEvents = async ({ id }: Account, currencyCode: CurrencyCode): Promise<DepositAddress> => {
-  const { id: currencyId } = await findCurrencyForCode(currencyCode, SymbolPairStateFilter.all)
-
-  return wrapInTransaction(sequelize, null, async (transaction) => {
-    const depositAddress = await findDepositAddress({ query: { accountId: id, currencyId }, transaction, usePessimisticLock: true })
-
-    if (!depositAddress) {
-      throw new ValidationError(`Deposit address does not exist for currency id: ${currencyId} and account id: ${id}`)
-    }
-
-    if (depositAddress.transactionTrackingActivated) {
-      logger.debug(`Deposit address transaction tracking already activated for currency id: ${currencyId} and account id: ${id}`)
-      return depositAddress
-    }
-
-    const manager = new CurrencyManager()
-
-    const successfulEventCreation = await manager.getCurrencyFromTicker(currencyCode).createAddressTransactionSubscription(depositAddress)
-    const updatedDepositAddress = await updateDepositAddress(
-      { ...depositAddress, transactionTrackingActivated: successfulEventCreation },
-      transaction,
-    )
-
-    return updatedDepositAddress
-  })
 }

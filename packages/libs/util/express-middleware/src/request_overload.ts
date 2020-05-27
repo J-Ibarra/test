@@ -1,5 +1,5 @@
 import { Logger } from '@abx-utils/logging'
-import { Session, User, OverloadedRequest } from '@abx-types/account'
+import { Session, User, OverloadedRequest, Account } from '@abx-types/account'
 
 import * as crypto from 'crypto'
 import * as express from 'express'
@@ -9,6 +9,7 @@ import { apiCookieSecret, apiCookieIv, findSession, findAccountById, JwtTokenHan
 
 const logger = Logger.getInstance('express-middleware', 'Request Overloads')
 const algo = 'aes-256-ctr'
+let marketAccountCache: Account | null
 
 export async function overloadRequestWithSessionInfo(
   request: OverloadedRequest | any,
@@ -92,5 +93,17 @@ const enrichRequestWithApiTokenAccountDetails = async (request: OverloadedReques
   const token = request.header('Authorization')
 
   const result = new JwtTokenHandler().verifyToken(token!)
-  request.account = await findAccountById(result.claims!.accountId)
+  request.account = await findAccount(result.claims!.accountId)
+}
+
+async function findAccount(accountId: string) {
+  if (accountId === process.env.MARKET_MAKER_ACCOUNT_ID) {
+    if (!marketAccountCache) {
+      marketAccountCache = await findAccountById(accountId)
+    }
+
+    return marketAccountCache
+  } else {
+    return findAccountById(accountId)
+  }
 }

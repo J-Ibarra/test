@@ -1,8 +1,9 @@
 import { Transaction } from 'sequelize'
 import { getModel, sequelize } from '@abx-utils/db-connection-utils'
-import { findCurrencyForId } from '@abx-service-clients/reference-data'
+import { findCurrencyForId, findCurrencyForCodes } from '@abx-service-clients/reference-data'
 import { DepositAddress } from '@abx-types/deposit'
 import { getAllKycOrEmailVerifiedAccountIds } from '@abx-service-clients/account'
+import { CurrencyCode, SymbolPairStateFilter } from '@abx-types/reference-data'
 
 const KYC_ACCOUNTS_CACHE_EXPIRY_3_MINUTES_IN_SECONDS = 3 * 60
 
@@ -50,13 +51,18 @@ export async function findDepositAddress({
   return depositAddressInstance ? depositAddressInstance.get() : null
 }
 
-export async function findDepositAddressByAddressOrPublicKey(publicKey: string, transaction?: Transaction): Promise<DepositAddress | null> {
+export async function findDepositAddressByAddressOrPublicKey(
+  publicKey: string,
+  currencyId: number,
+  transaction?: Transaction,
+): Promise<DepositAddress | null> {
   const depositAddressInstance = await getModel<DepositAddress>('depositAddress').findOne({
     where: {
       $or: [
         { address: sequelize.where(sequelize.fn('LOWER', sequelize.col('address')), 'LIKE', `%${publicKey.toLowerCase()}%`) },
         { publicKey: sequelize.where(sequelize.fn('LOWER', sequelize.col('publicKey')), 'LIKE', `%${publicKey.toLowerCase()}%`) },
       ],
+      currencyId,
     },
     transaction,
   })
@@ -105,4 +111,19 @@ export async function findDepositAddressesForAccountWithCurrency(accountId: stri
       },
     ),
   )
+}
+
+const ercTokensWithTransactionTracking = [CurrencyCode.tether]
+
+export async function countERC20AddressesWithTransactionTracking(accountId: string): Promise<number> {
+  const erc20Currencies = await findCurrencyForCodes(ercTokensWithTransactionTracking, SymbolPairStateFilter.all)
+  const erc20TokenDepositAddressesWithSubscription = await getModel<DepositAddress>('depositAddress').count({
+    where: {
+      currencyId: { $in: erc20Currencies.map(({ id }) => id) },
+      transactionTrackingActivated: true,
+      accountId,
+    },
+  })
+
+  return erc20TokenDepositAddressesWithSubscription
 }

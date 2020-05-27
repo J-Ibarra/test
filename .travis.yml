@@ -41,7 +41,7 @@ jobs:
     - script: ./_scripts/travis/travis-build-feature-or-bugfix.sh '{@abx/exchange-withdrawal-service,@abx/exchange-balance-service}'
       name: Build & Test Withdrawal and Balance Functional Areas
       if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and tag IS blank
-    - script: ./_scripts/travis/travis-build-feature-or-bugfix.sh '{@abx/exchange-scheduler-service,@abx/exchange-reports-service,@abx/exchange-account-data-service}'
+    - script: ./_scripts/travis/travis-build-feature-or-bugfix.sh '{@abx/exchange-scheduler-service,@abx/exchange-report-service,@abx/exchange-account-data-service}'
       name: Build & Test Scheduler, Reports and Account Functional Areas
       if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and tag IS blank
     - script: ./_scripts/travis/travis-build-feature-or-bugfix.sh '{@abx/exchange-notification-service,@abx/admin-fund-management-service}'
@@ -52,7 +52,7 @@ jobs:
       if: (branch =~ /^bugfix*/ or branch =~ /^feature*/) and tag IS blank
 
       # Build and publishes a new docker image for the services where a change was observed
-    - stage: Deploy
+    - stage: Release Image
       if:  tag =~ /^beta.+/
       script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/exchange-deposit-service,@abx/exchange-reference-data-service}'
       name: Deploy Deposit and Reference Data Functional Areas
@@ -60,7 +60,7 @@ jobs:
     - script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/exchange-withdrawal-service,@abx/exchange-balance-service}'
       name: Deploy Withdrawal and Balance Functional Areas
       if:  tag =~ /^beta.+/
-    - script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/exchange-scheduler-service,@abx/exchange-reports-service,@abx/exchange-account-data-service}'
+    - script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/exchange-scheduler-service,@abx/exchange-report-service,@abx/exchange-account-data-service}'
       name: Deploy Scheduler, Reports and Account Functional Areas
       if:  tag =~ /^beta.+/
     - script: ./_scripts/travis/travis-release-image-feature-or-bugfix.sh '{@abx/exchange-notification-service,@abx/admin-fund-management-service}'

@@ -10,8 +10,7 @@ import { decryptValue } from '@abx-utils/encryption'
 
 /** Adapting the {@link BitcoinApiProviderFacade} to {@link OnChainCurrencyGateway} for backwards-compatibility. */
 export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGateway {
-  // Should use 0 when allowed by CRYPTO API
-  private readonly UNCONFIRMED_TRANSACTIONS = 1
+  public static readonly CONFIRMATION_BLOCKS_TO_WAIT_FOR = parseInt(process.env.BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS || '1')
 
   ticker = CurrencyCode.bitcoin
   logger = Logger.getInstance('blockchain-currency-gateway', 'BitcoinOnChainCurrencyGatewayAdapter')
@@ -42,7 +41,7 @@ export class BitcoinOnChainCurrencyGatewayAdapter implements OnChainCurrencyGate
 
       await this.bitcoinBlockchainFacade.subscribeToAddressTransactionEvents(
         depositAddressDetails.address,
-        Number(process.env.BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS || this.UNCONFIRMED_TRANSACTIONS),
+        BitcoinOnChainCurrencyGatewayAdapter.CONFIRMATION_BLOCKS_TO_WAIT_FOR,
       )
       this.logger.info(`Activated transaction events for this address: ${depositAddressDetails.address}`)
       return true

@@ -2,7 +2,7 @@ import { Controller, Get, Request, Route, Security, Post, Body, Tags } from 'tso
 
 import { Logger } from '@abx-utils/logging'
 import { OverloadedRequest } from '@abx-types/account'
-import { findDepositAddressAndListenForEvents } from '../../../core'
+import { registerForDepositAddressTransactionNotifications } from '../../../core'
 import { CurrencyCode, SymbolPairStateFilter } from '@abx-types/reference-data'
 import { findDepositAddressesForAccount } from '../../../core'
 import { findCryptoCurrencies } from '@abx-service-clients/reference-data'
@@ -53,7 +53,7 @@ export class WalletsController extends Controller {
     try {
       this.logger.debug(`Activating ${body.currencyCode} address for account id ${account?.id}`)
 
-      const wallets = await findDepositAddressAndListenForEvents(account!, body.currencyCode)
+      const wallets = await registerForDepositAddressTransactionNotifications(account!, body.currencyCode)
       this.logger.debug(`Activated ${body.currencyCode} address for account id ${account?.id}`)
 
       return wallets

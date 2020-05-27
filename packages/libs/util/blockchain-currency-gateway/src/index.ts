@@ -10,6 +10,7 @@ export * from './validation.utils'
 export * from './model'
 export * from './ethereum'
 export * from './erc20-tokens/KvtOnChainCurrencyGateway'
+export * from './erc20-tokens/ERC20TokenCurrencyGatewaySkeleton'
 export * from './kinesis'
 export * from './bitcoin'
 

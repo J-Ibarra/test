@@ -2,12 +2,23 @@ import { expect } from 'chai'
 import MockExpressRequest from 'mock-express-request'
 import { getApiCacheClient } from '@abx-utils/db-connection-utils'
 import { maintenanceMiddleware } from '../maintenance'
+import * as mocks from 'node-mocks-http'
 
 describe('maintenance middleware', () => {
-  it('request should pass through the middleware and proceed', async () => {
-    const request = new MockExpressRequest()
+  const client = getApiCacheClient()
 
-    const successResult = await maintenanceMiddleware(request, null as any, () => {
+  afterEach(async () => {
+    await client.delete('maintenance')
+  })
+
+  it('request should pass through the middleware and proceed', async () => {
+    const client = getApiCacheClient()
+    await client.delete('maintenance')
+
+    const request = new MockExpressRequest()
+    const response = mocks.createResponse()
+
+    const successResult = await maintenanceMiddleware(request, response, () => {
       ''
     })
 

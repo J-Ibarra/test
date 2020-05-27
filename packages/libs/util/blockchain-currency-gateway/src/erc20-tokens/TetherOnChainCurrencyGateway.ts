@@ -15,7 +15,7 @@ const tetherAddress = {
  * Yeenus is used as a replacement ERC20 token which is easy to get hold of and test with.
  */
 export class TetherOnChainCurrencyGateway extends ERC20TokenCurrencyGatewaySkeleton {
-  private readonly TETHER_DECIMALS = 2
+  private readonly TETHER_DECIMALS = 6
   private readonly YEENUS_DECIMALS = 8
 
   constructor(env: Environment) {

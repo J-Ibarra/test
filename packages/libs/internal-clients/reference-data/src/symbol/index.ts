@@ -62,7 +62,10 @@ export function transformToSummary({ id, base, quote, fee, orderRange, sortOrder
 }
 
 function fetchSymbolsIfInMemoryCacheExpired(state: SymbolPairStateFilter = SymbolPairStateFilter.enabled): Promise<SymbolPair[]> {
-  return internalApiRequestDispatcher.fireRequestToInternalApi<SymbolPair[]>(SymbolEndpoints.getAllCompleteSymbolDetails, { state })
+  return internalApiRequestDispatcher.returnCachedValueOrRetrieveFromSource({
+    endpoint: SymbolEndpoints.getAllCompleteSymbolDetails,
+    responseBody: { state }
+  })
 }
 
 export function findSymbolsByAccountId(accountId: string) {

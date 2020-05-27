@@ -4,7 +4,7 @@ import * as Account from '@abx-service-clients/account'
 import { CurrencyCode } from '@abx-types/reference-data'
 import * as depositRequestOperations from '../../../../../core'
 import { processReceivedDepositRequestForCurrency } from '../../kinesis'
-import { currencyToDepositRequests, depositRequest, balanceAdjustment } from '../data.helper'
+import { currencyToDepositRequests, depositRequest } from '../data.helper'
 import { DepositGatekeeper } from '../../common'
 
 describe('received_requests_processor', () => {
@@ -66,7 +66,6 @@ describe('received_requests_processor', () => {
     const currencyManager = getCurrencyManager(checkConfirmationOfTransactionStub)
 
     const isAccountSuspendedStub = sinon.stub(Account, 'isAccountSuspended').resolves(false)
-    const completeReceivedDepositStub = sinon.stub(depositRequestOperations, 'completeReceivedDeposit')
 
     await triggerProcessor(currencyManager)
 

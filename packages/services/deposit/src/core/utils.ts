@@ -1,6 +1,8 @@
 import { CurrencyCode, Currency } from '@abx-types/reference-data'
-import { findCurrencyForCode } from '@abx-service-clients/reference-data'
+import { findCurrencyForCode, erc20Tokens } from '@abx-service-clients/reference-data'
 import { ECR20_TOKENS_WITH_ETH_FEE } from './constants'
+import { BitcoinOnChainCurrencyGatewayAdapter } from '@abx-utils/blockchain-currency-gateway'
+import { ERC20TokenCurrencyGatewaySkeleton } from '@abx-utils/blockchain-currency-gateway'
 
 let ethCurrency: Currency
 
@@ -32,7 +34,9 @@ const DEFAULT_REQUIRED_DEPOSIT_TRANSACTION_CONFIRMATIONS = 1
 
 export function getRequiredConfirmationsForDepositTransaction(currency: CurrencyCode) {
   if (currency === CurrencyCode.bitcoin) {
-    return Number(process.env.BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS)
+    return BitcoinOnChainCurrencyGatewayAdapter.CONFIRMATION_BLOCKS_TO_WAIT_FOR
+  } else if (erc20Tokens.includes(currency)) {
+    return ERC20TokenCurrencyGatewaySkeleton.CONFIRMATION_BLOCKS_TO_WAIT_FOR
   }
 
   return DEFAULT_REQUIRED_DEPOSIT_TRANSACTION_CONFIRMATIONS

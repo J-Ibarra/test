@@ -14,6 +14,8 @@ import { sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { findKycOrEmailVerifiedDepositAddresses, storeDepositRequests } from '../../../core'
 import { calculateRealTimeMidPriceForSymbol } from '@abx-service-clients/market-data'
 import { CurrencyCode, CurrencyBoundary } from '@abx-types/reference-data'
+import { WithdrawalRequest } from '@abx-types/withdrawal'
+import { findWithdrawalRequestsForTransactionHashes } from '@abx-service-clients/withdrawal'
 import { findCurrencyForCode, findBoundaryForCurrency } from '@abx-service-clients/reference-data'
 import { FIAT_CURRENCY_FOR_DEPOSIT_CONVERSION, convertTransactionToDepositRequest } from '../../../core'
 
@@ -89,14 +91,8 @@ export async function handleEthereumTransactions(
   currencyBoundary: CurrencyBoundary,
   t: Sequelize.Transaction,
 ) {
-  const potentialDepositTransactions = transactions.reduce(
-    (acc, transaction) =>
-      publicKeyToDepositAddress.has(transaction.to)
-        ? acc.concat({ tx: transaction, depositAddress: publicKeyToDepositAddress.get(transaction.to)! })
-        : acc,
-    [] as { tx: Transaction; depositAddress: DepositAddress }[],
-  )
-
+  const potentialDepositTransactions = await findPotentialTransactions(
+    transactions, publicKeyToDepositAddress, onChainCurrencyGateway)
   if (potentialDepositTransactions.length > 0) {
     logger.debug(`Found Potential Deposits: ${potentialDepositTransactions}`)
 
@@ -129,4 +125,56 @@ export async function handleEthereumTransactions(
       await pushRequestForProcessing(depositRequestsWithSufficientAmount, NEW_ETH_AND_KVT_DEPOSIT_REQUESTS_QUEUE_URL)
     }
   }
+}
+
+
+
+/**
+ *  We will only consider transactions which:
+      are received by a deposit address that we monitor
+      do not come from a kinesis holdings, unless there is a corresponding withdrawal for that
+    In the case of ERC20 tokens we want to discard any transaction which were made to cover the ETH tx fee,
+    from the deposit address into the holdings wallet.
+ */
+async function findPotentialTransactions(
+  transactions: Transaction[],
+  publicKeyToDepositAddress: Map<string, DepositAddress>,
+  onChainCurrencyGateway: Ethereum,
+) {
+  const potentialTransactionHashes = transactions
+    .filter((transaction) => publicKeyToDepositAddress.has(transaction.to))
+    .map((transaction) => transaction.hash)
+
+  if (potentialTransactionHashes.length > 0) {
+    const withdrawalRequests = await findWithdrawalRequestsForTransactionHashes(potentialTransactionHashes)
+    const holdingsAddress = await onChainCurrencyGateway.getHoldingPublicAddress()
+    
+    return transactions.reduce(
+      (acc, transaction) =>
+        isPotentialTransaction(transaction, publicKeyToDepositAddress, withdrawalRequests, holdingsAddress)
+          ? acc.concat({ tx: transaction, depositAddress: publicKeyToDepositAddress.get(transaction.to)! })
+          : acc,
+      [] as { tx: Transaction, depositAddress: DepositAddress }[],
+    )
+  } else {
+    return [] as { tx: Transaction; depositAddress: DepositAddress }[]
+  }
+}
+
+function isPotentialTransaction(
+  transaction: Transaction,
+  publicKeyToDepositAddress: Map<string, DepositAddress>,
+  withdrawalRequests: WithdrawalRequest[],
+  holdingsAddress: string
+) {
+  if (!publicKeyToDepositAddress.has(transaction.to)) {
+    return false
+  } else if (transaction.from !== holdingsAddress) {
+    return true
+  }
+
+  // potential if there is an existing withdrawal request
+  const depositCreatedFromWithdrawalRequest = withdrawalRequests.some(({ txHash }) => txHash === transaction.hash)
+
+  return depositCreatedFromWithdrawalRequest
 }

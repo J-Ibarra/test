@@ -6,6 +6,7 @@ setupModel(setupDepositModel)
 
 export * from './helpers'
 export * from './complete_pending_deposit'
+export * from './deposit-address'
 export * from './deposit_amount_validator'
 export * from './deposit_request'
 export * from './blockchain-follower/get_last_processed_entity'

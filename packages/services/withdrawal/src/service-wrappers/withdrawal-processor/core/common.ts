@@ -7,7 +7,7 @@ import util from 'util'
 export const nativelyImplementedCoins = [CurrencyCode.kag, CurrencyCode.kau, CurrencyCode.ethereum, CurrencyCode.kvt, CurrencyCode.tether]
 
 /** The currencies where we received CryptoAPIs Kinesis holdings address transaction notifications. */
-export const holdingsAddressTransactionNotificationEnabledCurrencies = [CurrencyCode.bitcoin]
+export const holdingsAddressTransactionNotificationEnabledCurrencies = [CurrencyCode.bitcoin, CurrencyCode.tether]
 
 /**
  * Responsible for returning the actual coin that the transaction fee is paid into.

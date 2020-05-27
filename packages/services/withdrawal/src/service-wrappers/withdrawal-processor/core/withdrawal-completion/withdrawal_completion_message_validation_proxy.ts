@@ -1,14 +1,23 @@
 import { CurrencyCode, Environment } from '@abx-types/reference-data'
 import { WithdrawalCompletionPendingPayload } from './model'
-import { IAddressTransactionEventPayload, getOnChainCurrencyManagerForEnvironment } from '@abx-utils/blockchain-currency-gateway'
+import {
+  IAddressTransactionEventPayload,
+  IAddressTokenTransactionEventPayload,
+  getOnChainCurrencyManagerForEnvironment,
+  BitcoinOnChainCurrencyGatewayAdapter,
+  ERC20TokenCurrencyGatewaySkeleton,
+} from '@abx-utils/blockchain-currency-gateway'
 import { completeWithdrawalRequest } from './withdrawal_request_completer'
 import { findWithdrawalRequest } from '../../../../core'
 import { holdingsAddressTransactionNotificationEnabledCurrencies } from '../common'
 import { Logger } from '@abx-utils/logging'
+import { getTokenForTransaction } from '@abx-service-clients/reference-data'
 
 const requiredConfirmationsForCurrency = {
-  [CurrencyCode.bitcoin]: parseInt(process.env.BITCOIN_TRANSACTION_CONFIRMATION_BLOCKS || '1'),
+  [CurrencyCode.bitcoin]: BitcoinOnChainCurrencyGatewayAdapter.CONFIRMATION_BLOCKS_TO_WAIT_FOR,
+  [CurrencyCode.tether]: ERC20TokenCurrencyGatewaySkeleton.CONFIRMATION_BLOCKS_TO_WAIT_FOR,
 }
+
 const logger = Logger.getInstance('withdrawal-processor', 'withdrawal_completion_message_validation_proxy')
 
 /**
@@ -18,8 +27,18 @@ const logger = Logger.getInstance('withdrawal-processor', 'withdrawal_completion
  *
  * @param message the message to payload
  */
-export function processWithdrawalCompletionRequest(message: WithdrawalCompletionPendingPayload | IAddressTransactionEventPayload) {
-  if (holdingsAddressTransactionNotificationEnabledCurrencies.includes(message.currency)) {
+export function processWithdrawalCompletionRequest(
+  message: WithdrawalCompletionPendingPayload | IAddressTransactionEventPayload | IAddressTokenTransactionEventPayload,
+) {
+  if (!!(message as IAddressTokenTransactionEventPayload).token_symbol) {
+    const tokenTransaction = message as IAddressTokenTransactionEventPayload
+
+    return completeWithdrawalRequestIfOutgoingTransactionConfirmed({
+      ...tokenTransaction,
+      currency: getTokenForTransaction(tokenTransaction.token_symbol),
+      txid: tokenTransaction.txHash,
+    })
+  } else if (holdingsAddressTransactionNotificationEnabledCurrencies.includes(message.currency)) {
     return completeWithdrawalRequestIfOutgoingTransactionConfirmed(message as IAddressTransactionEventPayload)
   }
 
@@ -35,7 +54,12 @@ export function processWithdrawalCompletionRequest(message: WithdrawalCompletion
  *
  * @param notificationPayload the address transaction CryptoApis notification
  */
-async function completeWithdrawalRequestIfOutgoingTransactionConfirmed({ currency, address, txid, confirmations }: IAddressTransactionEventPayload) {
+async function completeWithdrawalRequestIfOutgoingTransactionConfirmed({
+  currency,
+  address,
+  txid,
+  confirmations,
+}: Pick<IAddressTransactionEventPayload, 'currency' | 'address' | 'txid' | 'confirmations'>) {
   const onChainCurrencyManager = getOnChainCurrencyManagerForEnvironment(process.env.NODE_ENV as Environment)
 
   const [transactionDetails, withdrawalRequest] = await Promise.all([

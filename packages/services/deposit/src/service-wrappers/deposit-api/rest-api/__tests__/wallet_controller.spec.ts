@@ -19,7 +19,7 @@ describe('wallet_controller', () => {
       code: CurrencyCode.bitcoin,
     })
 
-    app = bootstrapRestApi().listen(DEPOSIT_API_PORT)
+    app = await bootstrapRestApi().listen(DEPOSIT_API_PORT)
   })
 
   afterEach(async () => {
@@ -40,15 +40,19 @@ describe('wallet_controller', () => {
 
     const createAddressTransactionSubscriptionStub = sinon.stub()
 
-    sinon.stub(blockchainUtils.CurrencyManager.prototype, 'getCurrencyFromTicker').returns({
-      createAddressTransactionSubscription: createAddressTransactionSubscriptionStub.resolves(true),
+    sinon.stub(blockchainUtils, 'getOnChainCurrencyManagerForEnvironment').returns({
+      getCurrencyFromTicker: () => ({
+        createAddressTransactionSubscription: createAddressTransactionSubscriptionStub.resolves(true),
+      }),
     } as any)
 
-    await Promise.all([
+    const [resp1] = await Promise.all([
       request(app).post(`/api/wallets/address/activation`).set('Cookie', cookie).send({ currencyCode: CurrencyCode.bitcoin }),
       request(app).post(`/api/wallets/address/activation`).set('Cookie', cookie).send({ currencyCode: CurrencyCode.bitcoin }),
       request(app).post(`/api/wallets/address/activation`).set('Cookie', cookie).send({ currencyCode: CurrencyCode.bitcoin }),
     ])
+
+    console.log(resp1)
 
     expect(createAddressTransactionSubscriptionStub.calledOnce).to.eql(true)
 

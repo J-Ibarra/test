@@ -24,7 +24,7 @@ describe('NewTransactionRecorder:recordDepositTransaction', () => {
       },
     } as any
 
-    sinon.stub(referenceDataOperations, 'getDepositMimimumAmountForCurrency').resolves(10)
+    sinon.stub(referenceDataOperations, 'getDepositMinimumAmountForCurrency').resolves(10)
   })
 
   afterEach(() => sinon.restore())

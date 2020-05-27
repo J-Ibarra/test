@@ -53,6 +53,6 @@ describe('Currency Boundary', () => {
     const boundaryCurrencyCodes = Object.keys(boundaries)
 
     expect(boundaryCurrencyCodes.length).to.equal(9)
-    expect(boundaryCurrencyCodes).to.deep.equal(['KVT', 'USD', 'EUR', 'KAU', 'KAG', 'ETH', 'GBP', 'BTC', 'USDT'])
+    expect(boundaryCurrencyCodes).to.deep.equal(['KVT', 'USD', 'EUR', 'KAU', 'KAG', 'ETH', 'BTC', 'USDT', 'GBP'])
   })
 })

@@ -12,6 +12,7 @@ export KINESIS_BANK_NAME='Test Bank'
 export KINESIS_BANK_CODE='123567'
 export KINESIS_BANK_ACCOUNT_NUMBER='1234512'
 export KINESIS_BANK_ACCOUNT_NAME='Kinesis Account'
+export MARKET_MAKER_ACCOUNT_ID='1234512'
 export SALESFORCE_CLIENT_ID='3MVG9uAc45HBYUrhWDpRX6wFvgMHqefY1.8GZiJXVYg8weDKGRHjIHJ3cZf0V5ckxgcDQ8om1iO8qnWUw8QkB'
 export SALESFORCE_CLIENT_SECRET='C8F16E23671341C54CC95EEC34B54078BC61C256865FADFE7F9A60DE5E30F8A3'
 export SALESFORCE_API_ADMIN_USERNAME='boris.shekerov@abx.com.testing'
@@ -51,6 +52,6 @@ export CONTIS_API_ROOT=https://sandboxapi.contis.com
 export CONTIS_CARD_ORDER_FEE=5
 export CONTIS_CARD_ORDER_VALIDATION_SLA=5
 
-. dev-withdrawal-deposit-env-vars.sh
+. ./dev-withdrawal-deposit-env-vars.sh
 
 npm run start

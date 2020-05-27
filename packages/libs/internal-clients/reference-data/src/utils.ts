@@ -1,4 +1,13 @@
-import { CryptoCurrency, CurrencyCode, FiatCurrencies, FiatCurrency, SymbolPair, CurrencyBoundary, FiatSymbol } from '@abx-types/reference-data'
+import {
+  CryptoCurrency,
+  CurrencyCode,
+  FiatCurrencies,
+  FiatCurrency,
+  SymbolPair,
+  CurrencyBoundary,
+  FiatSymbol,
+  Environment,
+} from '@abx-types/reference-data'
 import { findBoundaryForCurrency } from './boundaries'
 import Decimal from 'decimal.js'
 import { curry } from 'lodash'
@@ -129,3 +138,15 @@ function truncateForBoundary(currencyBoundary: CurrencyBoundary, amount: number)
 }
 
 export const truncateCurrencyDecimals = curry(truncateForBoundary) as (boundary: CurrencyBoundary, number?: number) => number
+
+export const erc20Tokens = [CurrencyCode.tether, CurrencyCode.kvt]
+
+export const isERC20Token = (currency: CurrencyCode) => [CurrencyCode.tether, CurrencyCode.kvt].includes(currency)
+
+/**
+ * For ERC20 tokens (e.g Tether) when tests are executed we actually test with the YEENUS ERC20 token.
+ * So, the transactions that we receive will be YEENUS token transactions which we want to process as tether.
+ */
+export function getTokenForTransaction(token: string): CurrencyCode {
+  return token === 'YEENUS' && process.env.NODE_ENV !== Environment.production ? CurrencyCode.tether : (token as CurrencyCode)
+}
