@@ -6,9 +6,11 @@ import Salesforce from './salesforceReferenceTable'
 import Session from './session'
 import Token from './token'
 import User from './user'
+import UserPhoneDetails from './user-phone-details'
 
 export default function accountModels(sequelize: Sequelize.Sequelize) {
   const userModel = User(sequelize)
+  const userPhoneDetailsModel = UserPhoneDetails(sequelize)
   const accountModel = Account(sequelize)
   const sessionModel = Session(sequelize)
   const tokenModel = Token(sequelize)
@@ -20,6 +22,7 @@ export default function accountModels(sequelize: Sequelize.Sequelize) {
   tokenModel.belongsTo(accountModel)
   salesforce.belongsTo(accountModel)
   bankDetails.belongsTo(accountModel)
+  userPhoneDetailsModel.belongsTo(userModel)
 
   return {
     account: accountModel,
@@ -28,5 +31,6 @@ export default function accountModels(sequelize: Sequelize.Sequelize) {
     token: tokenModel,
     salesforce,
     bankDetails,
+    userPhoneDetails: userPhoneDetailsModel
   }
 }

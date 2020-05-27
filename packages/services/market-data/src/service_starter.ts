@@ -2,7 +2,9 @@ import { bootstrapRestApi } from './rest-api'
 import { bootstrapInternalApi } from './internal-api'
 import { runReferenceDataMigrations } from './migrations/migration-runner'
 import { Environment } from '@abx-types/reference-data'
-import { openSocket } from './websocket-api/depth-update.sockets'
+import { openSocket as openDepthUpdateSocket } from './websocket-api/depth-update.sockets'
+import { openSocket as openMidPriceSocket } from './websocket-api/mid-price.socket'
+
 import { MARKET_DATA_REST_API_PORT } from '@abx-service-clients/market-data'
 import { Logger, LogLevel } from '@abx-utils/logging'
 import { killProcessOnSignal } from '@abx-utils/internal-api-tools'
@@ -21,6 +23,7 @@ export async function bootstrapMarketDataService() {
   server.headersTimeout = 66000 // Ensure the headersTimeout is set higher than the keepAliveTimeout due to this nodejs regression bug: https://github.com/nodejs/node/issues/27363
 
   if (process.env.NODE_ENV !== Environment.test) {
-    openSocket(server)
+    openDepthUpdateSocket(server)
+    openMidPriceSocket(server)
   }
 }

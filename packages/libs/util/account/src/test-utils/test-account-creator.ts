@@ -11,16 +11,19 @@ import { findUserByEmail } from '../user_query_repository'
 import moment from 'moment'
 import { apiCookieSecret, apiCookieIv } from '../cookie_secrets'
 
+import { UserPhoneDetails } from '@abx-types/account'
+
 export const TEST_PASSWORD = 'testPass123414'
+export const TEST_UUIDPHONE = 'QWERTYASDFGZXCCV'
 
 export async function createTemporaryTestingAccount(accountType: AccountType = AccountType.individual, transaction?: Transaction): Promise<Account> {
   const account = await createAccount(
-    { firstName: 'fn', lastName: 'ln', email: `${v4()}@abx.com`, password: TEST_PASSWORD },
+    { firstName: 'fn', lastName: 'ln', email: `${v4()}@abx.com`, password: TEST_PASSWORD, uuidPhone: TEST_UUIDPHONE },
     accountType,
     transaction,
   )
 
-  await new Promise(resolve => setTimeout(() => resolve(), 100))
+  await new Promise((resolve) => setTimeout(() => resolve(), 100))
 
   return account
 }
@@ -30,7 +33,7 @@ async function createAccount(
   type: AccountType = AccountType.individual,
   parentTransaction?: Transaction,
 ): Promise<Account> {
-  return wrapInTransaction(sequelize, parentTransaction, async transaction => {
+  return wrapInTransaction(sequelize, parentTransaction, async (transaction) => {
     await validateUserEmail(newAccount.email, transaction)
 
     console.log(`Validated email`)
@@ -76,7 +79,7 @@ async function createUser({ accountId, firstName, lastName, email, password }: C
         transaction,
       },
     )
-    .then(u => u.get('publicView'))
+    .then((u) => u.get('publicView'))
 }
 
 export async function createAccountAndSession(accountType: AccountType = AccountType.individual) {
@@ -86,7 +89,7 @@ export async function createAccountAndSession(accountType: AccountType = Account
       isolationLevel: sequelize.Sequelize.Transaction.ISOLATION_LEVELS.READ_COMMITTED,
       deferrable: sequelize.Sequelize.Deferrable.SET_DEFERRED,
     } as any)
-    .then(async transaction => {
+    .then(async (transaction) => {
       const tempAcc = await createTemporaryTestingAccount(accountType, transaction)
       await getModel<Account>('account').update({ status: AccountStatus.kycVerified } as any, { where: { id: tempAcc.id }, transaction })
       const user: User = tempAcc.users![0]
@@ -98,7 +101,7 @@ export async function createAccountAndSession(accountType: AccountType = Account
       return { account: tempAcc, cookie: `appSession=${cookie}`, email: user.email, id: user.id }
     })
 
-  await new Promise(resolve => setTimeout(() => resolve(), 200))
+  await new Promise((resolve) => setTimeout(() => resolve(), 200))
 
   return result
 }
@@ -113,10 +116,8 @@ async function createCookie(userId: string, t?: Transaction, sessionExpiryInHour
 }
 
 function createSession(userId: string, trans?: Transaction, cookieExpiryInHours: number = 12) {
-  return wrapInTransaction(sequelize, trans, async t => {
-    const expiry = moment()
-      .add(cookieExpiryInHours, 'hours')
-      .toDate()
+  return wrapInTransaction(sequelize, trans, async (t) => {
+    const expiry = moment().add(cookieExpiryInHours, 'hours').toDate()
     const session = await getModel<Session>('session').create(
       {
         id: v4(),
@@ -129,5 +130,22 @@ function createSession(userId: string, trans?: Transaction, cookieExpiryInHours:
     )
 
     return session.get()
+  })
+}
+
+export async function createUserTemporaryPhoneDetails(userId: string, uuidPhone: string, trans?: Transaction): Promise<UserPhoneDetails> {
+  return wrapInTransaction(sequelize, trans, async (t) => {
+    const phoneDetails = await getModel<UserPhoneDetails>('user_phone_details').create(
+      {
+        id: v4(),
+        userId,
+        uuidPhone,
+      },
+      {
+        transaction: t,
+      },
+    )
+
+    return phoneDetails.get()
   })
 }

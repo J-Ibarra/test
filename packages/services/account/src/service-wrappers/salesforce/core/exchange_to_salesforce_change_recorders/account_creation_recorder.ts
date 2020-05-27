@@ -42,7 +42,6 @@ export async function accountCreatedRecorder({ accountId, newDepositAddresses }:
         referrerSalesforcePlatformCredentialId,
       })
       logger.debug(`PlatformCredential Created ${JSON.stringify(platformCredentialResponse)}`)
-
       salesforceReference = await createSalesforceReferenceForAccount(account.id, salesforceAccount.id, platformCredentialResponse.id)
     } else if (!salesforceReference) {
       salesforceReference = await createSalesforceReference(client, account, accountUser, salesforceAccount, referrerSalesforcePlatformCredentialId)

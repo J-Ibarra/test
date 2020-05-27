@@ -64,3 +64,16 @@ export async function sendReferralCodeEmail(user: User, accountHin: string) {
 
   return createEmail(emailRequest)
 }
+
+export function sendVerificationCodeEmail(user: User, codePhone: number) {
+  return {
+    to: user.email,
+    subject: 'Verification Code!',
+    templateName: EmailTemplates.VerificationCodePhoneEmail,
+    templateContent: {
+      email: user.email,
+      codePhone: codePhone
+    },
+  } as Email
+}
+

@@ -4,4 +4,5 @@ export interface CreateAccountRequest {
   firstName?: string
   lastName?: string
   referrerHin?: string
+  uuidPhone?: string
 }

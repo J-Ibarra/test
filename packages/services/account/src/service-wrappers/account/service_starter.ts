@@ -3,11 +3,17 @@ import { bootstrapInternalApi } from './internal-api'
 import { ACCOUNT_REST_API_PORT } from '@abx-service-clients/account'
 import { Logger, LogLevel } from '@abx-utils/logging'
 import { killProcessOnSignal } from '@abx-utils/internal-api-tools'
+import { runAccountDataMigrations } from '../../migrations/migration-runner'
+import { Environment } from '@abx-types/reference-data'
 
 export async function bootstrapAccountsService() {
   killProcessOnSignal()
 
   Logger.configure((process.env.LOG_LEVEL as LogLevel) || LogLevel.debug)
+
+  if (process.env.NODE_ENV !== Environment.development && process.env.NODE_ENV !== Environment.e2eLocal) {
+    runAccountDataMigrations()
+  }
 
   console.log(`Bootstrapping account service API`)
   const publicApi = await bootstrapRestApi()

@@ -12,6 +12,9 @@ import {
   getKycVerifiedAccountDetails,
   recordKycCheckTriggered,
   findAccountByIdWithMfaStatus,
+  verifyUserAccountWithDevice,
+  saveAndSendVerificationCodeFromEmail,
+  findUserPhoneDetailsByUserId
 } from '../../../core'
 import {
   Account,
@@ -35,6 +38,10 @@ export interface VerifyAccountRequest {
 export interface ChangePasswordRequest {
   currentPassword: string
   newPassword: string
+}
+
+interface VerifyAccountWithDeviceRequest {
+  verificationCodePhone: number
 }
 
 @Tags('accounts')
@@ -129,6 +136,11 @@ export class AccountsController extends Controller {
       await sendReferralCodeEmail(user, account.hin!)
       this.logger.debug(`Referral email sent for ${requestBody.email}`)
 
+      if (requestBody.uuidPhone){
+        this.logger.debug(`Sending VerificationCode email for ${requestBody.email}`)
+        await saveAndSendVerificationCodeFromEmail(user)
+      }
+
       this.setStatus(201)
 
       return account
@@ -162,6 +174,34 @@ export class AccountsController extends Controller {
     try {
       this.setStatus(200)
       return await verifyUserAccount(userToken!)
+    } catch (error) {
+      this.setStatus(400)
+      return { message: error.message }
+    }
+  }
+
+  @SuccessResponse('200', 'Account verified')
+  @Post('accounts/verification/{userId}/device')
+  public async verifyUserAccountWithDevice(userId: string,@Body() { verificationCodePhone }: VerifyAccountWithDeviceRequest) {
+    try {
+      const userPhoneDetails = await findUserPhoneDetailsByUserId(userId)
+
+      if (!userPhoneDetails){
+        this.setStatus(404)
+        return { message: 'User not found'}
+      }
+
+      let verificationCodePhoneMatches: boolean = false
+      if (verificationCodePhone){    
+        verificationCodePhoneMatches = verificationCodePhone === userPhoneDetails.verificationCodePhone
+      }
+
+      if (!verificationCodePhoneMatches){
+        this.setStatus(400)
+        return { message: 'Verification Code Phone is incorrect' }
+      }
+      
+      return await verifyUserAccountWithDevice(userId)
     } catch (error) {
       this.setStatus(400)
       return { message: error.message }

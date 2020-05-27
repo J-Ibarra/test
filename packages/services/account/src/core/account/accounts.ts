@@ -21,8 +21,9 @@ import {
   KycStatusChange,
   User,
   UserPublicView,
+  UserPhoneDetails
 } from '@abx-types/account'
-import { findSession } from './session'
+import { findSession, findSessionByUserId } from './session'
 import { createAccountVerificationUrl, createUser, findUserByAccountId, findUserById, prepareWelcomeEmail, validateUserEmail } from '../users'
 import { cancelAllOrdersForAccount } from '@abx-service-clients/order'
 import { hasMfaEnabled } from '../mfa'
@@ -50,7 +51,11 @@ export function createAccount(
     )
     const account = accountInst.get()
     const user = await createUser({ accountId: account.id, ...newAccount }, transaction)
-
+    if (newAccount.uuidPhone){
+      await getModel<UserPhoneDetails>('user_phone_details').create(
+        { id: v4(), userId: user.id, uuidPhone: newAccount.uuidPhone },{ transaction },
+      )
+    }
     return {
       ...account,
       users: [user],
@@ -223,37 +228,21 @@ export async function verifyUserAccount(userToken: string, trans?: Transaction):
     const session = await findSession(sessionId, trans)
 
     if (moment().isBefore(session!.expiry)) {
-      const user = await findUserById(session!.userId, transaction)
-
-      const [, [updatedAccountInstance]] = await getModel<Partial<Account>>('account').update(
-        { status: AccountStatus.emailVerified },
-        {
-          where: { id: user!.accountId },
-          transaction,
-          returning: true,
-        },
-      )
-
-      // Publish for other services to work with
-      getEpicurusInstance().publish(AccountPubSubTopics.accountVerified, { accountId: user!.accountId })
-
-      const updatedAccount = updatedAccountInstance.get()
-      const userPublicView: UserPublicView = {
-        id: user!.id,
-        accountId: user!.accountId,
-        email: user!.email,
-        firstName: user!.firstName,
-        lastName: user!.lastName,
-        lastLogin: user!.lastLogin,
-        mfaEnabled: !!user!.mfaSecret,
-        accountType: updatedAccount.type!,
-        status: updatedAccount.status!,
-        hin: updatedAccount.hin!,
-      }
-
-      return userPublicView
+      return await verifyUserAccountResponse(session!.userId,transaction)
     } else {
       throw new ValidationError('The verification link used has expired.')
+    }
+  })
+}
+
+export async function verifyUserAccountWithDevice(userId: string, trans?: Transaction): Promise<UserPublicView & { status: AccountStatus }> {
+  return wrapInTransaction(sequelize, trans, async transaction => {
+    const session = await findSessionByUserId(userId, trans)
+
+    if (moment().isBefore(session!.expiry)) {
+      return await verifyUserAccountResponse(session!.userId,transaction)
+    } else {
+      throw new ValidationError('The session has expired.')
     }
   })
 }
@@ -307,4 +296,35 @@ export async function findAccountByIdWithMfaStatus(id: string, t?: Transaction):
     createdAt,
     updatedAt,
   }
+}
+async function verifyUserAccountResponse(userId: string,transaction: Transaction): Promise<UserPublicView & { status: AccountStatus }> {
+  const user = await findUserById(userId, transaction)
+
+  const [, [updatedAccountInstance]] = await getModel<Partial<Account>>('account').update(
+    { status: AccountStatus.emailVerified },
+    {
+      where: { id: user!.accountId },
+      transaction,
+      returning: true,
+    },
+  )
+
+  // Publish for other services to work with
+  getEpicurusInstance().publish(AccountPubSubTopics.accountVerified, { accountId: user!.accountId })
+
+  const updatedAccount = updatedAccountInstance.get()
+  const userPublicView: UserPublicView = {
+    id: user!.id,
+    accountId: user!.accountId,
+    email: user!.email,
+    firstName: user!.firstName,
+    lastName: user!.lastName,
+    lastLogin: user!.lastLogin,
+    mfaEnabled: !!user!.mfaSecret,
+    accountType: updatedAccount.type!,
+    status: updatedAccount.status!,
+    hin: updatedAccount.hin!,
+  }
+
+  return userPublicView
 }

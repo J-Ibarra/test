@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import moment from 'moment'
 import { truncateTables, MemoryCache } from '@abx-utils/db-connection-utils'
-import { findAndStoreMidPrices, storeMidPrice, getLatestMidPrice, getOldestMidPrice } from '../../../../repository'
+import { findAndStoreMidPrices, storeMidPrice, getLatestMidPrice, getOldestMidPrice, getMidPriceLiveStream } from '../../../../repository'
 import { initialiseRedis } from '../test-helper'
 import { createTemporaryTestingAccount } from '@abx-utils/account'
 
@@ -53,5 +53,18 @@ describe('Caching the mid prices', async () => {
       const midPrice = await getLatestMidPrice(kauUsd)
       expect(midPrice).to.eql(4)
     })
+  })
+
+  it('midPriceLiveStream should emit on mid price updates', () => {
+    const midPriceLiveStream = getMidPriceLiveStream()
+
+    let price = 0
+    midPriceLiveStream.on(kauUsd, (priceEmitted) => (price = priceEmitted))
+
+    const midPriceUpdate = 12
+
+    storeMidPrice({ symbolId: kauUsd, price: midPriceUpdate, createdAt: new Date() }, new Date())
+
+    expect(price).to.eql(midPriceUpdate)
   })
 })

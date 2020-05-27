@@ -2,6 +2,7 @@ import moment from 'moment'
 import { findAllMidPricesForSymbols, MID_PRICE_LATEST_KEY, MID_PRICE_OLDEST_KEY } from '..'
 import { MemoryCache } from '@abx-utils/db-connection-utils'
 import { DepthMidPrice } from '@abx-types/market-data'
+import { EventEmitter } from 'events'
 
 interface NewestAndOldestMarketDataPair {
   newest: DepthMidPrice
@@ -49,9 +50,16 @@ const storeMidPricesForSymbols = (symbolId: string, { newest, oldest }: NewestAn
   }
 }
 
-export const storeMidPrice = ({ symbolId, price, createdAt }: Pick<DepthMidPrice, 'symbolId' | 'price' | 'createdAt'>, timeFilter: Date) =>
+const midPriceLiveStream = new EventEmitter()
+
+export const storeMidPrice = ({ symbolId, price, createdAt }: Pick<DepthMidPrice, 'symbolId' | 'price' | 'createdAt'>, timeFilter: Date) => {
   MemoryCache.getInstance().set<number>({
     key: `${MID_PRICE_LATEST_KEY(symbolId)}`,
     ttl: Math.abs(moment(createdAt).diff(moment(timeFilter), 'ms')),
     val: price,
   })
+
+  midPriceLiveStream.emit(symbolId, price)
+}
+
+export const getMidPriceLiveStream = () => midPriceLiveStream

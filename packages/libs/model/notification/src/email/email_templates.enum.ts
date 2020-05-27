@@ -11,4 +11,5 @@ export enum EmailTemplates {
     TradeConfirmation = 'Kinesis Money Trade Confirmation v2',
     DepositConfirmation = 'Kinesis Money Deposit Success',
     DepositSuspendedEmail = 'Kinesis Money Suspended Account Crypto Deposit',
+    VerificationCodePhoneEmail = 'Kinesis Money Referral Verification Code Phone Email',
   }

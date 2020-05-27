@@ -3,18 +3,29 @@ import { sign } from 'jsonwebtoken'
 import moment from 'moment'
 import { Body, Controller, Delete, Post, Request, Response, Route, Security, SuccessResponse, Tags } from 'tsoa'
 import { Environment, localAndTestEnvironments, getAwsRegionForEnvironment } from '@abx-types/reference-data'
-import { createSessionForUser, isAccountSuspended, killSession, validateUserCredentials, authenticateMfa, hasMfaEnabled } from '../../../core'
+import { createSessionForUser, isAccountSuspended, killSession, validateUserCredentials, authenticateMfa, hasMfaEnabled, saveAndSendVerificationCodeFromEmail, validateUserPhone, findUserPhoneDetailsByUserId, validatePassword, findSessionByUserId, findUserById } from '../../../core'
 import { Logger } from '@abx-utils/logging'
 import { ValidationError } from '@abx-types/error'
-import { OverloadedRequest } from '@abx-types/account'
+import { OverloadedRequest, UserPublicView } from '@abx-types/account'
 import { createWalletAddressesForNewAccount } from '@abx-service-clients/deposit'
 
 const DEFAULT_SESSION_EXPIRY = 12
+
+interface LoginDeviceRequest {
+  pinCode: string
+}
 
 export interface LoginRequest {
   email: string
   password: string
   mfaToken?: string
+  uuidPhone?: string
+}
+
+export interface LoginValidationResult {
+	isSuccess: boolean
+	errorMessage?: string
+	errorStatusCode?: any
 }
 
 const environmentNameRecord = {
@@ -28,7 +39,7 @@ const environmentNameRecord = {
 
 const logger = Logger.getInstance('api', 'SessionsController')
 
-async function getJwt() {
+async function getJwt() { 
   const secretsManager = new aws.SecretsManager({
     apiVersion: '2017-10-17',
     region: getAwsRegionForEnvironment(process.env.NODE_ENV as Environment),
@@ -56,64 +67,50 @@ async function getJwt() {
 @Tags('accounts')
 @Route('sessions')
 export class SessionsController extends Controller {
+  @Post('{userId}/device')
+  public async loginFromDevice(userId: string, @Body() { pinCode }: LoginDeviceRequest, @Request() request: OverloadedRequest): Promise<{ message: string } | void> {
+    try {
+      const user = await findUserById(userId)
+      if (!user){
+        this.setStatus(404)
+        return { message: 'User not found'}
+      }
+      const userPhoneDetails = await findUserPhoneDetailsByUserId(userId)
+      const pinCodeHash:string | any = userPhoneDetails?.pinCodeHash
+      const isCurrentPinCodeValid = await validatePassword(pinCode, pinCodeHash)
+      
+      if (!isCurrentPinCodeValid){
+        throw new ValidationError('Back-up PIN is incorrect')
+      }
+      const session = await findSessionByUserId(userId)
+      if (!moment().isBefore(session!.expiry) || session!.deactivated) {
+        const resContent = await this.contentResponseLogin(userId,user!.accountId,request)
+        return resContent
+      }
+    } catch (e) {
+      this.setStatus(400)
+      return { message: e.message }
+    }
+  }
+  
   @Tags('authentication')
   @SuccessResponse('201', 'Created')
   @Response('400', 'Bad request')
   @Post()
   public async login(@Body() requestBody: LoginRequest, @Request() request: OverloadedRequest): Promise<any> {
-    const { email, password, mfaToken } = requestBody
+    const { email, password, mfaToken, uuidPhone } = requestBody
     try {
       const user = await validateUserCredentials(email, password)
 
-      const accountSuspended: boolean = await isAccountSuspended(user.accountId)
+      const loginValidationResult = await this.runLoginValidation(user, uuidPhone, mfaToken)
 
-      if (accountSuspended) {
-        this.setStatus(403)
-        return { message: 'Account suspended' }
+      if (!loginValidationResult.isSuccess) {
+        this.setStatus(loginValidationResult.errorStatusCode)
+          return { message: loginValidationResult.errorMessage }
       }
-
-      const isMfaEnabledForUser = await hasMfaEnabled(user.id)
-
-      if (isMfaEnabledForUser && !this.isLocalDev()) {
-        if (!mfaToken) {
-          this.setStatus(403)
-          return { message: 'MFA Required' }
-        }
-
-        const isVerified = await authenticateMfa(user.id, mfaToken)
-        if (!isVerified) {
-          this.setStatus(400)
-          return { message: 'The token you have provided is invalid' }
-        }
-      }
-
-      const { sessionCookie, user: updatedUser } = await createSessionForUser(user.id, DEFAULT_SESSION_EXPIRY)
-
-      const ip = (request as any).clientIp
-      let authToken: string = ''
-
-      if (!!environmentNameRecord[process.env.NODE_ENV!]) {
-        const jwt = await getJwt()
-        authToken = sign({}, `${ip}-${jwt}`)
-      }
-
-      const appSessionExpires: Date = moment()
-        .add(DEFAULT_SESSION_EXPIRY, 'hours')
-        .toDate()
-
-      this.setHeader(
-        'Set-Cookie',
-        `appSession=${sessionCookie}; ${this.isLocalDev() ? '' : 'Secure;'} HttpOnly; Path=/; ${
-          this.isLocalDev() ? '' : 'SameSite=Strict;'
-        } expires=${appSessionExpires};`,
-      )
-
-      process.nextTick(() => createWalletAddressesForNewAccount(user.accountId))
-
-      return {
-        ...updatedUser,
-        token: authToken,
-      }
+      
+      const resContent = await this.contentResponseLogin(user.id,user.accountId,request)
+      return resContent
     } catch (err) {
       this.setStatus(err.status || 400)
 
@@ -142,5 +139,88 @@ export class SessionsController extends Controller {
 
   private isLocalDev() {
     return localAndTestEnvironments.includes(process.env.NODE_ENV as Environment)
+  }
+
+  private async runLoginValidation(user: UserPublicView, uuidPhone: any, mfaToken: any): Promise<LoginValidationResult> {
+    const accountSuspended: boolean = await isAccountSuspended(user.accountId)
+
+    if (accountSuspended) {
+      return { 
+        errorMessage: 'Account suspended',
+        isSuccess: false,
+        errorStatusCode: 403,
+      }
+    }
+
+    let uuidPhoneMatches: any = null
+    if (uuidPhone) {   
+      uuidPhoneMatches = await validateUserPhone(user.id, uuidPhone)
+    }
+
+    if (uuidPhoneMatches === false) {
+      await saveAndSendVerificationCodeFromEmail(user)
+      return {
+        errorMessage: 'Register Device Required',
+        isSuccess: false,
+        errorStatusCode: 403,
+      }
+    }
+
+    const isMfaEnabledForUser = await hasMfaEnabled(user.id)
+
+    if (isMfaEnabledForUser && !this.isLocalDev() && !uuidPhone) {
+      if (!mfaToken) {
+        return {
+          errorMessage: 'MFA Required',
+          isSuccess: false,
+          errorStatusCode: 403,
+        }
+      }
+
+      const isVerified = await authenticateMfa(user.id, mfaToken)
+      if (!isVerified) {
+        return {
+          errorMessage: 'The token you have provided is invalid',
+          isSuccess: false,
+          errorStatusCode: 400,
+        }
+      }
+    }
+
+    return { 
+      errorMessage: 'Success',
+      isSuccess: true,
+      errorStatusCode: 200
+    }
+  }
+
+  private async contentResponseLogin(userId: string,account: string, request: OverloadedRequest): Promise<any> {
+    const { sessionCookie, user: updatedUser } = await createSessionForUser(userId, DEFAULT_SESSION_EXPIRY)
+
+    const ip = (request as any).clientIp
+    let authToken: string = ''
+
+    if (!!environmentNameRecord[process.env.NODE_ENV!]) {
+      const jwt = await getJwt()
+      authToken = sign({}, `${ip}-${jwt}`)
+    }
+
+    const appSessionExpires: Date = moment()
+      .add(DEFAULT_SESSION_EXPIRY, 'hours')
+      .toDate()
+
+    this.setHeader(
+      'Set-Cookie',
+      `appSession=${sessionCookie}; ${this.isLocalDev() ? '' : 'Secure;'} HttpOnly; Path=/; ${
+        this.isLocalDev() ? '' : 'SameSite=Strict;'
+      } expires=${appSessionExpires};`,
+    )
+
+    process.nextTick(() => createWalletAddressesForNewAccount(account))
+
+    return {
+      ...updatedUser,
+      token: authToken
+    }
   }
 }

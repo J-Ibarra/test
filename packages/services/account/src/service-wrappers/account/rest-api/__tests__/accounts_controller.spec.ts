@@ -6,7 +6,7 @@ import sinon from 'sinon'
 import { AccountStatus, AccountType, EmailValidationError, PersonalBankDetails } from '@abx-types/account'
 import * as notificationClientOperations from '@abx-service-clients/notification'
 
-import { findAccountById, findAccountWithUserDetails, validatePassword } from '../../../../core'
+import { findAccountById, findAccountWithUserDetails, validatePassword, findUserPhoneDetailsByUserId } from '../../../../core'
 import { getModel, truncateTables } from '@abx-utils/db-connection-utils'
 import { bootstrapRestApi } from '../index'
 import { createTemporaryTestingAccount, TEST_PASSWORD, createAccountAndSession } from '@abx-utils/account'
@@ -169,6 +169,32 @@ describe('api:accounts', () => {
     const { status: getStatus, body } = await request(app)
       .post('/api/accounts/verification')
       .send({ userToken: token })
+      .set('Accept', 'application/json')
+
+    expect(getStatus).to.eql(200)
+    expect(body.status).to.eql(AccountStatus.emailVerified)
+  })
+
+  it('verifies account with device', async () => {
+    const user = {
+      firstName: 'fn',
+      lastName: 'ln',
+      email: 'fn_ln@a.bc',
+      password: 'starlight',
+      uuidPhone : "QUOIYEOUWYOE",
+    }
+
+    const { status, body: userAccount } = await request(app)
+      .post(`/api/accounts`)
+      .send(user)
+      .set('Accept', 'application/json')
+    expect(status).to.eql(201)
+
+    const userPhoneDetails = await findUserPhoneDetailsByUserId(userAccount.users[0].id)
+
+    const { status: getStatus, body } = await request(app)
+      .post(`/api/accounts/verification/${userAccount.users[0].id}/device`)
+      .send({ verificationCodePhone: userPhoneDetails.verificationCodePhone })
       .set('Accept', 'application/json')
 
     expect(getStatus).to.eql(200)

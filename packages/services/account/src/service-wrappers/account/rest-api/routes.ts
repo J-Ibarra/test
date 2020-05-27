@@ -7,6 +7,7 @@ import { ResetPasswordController } from './password_reset_controller';
 import { SessionsController } from './session_controller';
 import { TokensController } from './token_controller';
 import { UserStateController } from './user_controller';
+import { UserDeviceManagementController } from './user_device_management_controller';
 import { E2eTestingDataSetupController } from './e2e-testing/E2eTestingDataSetupController';
 import { expressAuthentication } from './middleware/authentication';
 import * as express from 'express';
@@ -75,11 +76,17 @@ const models: TsoaRoute.Models = {
       "firstName": { "dataType": "string" },
       "lastName": { "dataType": "string" },
       "referrerHin": { "dataType": "string" },
+      "uuidPhone": { "dataType": "string" },
     },
   },
   "VerifyAccountRequest": {
     "properties": {
       "userToken": { "dataType": "string" },
+    },
+  },
+  "VerifyAccountWithDeviceRequest": {
+    "properties": {
+      "verificationCodePhone": { "dataType": "double", "required": true },
     },
   },
   "UserPublicView": {
@@ -121,11 +128,17 @@ const models: TsoaRoute.Models = {
       "token": { "dataType": "string", "required": true },
     },
   },
+  "LoginDeviceRequest": {
+    "properties": {
+      "pinCode": { "dataType": "string", "required": true },
+    },
+  },
   "LoginRequest": {
     "properties": {
       "email": { "dataType": "string", "required": true },
       "password": { "dataType": "string", "required": true },
       "mfaToken": { "dataType": "string" },
+      "uuidPhone": { "dataType": "string" },
     },
   },
   "TokenResponse": {
@@ -138,6 +151,24 @@ const models: TsoaRoute.Models = {
     "properties": {
       "email": { "dataType": "string", "required": true },
       "password": { "dataType": "string", "required": true },
+    },
+  },
+  "SavePinRequest": {
+    "properties": {
+      "pinCode": { "dataType": "string", "required": true },
+    },
+  },
+  "UserDeviceRequest": {
+    "properties": {
+      "email": { "dataType": "string", "required": true },
+      "uuidPhone": { "dataType": "string", "required": true },
+      "verificationCodePhone": { "dataType": "double", "required": true },
+    },
+  },
+  "ChangePinCodeRequest": {
+    "properties": {
+      "currentPinCode": { "dataType": "string", "required": true },
+      "newPinCode": { "dataType": "string", "required": true },
     },
   },
   "AccountTypeUpdateRequest": {
@@ -319,6 +350,26 @@ export function RegisterRoutes(app: express.Express) {
 
 
       const promise = controller.verifyUserAccount.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.post('/api/accounts/verification/:userId/device',
+    function(request: any, response: any, next: any) {
+      const args = {
+        userId: { "in": "path", "name": "userId", "required": true, "dataType": "string" },
+        undefined: { "in": "body", "required": true, "ref": "VerifyAccountWithDeviceRequest" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new AccountsController();
+
+
+      const promise = controller.verifyUserAccountWithDevice.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
   app.post('/api/accounts/kyc-form-submission',
@@ -562,6 +613,27 @@ export function RegisterRoutes(app: express.Express) {
       const promise = controller.resetPassword.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
+  app.post('/api/sessions/:userId/device',
+    function(request: any, response: any, next: any) {
+      const args = {
+        userId: { "in": "path", "name": "userId", "required": true, "dataType": "string" },
+        undefined: { "in": "body", "required": true, "ref": "LoginDeviceRequest" },
+        request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new SessionsController();
+
+
+      const promise = controller.loginFromDevice.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
   app.post('/api/sessions',
     function(request: any, response: any, next: any) {
       const args = {
@@ -680,6 +752,67 @@ export function RegisterRoutes(app: express.Express) {
 
 
       const promise = controller.activateUser.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.post('/api/users/device',
+    authenticateMiddleware([{ "cookieAuth": [] }, { "tokenAuth": [] }]),
+    function(request: any, response: any, next: any) {
+      const args = {
+        request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+        undefined: { "in": "body", "required": true, "ref": "SavePinRequest" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new UserDeviceManagementController();
+
+
+      const promise = controller.savePinCodeUserDevice.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.patch('/api/users/device',
+    function(request: any, response: any, next: any) {
+      const args = {
+        undefined: { "in": "body", "required": true, "ref": "UserDeviceRequest" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new UserDeviceManagementController();
+
+
+      const promise = controller.updateDevice.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.patch('/api/users/device/pin',
+    authenticateMiddleware([{ "cookieAuth": [] }, { "tokenAuth": [] }]),
+    function(request: any, response: any, next: any) {
+      const args = {
+        request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+        undefined: { "in": "body", "required": true, "ref": "ChangePinCodeRequest" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new UserDeviceManagementController();
+
+
+      const promise = controller.changePinCode.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, next);
     });
   app.patch('/api/test-automation/accounts/type',

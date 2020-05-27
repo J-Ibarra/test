@@ -6,11 +6,11 @@ import { AccountType } from '@abx-types/account'
 import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
 import { closeSocket, openSocket } from '../depth-update.sockets'
 import { clientsConnectedToSocket, DEPTH_UPDATE_EVENT_PREFIX } from '../depth_update_notification_dispatcher'
-import { createTemporaryTestingAccount } from '@abx-utils/account'
+import { createAccountAndSession } from '@abx-utils/account'
 import { OrderPubSubChannels } from '@abx-service-clients/order'
 import * as middlewareOperations from '@abx-utils/express-middleware'
 
-describe.skip('depth-update-sockets', () => {
+describe('depth-update-sockets', () => {
   const testDepth = [
     { price: 20, amount: 20 },
     { price: 19, amount: 10 },
@@ -40,11 +40,9 @@ describe.skip('depth-update-sockets', () => {
   }).timeout(20_000)
 
   it('should be able to subscribe and receive ask depth updates when cookie present', async () => {
-    const account = await createTemporaryTestingAccount(AccountType.individual)
+    const { cookie } = await createAccountAndSession(AccountType.individual)
 
-    sinon.stub(middlewareOperations, 'overloadRequestWithSessionInfo').resolves(account)
-
-    const socket = await connectAndWaitForSocketToOpen({ cookie: `appSession=testCookie` })
+    const socket = await connectAndWaitForSocketToOpen({ cookie })
 
     const epicurus = getEpicurusInstance()
     let depthUpdateReceived
@@ -66,10 +64,9 @@ describe.skip('depth-update-sockets', () => {
   }).timeout(20_000)
 
   it('should be able to subscribe and receive bid depth updates when cookie present', async () => {
-    const account = await createTemporaryTestingAccount(AccountType.individual)
-    sinon.stub(middlewareOperations, 'overloadRequestWithSessionInfo').resolves(account)
+    const { cookie } = await createAccountAndSession(AccountType.individual)
 
-    const socket = await connectAndWaitForSocketToOpen({ cookie: `appSession=fooA` })
+    const socket = await connectAndWaitForSocketToOpen({ cookie })
 
     const epicurus = getEpicurusInstance()
     let depthUpdateReceived
@@ -88,68 +85,6 @@ describe.skip('depth-update-sockets', () => {
     await waitForPredicateToBecomeTrue(() => !!depthUpdateReceived)
     socket.close()
     expect(depthUpdateReceived).to.eql(testDepth.map((depthItem) => ({ ...depthItem, ownedAmount: 0 })))
-  }).timeout(20_000)
-
-  it('should be able to subscribe and receive bid depth updates when JWT token present', async () => {
-    const account = await createTemporaryTestingAccount(AccountType.individual)
-    sinon.stub(middlewareOperations, 'overloadRequestWithSessionInfo').resolves(account)
-
-    const socket = await connectAndWaitForSocketToOpen({ Authorization: 'TA' })
-
-    const epicurus = getEpicurusInstance()
-    let depthUpdateReceived
-    socket.on(`${DEPTH_UPDATE_EVENT_PREFIX}KAU_KAG`, function ({ aggregateDepth }) {
-      depthUpdateReceived = aggregateDepth
-    })
-
-    epicurus.publish(OrderPubSubChannels.bidDepthUpdated, {
-      symbolId: 'KAU_KAG',
-      topOfDepthUpdated: false,
-      aggregateDepth: testDepth,
-      oppositeDepthTopOrder: { price: 10, amount: 10 },
-      ordersFromDepth: [],
-    })
-
-    await waitForPredicateToBecomeTrue(() => !!depthUpdateReceived)
-
-    socket.close()
-    expect(depthUpdateReceived).to.eql(testDepth.map((depthItem) => ({ ...depthItem, ownedAmount: 0 })))
-  }).timeout(20_000)
-
-  it('should be able to subscribe and receive more than one bid depth updates when JWT token present', async () => {
-    const account = await createTemporaryTestingAccount(AccountType.individual)
-    sinon.stub(middlewareOperations, 'overloadRequestWithSessionInfo').resolves(account)
-
-    const socket = await connectAndWaitForSocketToOpen({ Authorization: 'TAT' })
-
-    const epicurus = getEpicurusInstance()
-    let depthUpdateReceived
-    socket.on(`${DEPTH_UPDATE_EVENT_PREFIX}KAU_KAG`, function ({ aggregateDepth }) {
-      depthUpdateReceived = aggregateDepth
-    })
-
-    epicurus.publish(OrderPubSubChannels.bidDepthUpdated, {
-      symbolId: 'KAU_KAG',
-      topOfDepthUpdated: false,
-      aggregateDepth: testDepth,
-      oppositeDepthTopOrder: { price: 10, amount: 10 },
-      ordersFromDepth: [],
-    })
-
-    await waitForPredicateToBecomeTrue(() => !!depthUpdateReceived)
-
-    epicurus.publish(OrderPubSubChannels.bidDepthUpdated, {
-      symbolId: 'KAU_KAG',
-      topOfDepthUpdated: false,
-      aggregateDepth: testDepth.concat(testDepth[0]),
-      oppositeDepthTopOrder: { price: 10, amount: 10 },
-      ordersFromDepth: [],
-    })
-
-    await waitForPredicateToBecomeTrue(() => depthUpdateReceived.length === 3)
-
-    socket.close()
-    expect(depthUpdateReceived).to.eql(testDepth.concat(testDepth[0]).map((depthItem) => ({ ...depthItem, ownedAmount: 0 })))
   }).timeout(20_000)
 })
 

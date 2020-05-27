@@ -3,7 +3,7 @@ import socketIo from 'socket.io'
 import { Server } from 'http'
 import { Logger } from '@abx-utils/logging'
 import { getEpicurusInstance } from '@abx-utils/db-connection-utils'
-import { overloadRequestWithSessionInfo, CORS_ENABLED_ORIGINS } from '@abx-utils/express-middleware'
+import { CORS_ENABLED_ORIGINS } from '@abx-utils/express-middleware'
 import {
   emitAskDepthChange,
   emitBidDepthChange,
@@ -11,34 +11,16 @@ import {
   recordUnsubscribeForAccount,
 } from './depth_update_notification_dispatcher'
 import { OrderPubSubChannels } from '@abx-service-clients/order'
+import { authenticateSocketConnection } from './socket_connection_authentication'
 
 let io: SocketIO.Server
 const logger = Logger.getInstance('market_data', 'depth-update')
 
-export function openSocket(server?: Server) {
+export function openSocket(server?: Server): socketIo.Server {
   io = socketIo(server || 3001, {
     path: '/notifications/market-data-v2/depth-updates/',
     origins: CORS_ENABLED_ORIGINS,
-    allowRequest: async (request, callback) => {
-      logger.debug('Received socket connection request.')
-      const cookies = request.headers.cookie ? request.headers.cookie.split('; ') : []
-      request.header = (headerName: string) => request.headers[headerName.toLowerCase()]
-
-      const appSessionCookie = cookies.find(cookiePair => cookiePair.startsWith('appSession'))
-      if (!!appSessionCookie) {
-        request.cookies = {
-          appSession: appSessionCookie.split('=')[1],
-        }
-      }
-
-      await overloadRequestWithSessionInfo(request)
-
-      if (!!request.account) {
-        return callback(undefined, true)
-      }
-
-      return callback(undefined, false)
-    },
+    allowRequest: (request, callback) => authenticateSocketConnection(request, callback),
   } as any)
 
   const epicurus = getEpicurusInstance()
@@ -51,7 +33,7 @@ export function openSocket(server?: Server) {
     emitAskDepthChange(io, symbolId, aggregateDepth, ordersFromDepth)
   })
 
-  io.on('connection', socket => {
+  io.on('connection', (socket) => {
     logger.debug(`Socket id: ${socket.id}`)
     recordSubscriptionForAccount(socket.request.account.id, socket.id)
 
@@ -60,6 +42,8 @@ export function openSocket(server?: Server) {
     })
     socket.on('disconnect', () => recordUnsubscribeForAccount(socket.request.account.id, socket.id))
   })
+
+  return io
 }
 
 export function closeSocket() {

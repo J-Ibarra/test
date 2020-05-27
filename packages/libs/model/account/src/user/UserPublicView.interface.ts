@@ -2,7 +2,7 @@ import { User } from './User.interface'
 import { AccountType } from '../account/AccountType.enum'
 import { AccountStatus } from '../account/AccountStatus.enum'
 
-export interface UserPublicView extends Pick<User, 'id' | 'accountId' | 'email' | 'firstName' | 'lastName' | 'lastLogin'> {
+export interface UserPublicView extends Pick<User, 'id' | 'accountId' | 'email' | 'firstName' | 'lastName' | 'lastLogin' > {
   /** True if MFA has been enabled by the user. */
   mfaEnabled: boolean
   /** The type of the owner account. */

@@ -35,7 +35,6 @@ export class MemoryCache {
    * @param key an array of keys that we want to acquire
    */
   public get<T>(key: string): T | undefined {
-    this.logger.debug(`getting key: ${key}`)
     return this.cache.peek(key)
   }
 

@@ -22,6 +22,7 @@ import './password_reset_controller'
 import './session_controller'
 import './token_controller'
 import './user_controller'
+import './user_device_management_controller'
 import './e2e-testing/E2eTestingDataSetupController'
 
 import { OverloadedRequest } from '@abx-types/account'

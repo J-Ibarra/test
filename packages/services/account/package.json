@@ -15,6 +15,8 @@
     "build": "npm run clean && npm run compile",
     "clean": "rm -rf ./dist",
     "compile": "npm run clean && npm run api-build && tsc -p tsconfig.build.json --skipLibCheck",
+    "run-migrations:dev": "NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=development tsnd src/migrations/index.ts",
+    "run-migrations:test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test tsnd src/migrations/index.ts",
     "migrate-db": "npm run build && NEW_RELIC_NO_CONFIG_FILE=true NODE_ENV=test NODE_PATH=dist node dist/migrations/index.js",
     "test": "NEW_RELIC_NO_CONFIG_FILE=true NODE_PATH=dist ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts --require ../../../_test-setup/test_globals.js src/**/*.spec.ts --exit",
     "test-account": "NEW_RELIC_NO_CONFIG_FILE=true NODE_PATH=dist ts-mocha -p tsconfig.build.json --opts ../../../../_test-setup/mocha.opts --require ../../../_test-setup/test_globals.js src/**/*.spec.ts --exit",

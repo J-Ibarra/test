@@ -30,6 +30,12 @@ export async function createSession(userId: string, trans?: Transaction, cookieE
     return session.get()
   })
 }
+export async function findSessionByUserId(userId: string, trans?: Transaction) {
+  return wrapInTransaction(sequelize, trans, async t => {
+    const session = await getModel<Session>('session').findOne({ where: { userId }, transaction: t })
+    return session ? session.get() : null
+  })
+}
 
 export async function findSession(id: string, transaction?: Transaction): Promise<Session | null> {
   const session = await getModel<Session>('session').findByPrimary(id, { transaction })

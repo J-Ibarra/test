@@ -6,9 +6,13 @@ import { Transaction } from 'sequelize'
 import { Logger } from '@abx-utils/logging'
 import { getModel, sequelize, wrapInTransaction } from '@abx-utils/db-connection-utils'
 import { ValidationError } from '@abx-types/error'
+import { createEmail } from '@abx-service-clients/notification'
 import { Account, AccountType, CreateUserRequest, EmailValidationError, User, UserPublicView } from '@abx-types/account'
 import { UserInstance } from '../models/user'
 import { findAccountById, findAccountWithUserDetails } from '../account/accounts'
+import { sendVerificationCodeEmail } from './users-email-notifications-dispatcher'
+import { saveVerificationCodePhone } from './user-phone-details'
+
 
 const logger = Logger.getInstance('api', 'bootstrap')
 
@@ -218,6 +222,16 @@ export async function updateUser(request: Partial<User>, t?: Transaction): Promi
   })
 }
 
+export async function updateUserByEmail(request: Partial<User>, t?: Transaction): Promise<[number, UserInstance[]]> {
+  return wrapInTransaction(sequelize, t, async transaction => {
+    return (await getModel<User>('user').update(request as User, {
+      where: { email: request.email } as any,
+      transaction,
+      returning: true,
+    })) as any
+  })
+}
+
 async function findUser(criteria: Partial<User>, includeAccountDetails: boolean, trans?: Transaction): Promise<User | null> {
   return wrapInTransaction(sequelize, trans, async (t) => {
     const user = await getModel<User>('user').findOne({
@@ -249,4 +263,17 @@ export async function findAllUsersForHin(hin: string, t?: Transaction): Promise<
     ...user.get('publicView'),
     hin: (user as any).account.hin,
   }))
+}
+
+export async function saveAndSendVerificationCodeFromEmail(user){
+
+  const codePhone = getRndInteger()
+  await saveVerificationCodePhone(user.id, codePhone )
+
+  const verificationCodeEmailContent = sendVerificationCodeEmail(user, codePhone)
+  await createEmail(verificationCodeEmailContent)
+}
+
+function getRndInteger(min: number = 10000, max: number = 99999) {
+  return Math.floor(Math.random() * (max - min)) + min;
 }

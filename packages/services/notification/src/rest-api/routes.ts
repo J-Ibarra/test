@@ -5,7 +5,7 @@ import * as express from 'express';
 
 const models: TsoaRoute.Models = {
   "EmailTemplates": {
-    "enums": ["Kinesis Money Welcome Email", "Kinesis Money Verify Email Resend", "Kinesis Money Referral Link Email", "Kinesis Money Account Suspension", "Kinesis Money Account Reactivation", "Kinesis Money Withdrawal Request", "Kinesis Money Crypto Withdraw Success", "Kinesis Money Reset Password Request", "Kinesis Money Password Reset Confirmation", "Kinesis Money Trade Confirmation v2", "Kinesis Money Deposit Success", "Kinesis Money Suspended Account Crypto Deposit"],
+    "enums": ["Kinesis Money Welcome Email", "Kinesis Money Verify Email Resend", "Kinesis Money Referral Link Email", "Kinesis Money Account Suspension", "Kinesis Money Account Reactivation", "Kinesis Money Withdrawal Request", "Kinesis Money Crypto Withdraw Success", "Kinesis Money Reset Password Request", "Kinesis Money Password Reset Confirmation", "Kinesis Money Trade Confirmation v2", "Kinesis Money Deposit Success", "Kinesis Money Suspended Account Crypto Deposit", "Kinesis Money Referral Verification Code Phone Email"],
   },
   "EmailCheckRequestBody": {
     "properties": {

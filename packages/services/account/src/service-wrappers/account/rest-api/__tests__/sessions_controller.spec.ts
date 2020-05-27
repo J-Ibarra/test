@@ -4,8 +4,8 @@ import request from 'supertest'
 import sinon from 'sinon'
 import { Account, AccountType, User } from '@abx-types/account'
 import { bootstrapRestApi } from '..'
-import { createAccountAndSession, TEST_PASSWORD, createTemporaryTestingAccount } from '@abx-utils/account'
-import { updateUser } from '../../../../core'
+import { createAccountAndSession, TEST_PASSWORD, TEST_UUIDPHONE, createTemporaryTestingAccount, createUserTemporaryPhoneDetails } from '@abx-utils/account'
+import { updateUser, validateUserPhone } from '../../../../core'
 import { truncateTables } from '@abx-utils/db-connection-utils'
 import * as notificationClientOperations from '@abx-service-clients/notification'
 import * as orderClientOperations from '@abx-service-clients/order'
@@ -220,5 +220,61 @@ describe('api:sessions', () => {
       .set('Cookie', cookie)
 
     expect(LogOutStatus).to.eql(200)
+  })
+
+  it('returns 403 when uuidPhone user not match with registered', async () => {
+    const testAccount: Account = await createTemporaryTestingAccount(AccountType.admin)
+    const user: User = testAccount.users![0]
+    const { base32: secret } = speakeasy.generateSecret({
+      name: 'KBE',
+    })
+
+    const token = speakeasy.totp({
+      secret,
+      encoding: 'base32',
+    })
+
+    await updateUser({ id: user.id, mfaSecret: secret })
+    const { status, body } = await request(app)
+      .post('/api/sessions')
+      .send({
+        email: user.email,
+        password: TEST_PASSWORD,
+        mfaToken: token,
+        uuidPhone: '1234'
+      })
+      .set('Accept', 'application/json')
+
+    expect(status).to.eql(403)
+    expect(body.message).to.eql('Register Device Required')
+  })
+
+  it('login success when uuidPhone user matches with registered', async () => {
+    const testAccount: Account = await createTemporaryTestingAccount(AccountType.admin)
+    const user: User = testAccount.users![0]
+    const { base32: secret } = speakeasy.generateSecret({
+      name: 'KBE',
+    })
+
+    const token = speakeasy.totp({
+      secret,
+      encoding: 'base32',
+    })
+
+    await createUserTemporaryPhoneDetails(user.id, TEST_UUIDPHONE)  
+    await validateUserPhone(user.id, TEST_UUIDPHONE)
+
+    await updateUser({ id: user.id, mfaSecret: secret })
+    const { status, body } = await request(app)
+      .post('/api/sessions')
+      .send({
+        email: user.email,
+        password: TEST_PASSWORD,
+        mfaToken: token,
+        uuidPhone: TEST_UUIDPHONE
+      })
+      .set('Accept', 'application/json')
+
+    expect(status).to.eql(200)
   })
 })
