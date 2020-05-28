@@ -33,7 +33,8 @@ export async function getAllCurrencyBoundaries(): Promise<Record<CurrencyCode, C
 export async function getSymbolBoundaries(symbolId: string, state = SymbolPairStateFilter.enabled): Promise<SymbolBoundaries> {
   return internalApiRequestDispatcher.returnCachedValueOrRetrieveFromSource<SymbolBoundaries>({
     endpoint: BoundaryEndpoints.getSymbolBoundaries,
-    responseBody: { symbolId, state }
+    responseBody: { symbolId, state },
+    cacheKey: `${BoundaryEndpoints.getSymbolBoundaries}-${symbolId}`,
   })
 }
 

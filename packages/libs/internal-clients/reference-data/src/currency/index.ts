@@ -81,7 +81,8 @@ export async function findAllCurrencies(state: SymbolPairStateFilter = SymbolPai
 export async function getAllCurrenciesEligibleForAccount(accountId: string) {
   return internalApiRequestDispatcher.returnCachedValueOrRetrieveFromSource<Currency[]>({
     endpoint: CurrencyEndpoints.getAllCurrenciesEligibleForAccount,
-    responseBody: { accountId }
+    responseBody: { accountId },
+    cacheKey: `${CurrencyEndpoints.getAllCurrenciesEligibleForAccount}-${accountId}`,
   })
 }
 

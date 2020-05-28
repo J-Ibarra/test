@@ -26,27 +26,29 @@ export class InternalApiRequestDispatcher {
   }
 
   public async returnCachedValueOrRetrieveFromSource<T>({
-    endpoint, 
+    endpoint,
     ttl = 30_000,
-    responseBody = {}
+    responseBody = {},
+    cacheKey,
   }: {
-    endpoint: string, 
-    ttl?: number,
+    endpoint: string
+    ttl?: number
     responseBody?: any
+    cacheKey?: string
   }): Promise<T> {
-    const cachedValue = await this.memoryCache.get(endpoint)
-  
+    const cachedValue = await this.memoryCache.get(cacheKey || endpoint)
+
     if (!!cachedValue) {
       return cachedValue as T
     }
-  
+
     const freshValue = await this.fireRequestToInternalApi<T>(endpoint, responseBody)
     this.memoryCache.set<T>({
-      key: endpoint,
+      key: cacheKey || endpoint,
       ttl,
       val: freshValue,
     })
-  
+
     return freshValue
   }
 }
