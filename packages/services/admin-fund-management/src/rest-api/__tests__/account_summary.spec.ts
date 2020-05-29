@@ -36,11 +36,7 @@ describe('api:account_summary', () => {
       },
     ])
 
-    const { account: adminAccount, cookie } = await createAccountAndSession(AccountType.admin)
-    sinon.stub(expressMiddleware, 'overloadRequestWithSessionInfo').callsFake(async (request, _, next: () => void = () => ({})) => {
-      request.account = adminAccount
-      next()
-    })
+    const { cookie } = await createAccountAndSession(AccountType.admin)
 
     const { status: getStatus, body: getBody } = await request(app)
       .get(`/api/admin/fund-management/account-summary/${testClient.hin}`)
@@ -53,13 +49,9 @@ describe('api:account_summary', () => {
 
   it("should try and retrieve account summary but fail because the account hin doesn't exist ", async () => {
     const expectedError = new ValidationError('Unable to find account')
-    const { account, cookie } = await createAccountAndSession(AccountType.admin)
+    const { cookie } = await createAccountAndSession(AccountType.admin)
 
     sinon.stub(accountServiceOperations, 'findAccountWithUserDetails').resolves(null)
-    sinon.stub(expressMiddleware, 'overloadRequestWithSessionInfo').callsFake(async (request, _, next: () => void = () => ({})) => {
-      request.account = account
-      next()
-    })
 
     const { status: getStatus, body } = await request(app)
       .get(`/api/admin/fund-management/account-summary/FAIL-ME`)

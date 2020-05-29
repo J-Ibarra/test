@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, Request, Route, Security, SuccessResponse, Tags } from 'tsoa'
+import { Body, Controller, Get, Post, Query, Request, Route, Security, SuccessResponse, Tags, Hidden } from 'tsoa'
 
 import { AccountFeeTier, FeeTier } from '@abx-types/order'
 import {
@@ -14,6 +14,7 @@ import { OverloadedRequest } from '@abx-types/account'
 
 @Tags('order')
 @Route()
+@Hidden()
 export class FeesController extends Controller {
   @Security('cookieAuth')
   @Security('tokenAuth')

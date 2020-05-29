@@ -80,11 +80,6 @@ describe.skip('api:admin_request:approval', () => {
 
     const approvalDate = new Date()
 
-    sinon.stub(expressMiddleware, 'overloadRequestWithSessionInfo').callsFake(async (request, _, next: () => void = () => ({})) => {
-      request.account = adminAccount
-      next()
-    })
-
     const { status: getStatus } = await request(app)
       .patch(`/api/admin/fund-management/admin-requests/${adminRequest.id}`)
       .send({ status: AdminRequestStatus.approved, updatedAt: approvalDate })
@@ -126,10 +121,6 @@ describe.skip('api:admin_request:approval', () => {
     })
 
     sinon.stub(withdrawalOperations, 'completeFiatWithdrawal').throws('Error')
-    sinon.stub(expressMiddleware, 'overloadRequestWithSessionInfo').callsFake(async (request, _, next: () => void = () => ({})) => {
-      request.account = adminAccount
-      next()
-    })
 
     const { status: getStatus } = await request(app)
       .patch(`/api/admin/fund-management/admin-requests/${adminRequest.id}`)
@@ -177,10 +168,6 @@ describe.skip('api:admin_request:approval', () => {
     sinon.stub(referenceDataOperations, 'findBoundaryForCurrency').resolves({ maxDecimals: 2 })
 
     const triggerMultipleBalanceChangesStub = sinon.stub(balanceOperations, 'triggerMultipleBalanceChanges').resolves()
-    sinon.stub(expressMiddleware, 'overloadRequestWithSessionInfo').callsFake(async (request, _, next: () => void = () => ({})) => {
-      request.account = adminAccount
-      next()
-    })
 
     const { status: getStatus } = await request(app)
       .patch(`/api/admin/fund-management/admin-requests/${adminRequest.id}`)
@@ -241,10 +228,6 @@ describe.skip('api:admin_request:approval', () => {
 
     const confirmPendingDepositStub = sinon.stub(balanceOperations, 'confirmPendingDeposit').resolves()
     const createCurrencyTransactionStub = sinon.stub(orderOperations, 'createCurrencyTransaction').resolves()
-    sinon.stub(expressMiddleware, 'overloadRequestWithSessionInfo').callsFake(async (request, _, next: () => void = () => ({})) => {
-      request.account = adminAccount
-      next()
-    })
 
     const { status: getStatus } = await request(app)
       .patch(`/api/admin/fund-management/admin-requests/${adminRequest.id}`)

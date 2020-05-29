@@ -46,10 +46,6 @@ describe('api:admin_request:create', () => {
       sinon.stub(accountServiceOperations, 'findAccountWithUserDetails').resolves(testClient)
       sinon.stub(referenceDataOperations, 'findBoundaryForCurrency').resolves({ maxDecimals: 5 })
       const createPendingRedemptionStub = sinon.stub(balanceOperations, 'createPendingRedemption').resolves()
-      sinon.stub(expressMiddleware, 'overloadRequestWithSessionInfo').callsFake(async (request, _, next: () => void = () => ({})) => {
-        request.account = adminAccount
-        next()
-      })
 
       const { status: getStatus, body } = await request(app)
         .post(`/api/admin/fund-management/admin-requests`)
@@ -92,18 +88,13 @@ describe('api:admin_request:create', () => {
       const withdrawalAmount = 90
       const feeAmount = 25
 
-      const { account: adminAccount, cookie } = await createAccountAndSession(AccountType.admin)
+      const { cookie } = await createAccountAndSession(AccountType.admin)
 
       sinon.stub(referenceDataOperations, 'getCurrencyId').resolves(usdId)
       sinon.stub(accountServiceOperations, 'findAccountWithUserDetails').resolves(testClient)
       sinon.stub(referenceDataOperations, 'findBoundaryForCurrency').resolves({ maxDecimals: 2 })
 
       const createFiatWithdrawalStub = sinon.stub(withdrawalOperations, 'createFiatWithdrawal').resolves()
-
-      sinon.stub(expressMiddleware, 'overloadRequestWithSessionInfo').callsFake(async (request, _, next: () => void = () => ({})) => {
-        request.account = adminAccount
-        next()
-      })
 
       const { status: getStatus, body } = await request(app)
         .post(`/api/admin/fund-management/admin-requests`)
@@ -153,11 +144,6 @@ describe('api:admin_request:create', () => {
     sinon.stub(referenceDataOperations, 'findBoundaryForCurrency').resolves({ maxDecimals: 2 })
 
     const createPendingDepositStub = sinon.stub(balanceOperations, 'createPendingDeposit').resolves()
-
-    sinon.stub(expressMiddleware, 'overloadRequestWithSessionInfo').callsFake(async (request, _, next: () => void = () => ({})) => {
-      request.account = adminAccount
-      next()
-    })
 
     const { status: getStatus, body } = await request(app)
       .post(`/api/admin/fund-management/admin-requests`)

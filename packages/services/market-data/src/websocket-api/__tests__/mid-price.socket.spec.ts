@@ -31,7 +31,6 @@ describe('mid-update-sockets', () => {
 
   it('should not allow unauthorized subscription', async () => {
     try {
-      sinon.stub(middlewareOperations, 'overloadRequestWithSessionInfo').callsFake((request) => request as any)
       const socket = await connectAndWaitForSocketToOpen()
 
       expect(socket).to.be(undefined as any)
@@ -46,7 +45,7 @@ describe('mid-update-sockets', () => {
 
     let latestMidPrice
     let latestDailyChange
-    socket.on('onChange', function ({ price, dailyChange }) {
+    socket.on('onChange', function({ price, dailyChange }) {
       latestMidPrice = price
       latestDailyChange = dailyChange
     })
@@ -83,7 +82,7 @@ const waitForSocketToOpen = async (counter = 0) => {
     }
   }
 
-  await new Promise((res) => setTimeout(() => res(), 2000))
+  await new Promise(res => setTimeout(() => res(), 2000))
 
   if (!clientsConnectedToSocket()) {
     return waitForSocketToOpen(counter + 1)
@@ -97,7 +96,7 @@ const waitForPredicateToBecomeTrue = async (predicate, counter = 0) => {
     throw new Error('Predicate could not be satisfied')
   }
 
-  await new Promise((res) => setTimeout(() => res(), 2000))
+  await new Promise(res => setTimeout(() => res(), 2000))
 
   return waitForPredicateToBecomeTrue(predicate)
 }

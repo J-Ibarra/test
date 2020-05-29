@@ -1,5 +1,5 @@
 export * from './audit_middleware'
-export * from './authentication'
+export * from './authentication/authentication'
 export * from './cors_config'
 export * from './maintenance'
 export * from './rate-limiter'

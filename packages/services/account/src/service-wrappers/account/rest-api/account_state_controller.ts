@@ -1,4 +1,4 @@
-import { Body, Controller, Patch, Route, Security, Tags } from 'tsoa'
+import { Body, Controller, Patch, Route, Security, Tags, Hidden } from 'tsoa'
 
 import { AccountStatus } from '@abx-types/account'
 import { updateAccountStatus, updateSuspensionStatus } from '../../../core'
@@ -13,6 +13,7 @@ interface AccountSuspensionChangeRequest {
 
 @Tags('accounts')
 @Route('/admin/accounts')
+@Hidden()
 export class AccountStateController extends Controller {
   @Security({
     cookieAuth: [],
@@ -33,6 +34,7 @@ export class AccountStateController extends Controller {
     adminAuth: [],
   })
   @Patch('{accountId}/suspension')
+  @Hidden()
   public async suspendAccount(accountId: string, @Body() { suspended }: AccountSuspensionChangeRequest): Promise<{ message: string } | void> {
     try {
       await updateSuspensionStatus({ id: accountId, suspended })

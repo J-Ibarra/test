@@ -1,40 +1,35 @@
-import { OverloadedRequest, AccountType } from '@abx-types/account'
+import { OverloadedRequest } from '@abx-types/account'
 import { JwtTokenHandler } from '@abx-utils/account'
 import { Logger } from '@abx-utils/logging'
+import { runValidationPipe, adminAuthValidators, cookieValidators } from './validation_pipes'
 
 const logger = Logger.getInstance('express-middleware', 'authentication-middleware')
 
 export async function expressAuthentication(request: OverloadedRequest | any, securityName: string, _: string[]) {
   const { user } = request
+  const { session, account } = request
 
   if (securityName === 'cookieAuth') {
-    const { session, account } = request
+    const { success, errorMessage } = runValidationPipe({ session, account }, cookieValidators)
 
-    if (!session || !account || new Date(session.expiry) < new Date() || session.deactivated) {
-      logger.warn('Session invalid')
-      return Promise.reject({ message: 'Session invalid' })
-    }
-
-    if (account.suspended) {
-      logger.warn('Account suspended')
-      return Promise.reject({ message: 'Account suspended' })
-    }
-
-    if (account.type === AccountType.operator) {
-      logger.warn('Account not authorized')
-      return Promise.reject({ message: 'Account not authorized' })
+    if (!success) {
+      logger.warn(errorMessage)
+      return Promise.reject({ message: errorMessage })
     }
 
     return user
   } else if (securityName === 'adminAuth') {
-    const { account } = request
+    const { success, errorMessage } = runValidationPipe({ session, account }, adminAuthValidators)
 
-    if (account && account.type !== AccountType.admin) {
-      logger.warn('Account not authorized')
-      return Promise.reject({ message: 'Account not authorized' })
+    if (!success) {
+      logger.warn(errorMessage)
+      return Promise.reject({ message: errorMessage })
     }
   } else if (securityName === 'tokenAuth') {
     return runTokenValidation(request)
+  } else {
+    logger.warn('Security name not provided')
+    return Promise.reject({ message: 'Authorization not present' })
   }
 }
 

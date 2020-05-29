@@ -70,10 +70,6 @@ describe.skip('api:admin_request:rejection', () => {
 
     const updatedAtDate = new Date()
     const cancelFiatWithdrawalStub = sinon.stub(withdrawalOperations, 'cancelFiatWithdrawal').resolves()
-    sinon.stub(expressMiddleware, 'overloadRequestWithSessionInfo').callsFake(async (request, _, next: () => void = () => ({})) => {
-      request.account = adminAccount
-      next()
-    })
 
     const { status: getStatus } = await request(app)
       .patch(`/api/admin/fund-management/admin-requests/${adminRequest.id}`)
@@ -120,10 +116,6 @@ describe.skip('api:admin_request:rejection', () => {
       admin: adminAccount.id,
       status: AdminRequestStatus.pending,
     })
-    sinon.stub(expressMiddleware, 'overloadRequestWithSessionInfo').callsFake(async (request, _, next: () => void = () => ({})) => {
-      request.account = adminAccount
-      next()
-    })
 
     const { status: getStatus } = await request(app)
       .patch(`/api/admin/fund-management/admin-requests/${adminRequest.id}`)
@@ -163,10 +155,6 @@ describe.skip('api:admin_request:rejection', () => {
     const denyPendingDepositStub = sinon.stub(balanceOperations, 'denyPendingDeposit').resolves()
 
     sinon.stub(accountServiceOperations, 'findAccountWithUserDetails').resolves(testClient)
-    sinon.stub(expressMiddleware, 'overloadRequestWithSessionInfo').callsFake(async (request, _, next: () => void = () => ({})) => {
-      request.account = adminAccount
-      next()
-    })
 
     const { status: getStatus } = await request(app)
       .patch(`/api/admin/fund-management/admin-requests/${adminRequest.id}`)

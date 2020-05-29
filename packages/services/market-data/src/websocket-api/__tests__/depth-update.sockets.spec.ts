@@ -30,7 +30,6 @@ describe('depth-update-sockets', () => {
 
   it('should not allow unauthorized subscription', async () => {
     try {
-      sinon.stub(middlewareOperations, 'overloadRequestWithSessionInfo').callsFake((request) => request as any)
       const socket = await connectAndWaitForSocketToOpen()
 
       expect(socket).to.be(undefined as any)
@@ -46,7 +45,7 @@ describe('depth-update-sockets', () => {
 
     const epicurus = getEpicurusInstance()
     let depthUpdateReceived
-    socket.on(`${DEPTH_UPDATE_EVENT_PREFIX}KAU_KAG`, function ({ aggregateDepth }) {
+    socket.on(`${DEPTH_UPDATE_EVENT_PREFIX}KAU_KAG`, function({ aggregateDepth }) {
       depthUpdateReceived = aggregateDepth
     })
 
@@ -60,7 +59,7 @@ describe('depth-update-sockets', () => {
 
     await waitForPredicateToBecomeTrue(() => !!depthUpdateReceived)
     socket.close()
-    expect(depthUpdateReceived).to.eql(testDepth.map((depthItem) => ({ ...depthItem, ownedAmount: 0 })))
+    expect(depthUpdateReceived).to.eql(testDepth.map(depthItem => ({ ...depthItem, ownedAmount: 0 })))
   }).timeout(20_000)
 
   it('should be able to subscribe and receive bid depth updates when cookie present', async () => {
@@ -70,7 +69,7 @@ describe('depth-update-sockets', () => {
 
     const epicurus = getEpicurusInstance()
     let depthUpdateReceived
-    socket.on(`${DEPTH_UPDATE_EVENT_PREFIX}KAU_KAG`, function ({ aggregateDepth }) {
+    socket.on(`${DEPTH_UPDATE_EVENT_PREFIX}KAU_KAG`, function({ aggregateDepth }) {
       depthUpdateReceived = aggregateDepth
     })
 
@@ -84,7 +83,7 @@ describe('depth-update-sockets', () => {
 
     await waitForPredicateToBecomeTrue(() => !!depthUpdateReceived)
     socket.close()
-    expect(depthUpdateReceived).to.eql(testDepth.map((depthItem) => ({ ...depthItem, ownedAmount: 0 })))
+    expect(depthUpdateReceived).to.eql(testDepth.map(depthItem => ({ ...depthItem, ownedAmount: 0 })))
   }).timeout(20_000)
 })
 
@@ -111,7 +110,7 @@ const waitForSocketToOpen = async (counter = 0) => {
     }
   }
 
-  await new Promise((res) => setTimeout(() => res(), 2000))
+  await new Promise(res => setTimeout(() => res(), 2000))
 
   if (!clientsConnectedToSocket()) {
     return waitForSocketToOpen(counter + 1)
@@ -125,7 +124,7 @@ const waitForPredicateToBecomeTrue = async (predicate, counter = 0) => {
     throw new Error('Predicate could not be satisfied')
   }
 
-  await new Promise((res) => setTimeout(() => res(), 2000))
+  await new Promise(res => setTimeout(() => res(), 2000))
 
   return waitForPredicateToBecomeTrue(predicate)
 }

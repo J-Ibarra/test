@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post, Query, Request, Response, Route, Security, SuccessResponse, Tags } from 'tsoa'
+import { Body, Controller, Delete, Get, Post, Query, Request, Response, Route, Security, SuccessResponse, Tags, Hidden } from 'tsoa'
 import { activateMfa, deactivateMfa, deactivateUserMfa, verifyMfa, MFA, findUserByEmail } from '../../../core'
 import { OverloadedRequest } from '@abx-types/account'
 
@@ -68,6 +68,7 @@ export class MFAController extends Controller {
     adminAuth: [],
   })
   @Delete('admin/{accountHin}')
+  @Hidden()
   public async disableMfaByAdmin(accountHin: string): Promise<{ message: string } | void> {
     try {
       await deactivateUserMfa({ hin: accountHin })

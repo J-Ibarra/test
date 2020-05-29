@@ -14,7 +14,7 @@ import {
   findAccountByIdWithMfaStatus,
   verifyUserAccountWithDevice,
   saveAndSendVerificationCodeFromEmail,
-  findUserPhoneDetailsByUserId
+  findUserPhoneDetailsByUserId,
 } from '../../../core'
 import {
   Account,
@@ -46,6 +46,7 @@ interface VerifyAccountWithDeviceRequest {
 
 @Tags('accounts')
 @Route()
+@Hidden()
 export class AccountsController extends Controller {
   private logger = Logger.getInstance('api', 'AccountsController')
 
@@ -136,7 +137,7 @@ export class AccountsController extends Controller {
       await sendReferralCodeEmail(user, account.hin!)
       this.logger.debug(`Referral email sent for ${requestBody.email}`)
 
-      if (requestBody.uuidPhone){
+      if (requestBody.uuidPhone) {
         this.logger.debug(`Sending VerificationCode email for ${requestBody.email}`)
         await saveAndSendVerificationCodeFromEmail(user)
       }
@@ -182,25 +183,25 @@ export class AccountsController extends Controller {
 
   @SuccessResponse('200', 'Account verified')
   @Post('accounts/verification/{userId}/device')
-  public async verifyUserAccountWithDevice(userId: string,@Body() { verificationCodePhone }: VerifyAccountWithDeviceRequest) {
+  public async verifyUserAccountWithDevice(userId: string, @Body() { verificationCodePhone }: VerifyAccountWithDeviceRequest) {
     try {
       const userPhoneDetails = await findUserPhoneDetailsByUserId(userId)
 
-      if (!userPhoneDetails){
+      if (!userPhoneDetails) {
         this.setStatus(404)
-        return { message: 'User not found'}
+        return { message: 'User not found' }
       }
 
       let verificationCodePhoneMatches: boolean = false
-      if (verificationCodePhone){    
+      if (verificationCodePhone) {
         verificationCodePhoneMatches = verificationCodePhone === userPhoneDetails.verificationCodePhone
       }
 
-      if (!verificationCodePhoneMatches){
+      if (!verificationCodePhoneMatches) {
         this.setStatus(400)
         return { message: 'Verification Code Phone is incorrect' }
       }
-      
+
       return await verifyUserAccountWithDevice(userId)
     } catch (error) {
       this.setStatus(400)
