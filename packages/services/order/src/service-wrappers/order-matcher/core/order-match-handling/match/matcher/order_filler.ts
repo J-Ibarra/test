@@ -104,8 +104,8 @@ async function calculateAmountMatched(
   if (orderType === OrderType.market || spreadOrLimitBuyMatch || spreadOrLimitSellMatch) {
     const [orderWithCancellationReason, matchingOderWithCancellationReason] = await Promise.all([
       validateOrderBoundary(
-        { ...order, amount: order.remaining, limitPrice: matchingOrder.limitPrice, orderType: OrderType.limit },
-        matchAmount,
+        { ...order, amount: order.remaining, limitPrice: order.limitPrice || matchingOrder.limitPrice, orderType: OrderType.limit },
+        matchingOrder.amount,
         transaction,
       ),
       validateOrderBoundary({ ...matchingOrder, amount: matchingOrder.remaining }, matchingOrder.remaining, transaction),
@@ -205,7 +205,7 @@ async function enrichOrderMatchWithUsdMidPrice(orderMatch: OrderMatch): Promise<
   }
 }
 
-async function validateOrderBoundary(
+export async function validateOrderBoundary(
   order: OrderWithCancellationDetails,
   matchedAmount: number,
   transaction: Transaction,

@@ -101,15 +101,18 @@ async function handleNoDepth(order: Order, state: OrderModuleState, transaction:
 
 function cancelOrderBeingProcessed(order: OrderWithCancellationDetails, state: OrderModuleState, transaction: Transaction): any {
   if (order.shouldCancel) {
-    logger.warn(`Cancelling order: ${order.id}`)
-    return orderCancellationHandler.cancelOrderAndBroadcast(state, order, order.cancellationReason!, transaction)
+    return cancelOrder(order, state, transaction)
   }
 }
 
 function cancelMatchingOrder(matchCandidateToCancel: OrderWithCancellationDetails, state: OrderModuleState, transaction: Transaction): any {
   if (matchCandidateToCancel && matchCandidateToCancel.shouldCancel) {
-    removeOrderFromDepth(matchCandidateToCancel, state.depth)
-    logger.warn(`Cancelling matching order: ${matchCandidateToCancel.id}`)
-    return orderCancellationHandler.cancelOrderAndBroadcast(state, matchCandidateToCancel, matchCandidateToCancel.cancellationReason!, transaction)
+    return cancelOrder(matchCandidateToCancel, state, transaction)
   }
+}
+
+export function cancelOrder(order: OrderWithCancellationDetails, state: OrderModuleState, transaction: Transaction) {
+  removeOrderFromDepth(order, state.depth)
+  logger.warn(`Cancelling order: ${order.id}`)
+  return orderCancellationHandler.cancelOrderAndBroadcast(state, order, order.cancellationReason!, transaction)
 }
