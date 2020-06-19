@@ -8,7 +8,7 @@ import * as express from 'express';
 
 const models: TsoaRoute.Models = {
   "AdminRequestType": {
-    "enums": ["withdrawal", "deposit", "redemption"],
+    "enums": ["withdrawal", "deposit", "redemption", "mint"],
   },
   "CurrencyCode": {
     "enums": ["ETH", "KAU", "KAG", "KVT", "BTC", "USDT", "USD", "EUR", "GBP"],
